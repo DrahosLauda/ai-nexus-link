@@ -17,6 +17,10 @@ export interface WPPost {
   readingTime: number;
 }
 
+export interface WPPostDetail extends WPPost {
+  contentHtml: string;
+}
+
 /** Minimal raw shape we request from the REST API. */
 interface WPPostRaw {
   id: number;
@@ -100,4 +104,41 @@ export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
     date: formatSlovakDate(p.date),
     readingTime: estimateReadingTime(p.content.rendered),
   }));
+}
+
+/**
+ * Fetch a single published post by slug, including full HTML content.
+ * Returns null if no post matches (caller should render notFound()).
+ */
+export async function fetchPostBySlug(slug: string): Promise<WPPostDetail | null> {
+  const endpoint = `${WP_URL}/wp-json/wp/v2/posts`;
+  const params = new URLSearchParams({
+    slug,
+    status: "publish",
+    _fields: "id,slug,link,date,title,excerpt,content",
+  });
+
+  const res = await fetch(`${endpoint}?${params.toString()}`, {
+    next: { revalidate: 300 },
+    headers: { Accept: "application/json" },
+  });
+
+  if (!res.ok) {
+    throw new Error(`WP API responded ${res.status}`);
+  }
+
+  const raw = (await res.json()) as WPPostRaw[];
+  const post = raw[0];
+  if (!post) return null;
+
+  return {
+    id: post.id,
+    slug: post.slug,
+    link: post.link,
+    title: stripHtml(post.title.rendered),
+    excerpt: stripHtml(post.excerpt.rendered),
+    date: formatSlovakDate(post.date),
+    readingTime: estimateReadingTime(post.content.rendered),
+    contentHtml: post.content.rendered,
+  };
 }
