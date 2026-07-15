@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# digitalnapomoc.sk — frontend (AI Nexus Link)
 
-## Getting Started
+Nová landing page pre digitalnapomoc.sk — produkčná implementácia dizajnu
+z Claude Design. Referenčný frontend headless architektúry AI Nexus Link:
+WordPress slúži len ako CMS, Directus ako CRM/systémová vrstva.
 
-First, run the development server:
+Next.js 16 (App Router) + Tailwind CSS v4 + TypeScript.
+
+## Spustenie
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # doplňte hodnoty
+npm run dev                  # http://localhost:3000
+npm run build && npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Ako to funguje
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Blog** — `lib/wp.ts` číta 3 najnovšie publikované články z WP REST API
+  (`WP_URL`), ISR cache 5 minút. Keď API nie je dostupné, zobrazia sa
+  záložné články z `lib/content.ts`.
+- **Okamžitá obnova blogu** — `POST /api/revalidate?secret=<REVALIDATE_SECRET>`
+  zneplatní cache úvodnej stránky. Volajte z WP pri publikovaní (nižšie).
+- **Formuláre → Directus** — oba formuláre posielajú na `POST /api/lead`,
+  ktorý po validácii (honeypot, rate limit 5/10 min na IP) zapíše lead do
+  Directus kolekcie `client_leads`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Directus: kolekcia `client_leads`
 
-## Learn More
+API route zapisuje tieto polia — kolekcia ich musí mať (typ Input/Textarea,
+všetky okrem `email` voliteľné):
 
-To learn more about Next.js, take a look at the following resources:
+| Pole | Typ | Poznámka |
+|---|---|---|
+| `name` | string | meno (hlavný formulár) |
+| `email` | string | povinné |
+| `phone` | string | telefón (hero formulár) |
+| `message` | text | správa |
+| `source` | string | `hero-callback` alebo `kontakt-cta` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Directus token musí mať právo *create* na `client_leads` (rola s minimálnymi
+právami — nie admin token).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## WordPress: webhook na revalidáciu
 
-## Deploy on Vercel
+Do `wp-content/mu-plugins/nexus-revalidate.php`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```php
+<?php
+// Pri publikovaní článku obnoví Next.js frontend.
+add_action('publish_post', function () {
+    wp_remote_post(
+        'https://VASA-FRONTEND-DOMENA/api/revalidate?secret=VAS_REVALIDATE_SECRET',
+        ['timeout' => 5, 'blocking' => false]
+    );
+});
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Nasadenie na Railway
+
+1. Railway → New Service → GitHub repo, **Root Directory: `frontend`**.
+2. Build a štart zistí Railway sám (`npm run build` / `npm run start`).
+3. Variables: `WP_URL`, `DIRECTUS_URL`, `DIRECTUS_TOKEN`, `REVALIDATE_SECRET`
+   (zdieľajte cez environment group s orchestrátorom).
+4. Settings → Networking → Generate Domain (neskôr vlastná doména).
+
+## Čo treba doplniť
+
+- **Fotka tímu** — uložte do `public/team.jpg` a nahraďte placeholder
+  v `components/about.tsx` komponentom `<Image>` z `next/image`.
+- **E-mail notifikácia o novom leade** — `/api/lead` zatiaľ len zapisuje do
+  Directusu; notifikáciu rieši Directus Flows alebo doplníme e-mail službu.
+- Telefón v pätičke (`components/footer.tsx`) je zástupný.

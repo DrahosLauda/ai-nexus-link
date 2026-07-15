@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Section grounds */
+  --color-night: #08080d;
+  --color-cloud: #f5f6fa;
+  --color-ink: #16161d;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Grays on the dark ground */
+  --color-fog-100: #e7e7ee;
+  --color-fog-200: #c3c3d0;
+  --color-fog-300: #b5b5c3;
+  --color-fog-400: #a3a3b2;
+  --color-fog-500: #8f8f9e;
+  --color-fog-600: #6d6d7a;
+
+  /* Grays on the light ground */
+  --color-mist-400: #7a7a88;
+  --color-mist-500: #5c5c6b;
+  --color-mist-700: #3c3c48;
+  --color-line: #e6e7f0;
+
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-night);
+  color: var(--color-fog-100);
+  font-family: var(--font-sans), sans-serif;
+}
+
+::selection {
+  background: rgb(129 140 248 / 0.35);
+  color: #fff;
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.08);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-50px, 20px) scale(0.94);
+  }
 }
