@@ -69,6 +69,7 @@ python wp_writer_agent.py    # vygeneruje + pošle článok do WP (draft)
 | `REVALIDATE_SECRET` | frontend (Railway) + WP mu-plugin | tajný kľúč pre `/api/revalidate` |
 | `WP_USER`, `WP_APP_PASSWORD` | orchestrátor `.env` | WP publikovanie (application password) |
 | `ZAI_API_KEY` | orchestrátor `.env` | Z.ai GLM API |
+| `GEMINI_API_KEY` | orchestrátor `.env` | Google Gemini API (generovanie obrázkov k článkom) |
 
 ## Konvencie a bezpečnosť
 
