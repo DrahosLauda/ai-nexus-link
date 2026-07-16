@@ -90,7 +90,16 @@ _working_image_model = None
 
 # Google Gemini — primárny generátor obrázkov (kľúč z https://aistudio.google.com)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
+# Kandidáti po poradí; vlastný model vynútite cez GEMINI_IMAGE_MODEL v .env.
+GEMINI_IMAGE_CANDIDATES = [
+    m for m in [
+        os.getenv("GEMINI_IMAGE_MODEL"),
+        "gemini-3.1-flash-image",   # Nano Banana 2 — aktuálny
+        "gemini-2.5-flash-image",   # starší, stále dostupný
+    ] if m
+]
+
+_working_gemini_model = None
 
 
 def image_prompt(topic, variant):
@@ -110,31 +119,37 @@ def image_prompt(topic, variant):
 
 def generate_image_gemini(topic, variant):
     """Vygeneruje obrázok cez Google Gemini. Vráti (bytes, mime) alebo (None, None)."""
-    url = (
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"{GEMINI_IMAGE_MODEL}:generateContent"
-    )
+    global _working_gemini_model
     headers = {"x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json"}
     payload = {
         "contents": [{"parts": [{"text": image_prompt(topic, variant)}]}],
         "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
     }
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=120)
-        data = response.json()
-        if response.status_code != 200:
-            print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {str(data)[:300]}")
+    models = [_working_gemini_model] if _working_gemini_model else GEMINI_IMAGE_CANDIDATES
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+        try:
+            response = requests.post(url, headers=headers, json=payload, timeout=120)
+            data = response.json()
+            if response.status_code == 404:  # model neexistuje → skús ďalšieho
+                print(f"ℹ️  Gemini model {model} nie je dostupný, skúšam ďalší…")
+                continue
+            if response.status_code != 200:
+                print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {str(data)[:300]}")
+                return None, None
+            for part in data["candidates"][0]["content"]["parts"]:
+                inline = part.get("inlineData") or part.get("inline_data")
+                if inline:
+                    _working_gemini_model = model  # zapamätaj si funkčný model
+                    mime = inline.get("mimeType") or inline.get("mime_type") or "image/png"
+                    return base64.b64decode(inline["data"]), mime
+            print(f"⚠️  Gemini ({variant}) nevrátil obrázok v odpovedi.")
             return None, None
-        for part in data["candidates"][0]["content"]["parts"]:
-            inline = part.get("inlineData") or part.get("inline_data")
-            if inline:
-                mime = inline.get("mimeType") or inline.get("mime_type") or "image/png"
-                return base64.b64decode(inline["data"]), mime
-        print(f"⚠️  Gemini ({variant}) nevrátil obrázok v odpovedi.")
-        return None, None
-    except Exception as e:
-        print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {e}")
-        return None, None
+        except Exception as e:
+            print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {e}")
+            return None, None
+    print(f"⚠️  Žiadny Gemini model nefunguje ({', '.join(GEMINI_IMAGE_CANDIDATES)}).")
+    return None, None
 
 
 def generate_image_cogview(topic, variant):
