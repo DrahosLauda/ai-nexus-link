@@ -75,8 +75,23 @@ def generate_article(topic):
     return title, text
 
 
+# Kandidáti na obrazový model — skúšajú sa po poradí, použije sa prvý funkčný.
+# Vlastný názov sa dá vynútiť premennou ZAI_IMAGE_MODEL v .env.
+IMAGE_MODEL_CANDIDATES = [
+    m for m in [
+        os.getenv("ZAI_IMAGE_MODEL"),
+        "cogview-4-250304",
+        "cogview-4",
+        "cogview-3-flash",
+    ] if m
+]
+
+_working_image_model = None
+
+
 def generate_image(topic, variant):
     """Vygeneruje tematický obrázok cez Z.ai CogView. Vráti URL alebo None."""
+    global _working_image_model
     prompts = {
         "hero": (
             f"Modern minimal editorial illustration for a blog article about: {topic}. "
@@ -88,21 +103,30 @@ def generate_image(topic, variant):
             "Dark indigo-violet color palette, minimal, professional, no text, no letters"
         ),
     }
-    payload = {
-        "model": "cogview-3-flash",
-        "prompt": prompts[variant],
-        "size": "1344x768",
-    }
-    try:
-        response = requests.post(ZAI_IMAGE_URL, headers=zai_headers, json=payload, timeout=120)
-        data = response.json()
-        if response.status_code != 200:
+    models = [_working_image_model] if _working_image_model else IMAGE_MODEL_CANDIDATES
+    for model in models:
+        payload = {
+            "model": model,
+            "prompt": prompts[variant],
+            "size": "1344x768",
+        }
+        try:
+            response = requests.post(ZAI_IMAGE_URL, headers=zai_headers, json=payload, timeout=120)
+            data = response.json()
+            if response.status_code == 200:
+                _working_image_model = model  # zapamätaj si funkčný model
+                return data["data"][0]["url"]
+            error_code = str(data.get("error", {}).get("code", ""))
+            if error_code == "1211":  # model neexistuje → skús ďalšieho kandidáta
+                print(f"ℹ️  Model {model} na tomto účte nie je, skúšam ďalší…")
+                continue
             print(f"⚠️  Obrázok ({variant}) sa nepodarilo vygenerovať: {data}")
             return None
-        return data["data"][0]["url"]
-    except Exception as e:
-        print(f"⚠️  Obrázok ({variant}) sa nepodarilo vygenerovať: {e}")
-        return None
+        except Exception as e:
+            print(f"⚠️  Obrázok ({variant}) sa nepodarilo vygenerovať: {e}")
+            return None
+    print(f"⚠️  Žiadny obrazový model nefunguje ({', '.join(IMAGE_MODEL_CANDIDATES)}).")
+    return None
 
 
 def upload_image_to_wp(image_url, filename, alt_text):
