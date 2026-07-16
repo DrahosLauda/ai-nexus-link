@@ -88,10 +88,12 @@ IMAGE_MODEL_CANDIDATES = [
 
 _working_image_model = None
 
+# Google Gemini — primárny generátor obrázkov (kľúč z https://aistudio.google.com)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_IMAGE_MODEL = os.getenv("GEMINI_IMAGE_MODEL", "gemini-2.5-flash-image")
 
-def generate_image(topic, variant):
-    """Vygeneruje tematický obrázok cez Z.ai CogView. Vráti URL alebo None."""
-    global _working_image_model
+
+def image_prompt(topic, variant):
     prompts = {
         "hero": (
             f"Modern minimal editorial illustration for a blog article about: {topic}. "
@@ -103,11 +105,46 @@ def generate_image(topic, variant):
             "Dark indigo-violet color palette, minimal, professional, no text, no letters"
         ),
     }
+    return prompts[variant]
+
+
+def generate_image_gemini(topic, variant):
+    """Vygeneruje obrázok cez Google Gemini. Vráti (bytes, mime) alebo (None, None)."""
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{GEMINI_IMAGE_MODEL}:generateContent"
+    )
+    headers = {"x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json"}
+    payload = {
+        "contents": [{"parts": [{"text": image_prompt(topic, variant)}]}],
+        "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
+    }
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=120)
+        data = response.json()
+        if response.status_code != 200:
+            print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {str(data)[:300]}")
+            return None, None
+        for part in data["candidates"][0]["content"]["parts"]:
+            inline = part.get("inlineData") or part.get("inline_data")
+            if inline:
+                mime = inline.get("mimeType") or inline.get("mime_type") or "image/png"
+                return base64.b64decode(inline["data"]), mime
+        print(f"⚠️  Gemini ({variant}) nevrátil obrázok v odpovedi.")
+        return None, None
+    except Exception as e:
+        print(f"⚠️  Gemini obrázok ({variant}) zlyhal: {e}")
+        return None, None
+
+
+def generate_image_cogview(topic, variant):
+    """Záloha: obrázok cez Z.ai CogView. Vráti (bytes, mime) alebo (None, None)."""
+    global _working_image_model
     models = [_working_image_model] if _working_image_model else IMAGE_MODEL_CANDIDATES
     for model in models:
         payload = {
             "model": model,
-            "prompt": prompts[variant],
+            "prompt": image_prompt(topic, variant),
             "size": "1344x768",
         }
         try:
@@ -115,35 +152,44 @@ def generate_image(topic, variant):
             data = response.json()
             if response.status_code == 200:
                 _working_image_model = model  # zapamätaj si funkčný model
-                return data["data"][0]["url"]
+                img = requests.get(data["data"][0]["url"], timeout=60)
+                img.raise_for_status()
+                return img.content, img.headers.get("Content-Type", "image/png")
             error_code = str(data.get("error", {}).get("code", ""))
             if error_code == "1211":  # model neexistuje → skús ďalšieho kandidáta
                 print(f"ℹ️  Model {model} na tomto účte nie je, skúšam ďalší…")
                 continue
-            print(f"⚠️  Obrázok ({variant}) sa nepodarilo vygenerovať: {data}")
-            return None
+            print(f"⚠️  CogView obrázok ({variant}) zlyhal: {data}")
+            return None, None
         except Exception as e:
-            print(f"⚠️  Obrázok ({variant}) sa nepodarilo vygenerovať: {e}")
-            return None
-    print(f"⚠️  Žiadny obrazový model nefunguje ({', '.join(IMAGE_MODEL_CANDIDATES)}).")
-    return None
+            print(f"⚠️  CogView obrázok ({variant}) zlyhal: {e}")
+            return None, None
+    print(f"⚠️  Žiadny CogView model nefunguje ({', '.join(IMAGE_MODEL_CANDIDATES)}).")
+    return None, None
 
 
-def upload_image_to_wp(image_url, filename, alt_text):
-    """Stiahne vygenerovaný obrázok a natrvalo ho uloží do Knižnice médií WP.
+def generate_image(topic, variant):
+    """Obrázok k téme: najprv Gemini (ak je kľúč), potom Z.ai CogView ako záloha."""
+    if GEMINI_API_KEY:
+        image, mime = generate_image_gemini(topic, variant)
+        if image:
+            return image, mime
+        print("ℹ️  Skúšam zálohu cez Z.ai CogView…")
+    return generate_image_cogview(topic, variant)
+
+
+def upload_image_to_wp(image_bytes, mime, filename, alt_text):
+    """Natrvalo uloží obrázok do Knižnice médií WP.
 
     Vráti (media_id, trvalá_url) alebo (None, None) pri zlyhaní.
     """
     try:
-        img = requests.get(image_url, timeout=60)
-        img.raise_for_status()
-
         headers = wp_auth_header() | {
             "Content-Disposition": f'attachment; filename="{filename}"',
-            "Content-Type": img.headers.get("Content-Type", "image/png"),
+            "Content-Type": mime,
         }
         response = requests.post(
-            f"{WP_URL}/wp-json/wp/v2/media", headers=headers, data=img.content, timeout=60
+            f"{WP_URL}/wp-json/wp/v2/media", headers=headers, data=image_bytes, timeout=60
         )
         if response.status_code != 201:
             print(f"⚠️  Nahratie do médií zlyhalo: {response.status_code} {response.text[:200]}")
@@ -202,19 +248,21 @@ def generate_and_post_article(topic):
     slug_base = re.sub(r"[^a-z0-9]+", "-", topic.lower()).strip("-")[:40]
     featured_media_id = None
 
-    hero_url = generate_image(topic, "hero")
-    if hero_url:
+    image, mime = generate_image(topic, "hero")
+    if image:
+        ext = "jpg" if "jpeg" in mime else "png"
         media_id, permanent_url = upload_image_to_wp(
-            hero_url, f"{slug_base}-hero.png", title
+            image, mime, f"{slug_base}-hero.{ext}", title
         )
         if media_id:
             featured_media_id = media_id
             article_html = img_tag(permanent_url, title) + "\n" + article_html
 
-    inline_url = generate_image(topic, "inline")
-    if inline_url:
+    image, mime = generate_image(topic, "inline")
+    if image:
+        ext = "jpg" if "jpeg" in mime else "png"
         media_id, permanent_url = upload_image_to_wp(
-            inline_url, f"{slug_base}-detail.png", f"{title} — ilustrácia postupu"
+            image, mime, f"{slug_base}-detail.{ext}", f"{title} — ilustrácia postupu"
         )
         if media_id:
             article_html = insert_inline_image(
