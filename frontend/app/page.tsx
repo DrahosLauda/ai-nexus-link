@@ -23,8 +23,8 @@ export default async function Home() {
         excerpt: p.excerpt,
         date: p.date,
         read: String(p.readingTime),
-        href: p.link,
-        external: true,
+        // Interná stránka článku — WordPress zostáva skrytý headless backend.
+        href: `/blog/${p.slug}`,
       }));
     }
   } catch {

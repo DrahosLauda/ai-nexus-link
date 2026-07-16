@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export interface BlogCardPost {
   title: string;
   excerpt: string;
@@ -27,12 +29,12 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
               Najnovšie články
             </h2>
           </div>
-          <a
-            href="#blog"
+          <Link
+            href="/blog"
             className="inline-flex shrink-0 items-center gap-2 rounded-[10px] border border-white/[0.12] bg-white/[0.05] px-5 py-[11px] text-[14.5px] font-medium text-fog-100 backdrop-blur-md transition-colors hover:bg-white/[0.10] hover:text-white"
           >
             Všetky články →
-          </a>
+          </Link>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           {posts.map((post, i) => (

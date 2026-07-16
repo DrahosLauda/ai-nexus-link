@@ -106,10 +106,11 @@ export const fallbackPosts = [
   },
 ];
 
+// Absolútne cesty ("/#sluzby"), aby menu fungovalo aj z podstránok blogu.
 export const navLinks = [
-  { href: "#sluzby", label: "Služby" },
-  { href: "#postup", label: "Ako to funguje" },
-  { href: "#referencie", label: "Referencie" },
-  { href: "#blog", label: "Blog" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/#sluzby", label: "Služby" },
+  { href: "/#postup", label: "Ako to funguje" },
+  { href: "/#referencie", label: "Referencie" },
+  { href: "/blog", label: "Blog" },
+  { href: "/#faq", label: "FAQ" },
 ];

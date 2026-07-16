@@ -17,9 +17,11 @@ npm run build && npm run start
 
 ## Ako to funguje
 
-- **Blog** — `lib/wp.ts` číta 3 najnovšie publikované články z WP REST API
-  (`WP_URL`), ISR cache 5 minút. Keď API nie je dostupné, zobrazia sa
-  záložné články z `lib/content.ts`.
+- **Blog** — `lib/wp.ts` číta publikované články z WP REST API (`WP_URL`),
+  ISR cache 5 minút. Domovská stránka zobrazuje 3 najnovšie (fallback:
+  `lib/content.ts`), `/blog` zoznam všetkých a `/blog/[slug]` celý článok
+  v dizajne stránky — návštevník nikdy neopustí frontend, WordPress je
+  čisto headless backend.
 - **Okamžitá obnova blogu** — `POST /api/revalidate?secret=<REVALIDATE_SECRET>`
   zneplatní cache úvodnej stránky. Volajte z WP pri publikovaní (nižšie).
 - **Formuláre → Directus** — oba formuláre posielajú na `POST /api/lead`,

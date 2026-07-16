@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navLinks } from "@/lib/content";
 
@@ -23,31 +24,31 @@ export function Navbar() {
       }`}
     >
       <div className="mx-auto flex max-w-[1320px] items-center justify-between px-5 py-4 sm:px-10">
-        <a href="#" className="flex items-center gap-2.5">
+        <Link href="/" className="flex items-center gap-2.5">
           <div className="grid size-[30px] place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 text-[15px] font-extrabold text-white">
             d
           </div>
           <span className="text-base font-bold tracking-[-0.01em] text-white">
             digitalnapomoc.sk
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-7 text-sm text-fog-300 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="transition-colors hover:text-white"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#kontakt"
+          <Link
+            href="/#kontakt"
             className="inline-flex rounded-[10px] border border-white/[0.12] bg-white/[0.06] px-[18px] py-[9px] font-medium text-white backdrop-blur-md transition-colors hover:bg-white/[0.12]"
           >
             Konzultácia
-          </a>
+          </Link>
         </div>
 
         <button
@@ -85,22 +86,22 @@ export function Navbar() {
       {menuOpen && (
         <div className="flex flex-col gap-1 border-t border-white/[0.08] px-5 py-4 md:hidden">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
               className="rounded-lg px-3 py-2.5 text-[15px] text-fog-300 transition-colors hover:bg-white/[0.06] hover:text-white"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#kontakt"
+          <Link
+            href="/#kontakt"
             onClick={() => setMenuOpen(false)}
             className="mt-2 inline-flex justify-center rounded-[10px] border border-white/[0.12] bg-white/[0.06] px-[18px] py-[9px] font-medium text-white"
           >
             Konzultácia
-          </a>
+          </Link>
         </div>
       )}
     </nav>

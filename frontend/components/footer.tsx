@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const linkClasses = "text-[13.5px] text-fog-500 transition-colors hover:text-fog-200";
 
 export function Footer() {
@@ -21,18 +23,18 @@ export function Footer() {
 
         <div className="flex flex-col gap-3">
           <span className="text-[13px] font-bold text-white">Spoločnosť</span>
-          <a href="#sluzby" className={linkClasses}>Služby</a>
-          <a href="#postup" className={linkClasses}>Ako to funguje</a>
-          <a href="#blog" className={linkClasses}>Blog</a>
-          <a href="#kontakt" className={linkClasses}>Kontakt</a>
+          <Link href="/#sluzby" className={linkClasses}>Služby</Link>
+          <Link href="/#postup" className={linkClasses}>Ako to funguje</Link>
+          <Link href="/blog" className={linkClasses}>Blog</Link>
+          <Link href="/#kontakt" className={linkClasses}>Kontakt</Link>
         </div>
 
         <div className="flex flex-col gap-3">
           <span className="text-[13px] font-bold text-white">Služby</span>
-          <a href="#sluzby" className={linkClasses}>AI chatboty</a>
-          <a href="#sluzby" className={linkClasses}>Automatizácia procesov</a>
-          <a href="#sluzby" className={linkClasses}>Weby a e‑shopy</a>
-          <a href="#sluzby" className={linkClasses}>Digitálna pomoc 1:1</a>
+          <Link href="/#sluzby" className={linkClasses}>AI chatboty</Link>
+          <Link href="/#sluzby" className={linkClasses}>Automatizácia procesov</Link>
+          <Link href="/#sluzby" className={linkClasses}>Weby a e‑shopy</Link>
+          <Link href="/#sluzby" className={linkClasses}>Digitálna pomoc 1:1</Link>
         </div>
 
         <div className="flex flex-col gap-3">
@@ -52,12 +54,12 @@ export function Footer() {
           © 2026 digitalnapomoc.sk. Všetky práva vyhradené.
         </span>
         <div className="flex gap-5 text-[12.5px]">
-          <a href="#kontakt" className="text-fog-600 transition-colors hover:text-fog-300">
+          <Link href="/#kontakt" className="text-fog-600 transition-colors hover:text-fog-300">
             Ochrana súkromia
-          </a>
-          <a href="#kontakt" className="text-fog-600 transition-colors hover:text-fog-300">
+          </Link>
+          <Link href="/#kontakt" className="text-fog-600 transition-colors hover:text-fog-300">
             Obchodné podmienky
-          </a>
+          </Link>
         </div>
       </div>
     </footer>
