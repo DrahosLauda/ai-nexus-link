@@ -1,26 +1,192 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* Section grounds */
+  --color-night: #08080d;
+  --color-cloud: #f5f6fa;
+  --color-ink: #16161d;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* Grays on the dark ground */
+  --color-fog-100: #e7e7ee;
+  --color-fog-200: #c3c3d0;
+  --color-fog-300: #b5b5c3;
+  --color-fog-400: #a3a3b2;
+  --color-fog-500: #8f8f9e;
+  --color-fog-600: #6d6d7a;
+
+  /* Grays on the light ground */
+  --color-mist-400: #7a7a88;
+  --color-mist-500: #5c5c6b;
+  --color-mist-700: #3c3c48;
+  --color-line: #e6e7f0;
+
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-night);
+  color: var(--color-fog-100);
+  font-family: var(--font-sans), sans-serif;
+}
+
+::selection {
+  background: rgb(129 140 248 / 0.35);
+  color: #fff;
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.08);
+  }
+}
+
+@keyframes orb-float-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-50px, 20px) scale(0.94);
+  }
+}
+
+/* Obsah článku z WordPressu (headless) — typografia na tmavom pozadí */
+.wp-article {
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: var(--color-fog-200);
+}
+
+.wp-article h2 {
+  margin: 2em 0 0.6em;
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.wp-article h3 {
+  margin: 1.6em 0 0.5em;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.wp-article h4 {
+  margin: 1.4em 0 0.4em;
+  font-size: 17.5px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.wp-article p {
+  margin: 0 0 1.1em;
+}
+
+.wp-article a {
+  color: #a5b4fc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.wp-article a:hover {
+  color: #c7d2fe;
+}
+
+.wp-article ul,
+.wp-article ol {
+  margin: 0 0 1.1em;
+  padding-left: 1.4em;
+}
+
+.wp-article li {
+  margin-bottom: 0.45em;
+}
+
+.wp-article li::marker {
+  color: #818cf8;
+}
+
+.wp-article strong {
+  color: #fff;
+}
+
+.wp-article blockquote {
+  margin: 1.5em 0;
+  padding: 0.2em 0 0.2em 1.2em;
+  border-left: 3px solid #818cf8;
+  color: var(--color-fog-300);
+  font-style: italic;
+}
+
+.wp-article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 14px;
+  margin: 1.5em 0;
+}
+
+.wp-article figure {
+  margin: 1.5em 0;
+}
+
+.wp-article figure img {
+  margin: 0;
+}
+
+.wp-article figcaption {
+  margin-top: 0.6em;
+  font-size: 13px;
+  color: var(--color-fog-500);
+}
+
+.wp-article pre {
+  margin: 1.4em 0;
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  font-size: 14px;
+}
+
+.wp-article code {
+  font-family: var(--font-geist-mono, ui-monospace, monospace);
+  font-size: 0.92em;
+  color: #c7d2fe;
+}
+
+.wp-article hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wp-article table {
+  width: 100%;
+  margin: 1.5em 0;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.wp-article th,
+.wp-article td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wp-article th {
+  color: #fff;
+  font-weight: 600;
 }

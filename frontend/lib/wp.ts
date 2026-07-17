@@ -64,34 +64,13 @@ function formatSlovakDate(iso: string): string {
 
 export { formatSlovakDate };
 
-/**
- * Fetch the latest published posts from WordPress.
- *
- * Runs on the server (Server Component / Route Handler). Returns an empty
- * array on any network/parse error so the page never crashes — the blog
- * section is simply omitted.
- */
-export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
-  const endpoint = `${WP_URL}/wp-json/wp/v2/posts`;
-  const params = new URLSearchParams({
-    per_page: String(count),
-    orderby: "date",
-    order: "desc",
-    status: "publish",
-    _fields: "id,slug,link,date,title,excerpt,content",
-  });
+/** Celý článok vrátane HTML obsahu — pre detailovú stránku /blog/[slug]. */
+export interface WPPostFull extends WPPost {
+  contentHtml: string;
+}
 
-  const res = await fetch(`${endpoint}?${params.toString()}`, {
-    next: { revalidate: 300 }, // cache 5 min
-    headers: { Accept: "application/json" },
-  });
-
-  if (!res.ok) {
-    throw new Error(`WP API responded ${res.status}`);
-  }
-
-  const raw = (await res.json()) as WPPostRaw[];
-  return raw.map((p) => ({
+function toPost(p: WPPostRaw): WPPost {
+  return {
     id: p.id,
     slug: p.slug,
     link: p.link,
@@ -99,5 +78,45 @@ export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
     excerpt: stripHtml(p.excerpt.rendered),
     date: formatSlovakDate(p.date),
     readingTime: estimateReadingTime(p.content.rendered),
-  }));
+  };
+}
+
+async function wpGet(params: Record<string, string>): Promise<WPPostRaw[]> {
+  const search = new URLSearchParams({
+    status: "publish",
+    _fields: "id,slug,link,date,title,excerpt,content",
+    ...params,
+  });
+  const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {
+    next: { revalidate: 300 }, // cache 5 min
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) {
+    throw new Error(`WP API responded ${res.status}`);
+  }
+  return (await res.json()) as WPPostRaw[];
+}
+
+/**
+ * Fetch the latest published posts from WordPress.
+ *
+ * Runs on the server (Server Component / Route Handler). Callers are
+ * expected to catch errors and fall back so the page never crashes.
+ */
+export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
+  const raw = await wpGet({
+    per_page: String(count),
+    orderby: "date",
+    order: "desc",
+  });
+  return raw.map(toPost);
+}
+
+/** Jeden článok podľa slugu (URL mena), s celým HTML obsahom. */
+export async function fetchPostBySlug(
+  slug: string,
+): Promise<WPPostFull | null> {
+  const raw = await wpGet({ slug, per_page: "1" });
+  if (raw.length === 0) return null;
+  return { ...toPost(raw[0]), contentHtml: raw[0].content.rendered };
 }
