@@ -25,6 +25,7 @@ export default async function Home() {
         read: String(p.readingTime),
         // Interná stránka článku — WordPress zostáva skrytý headless backend.
         href: `/blog/${p.slug}`,
+        imageUrl: p.imageUrl,
       }));
     }
   } catch {

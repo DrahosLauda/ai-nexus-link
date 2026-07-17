@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export interface BlogCardPost {
@@ -8,6 +9,7 @@ export interface BlogCardPost {
   href: string;
   tag?: string;
   external?: boolean;
+  imageUrl?: string | null;
 }
 
 const gradients = [
@@ -43,13 +45,23 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
               className="flex flex-col overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] backdrop-blur-2xl transition-[border-color,box-shadow] duration-250 hover:border-indigo-400/65 hover:shadow-[0_0_32px_rgba(99,102,241,0.15)]"
             >
               <div
-                className="grid h-[150px] place-items-center"
+                className="relative grid h-[150px] place-items-center overflow-hidden"
                 style={{ background: gradients[i % gradients.length] }}
               >
-                {post.tag && (
-                  <span className="rounded-full border border-white/20 bg-[rgba(8,8,13,0.35)] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white/85 backdrop-blur-sm">
-                    {post.tag}
-                  </span>
+                {post.imageUrl ? (
+                  <Image
+                    src={post.imageUrl}
+                    alt=""
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  post.tag && (
+                    <span className="rounded-full border border-white/20 bg-[rgba(8,8,13,0.35)] px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-white/85 backdrop-blur-sm">
+                      {post.tag}
+                    </span>
+                  )
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
