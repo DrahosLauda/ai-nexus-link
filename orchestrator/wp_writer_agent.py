@@ -102,16 +102,35 @@ GEMINI_IMAGE_CANDIDATES = [
 _working_gemini_model = None
 
 
+NO_TEXT = (
+    "Strictly NO text, NO letters, NO words, NO labels, NO numbers, "
+    "NO typography of any kind anywhere in the image — purely visual "
+    "illustration without any writing."
+)
+
+
+def image_subject(topic):
+    """Krátky vizuálny námet z témy článku.
+
+    Obrazové modely nevedia správne písať (najmä slovenčinu) — dlhé zadanie
+    so zoznamom bodov ich zvádza kresliť infografiku s popiskami. Preto do
+    obrázkového promptu ide len prvá veta témy, orezaná na ~90 znakov.
+    """
+    subject = re.split(r"[.:;\n]", topic)[0].strip()
+    return subject[:90]
+
+
 def image_prompt(topic, variant):
+    subject = image_subject(topic)
     prompts = {
         "hero": (
-            f"Modern minimal editorial illustration for a blog article about: {topic}. "
-            "Dark background, indigo and violet accents, glassmorphism, abstract technology shapes, "
-            "no text, no letters, high quality"
+            f"Modern minimal editorial illustration evoking: {subject}. "
+            "Dark background, indigo and violet accents, glassmorphism, "
+            f"abstract technology shapes, high quality. {NO_TEXT}"
         ),
         "inline": (
-            f"Clean isometric illustration showing the process of: {topic}. "
-            "Dark indigo-violet color palette, minimal, professional, no text, no letters"
+            f"Clean isometric illustration of abstract devices and flows evoking: {subject}. "
+            f"Dark indigo-violet color palette, minimal, professional. {NO_TEXT}"
         ),
     }
     return prompts[variant]
