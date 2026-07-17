@@ -35,12 +35,17 @@ Hotové:
   politika „Frontend Web — create leads" (iba Create) → rola `Frontend Web` → user `frontend-bot` (token v Railway)
 
 Ďalšie na rade:
-- [ ] Krok 5 — WP mu-plugin webhook: pri publikovaní článku zavolať `/api/revalidate` (snippet vo `frontend/README.md`)
-- [ ] Krok 6 — merge `new-frontend` → `main` (PR je otvorený); potom prepnúť Railway branch na `main`
+- ✅ Krok 5 — WP mu-plugin webhook (`nexus-revalidate.php` v `wp-content/mu-plugins/` na hostingu) — publikovaný/upravený článok je na stránke do ~10 s
+- ✅ Krok 6 — PR #1 zmergovaný do `main`; Railway nasadzuje z `main`
+- ✅ Wayland: obrázky k téme cez Google Gemini (fallback Z.ai CogView), natrvalo vo WP médiách; téma ako CLI argument; `fix_post_images.py` na opravu starších článkov
 - [ ] Fáza 3 — orchestrátor ako Railway worker: cron + témy z `agent_config`, logy do `agent_logs`; SEO agent; publikuje ako draft (človek schvaľuje vo WP)
 - [ ] Fáza 4 — WooCommerce cez Store API (najprv embednutý checkout)
 - [ ] Fáza 5 — produktizácia: šablóna frontend+napojenie pre ďalších klientov
-- [ ] Neskôr: podstránky `/blog/[slug]`, `/sluzby/[slug]` s plným obsahom z WP; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin)
+- [ ] Neskôr: podstránky `/sluzby/[slug]`; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin); doména digitalnapomoc.sk → frontend (WP na subdoménu)
+
+Podrobná dokumentácia: `docs/architektura.md` (ako systém funguje),
+`docs/navody.md` (recepty na bežné úkony), `docs/dennik.md` (história
+a vyriešené problémy).
 
 ## Príkazy
 
@@ -57,7 +62,8 @@ Next.js kódu čítaj `node_modules/next/dist/docs/`.
 ```bash
 source venv/bin/activate
 python main.py               # test Directus spojenia
-python wp_writer_agent.py    # vygeneruje + pošle článok do WP (draft)
+python wp_writer_agent.py "Téma"        # článok + obrázky → WP koncept
+python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 ```
 
 ## Premenné prostredia
