@@ -27,6 +27,7 @@ build/
 .wayland/
 .wayland-core/
 .claude/settings.local.json
+.obsidian/
 
 # Misc
 *.log
