@@ -74,3 +74,5 @@ add_action('publish_post', function () {
 - **E-mail notifikácia o novom leade** — `/api/lead` zatiaľ len zapisuje do
   Directusu; notifikáciu rieši Directus Flows alebo doplníme e-mail službu.
 - Telefón v pätičke (`components/footer.tsx`) je zástupný.
+
+- <!-- deploy trigger -->
