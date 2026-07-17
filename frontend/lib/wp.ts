@@ -15,6 +15,8 @@ export interface WPPost {
   excerpt: string;
   date: string;
   readingTime: number;
+  /** URL hlavného obrázka (featured image) vo vhodnej veľkosti, ak existuje. */
+  imageUrl: string | null;
 }
 
 /** Minimal raw shape we request from the REST API. */
@@ -26,6 +28,30 @@ interface WPPostRaw {
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
+  _embedded?: {
+    "wp:featuredmedia"?: Array<{
+      source_url?: string;
+      media_details?: {
+        sizes?: Record<string, { source_url: string }>;
+      };
+    }>;
+  };
+}
+
+/**
+ * Vyberie z featured image komprimovanú veľkosť, ktorú WordPress
+ * automaticky generuje pri nahratí (medium_large ≈ 768 px stačí na kartu).
+ */
+function extractImageUrl(p: WPPostRaw): string | null {
+  const media = p._embedded?.["wp:featuredmedia"]?.[0];
+  if (!media) return null;
+  const sizes = media.media_details?.sizes;
+  return (
+    sizes?.medium_large?.source_url ??
+    sizes?.large?.source_url ??
+    media.source_url ??
+    null
+  );
 }
 
 /** Strip all HTML tags and decode the most common WP entities. */
@@ -36,6 +62,7 @@ function stripHtml(html: string): string {
     .replace(/&amp;/g, "&")
     .replace(/&#8211;|&ndash;/g, "–")
     .replace(/&#8212;|&mdash;/g, "—")
+    .replace(/&#8230;|&hellip;/g, "…")
     .replace(/&#8217;|&rsquo;/g, "’")
     .replace(/&#8220;|&ldquo;/g, "“")
     .replace(/&#8221;|&rdquo;/g, "”")
@@ -78,13 +105,17 @@ function toPost(p: WPPostRaw): WPPost {
     excerpt: stripHtml(p.excerpt.rendered),
     date: formatSlovakDate(p.date),
     readingTime: estimateReadingTime(p.content.rendered),
+    imageUrl: extractImageUrl(p),
   };
 }
 
 async function wpGet(params: Record<string, string>): Promise<WPPostRaw[]> {
   const search = new URLSearchParams({
     status: "publish",
-    _fields: "id,slug,link,date,title,excerpt,content",
+    // _embed pribalí featured image; _fields musí preto obsahovať aj
+    // _links a _embedded, inak WP embed z odpovede vyreže.
+    _embed: "wp:featuredmedia",
+    _fields: "id,slug,link,date,title,excerpt,content,_links,_embedded",
     ...params,
   });
   const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {

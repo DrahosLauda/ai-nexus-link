@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
@@ -57,10 +58,20 @@ export default async function BlogIndex() {
               >
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="grid h-[150px] place-items-center"
+                  className="relative grid h-[150px] place-items-center overflow-hidden"
                   style={{ background: gradients[i % gradients.length] }}
                   aria-label={post.title}
-                />
+                >
+                  {post.imageUrl && (
+                    <Image
+                      src={post.imageUrl}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-300 hover:scale-[1.03]"
+                    />
+                  )}
+                </Link>
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <span className="text-[12.5px] text-fog-500">
                     {post.date} · {post.readingTime} min čítania
