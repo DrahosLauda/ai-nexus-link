@@ -19,6 +19,26 @@ ZAI_API_KEY = os.getenv("ZAI_API_KEY")
 ZAI_CHAT_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 ZAI_IMAGE_URL = "https://open.bigmodel.cn/api/paas/v4/images/generations"
 
+# Ďalší poskytovatelia textu (kľúče v .env / Railway). GEMINI_API_KEY je nižšie
+# pri obrázkoch a používa sa aj na text cez Gemini.
+MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY")      # Kimi (Moonshot AI)
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")    # Claude
+
+# Poskytovatelia s OpenAI-kompatibilným rozhraním: (URL, API kľúč).
+OPENAI_COMPAT_PROVIDERS = {
+    "zai": (ZAI_CHAT_URL, ZAI_API_KEY),
+    "kimi": ("https://api.moonshot.ai/v1/chat/completions", MOONSHOT_API_KEY),
+}
+
+# Predvolený model pre každého poskytovateľa (použije sa, ak `text_model`
+# v Directus configu chýba). Pri prepnutí poskytovateľa netreba nič v kóde.
+DEFAULT_TEXT_MODELS = {
+    "zai": "glm-4.5-flash",
+    "kimi": "kimi-k2-0905-preview",
+    "gemini": "gemini-2.5-flash",
+    "claude": "claude-sonnet-5",
+}
+
 DEFAULT_TOPIC = "Automatické spracovanie faktúr z e-mailu pomocou AI"
 
 zai_headers = {
@@ -33,15 +53,9 @@ def wp_auth_header():
     return {"Authorization": f"Basic {token}"}
 
 
-def generate_article(topic, model="glm-4.5-flash", system_prompt=None):
-    """Vygeneruje titulok a HTML článku cez Z.ai GLM.
-
-    model a system_prompt prichádzajú z Directus configu; ak chýbajú,
-    použijú sa rozumné defaulty.
-    """
-    print(f"🐉 Generujem článok na tému: {topic} (model: {model})")
-
-    prompt = f"""
+def article_prompt(topic):
+    """Zadanie pre model — rovnaké pre všetkých poskytovateľov."""
+    return f"""
     Napíš profesionálny, 1000+ slovný SEO optimalizovaný článok na tému: "{topic}".
     Článok musí byť v slovenčine a naformátovaný v čistom HTML.
 
@@ -59,21 +73,78 @@ def generate_article(topic, model="glm-4.5-flash", system_prompt=None):
     Vygeneruj IBA titulok a HTML kód článku, nič iné.
     """
 
+
+def _text_openai_compat(provider, model, system_prompt, prompt):
+    """Text cez OpenAI-kompatibilné API (Z.ai, Kimi). Vráti surový text modelu."""
+    url, key = OPENAI_COMPAT_PROVIDERS[provider]
+    if not key:
+        raise RuntimeError(f"Chýba API kľúč pre poskytovateľa „{provider}“ (skontroluj .env / Railway).")
     messages = []
     if system_prompt:
         messages.append({"role": "system", "content": system_prompt})
     messages.append({"role": "user", "content": prompt})
-
-    payload = {
-        "model": model,
-        "messages": messages,
-    }
-    response = requests.post(ZAI_CHAT_URL, headers=zai_headers, json=payload)
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {key}"}
+    response = requests.post(url, headers=headers, json={"model": model, "messages": messages}, timeout=180)
     data = response.json()
     if response.status_code != 200:
-        raise RuntimeError(f"Chyba API Z.ai: {data}")
+        raise RuntimeError(f"Chyba API {provider}: {data}")
+    return data["choices"][0]["message"]["content"]
 
-    text = data["choices"][0]["message"]["content"]
+
+def _text_gemini(model, system_prompt, prompt):
+    """Text cez Google Gemini. Vráti surový text modelu."""
+    if not GEMINI_API_KEY:
+        raise RuntimeError("Chýba GEMINI_API_KEY (skontroluj .env / Railway).")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    payload = {"contents": [{"parts": [{"text": prompt}]}]}
+    if system_prompt:
+        payload["systemInstruction"] = {"parts": [{"text": system_prompt}]}
+    headers = {"x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json"}
+    response = requests.post(url, headers=headers, json=payload, timeout=180)
+    data = response.json()
+    if response.status_code != 200:
+        raise RuntimeError(f"Chyba API Gemini (text): {data}")
+    parts = data["candidates"][0]["content"]["parts"]
+    return "".join(p.get("text", "") for p in parts)
+
+
+def _text_claude(model, system_prompt, prompt):
+    """Text cez Anthropic Claude (Messages API). Vráti surový text modelu."""
+    if not ANTHROPIC_API_KEY:
+        raise RuntimeError("Chýba ANTHROPIC_API_KEY (skontroluj .env / Railway).")
+    headers = {
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }
+    payload = {"model": model, "max_tokens": 8000, "messages": [{"role": "user", "content": prompt}]}
+    if system_prompt:
+        payload["system"] = system_prompt
+    response = requests.post("https://api.anthropic.com/v1/messages", headers=headers, json=payload, timeout=180)
+    data = response.json()
+    if response.status_code != 200:
+        raise RuntimeError(f"Chyba API Claude: {data}")
+    return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+
+
+def generate_article(topic, provider="zai", model=None, system_prompt=None):
+    """Vygeneruje titulok a HTML článku podľa vybraného poskytovateľa.
+
+    provider (zai/kimi/gemini/claude), model a system_prompt prichádzajú
+    z Directus configu; ak model chýba, použije sa predvolený pre daného
+    poskytovateľa.
+    """
+    model = model or DEFAULT_TEXT_MODELS.get(provider, "glm-4.5-flash")
+    print(f"🐉 Generujem článok na tému: {topic} (poskytovateľ: {provider}, model: {model})")
+
+    prompt = article_prompt(topic)
+    if provider == "gemini":
+        text = _text_gemini(model, system_prompt, prompt)
+    elif provider == "claude":
+        text = _text_claude(model, system_prompt, prompt)
+    else:  # zai, kimi a iné OpenAI-kompatibilné
+        text = _text_openai_compat(provider, model, system_prompt, prompt)
+
     text = text.replace("```html", "").replace("```", "").strip()
 
     # Oddelenie titulku (prvý riadok "TITLE: ...") od HTML obsahu
@@ -297,7 +368,8 @@ def generate_and_post_article(topic=None):
 
     # 0. Nastavenia z Directusu (ak nie sú, padáme na defaulty).
     config = nacitaj_config() or {}
-    model = config.get("text_model") or "glm-4.5-flash"
+    text_provider = config.get("text_provider") or "zai"
+    model = config.get("text_model") or None  # None → predvolený model poskytovateľa
     system_prompt = config.get("system_prompt") or None
     image_provider = config.get("image_provider") or "gemini"
     post_status = config.get("post_status") or "draft"
@@ -315,7 +387,9 @@ def generate_and_post_article(topic=None):
 
     # 1. Článok
     try:
-        title, article_html = generate_article(topic, model=model, system_prompt=system_prompt)
+        title, article_html = generate_article(
+            topic, provider=text_provider, model=model, system_prompt=system_prompt
+        )
     except Exception as e:
         print(f"❌ {e}")
         zapis_log("error", topic=topic, message=f"Generovanie článku zlyhalo: {e}")
