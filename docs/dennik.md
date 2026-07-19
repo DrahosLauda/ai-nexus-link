@@ -3,6 +3,39 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — dolaďovanie blogu, obrázky, dokumentácia
+
+**Urobené po Fáze 1+2 (17. 7. 2026):**
+
+- **Obrázky článkov v blogových kartách** — karty na domovskej stránke a `/blog`
+  ťahajú featured image z WP médií cez `next/image` (WebP/AVIF, lazy loading,
+  gradient ako fallback). WP klient posiela `_embed=wp:featuredmedia`.
+- **Writer agent: obrázky cez Google Gemini** — Z.ai CogView vyžadoval platený
+  kredit (chyba 1113), preto obrázky teraz generuje Gemini
+  (`gemini-3.1-flash-image` → `gemini-2.5-flash-image`), CogView ako záloha.
+  Kľúč v projekte AI NEXUS LINK (Google Cloud, $300 trial, billing Tier 1).
+- **`fix_post_images.py`** — nástroj na výmenu starých (meniacich sa picsum)
+  obrázkov v existujúcich článkoch za trvalé tematické.
+- **Dokumentácia** — pribudli `docs/wayland-ferrox.md` (rozlíšenie od Wayland
+  app Ferrox Labs) a `docs/prikazy.md` (terminálový ťahák na učenie).
+
+**Problémy a ponaučenia:**
+
+1. **Zmena na `main` sa nenasadila** — Railway preskakuje commity, ktoré sa
+   nedotknú Root Directory `frontend/`. Merge PR skončil ako „Skipped".
+   → Riešenie: drobná zmena v `frontend/` (napr. komentár v README) spustí deploy.
+   *Ponaučenie: pri Root Directory sa nasadia len zmeny v tom priečinku.*
+2. **AI v obrázkoch komolí text** — do obrázkového promptu sa dostávala celá
+   dlhá téma článku, model kreslil „infografiky" so zlou slovenčinou.
+   → Prompt sa oreže na krátky námet (prvá veta, max 90 znakov) + dôrazný
+   zákaz textu. *Ponaučenie: obrazové modely nevedia písať — žiadny text do obrázkov.*
+
+**Krok 0 pre Fázu 3 (17. 7. 2026):**
+
+- Prepojený **GitHub účet s Claude Code** (Claude GitHub App → repo `ai-nexus-link`).
+  Nové sedenia budú pushovat priamo — bez git bundle. Existujúce sedenie prístup
+  nezíska (platí pre nové sedenia).
+
 ## Júl 2026 — Fáza 1 + 2: nový frontend, CRM, agenti (dokončené)
 
 **Postavené za jeden veľký ťah (14.–16. 7. 2026):**
