@@ -2,8 +2,11 @@ import os
 import re
 import sys
 import base64
+import random
 import requests
 from dotenv import load_dotenv
+
+from directus import nacitaj_config, zapis_log
 
 # Načítanie premenných
 load_dotenv()
@@ -30,9 +33,13 @@ def wp_auth_header():
     return {"Authorization": f"Basic {token}"}
 
 
-def generate_article(topic):
-    """Vygeneruje titulok a HTML článku cez Z.ai GLM."""
-    print(f"🐉 Generujem článok na tému: {topic}")
+def generate_article(topic, model="glm-4.5-flash", system_prompt=None):
+    """Vygeneruje titulok a HTML článku cez Z.ai GLM.
+
+    model a system_prompt prichádzajú z Directus configu; ak chýbajú,
+    použijú sa rozumné defaulty.
+    """
+    print(f"🐉 Generujem článok na tému: {topic} (model: {model})")
 
     prompt = f"""
     Napíš profesionálny, 1000+ slovný SEO optimalizovaný článok na tému: "{topic}".
@@ -52,9 +59,14 @@ def generate_article(topic):
     Vygeneruj IBA titulok a HTML kód článku, nič iné.
     """
 
+    messages = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+
     payload = {
-        "model": "glm-4.5-flash",
-        "messages": [{"role": "user", "content": prompt}],
+        "model": model,
+        "messages": messages,
     }
     response = requests.post(ZAI_CHAT_URL, headers=zai_headers, json=payload)
     data = response.json()
@@ -202,8 +214,22 @@ def generate_image_cogview(topic, variant):
     return None, None
 
 
-def generate_image(topic, variant):
-    """Obrázok k téme: najprv Gemini (ak je kľúč), potom Z.ai CogView ako záloha."""
+def generate_image(topic, variant, provider="gemini"):
+    """Obrázok k téme. `provider` určuje primárny generátor, druhý je záloha.
+
+    provider="gemini" (default) → Gemini, záloha CogView.
+    provider="cogview"          → CogView, záloha Gemini.
+    """
+    if provider == "cogview":
+        image, mime = generate_image_cogview(topic, variant)
+        if image:
+            return image, mime
+        if GEMINI_API_KEY:
+            print("ℹ️  Skúšam zálohu cez Google Gemini…")
+            return generate_image_gemini(topic, variant)
+        return None, None
+
+    # Predvolene Gemini ako primárny, CogView ako záloha.
     if GEMINI_API_KEY:
         image, mime = generate_image_gemini(topic, variant)
         if image:
@@ -264,16 +290,35 @@ def insert_inline_image(article_html, tag):
     return article_html + "\n" + tag
 
 
-def generate_and_post_article(topic):
+def generate_and_post_article(topic=None):
     if not all([WP_URL, WP_USER, WP_APP_PASSWORD, ZAI_API_KEY]):
         print("❌ Chyba: Chýbajú údaje v .env súbore (WP_URL, WP_USER, WP_APP_PASSWORD, ZAI_API_KEY).")
         return
 
+    # 0. Nastavenia z Directusu (ak nie sú, padáme na defaulty).
+    config = nacitaj_config() or {}
+    model = config.get("text_model") or "glm-4.5-flash"
+    system_prompt = config.get("system_prompt") or None
+    image_provider = config.get("image_provider") or "gemini"
+    post_status = config.get("post_status") or "draft"
+
+    # Téma: 1) argument z príkazu, 2) náhodná zo zoznamu topics v configu,
+    # 3) predvolená téma. Náhodný výber využije cloud worker bez zásahu človeka.
+    if not topic:
+        topics = config.get("topics") or []
+        if topics:
+            topic = random.choice(topics)
+            print(f"🎲 Téma vybraná zo zoznamu topics: {topic}")
+        else:
+            topic = DEFAULT_TOPIC
+            print(f"ℹ️  Config nemá témy, použijem predvolenú: {topic}")
+
     # 1. Článok
     try:
-        title, article_html = generate_article(topic)
+        title, article_html = generate_article(topic, model=model, system_prompt=system_prompt)
     except Exception as e:
         print(f"❌ {e}")
+        zapis_log("error", topic=topic, message=f"Generovanie článku zlyhalo: {e}")
         return
 
     # 2. Obrázky: vygenerovať k téme → natrvalo uložiť do WP médií.
@@ -282,7 +327,7 @@ def generate_and_post_article(topic):
     slug_base = re.sub(r"[^a-z0-9]+", "-", topic.lower()).strip("-")[:40]
     featured_media_id = None
 
-    image, mime = generate_image(topic, "hero")
+    image, mime = generate_image(topic, "hero", provider=image_provider)
     if image:
         ext = "jpg" if "jpeg" in mime else "png"
         media_id, permanent_url = upload_image_to_wp(
@@ -292,7 +337,7 @@ def generate_and_post_article(topic):
             featured_media_id = media_id
             article_html = img_tag(permanent_url, title) + "\n" + article_html
 
-    image, mime = generate_image(topic, "inline")
+    image, mime = generate_image(topic, "inline", provider=image_provider)
     if image:
         ext = "jpg" if "jpeg" in mime else "png"
         media_id, permanent_url = upload_image_to_wp(
@@ -303,12 +348,14 @@ def generate_and_post_article(topic):
                 article_html, img_tag(permanent_url, f"{title} — ilustrácia postupu")
             )
 
-    # 3. Odoslanie do WordPressu ako koncept
-    print(f"🚀 Odosielam článok na {WP_URL}...")
+    # 3. Odoslanie do WordPressu. Predvolene ako koncept (post_status="draft"),
+    #    publikovanie sa dá zapnúť v Directus configu — poistka proti nechcenému
+    #    automatickému publikovaniu ostáva na strane configu.
+    print(f"🚀 Odosielam článok na {WP_URL} (status: {post_status})...")
     wp_payload = {
         "title": title,
         "content": article_html,
-        "status": "draft",  # Koncept — publikujete po kontrole vo wp-admin
+        "status": post_status,
     }
     if featured_media_id:
         wp_payload["featured_media"] = featured_media_id
@@ -321,14 +368,26 @@ def generate_and_post_article(topic):
     )
     if response.status_code == 201:
         post_id = response.json().get("id")
-        print(f"🎉 Hotovo! Článok s trvalými obrázkami je vo WordPresse ako koncept (ID: {post_id}).")
+        print(f"🎉 Hotovo! Článok s trvalými obrázkami je vo WordPresse ako {post_status} (ID: {post_id}).")
         print("   Skontrolujte ho vo wp-admin → Články a publikujte.")
+        zapis_log(
+            "success",
+            topic=topic,
+            message=f"Vytvorený {post_status}: „{title}“.",
+            wp_post_id=post_id,
+        )
     else:
         print(f"❌ WordPress vrátil chybu: {response.status_code}")
         print(response.text)
+        zapis_log(
+            "error",
+            topic=topic,
+            message=f"WordPress vrátil {response.status_code}: {response.text[:300]}",
+        )
 
 
 if __name__ == "__main__":
-    # Téma sa dá zadať ako argument: python wp_writer_agent.py "Moja téma"
-    topic = " ".join(sys.argv[1:]).strip() or DEFAULT_TOPIC
+    # Téma sa dá zadať ako argument: python wp_writer_agent.py "Moja téma".
+    # Bez argumentu si tému vyberie sám zo zoznamu topics v Directus configu.
+    topic = " ".join(sys.argv[1:]).strip() or None
     generate_and_post_article(topic)
