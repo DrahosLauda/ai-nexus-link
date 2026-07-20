@@ -3,6 +3,37 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — Fáza 3: agent v Directuse, prepínanie modelov, obmedzený token
+
+**Urobené:**
+
+- **`agent_config` + `agent_logs` v Directuse** — agenta (model, poskytovateľ,
+  témy, prompt, draft/publish) nastavuješ **klikaním**; každý beh sa zaloguje.
+- **Orchestrátor prepojený s Directusom** — `directus.py` (`nacitaj_config`
+  číta config, `zapis_log` píše logy). `wp_writer_agent.py` berie nastavenia
+  z configu; bez zadanej témy vyberie **náhodnú** zo `topics`.
+- **Prepínanie poskytovateľa textu** — pole `text_provider`: Z.ai / Kimi
+  (Moonshot) / Google Gemini / Anthropic Claude. Predvolené modely
+  per-poskytovateľ; nové kľúče `MOONSHOT_API_KEY`, `ANTHROPIC_API_KEY`,
+  Gemini kľúč sa používa aj na text.
+- **Obmedzený Directus token** — politika „Orchestrátor" (`agent_config` = Read,
+  `agent_logs` = Create), rola `Orchestrátor`, používateľ `orchestrator-bot`.
+  Admin token už orchestrátor nepoužíva (zásada least privilege).
+- **`requirements.txt`** pre orchestrátor; **`docs/vizia.md`** (vízia platformy,
+  viac agentov, model dodania — SaaS).
+
+**Ponaučenia:**
+
+1. **Directus pole s „Required" sa nedá nechať prázdne** — `text_model` treba
+   vždy vyplniť konkrétnym modelom pre daného poskytovateľa (Gemini
+   `gemini-3.5-flash`, Z.ai `glm-4.5-flash`, Claude `claude-sonnet-5`, Kimi
+   jeho model). *Ponaučenie: config pole = vždy konkrétna hodnota.*
+2. **Pri prepnutí poskytovateľa treba zmeniť aj `text_model`** — inak model
+   jedného poskytovateľa ide do API druhého (404/chyba).
+
+**Ďalší krok:** Railway worker + cron (agent 2–3× týždenne); ručné spustenie
+ostáva. Neskôr: SEO agent a ďalší agenti (rovnaký vzor — config + modul + logy).
+
 ## Júl 2026 — dolaďovanie blogu, obrázky, dokumentácia
 
 **Urobené po Fáze 1+2 (17. 7. 2026):**
