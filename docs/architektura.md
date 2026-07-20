@@ -64,12 +64,14 @@ Wayland agent ──► WordPress (koncept) ──► človek schváli/publikuje
 | `WP_URL` | Railway (frontend), `orchestrator/.env` | adresa WordPressu |
 | `DIRECTUS_URL` | Railway (frontend), `orchestrator/.env` | ⚠️ len základná adresa, bez `/admin/...` |
 | `DIRECTUS_TOKEN` | Railway (frontend) | token používateľa `frontend-bot` — smie IBA vytvárať leady |
-| `DIRECTUS_TOKEN` | `orchestrator/.env` | admin token (TODO Fáza 3: vlastná obmedzená rola) |
+| `DIRECTUS_TOKEN` | `orchestrator/.env` + Railway | token používateľa `orchestrator-bot` — smie IBA čítať `agent_config` a vytvárať `agent_logs` |
 | `REVALIDATE_SECRET` | Railway (frontend) + vo WP mu-plugine | tajný kľúč webhoooku |
 | `WP_USER`, `WP_APP_PASSWORD` | `orchestrator/.env` | WP application password na publikovanie konceptov |
 | `ZAI_API_KEY` | `orchestrator/.env` | Z.ai GLM — text článkov |
 | `GEMINI_API_KEY` | `orchestrator/.env` | Google Gemini — obrázky (kľúč projektu AI NEXUS LINK, Tier 1) |
 | `GEMINI_IMAGE_MODEL` | `orchestrator/.env` (voliteľné) | vynútenie konkrétneho obrazového modelu |
+| `MOONSHOT_API_KEY` | `orchestrator/.env` (voliteľné) | Kimi (Moonshot) — text, ak `text_provider=kimi` |
+| `ANTHROPIC_API_KEY` | `orchestrator/.env` (voliteľné) | Claude — text, ak `text_provider=claude` |
 
 ## Bezpečnostné zásady
 

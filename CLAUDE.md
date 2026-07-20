@@ -43,7 +43,8 @@ Hotové:
 - [ ] Fáza 5 — produktizácia: šablóna frontend+napojenie pre ďalších klientov
 - [ ] Neskôr: podstránky `/sluzby/[slug]`; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin); doména digitalnapomoc.sk → frontend (WP na subdoménu)
 
-Podrobná dokumentácia: `docs/architektura.md` (ako systém funguje),
+Podrobná dokumentácia: `docs/vizia.md` (kam to celé smeruje, hodnota, model
+dodania — SaaS), `docs/architektura.md` (ako systém funguje),
 `docs/navody.md` (recepty na bežné úkony), `docs/dennik.md` (história a vyriešené problémy), `docs/prikazy.md`
 (terminálový ťahák), `docs/wayland-ferrox.md` (poznámka k Wayland app).
 
