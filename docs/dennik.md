@@ -3,6 +3,45 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — Fáza 4 (krok 4): SEO+GEO agent (MVP)
+
+**Druhá „lego" kocka po Writerovi** — dôkaz, že sa agenti pridávajú vzorom, nie
+prepisom. Modul `orchestrator/seo_geo_agent.py`.
+
+**Ako pracuje (autopilot, rovnaký vzor ako Writer):**
+
+1. Prečíta si config z Directusu — `nacitaj_config("seo_geo")` (poskytovateľ,
+   model, prompt). Bez configu použije defaulty.
+2. Nájde článok: podľa ID z príkazu, inak **najnovší koncept** (číta s
+   prihlásením, `context=edit`, lebo koncepty nie sú verejné).
+3. Nechá model (Z.ai/Kimi/Gemini/Claude) vrátiť **JSON** so SEO/GEO návrhmi:
+   meta popis (150–160 zn.), focus keyword, max 3 interné odkazy, GEO tip.
+4. **Bezpečne** zapíše len **meta popis do WP `excerpt`** (frontend ho renderuje
+   ako `<meta description>`). **Status článku nemení — ostáva koncept.**
+5. Kľúčové slovo, odkazy a GEO tip zapíše do `agent_logs` — rozhoduje človek.
+
+**Znovupoužitie (ponytail):** WP prihlásenie aj volania modelov sa importujú z
+`wp_writer_agent.py`, config/logy z `directus.py`. **Žiadny duplicitný kód,
+žiadna nová závislosť.** Token `orchestrator-bot` (read `agent_config`, create
+`agent_logs`) stačí; WP zápis cez application password.
+
+**MVP rozsah (zámerne malý):** meta popis do `excerpt` + kľúčové slovo a odkazy
+do logu. Neskôr: optimalizácia titulku, GEO „kľúčové fakty" blok, automatické
+interné odkazy.
+
+**Overené (v cloud sedení):** `py_compile` OK, import modulu OK (všetky
+prepojenia sedia), jednotkové testy `parse_navrhy` (JSON obalený textom aj
+code fence, aj nezmyselná odpoveď → bezpečné None) a `seo_prompt`. **Naživo
+(WP/Directus/model) treba otestovať na Railway alebo lokálne** — pieskovisko na
+tie služby nedosiahne.
+
+**Podkroky, čo ešte ostávajú (klikacia časť):**
+
+- **Directus:** pridať riadok `agent_config` s `agent_name = seo_geo`
+  (`is_active`, `text_provider`, `text_model`, príp. `system_prompt`).
+- **Railway:** druhý cron worker (Start Command `python seo_geo_agent.py`),
+  ideálne po Writerovi.
+
 ## Júl 2026 — Fáza 4 (krok 2): SEO/GEO základ na frontende
 
 **Kontext:** Fázu 4 sme začali smerom „ďalší agent lego vzorom" — konkrétne

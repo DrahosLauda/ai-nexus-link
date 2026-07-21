@@ -64,6 +64,7 @@ Next.js kódu čítaj `node_modules/next/dist/docs/`.
 source venv/bin/activate
 python main.py               # test Directus spojenia
 python wp_writer_agent.py "Téma"        # článok + obrázky → WP koncept
+python seo_geo_agent.py [ID]            # SEO/GEO vylepšenie konceptu (meta popis → WP)
 python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 ```
 
