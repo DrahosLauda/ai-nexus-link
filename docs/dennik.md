@@ -46,6 +46,17 @@ klikaním v Directuse, s bezpečným obmedzeným tokenom.
 dizajn — config + modul + logy); WooCommerce (Store API); produktizácia
 (multi-tenant SaaS). Zvážiť pomôcku `ponytail` na čistejší kód.
 
+**Na zaradenie (TODO):**
+
+- **Skrytie WordPressu pre verejnosť** — kým nie sme pripravení spustiť, dať WP
+  na digitalnapomoc.sk do režimu údržby / „coming soon" (heslom chránený),
+  aby slúžil len ako oddelený neverejný systém (obsah/admin). Frontend na
+  Railway je aj tak skrytý (bez odkazov, noindex).
+- **Prepnutie domény (pred spustením):** digitalnapomoc.sk → Next.js frontend
+  (Railway); WordPress presunúť na `wp.digitalnapomoc.sk` (skrytý, noindex,
+  len login), zmeniť `WP_URL`. Neskôr Cloudflare pred frontend (CDN, rýchlosť,
+  bezpečnosť).
+
 ## Júl 2026 — dolaďovanie blogu, obrázky, dokumentácia
 
 **Urobené po Fáze 1+2 (17. 7. 2026):**
