@@ -21,6 +21,14 @@
   Admin token už orchestrátor nepoužíva (zásada least privilege).
 - **`requirements.txt`** pre orchestrátor; **`docs/vizia.md`** (vízia platformy,
   viac agentov, model dodania — SaaS).
+- **Orchestrátor nasadený na Railway ako cron worker** — nová služba v projekte
+  „ravishing-gratitude" z GitHub repa, **Root Directory `orchestrator`**, branch
+  `main`, Start Command `python wp_writer_agent.py`, cron **`0 6 * * 1,3,5`**
+  (Po/St/Pi 6:00 UTC ≈ 7–8 ráno u nás). Premenné v Railway Variables vrátane
+  **obmedzeného** `DIRECTUS_TOKEN`. Otestované naostro — beh v cloude napísal
+  článok „Chatbot pre zákaznícku podporu malej firmy" + obrázky → WP draft
+  (ID 802) → log `success`. **Agent beží 24/7 aj pri vypnutom PC.** Ručné
+  spustenie ostáva (`python wp_writer_agent.py`, alebo „Run now" v Railway).
 
 **Ponaučenia:**
 
@@ -31,8 +39,12 @@
 2. **Pri prepnutí poskytovateľa treba zmeniť aj `text_model`** — inak model
    jedného poskytovateľa ide do API druhého (404/chyba).
 
-**Ďalší krok:** Railway worker + cron (agent 2–3× týždenne); ručné spustenie
-ostáva. Neskôr: SEO agent a ďalší agenti (rovnaký vzor — config + modul + logy).
+**Stav:** Fáza 3 hotová — agent píše články 24/7 v cloude (Railway), riadený
+klikaním v Directuse, s bezpečným obmedzeným tokenom.
+
+**Ďalší krok (Fáza 4):** ďalší agenti rovnakým vzorom (SEO, sociálne siete,
+dizajn — config + modul + logy); WooCommerce (Store API); produktizácia
+(multi-tenant SaaS). Zvážiť pomôcku `ponytail` na čistejší kód.
 
 ## Júl 2026 — dolaďovanie blogu, obrázky, dokumentácia
 

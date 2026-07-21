@@ -55,7 +55,7 @@ Wayland agent ──► WordPress (koncept) ──► človek schváli/publikuje
 | Frontend | Railway, projekt „ravishing-gratitude", služba `ai-nexus-link` | https://ai-nexus-link-production.up.railway.app — nasadzuje sa automaticky z GitHub `main`, Root Directory `frontend` |
 | Directus | Railway | https://directus-production-04b1.up.railway.app |
 | WordPress | klasický webhosting | www.digitalnapomoc.sk (súbory cez FTP/správcu súborov) |
-| Orchestrátor | lokálne (VS Code, `venv`) | presun na Railway = Fáza 3 |
+| Orchestrátor | Railway (cron worker, projekt „ravishing-gratitude", Root Directory `orchestrator`, branch `main`) | cron `0 6 * * 1,3,5` (Po/St/Pi ráno); ručne aj lokálne (`venv`) alebo „Run now" |
 
 ## Premenné prostredia
 
