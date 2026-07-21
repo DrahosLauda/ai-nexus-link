@@ -90,3 +90,13 @@ python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 - Do `main` len cez vetvu + pull request. **Zlúčenie (merge) PR do `main` a iné
   dôležité/nezvratné kroky rob až po mojom výslovnom súhlase — VŽDY sa najprv opýtaj
   a počkaj na moje „áno".** (Vytvoriť vetvu, commit, push do vetvy a otvoriť PR môžeš.)
+
+## Minimalizmus kódu (inšpirované `ponytail`)
+
+Najlepší kód je ten, čo netreba napísať. Pred pridaním kódu prejdi „rebrík":
+1) Treba to vôbec existovať (YAGNI)? 2) Je to už v kóde (znovupoužiť)?
+3) Vie to štandardná knižnica? 4) Je to natívna funkcia platformy (napr.
+Next.js konvencie ako `robots.ts`, `sitemap.ts`)? 5) Máme už závislosť, čo to
+rieši? 6) Stačí jeden riadok? 7) Až potom stavaj — minimálne životaschopné
+riešenie. Novú závislosť pridaj, len keď nič z vyššieho nestačí. **Nikdy**
+neškrtaj na úkor validácie, bezpečnosti, ošetrenia chýb a prístupnosti.
