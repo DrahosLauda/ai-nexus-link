@@ -85,3 +85,6 @@ python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 - Každý systém má vlastný token s minimálnymi právami (zásada least privilege).
 - Leady a logy nikdy do WP; obsah webu nikdy do Directusu — inak sa systém nedá replikovať.
 - WP REST API: verejne len čítanie publikovaného obsahu; zápis cez application passwords.
+- Do `main` len cez vetvu + pull request. **Zlúčenie (merge) PR do `main` a iné
+  dôležité/nezvratné kroky rob až po mojom výslovnom súhlase — VŽDY sa najprv opýtaj
+  a počkaj na moje „áno".** (Vytvoriť vetvu, commit, push do vetvy a otvoriť PR môžeš.)
