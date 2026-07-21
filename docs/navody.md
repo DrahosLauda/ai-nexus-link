@@ -18,6 +18,22 @@ python wp_writer_agent.py "Téma článku po slovensky"
 - 💰 Kredit sa míňa LEN pri generovaní (~5–8 centov/článok). Zobrazovanie
   je zadarmo — obrázky sú statické súbory v médiách a NIKDY sa nemenia.
 
+## SEO/GEO vylepšenie konceptu (cez SEO+GEO agenta)
+
+```bash
+cd orchestrator && source venv/bin/activate
+python seo_geo_agent.py         # najnovší koncept
+python seo_geo_agent.py 802     # konkrétny článok podľa ID
+```
+
+- Agent nechá model navrhnúť **meta popis** a zapíše ho do WP poľa „Zhrnutie"
+  (`excerpt`) — frontend ho použije ako meta description pre Google/AI.
+- **Kľúčové slovo, interné odkazy a GEO tip** nájdeš v Directuse → `agent_logs`
+  (agent `seo_geo`) — rozhodneš sa, čo z toho použiješ.
+- Článok **ostáva koncept** — po kontrole ho publikuješ vo wp-admin.
+- Nastavenia (poskytovateľ/model) meníš klikaním v Directus `agent_config`
+  (riadok `agent_name = seo_geo`).
+
 ## Oprava obrázkov v starom článku
 
 Pre články spred „obrázkovej reformy" (meniace sa picsum obrázky):

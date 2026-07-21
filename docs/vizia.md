@@ -37,7 +37,7 @@ Tento vzor je **kľúč k produktizácii**: pridať schopnosť = pridať modul.
 | Agent | Čo robí | Stav |
 |---|---|---|
 | **Writer (`wp_writer`)** | Píše SEO články + generuje obrázky → WP koncept | ✅ funguje |
-| **SEO agent** | Optimalizuje tituly/meta/kľúčové slová, interné odkazy | 🔜 plán (Fáza 3+) |
+| **SEO+GEO agent (`seo_geo`)** | Meta popis do WP, kľúčové slovo, interné odkazy, GEO tipy pre AI vyhľadávače | ⏳ MVP (Fáza 4) |
 | **Social agent** | Tvorí a uverejňuje príspevky na sociálne siete | 🔜 plán |
 | **Frontend/dizajn agent** | Pomáha s dizajnom sekcií, vizuálmi, úpravami vzhľadu | 🔜 plán |
 | **„Plugin-nahrádzajúci" agenti** | Nahradia bežné WP pluginy vlastnou AI logikou | 🔜 plán |
