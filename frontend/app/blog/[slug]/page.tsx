@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
+import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
+import { absoluteUrl, articleSchema } from "@/lib/seo";
 import { fetchPostBySlug, type WPPostFull } from "@/lib/wp";
 
 export const revalidate = 300;
@@ -20,10 +22,30 @@ async function getPost(slug: string): Promise<WPPostFull | null> {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: "Článok – digitalnapomoc.sk" };
+  if (!post) return { title: "Článok" };
+
+  const url = absoluteUrl(`/blog/${post.slug}`);
+  const images = post.imageUrl ? [post.imageUrl] : undefined;
+
   return {
-    title: `${post.title} – digitalnapomoc.sk`,
+    title: post.title,
     description: post.excerpt,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      url,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.dateISO,
+      modifiedTime: post.modifiedISO,
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images,
+    },
   };
 }
 
@@ -34,6 +56,7 @@ export default async function BlogPost({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-night text-fog-100">
+      <JsonLd data={articleSchema(post)} />
       <Navbar />
       <main className="mx-auto flex max-w-[760px] flex-col gap-8 px-5 pb-16 pt-[130px] sm:px-10 lg:pb-24 lg:pt-[150px]">
         <div className="flex flex-col gap-5">
@@ -44,7 +67,8 @@ export default async function BlogPost({ params }: Props) {
             ← Všetky články
           </Link>
           <span className="text-[13.5px] text-fog-500">
-            {post.date} · {post.readingTime} min čítania
+            <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
+            {post.readingTime} min čítania
           </span>
           <h1 className="text-balance text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] text-white lg:text-[44px]">
             {post.title}

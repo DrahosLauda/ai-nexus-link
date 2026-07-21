@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { About } from "@/components/about";
 import { Blog, type BlogCardPost } from "@/components/blog";
 import { ContactCta } from "@/components/contact-cta";
@@ -5,11 +6,17 @@ import { Faq } from "@/components/faq";
 import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { HowItWorks } from "@/components/how-it-works";
+import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
 import { Services } from "@/components/services";
 import { Testimonials } from "@/components/testimonials";
 import { fallbackPosts } from "@/lib/content";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { fetchLatestPosts } from "@/lib/wp";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   // Najnovšie články z WordPressu (www.digitalnapomoc.sk); keď API
@@ -34,6 +41,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-night text-fog-100">
+      <JsonLd data={[organizationSchema(), websiteSchema()]} />
       <Navbar />
       <main>
         <Hero />
