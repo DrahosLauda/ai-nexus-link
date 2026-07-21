@@ -81,6 +81,19 @@ obrázkov = CLS, dorovnať Dostupnosť 95, `<nav>`/`<time>`/`<article>`). Potom
 krok 4: SEO+GEO agent do orchestrátora + SEO monitor (automatické meranie cez
 PageSpeed Insights API).
 
+**Nápady na neskôr (vizuálne doladenie — cieľ: expertná vizuálna forma):**
+
+- **Maskot značky** z fialového robota z článkových obrázkov: spraviť jeden
+  znovupoužiteľný priesvitný/vektorový maskot, ktorý vie jemne svietiť aj
+  „zamávať" (CSS/Lottie animácia), umiestnený zámerne (hero, chat bublina) —
+  **nie** zapekať efekt do každého AI obrázka (to je krehké a nekonzistentné).
+  Sadne aj do budúceho chatbota a do „lego" znovupoužiteľnosti. (Cesta C.)
+- **Jemné efekty na článkových obrázkoch** (CSS, nedeštruktívne): pomalé
+  „dýchanie"/žiara alebo zoom pri prejdení myšou — celý obrázok naraz. (Cesta A.)
+- Poznámka: dôvod, prečo „svieti len robot" nejde automaticky — AI obrázok je
+  plochý súbor bez vrstiev; časť sa nedá adresovať bez vystrihnutia.
+- Celkový cieľ: postupne doladiť web do **expertnej** vizuálnej úrovne.
+
 ## Júl 2026 — Fáza 3: agent v Directuse, prepínanie modelov, obmedzený token
 
 **Urobené:**
