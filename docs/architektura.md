@@ -47,6 +47,11 @@ Wayland agent ──► WordPress (koncept) ──► človek schváli/publikuje
 4. **Leady:** formuláre (hero + kontakt) → `POST /api/lead` → validácia,
    honeypot, rate limit → zápis do Directus `client_leads`
    (`source` rozlišuje formulár: `hero-callback` / `kontakt-cta`).
+5. **SEO/GEO:** keďže sme headless, meta značky a štruktúrované dáta generuje
+   **frontend** (nie WordPress). Centrálna konfigurácia v `frontend/lib/seo.ts`;
+   `robots.txt`, `sitemap.xml`, `llms.txt` a JSON-LD (`Organization`, `WebSite`,
+   `BlogPosting`) sa tvoria automaticky z WP obsahu. Indexovanie riadi prepínač
+   `SITE_INDEXABLE` — kým nie je `true`, web je skrytý (noindex).
 
 ## Kde čo beží
 
@@ -65,6 +70,8 @@ Wayland agent ──► WordPress (koncept) ──► človek schváli/publikuje
 | `DIRECTUS_URL` | Railway (frontend), `orchestrator/.env` | ⚠️ len základná adresa, bez `/admin/...` |
 | `DIRECTUS_TOKEN` | Railway (frontend) | token používateľa `frontend-bot` — smie IBA vytvárať leady |
 | `DIRECTUS_TOKEN` | `orchestrator/.env` + Railway | token používateľa `orchestrator-bot` — smie IBA čítať `agent_config` a vytvárať `agent_logs` |
+| `SITE_URL` | Railway (frontend), voliteľné | ⚠️ len základná adresa frontendu (nie WP!). Default = Railway URL; pri prepnutí domény `https://digitalnapomoc.sk` |
+| `SITE_INDEXABLE` | Railway (frontend), voliteľné | `true` = web sa smie indexovať + povolia sa AI roboty. Inak skrytý (noindex) |
 | `REVALIDATE_SECRET` | Railway (frontend) + vo WP mu-plugine | tajný kľúč webhoooku |
 | `WP_USER`, `WP_APP_PASSWORD` | `orchestrator/.env` | WP application password na publikovanie konceptov |
 | `ZAI_API_KEY` | `orchestrator/.env` | Z.ai GLM — text článkov |

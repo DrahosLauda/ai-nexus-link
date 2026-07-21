@@ -8,9 +8,11 @@ import { fetchLatestPosts, type WPPost } from "@/lib/wp";
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "Blog – digitalnapomoc.sk",
+  // Šablóna z layout.tsx doplní „ – digitalnapomoc.sk".
+  title: "Blog",
   description:
     "Články o AI, automatizácii a digitálnych nástrojoch pre malé firmy a jednotlivcov — ľudsky a bez žargónu.",
+  alternates: { canonical: "/blog" },
 };
 
 const gradients = [

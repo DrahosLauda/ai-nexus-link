@@ -74,6 +74,8 @@ python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 | `WP_URL` | frontend (Railway), orchestrátor `.env` | WordPress URL |
 | `DIRECTUS_URL`, `DIRECTUS_TOKEN` | frontend (Railway), orchestrátor `.env` | Directus; frontend používa token `frontend-bot` (iba create na `client_leads`) |
 | `REVALIDATE_SECRET` | frontend (Railway) + WP mu-plugin | tajný kľúč pre `/api/revalidate` |
+| `SITE_URL` | frontend (Railway), voliteľné | verejná adresa frontendu (nie WP); default = Railway URL, pri doméne `https://digitalnapomoc.sk` |
+| `SITE_INDEXABLE` | frontend (Railway), voliteľné | `true` = indexovať web + povoliť AI roboty; inak skrytý (noindex) |
 | `WP_USER`, `WP_APP_PASSWORD` | orchestrátor `.env` | WP publikovanie (application password) |
 | `ZAI_API_KEY` | orchestrátor `.env` | Z.ai GLM API |
 | `GEMINI_API_KEY` | orchestrátor `.env` | Google Gemini API (generovanie obrázkov k článkom) |

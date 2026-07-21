@@ -3,6 +3,84 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — Fáza 4 (krok 2): SEO/GEO základ na frontende
+
+**Kontext:** Fázu 4 sme začali smerom „ďalší agent lego vzorom" — konkrétne
+**SEO + GEO agent** (GEO = Generative Engine Optimization = optimalizácia pre
+AI vyhľadávače ako ChatGPT, Perplexity, Google AI Overviews). Keďže sme
+**headless** (Google aj AI vidia len Next.js frontend, nie WordPress), meta
+značky a štruktúrované dáta patria na **frontend** — Yoast/Rank Math vo WP by
+boli zbytočné (nikto ich nevidí). Preto prvý krok = SEO/GEO **základ na
+frontende**, až potom samotný agent.
+
+**Audit pred prácou:**
+
+- **PageSpeed (pagespeed.web.dev)** na Railway web: mobil 98/95/100/100,
+  desktop 100/95/100/100 (Výkonnosť/Dostupnosť/Osvedčené postupy/SEO),
+  „Agentské prehliadanie" 2/2. Východisko je špičkové — headless Next.js je
+  rýchlejší ako klasické WP témy (aj GeneratePress), lebo na frontende WP vôbec
+  nebeží.
+- **Audit kódu** ukázal, čo chýbalo: JSON-LD štruktúrované dáta, Open Graph,
+  canonical, `sitemap.xml`, `robots.txt`, `llms.txt`. („SEO 100" v Lighthouse
+  je len základná hygiena — schema/OG/GEO nemeria.)
+- Poznámka: `geo-seo-claude` (github.com/zubair-trabzada/geo-seo-claude) **nie
+  je WP plugin**, ale Claude Code **skill na GEO audit**. Jeho princípy sme
+  prebrali priamo do frontendu (schema, llms.txt, povolenie AI robotov).
+
+**Urobené (`frontend/`):**
+
+- **`lib/seo.ts`** — centrálna SEO/GEO konfigurácia na jednom mieste (aby sa
+  dala preniesť na ďalšieho klienta): `SITE_URL`, `SITE_NAME`,
+  `SITE_DESCRIPTION`, prepínač `SITE_INDEXABLE`, zoznam AI crawlerov,
+  generátory JSON-LD (`organizationSchema`, `websiteSchema`, `articleSchema`).
+- **`app/robots.ts`** — `/robots.txt`. Kým `SITE_INDEXABLE` != `true`, zakáže
+  všetko (web skrytý). Po zapnutí povolí bežných robotov aj AI crawlerov (GEO)
+  a odkáže na sitemap.
+- **`app/sitemap.ts`** — `/sitemap.xml` zo statických stránok + všetkých WP
+  článkov (odľahčená funkcia `fetchAllPostRefs` v `lib/wp.ts`). Pri výpadku WP
+  vráti aspoň statické stránky.
+- **`app/llms.txt/route.ts`** — `/llms.txt` (štandard z llmstxt.org): popis
+  webu + zoznam článkov v Markdown podobe pre AI modely.
+- **`components/json-ld.tsx`** — znovupoužiteľný komponent na vloženie JSON-LD.
+- **`layout.tsx`** — `metadataBase`, šablóna titulku (`%s – digitalnapomoc.sk`),
+  predvolené Open Graph + Twitter Card, prepínač `robots` (noindex kým
+  nespustíme).
+- **`app/page.tsx`** — canonical `/` + JSON-LD Organization & WebSite.
+- **`app/blog/[slug]/page.tsx`** — bohaté meta (OG typu `article` s dátumami,
+  Twitter, canonical) + `BlogPosting` JSON-LD.
+- **`app/blog/page.tsx`** — titulok „Blog" (šablóna dopĺňa zvyšok) + canonical.
+- **`lib/wp.ts`** — pridané ISO dátumy (`dateISO`, `modifiedISO`) pre schema a
+  sitemap; `_fields` rozšírené o `modified`.
+
+**Overené:** `npm run lint` čistý, `npm run build` prešiel (TypeScript OK).
+V prerenderovanom HTML potvrdené: `noindex, nofollow` (web skrytý), JSON-LD
+Organization+WebSite, Open Graph aj canonical. `robots.txt` = `Disallow: /`.
+
+**Ponaučenia:**
+
+1. **Headless = SEO patrí na frontend, nie do WP.** Google/AI vidia len
+   Next.js. WP SEO pluginy sú v tejto architektúre zbytočné.
+2. **„SEO 100" v Lighthouse ≠ hotovo.** Test kontroluje len základnú hygienu;
+   štruktúrované dáta, Open Graph ani GEO nemeria.
+3. **Web sa v cloud sedení nedá načítať** (sieťová politika blokuje Railway aj
+   Directus) — audit sme spravili z kódu; živý PageSpeed spustil používateľ.
+   Preto majú `sitemap.ts` a `llms.txt` fallback pri nedostupnom WP.
+
+**Na doriešenie (klikacia časť — Railway Variables):**
+
+- **`SITE_URL`** — verejná adresa frontendu. Teraz default = Railway URL. Pri
+  prepnutí domény nastaviť `https://digitalnapomoc.sk`.
+- **`SITE_INDEXABLE`** — rozhodnutie na spustenie. `true` = web sa smie
+  indexovať (a povolia sa AI roboty). Kým nie je nastavené, web je **skrytý**
+  (noindex) — súlad s plánom „spustiť až po doméne". ⚠️ Pozor: pri `noindex`
+  Lighthouse zníži SEO skóre (hlási zámerný noindex) — je to očakávané, skóre
+  vyskočí späť na 100 pri spustení.
+
+**Ďalší krok (krok 3):** rýchlosť + sémantika (rozmery vnútro-článkových
+obrázkov = CLS, dorovnať Dostupnosť 95, `<nav>`/`<time>`/`<article>`). Potom
+krok 4: SEO+GEO agent do orchestrátora + SEO monitor (automatické meranie cez
+PageSpeed Insights API).
+
 ## Júl 2026 — Fáza 3: agent v Directuse, prepínanie modelov, obmedzený token
 
 **Urobené:**

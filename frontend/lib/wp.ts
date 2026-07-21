@@ -14,6 +14,9 @@ export interface WPPost {
   title: string;
   excerpt: string;
   date: string;
+  /** Pôvodné ISO dátumy — pre štruktúrované dáta (schema) a sitemap. */
+  dateISO: string;
+  modifiedISO: string;
   readingTime: number;
   /** URL hlavného obrázka (featured image) vo vhodnej veľkosti, ak existuje. */
   imageUrl: string | null;
@@ -25,6 +28,7 @@ interface WPPostRaw {
   slug: string;
   link: string;
   date: string;
+  modified: string;
   title: { rendered: string };
   excerpt: { rendered: string };
   content: { rendered: string };
@@ -104,6 +108,8 @@ function toPost(p: WPPostRaw): WPPost {
     title: stripHtml(p.title.rendered),
     excerpt: stripHtml(p.excerpt.rendered),
     date: formatSlovakDate(p.date),
+    dateISO: p.date,
+    modifiedISO: p.modified,
     readingTime: estimateReadingTime(p.content.rendered),
     imageUrl: extractImageUrl(p),
   };
@@ -115,7 +121,7 @@ async function wpGet(params: Record<string, string>): Promise<WPPostRaw[]> {
     // _embed pribalí featured image; _fields musí preto obsahovať aj
     // _links a _embedded, inak WP embed z odpovede vyreže.
     _embed: "wp:featuredmedia",
-    _fields: "id,slug,link,date,title,excerpt,content,_links,_embedded",
+    _fields: "id,slug,link,date,modified,title,excerpt,content,_links,_embedded",
     ...params,
   });
   const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {
@@ -150,4 +156,33 @@ export async function fetchPostBySlug(
   const raw = await wpGet({ slug, per_page: "1" });
   if (raw.length === 0) return null;
   return { ...toPost(raw[0]), contentHtml: raw[0].content.rendered };
+}
+
+/** Odľahčený zoznam článkov (slug + dátum úpravy) pre sitemap. */
+export interface WPPostRef {
+  slug: string;
+  modifiedISO: string;
+}
+
+/**
+ * Vráti slug a dátum poslednej úpravy pre všetky publikované články.
+ * Používa sa v `app/sitemap.ts`. Bez `_embed`, aby bola odpoveď malá.
+ */
+export async function fetchAllPostRefs(): Promise<WPPostRef[]> {
+  const search = new URLSearchParams({
+    status: "publish",
+    per_page: "100",
+    orderby: "date",
+    order: "desc",
+    _fields: "slug,modified",
+  });
+  const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {
+    next: { revalidate: 300 },
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) {
+    throw new Error(`WP API responded ${res.status}`);
+  }
+  const data = (await res.json()) as Array<{ slug: string; modified: string }>;
+  return data.map((p) => ({ slug: p.slug, modifiedISO: p.modified }));
 }
