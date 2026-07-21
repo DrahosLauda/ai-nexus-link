@@ -76,7 +76,8 @@ export default async function BlogIndex() {
                 </Link>
                 <div className="flex flex-1 flex-col gap-3 p-6">
                   <span className="text-[12.5px] text-fog-500">
-                    {post.date} · {post.readingTime} min čítania
+                    <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
+                    {post.readingTime} min čítania
                   </span>
                   <h2 className="text-balance text-[18.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white">
                     <Link

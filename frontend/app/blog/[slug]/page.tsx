@@ -67,7 +67,8 @@ export default async function BlogPost({ params }: Props) {
             ← Všetky články
           </Link>
           <span className="text-[13.5px] text-fog-500">
-            {post.date} · {post.readingTime} min čítania
+            <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
+            {post.readingTime} min čítania
           </span>
           <h1 className="text-balance text-4xl font-extrabold leading-[1.1] tracking-[-0.03em] text-white lg:text-[44px]">
             {post.title}
