@@ -3,6 +3,31 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — Fáza 4 (krok 4b): breadcrumbs + FAQ schéma (náhrada SEO pluginu)
+
+Cieľ: aby náš systém nahradil platený WP plugin (Rank Math / AIO SEO). Kľúč:
+v **headless** architektúre plugin ani nemôže robiť svoju prácu (vkladá značky
+do WP stránky, ktorú nikto nevidí) — SEO/GEO **musí** byť na frontende, a to je
+presne, čo staviame.
+
+**Urobené (`frontend/`):**
+
+- **Breadcrumbs** — na stránke článku viditeľná omrvinková navigácia
+  (Domov › Blog) + `BreadcrumbList` JSON-LD (Domov › Blog › článok).
+- **FAQ schéma** — `FAQPage` JSON-LD na domovskej z existujúcej FAQ sekcie
+  (`lib/content.ts` → `faqs`). Google z toho robí rich results.
+- Generátory `breadcrumbSchema` a `faqSchema` v `lib/seo.ts`.
+
+**Overené:** `lint` + `build` OK; v HTML domovskej potvrdené `FAQPage` so 4
+otázkami. Breadcrumb schéma je na dynamickej stránke článku (naživo na Railway).
+
+**Parita s Rank Math / AIO SEO — stav:** meta titulok/popis, OG/Twitter,
+sitemap, robots/noindex, canonical, JSON-LD (Organization, WebSite, BlogPosting,
+BreadcrumbList, FAQPage), alt texty, llms.txt + AI crawleri (GEO — tu sme
+**pred** pluginmi). **Ešte na roadmape:** HowTo schéma (potrebuje kroky z
+článku — práca pre agenta v2), presmerovania (301), 404 monitor. Zámerne
+nerobíme „semafor" analýzu v editore (obsah píše AI, ladí agent).
+
 ## Júl 2026 — Fáza 4 (krok 4): SEO+GEO agent (MVP)
 
 **Druhá „lego" kocka po Writerovi** — dôkaz, že sa agenti pridávajú vzorom, nie

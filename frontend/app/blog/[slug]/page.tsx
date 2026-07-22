@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
-import { absoluteUrl, articleSchema } from "@/lib/seo";
+import { absoluteUrl, articleSchema, breadcrumbSchema } from "@/lib/seo";
 import { fetchPostBySlug, type WPPostFull } from "@/lib/wp";
 
 export const revalidate = 300;
@@ -54,18 +54,30 @@ export default async function BlogPost({ params }: Props) {
   const post = await getPost(slug);
   if (!post) notFound();
 
+  const crumbs = [
+    { name: "Domov", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ];
+
   return (
     <div className="min-h-screen bg-night text-fog-100">
-      <JsonLd data={articleSchema(post)} />
+      <JsonLd data={[articleSchema(post), breadcrumbSchema(crumbs)]} />
       <Navbar />
       <main className="mx-auto flex max-w-[760px] flex-col gap-8 px-5 pb-16 pt-[130px] sm:px-10 lg:pb-24 lg:pt-[150px]">
         <div className="flex flex-col gap-5">
-          <Link
-            href="/blog"
-            className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+          <nav
+            aria-label="Omrvinková navigácia"
+            className="flex flex-wrap items-center gap-1.5 text-[13.5px] text-fog-500"
           >
-            ← Všetky články
-          </Link>
+            <Link href="/" className="transition-colors hover:text-fog-200">
+              Domov
+            </Link>
+            <span aria-hidden="true">›</span>
+            <Link href="/blog" className="transition-colors hover:text-fog-200">
+              Blog
+            </Link>
+          </nav>
           <span className="text-[13.5px] text-fog-500">
             <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
             {post.readingTime} min čítania

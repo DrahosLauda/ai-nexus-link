@@ -10,8 +10,8 @@ import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
 import { Services } from "@/components/services";
 import { Testimonials } from "@/components/testimonials";
-import { fallbackPosts } from "@/lib/content";
-import { organizationSchema, websiteSchema } from "@/lib/seo";
+import { fallbackPosts, faqs } from "@/lib/content";
+import { faqSchema, organizationSchema, websiteSchema } from "@/lib/seo";
 import { fetchLatestPosts } from "@/lib/wp";
 
 export const metadata: Metadata = {
@@ -41,7 +41,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-night text-fog-100">
-      <JsonLd data={[organizationSchema(), websiteSchema()]} />
+      <JsonLd data={[organizationSchema(), websiteSchema(), faqSchema(faqs)]} />
       <Navbar />
       <main>
         <Hero />
