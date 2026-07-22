@@ -149,13 +149,30 @@ export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
   return raw.map(toPost);
 }
 
+/**
+ * Odstráni zbytočné oddeľovače na konci článku (AI ich občas dopíše):
+ * koncové `<hr>`, prázdne odseky alebo odseky s len pomlčkou/hviezdičkami.
+ */
+function stripTrailingSeparators(html: string): string {
+  let out = html.trim();
+  const trailing =
+    /(<hr[^>]*\/?>|<p[^>]*>(?:\s|&nbsp;|[-–—*_])*<\/p>)\s*$/i;
+  while (trailing.test(out)) {
+    out = out.replace(trailing, "").trim();
+  }
+  return out;
+}
+
 /** Jeden článok podľa slugu (URL mena), s celým HTML obsahom. */
 export async function fetchPostBySlug(
   slug: string,
 ): Promise<WPPostFull | null> {
   const raw = await wpGet({ slug, per_page: "1" });
   if (raw.length === 0) return null;
-  return { ...toPost(raw[0]), contentHtml: raw[0].content.rendered };
+  return {
+    ...toPost(raw[0]),
+    contentHtml: stripTrailingSeparators(raw[0].content.rendered),
+  };
 }
 
 /** Odľahčený zoznam článkov (slug + dátum úpravy) pre sitemap. */
