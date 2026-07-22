@@ -3,6 +3,44 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Aktuálny stav Directus `agent_config` (potvrdené používateľom, júl 2026)
+
+> Referencia — živý Directus z cloud sedenia nevidíme, preto zapisujeme sem.
+
+| Agent (`agent_name`) | `is_active` | `text_provider` | `text_model` | `system_prompt` |
+|---|---|---|---|---|
+| `wp_writer` | ✅ | gemini | **`gemini-3.5-flash`** | predajný tón (viď `navody.md`) — **vložený** |
+| `seo_geo` | ✅ | gemini | **`gemini-3.5-flash`** | — |
+
+- **Funkčný text model = `gemini-3.5-flash`** (potvrdené naostro). Predvolený
+  model v kóde (`wp_writer_agent.py` → `DEFAULT_TEXT_MODELS["gemini"]`) zosúladený
+  na `gemini-3.5-flash` (predtým `gemini-2.5-flash`).
+
+## Júl 2026 — Fáza 4 (krok 4b): breadcrumbs + FAQ schéma (náhrada SEO pluginu)
+
+Cieľ: aby náš systém nahradil platený WP plugin (Rank Math / AIO SEO). Kľúč:
+v **headless** architektúre plugin ani nemôže robiť svoju prácu (vkladá značky
+do WP stránky, ktorú nikto nevidí) — SEO/GEO **musí** byť na frontende, a to je
+presne, čo staviame.
+
+**Urobené (`frontend/`):**
+
+- **Breadcrumbs** — na stránke článku viditeľná omrvinková navigácia
+  (Domov › Blog) + `BreadcrumbList` JSON-LD (Domov › Blog › článok).
+- **FAQ schéma** — `FAQPage` JSON-LD na domovskej z existujúcej FAQ sekcie
+  (`lib/content.ts` → `faqs`). Google z toho robí rich results.
+- Generátory `breadcrumbSchema` a `faqSchema` v `lib/seo.ts`.
+
+**Overené:** `lint` + `build` OK; v HTML domovskej potvrdené `FAQPage` so 4
+otázkami. Breadcrumb schéma je na dynamickej stránke článku (naživo na Railway).
+
+**Parita s Rank Math / AIO SEO — stav:** meta titulok/popis, OG/Twitter,
+sitemap, robots/noindex, canonical, JSON-LD (Organization, WebSite, BlogPosting,
+BreadcrumbList, FAQPage), alt texty, llms.txt + AI crawleri (GEO — tu sme
+**pred** pluginmi). **Ešte na roadmape:** HowTo schéma (potrebuje kroky z
+článku — práca pre agenta v2), presmerovania (301), 404 monitor. Zámerne
+nerobíme „semafor" analýzu v editore (obsah píše AI, ladí agent).
+
 ## Júl 2026 — Fáza 4 (krok 4): SEO+GEO agent (MVP)
 
 **Druhá „lego" kocka po Writerovi** — dôkaz, že sa agenti pridávajú vzorom, nie
@@ -41,6 +79,21 @@ tie služby nedosiahne.
   (`is_active`, `text_provider`, `text_model`, príp. `system_prompt`).
 - **Railway:** druhý cron worker (Start Command `python seo_geo_agent.py`),
   ideálne po Writerovi.
+
+**Smerovanie obsahu (produktová línia):** blog je nástroj na získavanie
+klientov — články majú informovať a zároveň prirodzene viesť k **našej ponuke
+automatizácií** (hotové riešenie + integrácia na nástroje klienta: auto-odpoveď
+na e-mail, rezervácie, objednávky). Rieši sa **predajným `system_prompt`**
+Writera — nastavuje sa **ručne** v Directuse (recept v `docs/navody.md`).
+*(Setup skript sme zámerne zrušili — kvôli bezpečnosti config nastavujeme ručne,
+bez admin tokenu v `.env`.)*
+
+**Roadmapa SEO+GEO agenta (na neskôr):**
+
+- **v2 — automatické prelinkovanie:** agent svoje návrhy interných odkazov sám
+  vloží do tela článku (bezpečný kotviaci text), nielen do logu.
+- **HowTo štruktúrované dáta** pre návodové články (dnes `BlogPosting`) — lepšia
+  citovateľnosť v AI vyhľadávačoch.
 
 ## Júl 2026 — Fáza 4 (krok 2): SEO/GEO základ na frontende
 

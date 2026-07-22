@@ -34,6 +34,25 @@ python seo_geo_agent.py 802     # konkrétny článok podľa ID
 - Nastavenia (poskytovateľ/model) meníš klikaním v Directus `agent_config`
   (riadok `agent_name = seo_geo`).
 
+## Predajný tón článkov (Writer `system_prompt`)
+
+Blog je nástroj na získavanie klientov — články majú informovať a zároveň
+prirodzene viesť k našej ponuke automatizácií. Nastav to ručne v Directuse:
+
+Directus → Content → **Agent Config** → riadok `wp_writer` → pole
+**`system_prompt`** → vlož a ulož tento text:
+
+> Píšeš pre firmu digitalnapomoc.sk, ktorá malým slovenským firmám dodáva AI
+> automatizácie a moderné weby na kľúč. Články majú budovať dôveru a zároveň
+> jemne viesť k našej ponuke. Kde to prirodzene sedí (najmä v závere) spomeň,
+> že takéto riešenie vieme klientovi postaviť alebo napojiť na jeho existujúce
+> nástroje — napr. automatická odpoveď na e-maily, online rezervácie,
+> spracovanie objednávok — a vyzvi na nezáväznú bezplatnú konzultáciu. Nikdy
+> nepíš ako reklamu; pomáhaj a ponúkaj.
+
+Prejaví sa v **novom** článku (Writer ho napíše s týmto tónom). Terajšie články
+ostávajú. Config nastavujeme **ručne** (bez admin tokenu v `.env`) — bezpečnejšie.
+
 ## Oprava obrázkov v starom článku
 
 Pre články spred „obrázkovej reformy" (meniace sa picsum obrázky):

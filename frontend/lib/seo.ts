@@ -116,3 +116,34 @@ export function articleSchema(post: ArticleForSchema): Record<string, unknown> {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 }
+
+/** JSON-LD omrvinkovej navigácie (Domov › Blog › …) — pre Google rich results. */
+export function breadcrumbSchema(
+  items: { name: string; path: string }[],
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      item: absoluteUrl(it.path),
+    })),
+  };
+}
+
+/** JSON-LD často kladených otázok (FAQPage) — Google z nich robí rich results. */
+export function faqSchema(
+  faqs: { q: string; a: string }[],
+): Record<string, unknown> {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}

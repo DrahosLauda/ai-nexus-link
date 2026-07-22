@@ -35,7 +35,7 @@ OPENAI_COMPAT_PROVIDERS = {
 DEFAULT_TEXT_MODELS = {
     "zai": "glm-4.5-flash",
     "kimi": "kimi-k2-0905-preview",
-    "gemini": "gemini-2.5-flash",
+    "gemini": "gemini-3.5-flash",
     "claude": "claude-sonnet-5",
 }
 
