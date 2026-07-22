@@ -3,6 +3,19 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Aktuálny stav Directus `agent_config` (potvrdené používateľom, júl 2026)
+
+> Referencia — živý Directus z cloud sedenia nevidíme, preto zapisujeme sem.
+
+| Agent (`agent_name`) | `is_active` | `text_provider` | `text_model` | `system_prompt` |
+|---|---|---|---|---|
+| `wp_writer` | ✅ | gemini | **`gemini-3.5-flash`** | predajný tón (viď `navody.md`) — **vložený** |
+| `seo_geo` | ✅ | gemini | **`gemini-3.5-flash`** | — |
+
+- **Funkčný text model = `gemini-3.5-flash`** (potvrdené naostro). Predvolený
+  model v kóde (`wp_writer_agent.py` → `DEFAULT_TEXT_MODELS["gemini"]`) zosúladený
+  na `gemini-3.5-flash` (predtým `gemini-2.5-flash`).
+
 ## Júl 2026 — Fáza 4 (krok 4b): breadcrumbs + FAQ schéma (náhrada SEO pluginu)
 
 Cieľ: aby náš systém nahradil platený WP plugin (Rank Math / AIO SEO). Kľúč:
