@@ -42,6 +42,21 @@ tie služby nedosiahne.
 - **Railway:** druhý cron worker (Start Command `python seo_geo_agent.py`),
   ideálne po Writerovi.
 
+**Smerovanie obsahu (produktová línia):** blog je nástroj na získavanie
+klientov — články majú informovať a zároveň prirodzene viesť k **našej ponuke
+automatizácií** (hotové riešenie + integrácia na nástroje klienta: auto-odpoveď
+na e-mail, rezervácie, objednávky). Rieši sa **predajným `system_prompt`**
+Writera — nastavuje sa **ručne** v Directuse (recept v `docs/navody.md`).
+*(Setup skript sme zámerne zrušili — kvôli bezpečnosti config nastavujeme ručne,
+bez admin tokenu v `.env`.)*
+
+**Roadmapa SEO+GEO agenta (na neskôr):**
+
+- **v2 — automatické prelinkovanie:** agent svoje návrhy interných odkazov sám
+  vloží do tela článku (bezpečný kotviaci text), nielen do logu.
+- **HowTo štruktúrované dáta** pre návodové články (dnes `BlogPosting`) — lepšia
+  citovateľnosť v AI vyhľadávačoch.
+
 ## Júl 2026 — Fáza 4 (krok 2): SEO/GEO základ na frontende
 
 **Kontext:** Fázu 4 sme začali smerom „ďalší agent lego vzorom" — konkrétne
