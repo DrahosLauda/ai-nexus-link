@@ -3,6 +3,18 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — oprava: odrážky v článkoch (Tailwind reset)
+
+Prvý článok publikovaný cez celý reťazec (Writer → SEO agent → človek) —
+ID 811. Používateľ si všimol, že **zoznamy v článku nemajú guľôčky/čísla**.
+
+**Príčina:** Tailwind v4 preflight resetuje `ul/ol` na `list-style: none` na
+celom webe. V `.wp-article` sme značky nevrátili (hoci sme farbili `::marker`).
+
+**Oprava:** `frontend/app/globals.css` — `.wp-article ul` → `disc`,
+`.wp-article ol` → `decimal`. *Ponaučenie: Tailwind preflight vypína značky
+zoznamov; pri obsahu z CMS treba `list-style` explicitne vrátiť.*
+
 ## Aktuálny stav Directus `agent_config` (potvrdené používateľom, júl 2026)
 
 > Referencia — živý Directus z cloud sedenia nevidíme, preto zapisujeme sem.
