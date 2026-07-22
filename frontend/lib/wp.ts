@@ -150,17 +150,20 @@ export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
 }
 
 /**
- * Odstráni zbytočné oddeľovače na konci článku (AI ich občas dopíše):
- * koncové `<hr>`, prázdne odseky alebo odseky s len pomlčkou/hviezdičkami.
+ * Vyčistí HTML článku od artefaktov, ktoré AI model občas nechá — kdekoľvek
+ * v článku, nielen na konci:
+ * - Markdown tučné písmo (`**text**` / `__text__`) → `<strong>`,
+ * - samostatné oddeľovače: `<hr>` a odseky s len pomlčkou/hviezdičkami.
  */
-function stripTrailingSeparators(html: string): string {
-  let out = html.trim();
-  const trailing =
-    /(<hr[^>]*\/?>|<p[^>]*>(?:\s|&nbsp;|[-–—*_])*<\/p>)\s*$/i;
-  while (trailing.test(out)) {
-    out = out.replace(trailing, "").trim();
-  }
-  return out;
+function cleanContentHtml(html: string): string {
+  return html
+    // Markdown tučné → HTML (model občas nechá **text** namiesto <strong>).
+    .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/__([^_\n]+)__/g, "<strong>$1</strong>")
+    // Samostatné oddeľovače kdekoľvek: <hr> a odseky len s pomlčkou/*_.
+    .replace(/<hr[^>]*\/?>/gi, "")
+    .replace(/<p[^>]*>(?:\s|&nbsp;|[-–—*_])*<\/p>/gi, "")
+    .trim();
 }
 
 /** Jeden článok podľa slugu (URL mena), s celým HTML obsahom. */
@@ -171,7 +174,7 @@ export async function fetchPostBySlug(
   if (raw.length === 0) return null;
   return {
     ...toPost(raw[0]),
-    contentHtml: stripTrailingSeparators(raw[0].content.rendered),
+    contentHtml: cleanContentHtml(raw[0].content.rendered),
   };
 }
 
