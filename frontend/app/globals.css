@@ -109,6 +109,15 @@ body {
   padding-left: 1.4em;
 }
 
+/* Tailwind preflight vypína značky zoznamov — pre obsah článku ich vrátime. */
+.wp-article ul {
+  list-style: disc outside;
+}
+
+.wp-article ol {
+  list-style: decimal outside;
+}
+
 .wp-article li {
   margin-bottom: 0.45em;
 }
