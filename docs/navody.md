@@ -34,6 +34,16 @@ python seo_geo_agent.py 802     # konkrétny článok podľa ID
 - Nastavenia (poskytovateľ/model) meníš klikaním v Directus `agent_config`
   (riadok `agent_name = seo_geo`).
 
+## Automatizácia (reťazec Writer → SEO agent)
+
+Cron na Railway spúšťa **`run_pipeline.py`** — jeden beh, dvaja agenti za sebou:
+Writer napíše koncept a SEO+GEO agent ho hneď vylepší (na presnom ID článku).
+Ráno (Po/St/Pi) tak pribudne rovno **optimalizovaný koncept** na schválenie.
+
+Nastavenie na Railway: cron worker → **Settings** → **Start Command** =
+`python run_pipeline.py`. Ručný test: „Run now" alebo lokálne
+`python run_pipeline.py`.
+
 ## Predajný tón článkov (Writer `system_prompt`)
 
 Blog je nástroj na získavanie klientov — články majú informovať a zároveň

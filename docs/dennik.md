@@ -3,6 +3,28 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Júl 2026 — Fáza 4: reťazec Writer → SEO+GEO agent (automatizácia)
+
+**Cloud cron overený naostro:** Railway „Run now" na orchestrátorovi vytvoril
+koncept (ID 816, téma „Chatbot…", `gemini-3.5-flash`) + zapísal `agent_logs`
+success. Writer teda v cloude beží sám (cron Po/St/Pi 6:00 UTC).
+
+**Reťazenie agentov (nové):**
+
+- **`orchestrator/run_pipeline.py`** — jeden beh, dvaja agenti za sebou:
+  Writer napíše koncept → SEO+GEO agent ho vylepší. **Deterministické** — SEO
+  agent dostane presné ID, ktoré Writer vytvoril (žiadne „hádanie najnovšieho
+  konceptu" ani preteky medzi dvomi cronmi).
+- **`wp_writer_agent.py`** — `generate_and_post_article` teraz **vracia
+  `post_id`** (na úspech), aby ho reťazec vedel odovzdať SEO agentovi.
+- Ručné spúšťanie jednotlivých agentov ostáva.
+
+**Overené (cloud sedenie):** `py_compile` + import `run_pipeline` OK (reťazec sa
+poskladá, Writer vracia ID).
+
+**Klikacia časť (Railway):** na cron worker-i zmeniť **Start Command** z
+`python wp_writer_agent.py` na **`python run_pipeline.py`**. Žiadna nová služba.
+
 ## Júl 2026 — oprava: odrážky v článkoch (Tailwind reset)
 
 Prvý článok publikovaný cez celý reťazec (Writer → SEO agent → človek) —
