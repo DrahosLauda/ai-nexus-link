@@ -50,6 +50,8 @@ Nastavenie na Railway: cron worker → **Settings** → **Start Command** =
 > = cron worker (náhodný názov, napr. „sincere-motivation"; Root Directory
 > `orchestrator`, Start Command spúšťa Python). Pri práci s agentmi si vždy
 > otvor **orchestrátor**, nie frontend.
+> Záložky služby orchestrátora: **Cron Runs · Deployments · Variables · Metrics
+> · Console · Settings**.
 
 **Zmeniť Start Command (čo cron spúšťa):**
 1. Railway → otvor projekt → klikni na službu **orchestrátora**.
@@ -60,11 +62,12 @@ Nastavenie na Railway: cron worker → **Settings** → **Start Command** =
    neprejaví). Počkaj na status **Active** (zelený).
 
 **Spustiť agenta hneď (Run now):**
-1. Služba orchestrátora → záložka **Deployments** (alebo tlačidlo **Run now** hore).
-2. Klikni **Run now** → spustí Start Command okamžite.
+1. Služba orchestrátora → záložka **Cron Runs**.
+2. Vpravo hore tlačidlo **Run now** → spustí Start Command okamžite.
+   (Tá istá záložka ukazuje aj rozvrh „Next run…" a „Recent Executions".)
 
 **Pozrieť logy (výpis behu):**
-1. Služba orchestrátora → **Deployments** → klikni na konkrétny beh → **View logs**.
+1. **Cron Runs** (alebo **Deployments**) → pri aktívnom behu **View logs**.
 2. Úspešný reťazec končí `✅ Reťazec dokončený.`
 
 **Zmeniť premennú prostredia (env var):**
