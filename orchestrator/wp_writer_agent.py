@@ -450,6 +450,7 @@ def generate_and_post_article(topic=None):
             message=f"Vytvorený {post_status}: „{title}“.",
             wp_post_id=post_id,
         )
+        return post_id  # pre reťazenie: SEO agent dostane presné ID
     else:
         print(f"❌ WordPress vrátil chybu: {response.status_code}")
         print(response.text)
@@ -458,6 +459,7 @@ def generate_and_post_article(topic=None):
             topic=topic,
             message=f"WordPress vrátil {response.status_code}: {response.text[:300]}",
         )
+        return None
 
 
 if __name__ == "__main__":

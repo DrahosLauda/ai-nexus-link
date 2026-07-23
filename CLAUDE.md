@@ -65,6 +65,7 @@ source venv/bin/activate
 python main.py               # test Directus spojenia
 python wp_writer_agent.py "Téma"        # článok + obrázky → WP koncept
 python seo_geo_agent.py [ID]            # SEO/GEO vylepšenie konceptu (meta popis → WP)
+python run_pipeline.py                  # reťazec Writer → SEO+GEO agent (Start Command cronu)
 python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 ```
 
