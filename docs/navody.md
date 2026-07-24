@@ -44,6 +44,35 @@ Nastavenie na Railway: cron worker → **Settings** → **Start Command** =
 `python run_pipeline.py`. Ručný test: „Run now" alebo lokálne
 `python run_pipeline.py`.
 
+## Railway — presné cesty (klikací ťahák)
+
+> Služby v projekte: **frontend** = `ai-nexus-link` (Next.js), **orchestrátor**
+> = cron worker (náhodný názov, napr. „sincere-motivation"; Root Directory
+> `orchestrator`, Start Command spúšťa Python). Pri práci s agentmi si vždy
+> otvor **orchestrátor**, nie frontend.
+> Záložky služby orchestrátora: **Cron Runs · Deployments · Variables · Metrics
+> · Console · Settings**.
+
+**Zmeniť Start Command (čo cron spúšťa):**
+1. Railway → otvor projekt → klikni na službu **orchestrátora**.
+2. Horné záložky → **Settings**.
+3. Scrolluj do sekcie **Deploy** → políčko **Custom Start Command**.
+4. Prepíš hodnotu (napr. `python run_pipeline.py`).
+5. Hore sa objaví fialové tlačidlo **Deploy** → **stlač ho** (bez toho sa zmena
+   neprejaví). Počkaj na status **Active** (zelený).
+
+**Spustiť agenta hneď (Run now):**
+1. Služba orchestrátora → záložka **Cron Runs**.
+2. Vpravo hore tlačidlo **Run now** → spustí Start Command okamžite.
+   (Tá istá záložka ukazuje aj rozvrh „Next run…" a „Recent Executions".)
+
+**Pozrieť logy (výpis behu):**
+1. **Cron Runs** (alebo **Deployments**) → pri aktívnom behu **View logs**.
+2. Úspešný reťazec končí `✅ Reťazec dokončený.`
+
+**Zmeniť premennú prostredia (env var):**
+1. Služba → záložka **Variables** → uprav/pridaj hodnotu → **Deploy** (fialové tlačidlo).
+
 ## Predajný tón článkov (Writer `system_prompt`)
 
 Blog je nástroj na získavanie klientov — články majú informovať a zároveň
