@@ -5,6 +5,34 @@
 > Prostredie: doména + WP na **hostcreators.sk** (panel **WebAdmin**), frontend
 > na **Railway**.
 
+## Kontext a stav (štart fázy — čítaj najprv)
+
+**Kde sme:** Fáza 4 dokončená — dvaja agenti (Writer + SEO/GEO) bežia 24/7
+v reťazci, frontend má plné SEO/GEO. Web je zatiaľ **skrytý**
+(`SITE_INDEXABLE` nenastavené). Táto fáza ho **spustí naostro** na doméne
+`digitalnapomoc.sk`.
+
+**Dané rozhodnutia:**
+
+- Hlavná adresa: `digitalnapomoc.sk` (+ `www`), HTTPS na hostingu.
+- Doména + WordPress: **hostcreators.sk** (panel WebAdmin — subdomény, DNS
+  zóna, SSL).
+- Frontend: **Railway** (služba `ai-nexus-link`).
+
+**Čo potrebujem od používateľa pred cutover-om:** screenshot DNS záznamov,
+ktoré ukáže Railway po pridaní custom domény (Fáza A, krok 3).
+
+**Prepojené dokumenty (vedomostná mapa):**
+
+- [architektura.md](./architektura.md) — ako systém funguje (vrstvy, dátové toky).
+- [zdroje-pravdy.md](./zdroje-pravdy.md) — kde čo žije, kam ukladať, obnova.
+- [directus.md](./directus.md) — Directus (kolekcie, tokeny/role).
+- [navody.md](./navody.md) — recepty vrátane presného Railway ťaháka.
+- [vizia.md](./vizia.md) — roadmap (go-live = ďalšia fáza, potom multi-tenant).
+- [dennik.md](./dennik.md) — história a zmeny (Fáza 4 uzavretá).
+- Premenné prostredia: `SITE_URL`, `SITE_INDEXABLE`, `WP_URL` — viď
+  `architektura.md` a `../CLAUDE.md`.
+
 ## Dôležité zásady
 
 - **Kód meniť netreba** — všetko riadia env premenné (`SITE_URL`,

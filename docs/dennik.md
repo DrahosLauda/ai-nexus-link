@@ -3,6 +3,37 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Fáza 4 — DOKONČENÁ ✅ (zhrnutie + changelog)
+
+**Fáza 4 uzavretá** — postavili sme druhého agenta a plnú automatizáciu reťazca.
+
+**Čo Fáza 4 priniesla:**
+
+- **SEO/GEO základ na frontende** — metadata, Open Graph, canonical,
+  `sitemap.xml`, `robots.txt`, `llms.txt`, JSON-LD (Organization, WebSite,
+  BlogPosting, BreadcrumbList, FAQPage). Parita s Rank Math / AIO SEO, na GEO
+  ich prekonáva.
+- **Druhý agent — SEO+GEO** (`seo_geo_agent.py`) rovnakým „lego" vzorom.
+- **Automatizácia reťazca** (`run_pipeline.py`): Writer → SEO agent v jednom cron
+  behu; cloud cron overený naostro (Po/St/Pi, `gemini-3.5-flash`, článok 819).
+- **Predajný tón** Writera (články vedú k ponuke automatizácií).
+- **Dolaďovanie obsahu:** sémantický `<time>`, zdieľací og:image, opravené
+  odrážky (Tailwind reset), odstránenie `**markdown**` a stray pomlčiek pri
+  zobrazení.
+- **Dokumentácia:** `zdroje-pravdy.md`, `directus.md`, Railway ťahák v
+  `navody.md`, roadmap vo `vizia.md`, minimalizmus v `CLAUDE.md`.
+
+**Changelog (PR):** #6 SEO/GEO základ · #7 SEO+GEO agent · #8 breadcrumbs+FAQ +
+model fix + docs · #9 odrážky · #10 koncová pomlčka · #11 čistenie obsahu
+(`**`/pomlčky) · #12 reťazec `run_pipeline` · #13 docs (Railway/zdroje/Directus) ·
+#14 roadmap · #15 go-live runbook.
+
+**Stav:** 2 agenti (Writer + SEO/GEO) bežia 24/7 v reťazci; frontend má plné
+SEO/GEO; web je zatiaľ **skrytý** (`SITE_INDEXABLE` nenastavené).
+
+**Ďalšia fáza:** Spustenie referencie (go-live) — štartový dokument a runbook:
+`docs/go-live.md`.
+
 ## Júl 2026 — Fáza 4: reťazec Writer → SEO+GEO agent (automatizácia)
 
 **Cloud cron overený naostro:** Railway „Run now" na orchestrátorovi vytvoril
