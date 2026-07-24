@@ -37,9 +37,10 @@ Tento vzor je **kľúč k produktizácii**: pridať schopnosť = pridať modul.
 | Agent | Čo robí | Stav |
 |---|---|---|
 | **Writer (`wp_writer`)** | Píše SEO články + generuje obrázky → WP koncept | ✅ funguje |
-| **SEO+GEO agent (`seo_geo`)** | Meta popis do WP, kľúčové slovo, interné odkazy, GEO tipy pre AI vyhľadávače | ⏳ MVP (Fáza 4) |
+| **SEO+GEO agent (`seo_geo`)** | Meta popis do WP, kľúčové slovo, interné odkazy, GEO tipy pre AI vyhľadávače | ✅ funguje (reťazec s Writerom) |
 | **Social agent** | Tvorí a uverejňuje príspevky na sociálne siete | 🔜 plán |
 | **Frontend/dizajn agent** | Pomáha s dizajnom sekcií, vizuálmi, úpravami vzhľadu | 🔜 plán |
+| **WooCommerce / „produkt" agent** | Pridá reálnu službu ako WooCommerce produkt + presmerovanie do pokladne | 🔜 plán (Fáza 6) |
 | **„Plugin-nahrádzajúci" agenti** | Nahradia bežné WP pluginy vlastnou AI logikou | 🔜 plán |
 | **Ďalší podľa dopytu** | Newsletter, recenzie, zákaznícka podpora (chatbot)… | 🔜 nápady |
 
@@ -75,10 +76,12 @@ izolovaný, so svojím configom a svojimi agentmi, pod našou centrálnou správ
 |---|---|---|---|
 | **1 — Frontend** ✅ | Moderný Next.js web, blog z WP | Ukážka „pred/po", ktorá predáva | Rýchly, pekný web bez zmeny WP |
 | **2 — Leady/CRM** ✅ | Formuláre → Directus | Dôkaz, že web prináša kontakty | Žiadny lead sa nestratí |
-| **3 — AI agenti 24/7** ⏳ | Agent píše sám v cloude; výber modelu klikaním; základ pre viac agentov | Obsah na autopilota; jadro produktu | Web „žije", lepšie SEO |
-| **4 — WooCommerce** | Online predaj cez Store API | Drahšia zákazka (e-shop) | Klient začne predávať online |
-| **5 — Produktizácia (multi-tenant SaaS)** | Šablóna + admin pre viac klientov, moduly ako lego | **Biznis** — nový klient za dni | Dostupné riešenie „na kľúč" |
-| **Neskôr** | Ďalší agenti (SEO, social, dizajn…), podstránky služieb, doména `digitalnapomoc.sk` → frontend (WP na subdoménu) | Bohatšia ponuka modulov | Kompletný web + AI pomoc |
+| **3 — AI agenti 24/7** ✅ | Agent píše sám v cloude; výber modelu klikaním; základ pre viac agentov | Obsah na autopilota; jadro produktu | Web „žije", lepšie SEO |
+| **4 — Druhý agent (SEO/GEO) + automatizácia** ✅ | Writer→SEO reťazec v cloude; SEO/GEO parita; predajný tón | Reťazec agentov; obsah aj optimalizácia na autopilota | Web optimalizovaný pre Google aj AI vyhľadávače |
+| **➡️ Spustenie referencie (go-live) — ĎALŠIA** | Doména `digitalnapomoc.sk` → frontend; WP na skrytú `wp.` subdoménu (noindex); `SITE_INDEXABLE=true`; neskôr Cloudflare | **Živá verejná referencia, ktorá predáva** | Web beží naostro na vlastnej doméne |
+| **5 — Produktizácia (multi-tenant SaaS)** | Šablóna + centrálny admin pre viac klientov, moduly ako lego | **Biznis** — nový klient za dni | „Slovenský GHL na AI" na kľúč |
+| **6 — WooCommerce + „produkt" agent** | Online predaj cez Store API; agent pridá reálnu službu ako produkt s presmerovaním do pokladne | Drahšia zákazka (e-shop) + ďalší modul | Klient predáva online |
+| **Neskôr** | Ďalší agenti (social, dizajn, newsletter, chatbot); podstránky služieb | Bohatšia ponuka modulov | Kompletná AI pomoc |
 
 ## 6. Hodnota v skratke
 
