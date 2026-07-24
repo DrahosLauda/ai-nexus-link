@@ -48,7 +48,8 @@ dodania — SaaS), `docs/architektura.md` (ako systém funguje),
 `docs/navody.md` (recepty na bežné úkony), `docs/dennik.md` (história a vyriešené problémy), `docs/prikazy.md`
 (terminálový ťahák), `docs/wayland-ferrox.md` (poznámka k Wayland app),
 `docs/zdroje-pravdy.md` (kde čo žije a kam ukladať — tri zdroje pravdy),
-`docs/directus.md` (Directus ťahák — kolekcie, úkony, tokeny/role).
+`docs/directus.md` (Directus ťahák — kolekcie, úkony, tokeny/role),
+`docs/go-live.md` (spustenie referencie — doména → frontend, WP na wp. subdoménu).
 
 ## Príkazy
 
