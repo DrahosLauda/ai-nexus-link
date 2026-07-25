@@ -33,6 +33,7 @@ export default async function Home() {
         // Interná stránka článku — WordPress zostáva skrytý headless backend.
         href: `/blog/${p.slug}`,
         imageUrl: p.imageUrl,
+        imageAlt: p.imageAlt,
       }));
     }
   } catch {

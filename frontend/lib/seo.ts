@@ -107,7 +107,15 @@ export function articleSchema(post: ArticleForSchema): Record<string, unknown> {
     "@type": "BlogPosting",
     headline: post.title,
     description: post.excerpt,
-    ...(post.imageUrl ? { image: [post.imageUrl] } : {}),
+    ...(post.imageUrl
+      ? {
+          image: [
+            post.imageUrl.startsWith("http")
+              ? post.imageUrl
+              : absoluteUrl(post.imageUrl),
+          ],
+        }
+      : {}),
     datePublished: post.dateISO,
     dateModified: post.modifiedISO || post.dateISO,
     inLanguage: "sk-SK",
