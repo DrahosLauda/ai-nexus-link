@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const cardClasses =
   "rounded-[20px] border border-line bg-white shadow-[0_8px_28px_rgba(23,23,50,0.05)] transition-[border-color,box-shadow] duration-250 hover:border-indigo-300 hover:shadow-[0_14px_40px_rgba(99,102,241,0.14)]";
 
@@ -87,7 +89,8 @@ export function Services() {
             </div>
           </div>
 
-          <div
+          <Link
+            href="/headless-wordpress"
             className={`${cardClasses} flex flex-col justify-between gap-6 p-7`}
           >
             <div className="grid size-11 place-items-center rounded-xl bg-[#eef0ff]">
@@ -109,10 +112,13 @@ export function Services() {
             <div className="flex flex-col gap-2">
               <h3 className="text-[19px] font-bold text-ink">Weby a e‑shopy</h3>
               <p className="text-[14.5px] leading-[1.55] text-mist-500">
-                Moderný web, ktorý si viete sami upravovať.
+                Moderný web na headless WordPresse — rýchly a bez pluginového pekla.
               </p>
+              <span className="mt-1 inline-flex items-center gap-1.5 text-[14px] font-semibold text-indigo-500">
+                Zistiť viac →
+              </span>
             </div>
-          </div>
+          </Link>
 
           <div
             className={`${cardClasses} flex flex-col justify-between gap-6 p-7`}

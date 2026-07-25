@@ -110,7 +110,6 @@ export const fallbackPosts = [
 export const navLinks = [
   { href: "/#sluzby", label: "Služby" },
   { href: "/#postup", label: "Ako to funguje" },
-  { href: "/headless-wordpress", label: "Headless WP" },
   { href: "/#referencie", label: "Referencie" },
   { href: "/blog", label: "Blog" },
   { href: "/#faq", label: "FAQ" },
