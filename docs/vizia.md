@@ -40,9 +40,13 @@ Tento vzor je **kľúč k produktizácii**: pridať schopnosť = pridať modul.
 | **SEO+GEO agent (`seo_geo`)** | Meta popis do WP, kľúčové slovo, interné odkazy, GEO tipy pre AI vyhľadávače | ✅ funguje (reťazec s Writerom) |
 | **Social agent** | Tvorí a uverejňuje príspevky na sociálne siete | 🔜 plán |
 | **Frontend/dizajn agent** | Pomáha s dizajnom sekcií, vizuálmi, úpravami vzhľadu | 🔜 plán |
+| **Mockup / náhľad agent** | Z **agentského promptu podľa biznisu/biznis plánu** vygeneruje **náhľad stránky pre klienta** (hotové ukážky do portfólia) | 🔜 plán — viď §8 |
+| **Chatbot / zák. podpora agent** | Odpovedá návštevníkom, kvalifikuje leady, rezervácie | 🔜 plán — showcase |
+| **Rezervačný / objednávkový agent** | Auto-potvrdenia, kalendár, napojenie na nástroje klienta | 🔜 plán — showcase |
+| **E-mail / auto-odpoveď agent** | Automatická odpoveď a triedenie dopytov z formulárov | 🔜 plán — showcase |
 | **WooCommerce / „produkt" agent** | Pridá reálnu službu ako WooCommerce produkt + presmerovanie do pokladne | 🔜 plán (Fáza 6) |
 | **„Plugin-nahrádzajúci" agenti** | Nahradia bežné WP pluginy vlastnou AI logikou | 🔜 plán |
-| **Ďalší podľa dopytu** | Newsletter, recenzie, zákaznícka podpora (chatbot)… | 🔜 nápady |
+| **Ďalší podľa dopytu** | Newsletter, recenzie… | 🔜 nápady |
 
 Každý z nich zapadá do rovnakého vzoru: config v Directuse, logy v Directuse,
 modul v orchestrátore, vlastný token s minimálnymi právami.
@@ -102,3 +106,61 @@ neskôr e-shop — rýchlo a cenovo dostupne.
 
 > Táto vízia je živý dokument. Keď pribudne nový agent alebo sa rozhodne o
 > ďalšom module, doplň sem riadok — nech mapa hodnoty ostáva aktuálna.
+
+## 8. Viac agentov = živá ukážka automatizácií (predajný nástroj)
+
+**Cieľ:** mať **viacero agentov, ktoré sú konkrétnym príkladom toho, čo vieme
+firmám v praxi zautomatizovať** — a k nim **priradiť reálne služby vo Woo**, aby
+bolo na vlastnom webe vidieť, že *headless WordPress sa dá prepojiť s naším
+frontendom* a že to celé funguje naostro.
+
+**Princíp „ukáž, nepovedz":** každý agent, ktorý postavíme pre seba, je zároveň
+**demo služby**, ktorú predávame. Náš web = katalóg fungujúcich automatizácií.
+
+**Párovanie agent ↔ Woo služba (návrh):**
+
+| Ukážkový agent (beží na našom webe) | Woo služba, ktorú predávame |
+|---|---|
+| Writer + SEO/GEO (už beží) | „AI tvorba obsahu na autopilota" (mesačne) |
+| Chatbot / zák. podpora | „AI asistent na web" (nasadenie + mesačne) |
+| Rezervačný / objednávkový | „Automatické rezervácie/objednávky" |
+| E-mail / auto-odpoveď | „Auto-odpoveď a triedenie dopytov" |
+| Mockup / náhľad agent (§9) | „Nový moderný web za pár dní" (na kľúč) |
+
+Woo produkty najprv ako **embednutý checkout** (Store API) — najmenší krok, ako
+ukázať prepojenie headless WP ↔ frontend na reálnom nákupe.
+
+## 9. Frontend „mockup" agent — náhľady stránok pre klientov
+
+**Myšlienka:** agent, ktorý z **agentského promptu podľa biznisu alebo biznis
+plánu klienta** vygeneruje **náhľad webu** (hero, sekcie, texty, prípadne
+vizuál). Výstupy:
+
+1. **Predajný nástroj** — na obchodnom stretnutí ukážeme klientovi „takto by
+   vyzeral váš web" za pár minút, nie za týždne.
+2. **Portfólio hotových ukážok** — pár vygenerovaných náhľadov necháme na webe
+   ako referencie; na ich príkladoch prezentujeme automatizácie pre firmy.
+3. Zapadá do „lego" vzoru — config v Directuse, modul v orchestrátore, logy.
+
+Neskôr: z náhľadu jedným klikom spraviť reálny frontend (produktizácia, Fáza 5).
+
+## 10. Dizajn webu — smerovanie (svetlá, čistá, „AI agentúra")
+
+**Zámer:** posunúť náš web bližšie k štýlu **apertia.ai** (David Strejc) —
+čistý, moderný, vzdušný „AI agentúra" look — ale s **výraznejšie bielym /
+svetlým pozadím** (viac ako má apertia, resp. ako predloha z vlastnej landing
+page). Dnešný web je tmavý glassmorphism; ideme skôr k **svetlému, minimalistickému**.
+
+**Súčasť dizajnu — nová stránka „Čo je headless WordPress":**
+
+- Vysvetlí **jednoducho a vizuálne**, čo je headless WP a prečo je to výhoda
+  (rýchlosť, bezpečnosť, moderný web bez straty známeho admina).
+- **Kalkulačka úspory nákladov za pluginy** — návštevník zadá, koľko platí za
+  WP pluginy (SEO, cache, formuláre, zálohy…), a uvidí, koľko **ušetrí** s naším
+  headless riešením (my tie funkcie nahrádzame frontendom + agentmi). Predajný
+  a zároveň vzdelávací prvok — presne to, o čo ide: ukázať hodnotu číslom.
+
+**Referencie (ktoré Claude v cloude nevidí — nutné dodať obsah/screenshoty):**
+`apertia.ai` (403 pri stiahnutí) a vlastná landing page
+`LandingGH-Digitalnapomoc/index.html#pricing` (lokálny súbor na Macu). Pri
+realizácii ich treba vložiť do repa alebo opísať (farby, fonty, sekcie).

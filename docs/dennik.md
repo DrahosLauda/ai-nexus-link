@@ -37,6 +37,23 @@
 - [ ] **Interné odkazy v tele článku** po migrácii `www→wp` ukazujú na `wp.` —
   prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
 
+**🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–10):**
+
+- [ ] **Viac ukážkových agentov = demo automatizácií** — chatbot/zák. podpora,
+  rezervačný/objednávkový, e-mail auto-odpoveď. Každý agent = live demo služby.
+  Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).
+- [ ] **Woo služby napárované na agentov** — reálne produkty vo WooCommerce
+  (embednutý checkout, Store API), aby bolo vidieť headless WP ↔ frontend naostro.
+- [ ] **Frontend „mockup" agent** — z promptu podľa biznisu/biznis plánu klienta
+  vygeneruje náhľad webu; hotové ukážky do portfólia (predajný nástroj).
+- [ ] 🎨 **Redizajn webu → svetlý/čistý štýl à la apertia.ai** (viac bieleho
+  pozadia než apertia, príp. podľa vlastnej landing page). Dnes tmavý glassmorphism.
+- [ ] **Stránka „Čo je headless WordPress" + kalkulačka úspory za pluginy**
+  (vzdelávací + predajný prvok — hodnota vyjadrená číslom).
+- [ ] ⚠️ **Dodať dizajnové referencie do repa** — `apertia.ai` (blokuje sťahovanie)
+  a vlastná landing page (`LandingGH-Digitalnapomoc/index.html`) sú pre cloud
+  sedenie neviditeľné; pri realizácii vložiť screenshoty/HTML alebo opis.
+
 **🟢 Doplnky / neskôr (nie sú blokery):**
 
 - [ ] Podstránky služieb `/sluzby/[slug]`.
