@@ -1,0 +1,596 @@
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalnaPomoc.sk | Systém Všetko v Jednom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; color: #1F2937; }
+        
+        /* Chart Container Styling - MANDATORY via Instructions */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 6<!DOCTYPE html>00px; /* Max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #2563EB, #7C3AED);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <!-- Chosen Palette: Modern SaaS Blue/Purple (Trust & Tech) on Light Background -->
+    <!-- Application Structure Plan:
+         1. Hero Section: Immediate value prop "All-in-one" (Source: PDF Structure).
+         2. Social Proof: Trust building.
+         3. Problem/Solution (Interactive): WP vs GHL comparison logic from PDF.
+         4. Cost Calculator (Interactive): Demonstrates the "Licenčné poplatky" argument.
+         5. Modules/Features: Grid showing specific tools (CRM, Reporting, AI).
+         6. Pricing: The 3 tiers mentioned in strategy PDF.
+         7. Testimonials & CTA.
+         Rationale: This structure leads the user from emotional buy-in (Hero) to logical justification (Calculator/Comparison) to action (Pricing).
+    -->
+    <!-- Visualization & Content Choices:
+         - Cost Chart: Bar chart comparing multi-plugin stack costs vs GHL flat fee. Goal: Inform/Compare.
+         - Funnel Chart: Representing the "Conversion Focus" argument. Goal: Inform.
+         - Icons: Unicode/CSS to replace SVG requirements.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-gray-50">
+
+    <!-- NAVIGATION -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+                        DigitalnaPomoc
+                    </span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#problem" class="text-gray-600 hover:text-blue-600 transition font-medium">Porovnanie</a>
+                    <a href="#savings" class="text-gray-600 hover:text-blue-600 transition font-medium">Úspora</a>
+                    <a href="#features" class="text-gray-600 hover:text-blue-600 transition font-medium">Funkcie</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition font-medium">Cenník</a>
+                </div>
+                <button onclick="scrollToSection('contact')" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-semibold transition shadow-lg hover:shadow-blue-500/30">
+                    Konzultácia Zdarma
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION (Podsekcia B - 1) -->
+    <section class="relative pt-20 pb-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <span class="inline-block py-1 px-3 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold mb-6 border border-blue-100">
+                🚀 Kompletný "Biznis v krabici"
+            </span>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
+                Nahraďte desiatky nástrojov <br>
+                <span class="gradient-text">jedným systémom</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-500 max-w-2xl mx-auto mb-10">
+                Zabudnite na "pluginové peklo" vo WordPresse. Získajte web, CRM, fakturáciu, automatizáciu a AI zamestnanca v jednej platforme.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="scrollToSection('pricing')" class="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                    Zobraziť Balíky
+                </button>
+                <button onclick="scrollToSection('problem')" class="px-8 py-4 bg-white text-gray-700 font-bold rounded-lg border border-gray-200 hover:bg-gray-50 transition shadow-md">
+                    Prečo prejsť z WordPress?
+                </button>
+            </div>
+        </div>
+        <!-- Decorative background element -->
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full z-0 opacity-30 pointer-events-none">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div class="absolute top-20 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF (Podsekcia B - 2) -->
+    <section class="py-10 bg-white border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">Dôverujú nám moderní podnikatelia</p>
+            <div class="flex justify-center items-center flex-wrap gap-8 opacity-60 grayscale hover:grayscale-0 transition duration-500">
+                <span class="text-2xl font-bold text-gray-400">AGENCY<span class="text-blue-500">PRO</span></span>
+                <span class="text-2xl font-bold text-gray-400">SaaS<span class="text-purple-500">MASTER</span></span>
+                <span class="text-2xl font-bold text-gray-400">Marketer<span class="text-indigo-500">IS</span></span>
+                <span class="text-2xl font-bold text-gray-400">Business<span class="text-blue-500">FLOW</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROBLÉM VS RIEŠENIE (Podsekcia B - 3 & PDF Source Report) -->
+    <section id="problem" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">Prečo "zadarmo" WordPress nakoniec stojí viac?</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+                    Na základe našej analýzy (PDF "Kľúčové rozdiely"), WordPress vyžaduje neustálu údržbu a platené pluginy, aby dosiahol funkčnosť, ktorú my ponúkame v základe.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Interactive Comparison Logic -->
+                <div class="space-y-6">
+                    <div id="wp-card" class="bg-white p-6 rounded-2xl shadow-sm border border-red-100 transition-all duration-300 cursor-pointer hover:shadow-md" onclick="highlightComparison('wp')">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-2xl">⚠️</div>
+                            <h3 class="text-xl font-bold text-gray-800">WordPress "Pluginové Peklo"</h3>
+                        </div>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">✖</span> 5-10 rôznych pluginov, ktoré sa "bijú"
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">✖</span> Pomalé načítanie webu kvôli skriptom
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">✖</span> Žiadne natívne CRM ani automatizácia
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">✖</span> Bezpečnostné diery a nutnosť aktualizácií
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div id="ghl-card" class="bg-white p-6 rounded-2xl shadow-lg border-2 border-blue-500 transition-all duration-300 transform scale-105 cursor-pointer" onclick="highlightComparison('ghl')">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl">✅</div>
+                            <h3 class="text-xl font-bold text-gray-800">DigitalnaPomoc (All-in-One)</h3>
+                        </div>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✔</span> Vstavané CRM, Kalendár, Emailing
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✔</span> Zameranie na konverzie a predaj
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✔</span> Stabilita (žiadne konflikty pluginov)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✔</span> AI Zamestnanec v cene
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Visual Focus based on selection -->
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 h-full flex flex-col justify-center">
+                    <div id="comparison-display">
+                        <h4 class="text-lg font-semibold text-blue-600 mb-2 uppercase tracking-wide">Analýza Efektivity</h4>
+                        <p id="comparison-text" class="text-2xl font-bold text-gray-800 mb-6">
+                            "Kým WordPress je nástroj na tvorbu webov, my sme systém na riadenie biznisu."
+                        </p>
+                        
+                        <!-- Chart Container -->
+                        <div class="chart-container">
+                            <canvas id="efficiencyChart"></canvas>
+                        </div>
+                        <p class="text-center text-sm text-gray-400 mt-4">Porovnanie času potrebného na správu zákazníka</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERAKTÍVNA KALKULAČKA (Podsekcia B - 4 & 5 - Moduly a Cena) -->
+    <section id="savings" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-6">Koľko platíte zbytočne?</h2>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Väčšina firiem platí za 5 a viac nástrojov. Zaškrtnite, čo aktuálne používate, a zistite, koľko ušetríte prechodom na náš systém.
+                    </p>
+
+                    <div class="space-y-4 bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                        <label class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50">
+                            <span class="flex items-center">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 savings-calc" value="30" onchange="updateSavings()">
+                                <span class="ml-3 font-medium">Email Marketing (napr. Mailchimp)</span>
+                            </span>
+                            <span class="text-gray-500">€30/mes</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50">
+                            <span class="flex items-center">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 savings-calc" value="50" onchange="updateSavings()">
+                                <span class="ml-3 font-medium">CRM Systém (napr. Pipedrive)</span>
+                            </span>
+                            <span class="text-gray-500">€50/mes</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50">
+                            <span class="flex items-center">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 savings-calc" value="15" onchange="updateSavings()">
+                                <span class="ml-3 font-medium">Rezervácie (napr. Calendly)</span>
+                            </span>
+                            <span class="text-gray-500">€15/mes</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50">
+                            <span class="flex items-center">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 savings-calc" value="25" onchange="updateSavings()">
+                                <span class="ml-3 font-medium">Funnels/Lieviky (napr. ClickFunnels)</span>
+                            </span>
+                            <span class="text-gray-500">€97/mes</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm cursor-pointer hover:bg-gray-50">
+                            <span class="flex items-center">
+                                <input type="checkbox" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 savings-calc" value="20" onchange="updateSavings()">
+                                <span class="ml-3 font-medium">Automatizácie (napr. Zapier)</span>
+                            </span>
+                            <span class="text-gray-500">€20/mes</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="bg-gray-900 rounded-3xl p-8 text-white shadow-2xl">
+                        <h3 class="text-2xl font-semibold mb-6">Vaša mesačná úspora</h3>
+                        
+                        <!-- Chart Container for Savings -->
+                        <div class="chart-container">
+                            <canvas id="savingsChart"></canvas>
+                        </div>
+
+                        <div class="mt-8 pt-8 border-t border-gray-700 flex justify-between items-end">
+                            <div>
+                                <p class="text-gray-400 text-sm">Cena DigitalnaPomoc (Rast)</p>
+                                <p class="text-2xl font-bold text-white">€97/mes</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-400 text-sm">Aktuálne náklady</p>
+                                <p id="total-cost-display" class="text-4xl font-bold text-red-400">€0/mes</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-green-500/20 rounded-lg p-4 text-center border border-green-500/50">
+                            <span class="text-green-400 font-bold text-lg">Ušetríte ročne: <span id="yearly-savings">€0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- MODULY A FUNKCIE (Podsekcia B - 4 & 5) -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-blue-600 font-bold tracking-wider uppercase text-sm">Ekosystém</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2">Čo všetko obsahuje náš systém?</h2>
+                <p class="mt-4 text-gray-500 max-w-2xl mx-auto">Všetky moduly sú navzájom prepojené. Dáta z reklamy idú priamo do CRM a AI automaticky komunikuje.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Module 1: AI (Highlighted in PDF) -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 group">
+                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition">🤖</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">AI Zamestnanec</h3>
+                    <p class="text-gray-600 mb-4">Chatbot, ktorý "nie je hlúpy". Trénovaný na vašich dátach, dohaduje termíny a odpovedá 24/7. Nikdy nespí.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Konverzačná AI</li>
+                        <li>• Booking do kalendára</li>
+                    </ul>
+                </div>
+
+                <!-- Module 2: Ad Reporting (Highlighted in PDF) -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 group">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition">📊</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Ad Reporting</h3>
+                    <p class="text-gray-600 mb-4">Presne viete, ktoré euro z reklamy prinieslo zisk. Žiadne skreslené dáta z pluginov, ale priame API prepojenie.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Attribution tracking</li>
+                        <li>• ROI dashboard</li>
+                    </ul>
+                </div>
+
+                <!-- Module 3: Automatizácia & CRM -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 group">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition">⚙️</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">CRM & Automatizácia</h3>
+                    <p class="text-gray-600 mb-4">Keď príde lead, systém automaticky pošle SMS, email a priradí úlohu obchodníkovi. Všetko na jednom mieste.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li>• Pipeline management</li>
+                        <li>• SMS/Email workflows</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CENOVÉ BALÍKY (Podsekcia B - 6) -->
+    <section id="pricing" class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">Jednoduchý Cenník</h2>
+                <p class="mt-4 text-gray-500">Žiadne skryté poplatky. Vyberte si balík, ktorý sedí vášmu rastu.</p>
+                
+                <!-- Toggle Monthly/Yearly -->
+                <div class="mt-6 flex justify-center items-center gap-3">
+                    <span class="text-gray-600 font-medium">Mesačne</span>
+                    <button id="billing-toggle" class="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600 transition" onclick="togglePricing()">
+                        <span id="toggle-circle" class="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition"></span>
+                    </button>
+                    <span class="text-gray-900 font-bold">Ročne <span class="text-green-500 text-sm">(-20%)</span></span>
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Základ -->
+                <div class="border border-gray-200 rounded-2xl p-8 hover:border-blue-300 transition relative">
+                    <h3 class="text-xl font-bold text-gray-900">Základ</h3>
+                    <p class="text-gray-500 text-sm mt-2">Pre začínajúcich podnikateľov.</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-4xl font-extrabold text-gray-900 price-display" data-monthly="47" data-yearly="37">€47</span>
+                        <span class="ml-1 text-gray-500">/mes</span>
+                    </div>
+                    <button class="mt-8 w-full bg-blue-50 text-blue-700 hover:bg-blue-100 py-3 rounded-lg font-bold transition">Začať</button>
+                    <ul class="mt-8 space-y-4 text-sm text-gray-600">
+                        <li class="flex items-center">✅ CRM Systém</li>
+                        <li class="flex items-center">✅ Webstránka</li>
+                        <li class="flex items-center">✅ Kalendár</li>
+                        <li class="flex items-center text-gray-400">❌ Automatizácie</li>
+                        <li class="flex items-center text-gray-400">❌ AI Zamestnanec</li>
+                    </ul>
+                </div>
+
+                <!-- Rast (Most Popular) -->
+                <div class="border-2 border-blue-600 rounded-2xl p-8 relative shadow-xl transform scale-105 bg-white z-10">
+                    <div class="absolute top-0 right-0 -mt-4 mr-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Najobľúbenejšie</div>
+                    <h3 class="text-xl font-bold text-gray-900">Rast</h3>
+                    <p class="text-gray-500 text-sm mt-2">Pre firmy, ktoré chcú automatizovať.</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-4xl font-extrabold text-gray-900 price-display" data-monthly="97" data-yearly="77">€97</span>
+                        <span class="ml-1 text-gray-500">/mes</span>
+                    </div>
+                    <button class="mt-8 w-full bg-blue-600 text-white hover:bg-blue-700 py-3 rounded-lg font-bold transition shadow-lg">Vybrať Balík</button>
+                    <ul class="mt-8 space-y-4 text-sm text-gray-600">
+                        <li class="flex items-center">✅ <span class="font-bold ml-1">Všetko zo Základu</span></li>
+                        <li class="flex items-center">✅ Neobmedzené Lieviky</li>
+                        <li class="flex items-center">✅ Email & SMS Marketing</li>
+                        <li class="flex items-center">✅ Pokročilé Automatizácie</li>
+                        <li class="flex items-center">✅ Čiastočný prístup k AI</li>
+                    </ul>
+                </div>
+
+                <!-- Pro -->
+                <div class="border border-gray-200 rounded-2xl p-8 hover:border-blue-300 transition">
+                    <h3 class="text-xl font-bold text-gray-900">Pro</h3>
+                    <p class="text-gray-500 text-sm mt-2">Kompletná dominancia trhu.</p>
+                    <div class="mt-6 flex items-baseline">
+                        <span class="text-4xl font-extrabold text-gray-900 price-display" data-monthly="297" data-yearly="237">€297</span>
+                        <span class="ml-1 text-gray-500">/mes</span>
+                    </div>
+                    <button class="mt-8 w-full bg-white border-2 border-gray-200 text-gray-700 hover:border-gray-900 hover:text-gray-900 py-3 rounded-lg font-bold transition">Kontaktujte nás</button>
+                    <ul class="mt-8 space-y-4 text-sm text-gray-600">
+                        <li class="flex items-center">✅ <span class="font-bold ml-1">Všetko z Rastu</span></li>
+                        <li class="flex items-center">✅ Plne trénovaný AI Zamestnanec</li>
+                        <li class="flex items-center">✅ SaaS Mód</li>
+                        <li class="flex items-center">✅ Prioritná podpora</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA + KONTAKT (Podsekcia B - 8) -->
+    <section id="contact" class="py-20 bg-gray-900 text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Pripravení zjednodušiť svoj biznis?</h2>
+            <p class="text-gray-400 text-lg mb-10">
+                Nechajte technológie pracovať za vás. Dohodnite si nezáväznú konzultáciu a ukážeme vám, ako DigitalnaPomoc ušetrí váš čas aj peniaze.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="px-8 py-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-500 transition shadow-xl">
+                    Rezervovať Demo
+                </button>
+                <button class="px-8 py-4 bg-transparent border border-gray-600 text-white font-bold rounded-lg hover:bg-gray-800 transition">
+                    Napíšte Nám
+                </button>
+            </div>
+            <p class="mt-12 text-sm text-gray-600">© 2024 DigitalnaPomoc. Všetky práva vyhradené.</p>
+        </div>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script>
+        // --- 1. COMPARISON CHART LOGIC ---
+        const ctxEfficiency = document.getElementById('efficiencyChart').getContext('2d');
+        let efficiencyChart = new Chart(ctxEfficiency, {
+            type: 'bar',
+            data: {
+                labels: ['Správa Techniky', 'Marketing & Predaj'],
+                datasets: [
+                    {
+                        label: 'WordPress (Pluginové peklo)',
+                        data: [70, 30], // Veľa času na techniku
+                        backgroundColor: 'rgba(239, 68, 68, 0.6)', // Red
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'DigitalnaPomoc (GHL)',
+                        data: [10, 90], // Málo času na techniku, veľa na predaj
+                        backgroundColor: 'rgba(37, 99, 235, 0.6)', // Blue
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: { display: true, text: 'Využitie času (%)' }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to highlight comparison cards
+        function highlightComparison(type) {
+            const wpCard = document.getElementById('wp-card');
+            const ghlCard = document.getElementById('ghl-card');
+            const text = document.getElementById('comparison-text');
+
+            if (type === 'wp') {
+                wpCard.classList.add('ring-2', 'ring-red-500', 'shadow-xl');
+                wpCard.classList.remove('opacity-50');
+                ghlCard.classList.remove('ring-2', 'ring-blue-500', 'scale-105');
+                ghlCard.classList.add('opacity-50');
+                text.innerHTML = "WordPress vás núti riešiť <span class='text-red-600'>aktualizácie a konflikty</span> pluginov namiesto biznisu.";
+            } else {
+                ghlCard.classList.add('ring-2', 'ring-blue-500', 'scale-105', 'shadow-xl');
+                ghlCard.classList.remove('opacity-50');
+                wpCard.classList.remove('ring-2', 'ring-red-500', 'shadow-xl');
+                wpCard.classList.add('opacity-50');
+                text.innerHTML = "DigitalnaPomoc automatizuje procesy, takže sa <span class='text-blue-600'>sústredíte len na predaj</span>.";
+            }
+        }
+        
+        // Initialize highlight
+        highlightComparison('ghl');
+
+        // --- 2. SAVINGS CALCULATOR LOGIC ---
+        const ctxSavings = document.getElementById('savingsChart').getContext('2d');
+        // Initial Data
+        const systemCost = 97; // Rast plan
+        let currentCost = 0;
+
+        let savingsChart = new Chart(ctxSavings, {
+            type: 'bar',
+            data: {
+                labels: ['Aktuálne Nástroje', 'DigitalnaPomoc'],
+                datasets: [{
+                    label: 'Mesačné Náklady (€)',
+                    data: [0, systemCost],
+                    backgroundColor: [
+                        'rgba(239, 68, 68, 0.7)', // Red for current
+                        'rgba(16, 185, 129, 0.7)'  // Green for GHL
+                    ],
+                    borderRadius: 8,
+                    barThickness: 50
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#9CA3AF' }
+                    },
+                    x: {
+                        ticks: { color: '#FFFFFF' },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        function updateSavings() {
+            const checkboxes = document.querySelectorAll('.savings-calc');
+            let total = 0;
+            checkboxes.forEach(box => {
+                if (box.checked) {
+                    total += parseInt(box.value);
+                }
+            });
+            
+            // Allow user to see "0" if nothing checked, but for chart clarity vs 97, we keep dynamic
+            currentCost = total;
+            
+            // Update Text
+            document.getElementById('total-cost-display').innerText = `€${total}/mes`;
+            const yearly = (total - systemCost) * 12;
+            const yearlyEl = document.getElementById('yearly-savings');
+            
+            if (yearly > 0) {
+                yearlyEl.innerText = `€${yearly}`;
+                yearlyEl.parentElement.classList.remove('hidden');
+            } else {
+                yearlyEl.innerText = "Ešte neušetríte";
+            }
+
+            // Update Chart
+            savingsChart.data.datasets[0].data[0] = total;
+            savingsChart.update();
+        }
+
+        // Initialize calculator with some checked defaults to show impact immediately
+        document.querySelectorAll('.savings-calc')[0].checked = true; // Email
+        document.querySelectorAll('.savings-calc')[1].checked = true; // CRM
+        document.querySelectorAll('.savings-calc')[3].checked = true; // Funnels
+        updateSavings();
+
+
+        // --- 3. PRICING TOGGLE ---
+        let isYearly = false;
+        function togglePricing() {
+            isYearly = !isYearly;
+            const circle = document.getElementById('toggle-circle');
+            const displays = document.querySelectorAll('.price-display');
+
+            if (isYearly) {
+                circle.classList.add('translate-x-6');
+                circle.classList.remove('translate-x-1');
+                displays.forEach(el => {
+                    el.innerText = '€' + el.dataset.yearly;
+                });
+            } else {
+                circle.classList.remove('translate-x-6');
+                circle.classList.add('translate-x-1');
+                displays.forEach(el => {
+                    el.innerText = '€' + el.dataset.monthly;
+                });
+            }
+        }
+
+        // --- 4. NAVIGATION SCROLL ---
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
