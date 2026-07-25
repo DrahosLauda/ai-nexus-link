@@ -23,9 +23,58 @@ export function Services() {
         <div className="grid gap-5 lg:grid-cols-3 lg:auto-rows-[210px]">
           {/* AI chatbots — featured 2×2 cell */}
           <div
-            className={`${cardClasses} flex flex-col justify-between gap-8 p-[34px] lg:col-span-2 lg:row-span-2`}
+            className={`${cardClasses} relative overflow-hidden flex flex-col justify-between gap-8 p-[34px] lg:col-span-2 lg:row-span-2`}
           >
-            <div className="grid size-12 place-items-center rounded-xl bg-[#eef0ff]">
+            {/* Jemná dekoratívna grafika zboku (AI vlny + chat bublina) */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-16 top-1/2 hidden -translate-y-1/2 opacity-[0.55] lg:block"
+            >
+              <svg
+                width="360"
+                height="360"
+                viewBox="0 0 360 360"
+                fill="none"
+                stroke="#818cf8"
+                strokeWidth="1.5"
+              >
+                <circle cx="250" cy="180" r="60" />
+                <circle cx="250" cy="180" r="105" strokeOpacity="0.6" />
+                <circle cx="250" cy="180" r="150" strokeOpacity="0.35" />
+                <rect
+                  x="205"
+                  y="150"
+                  width="90"
+                  height="62"
+                  rx="16"
+                  fill="#eef0ff"
+                  stroke="#a5b4fc"
+                />
+                <circle cx="228" cy="181" r="4" fill="#818cf8" stroke="none" />
+                <circle cx="250" cy="181" r="4" fill="#a5b4fc" stroke="none" />
+                <circle cx="272" cy="181" r="4" fill="#c7d2fe" stroke="none" />
+                <path
+                  d="M240 212v14l16-14"
+                  fill="#eef0ff"
+                  stroke="#a5b4fc"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M120 90l6 12 12 6-12 6-6 12-6-12-12-6 12-6z"
+                  fill="#c4b5fd"
+                  stroke="none"
+                  opacity="0.8"
+                />
+                <path
+                  d="M150 250l4 8 8 4-8 4-4 8-4-8-8-4 8-4z"
+                  fill="#a5b4fc"
+                  stroke="none"
+                  opacity="0.7"
+                />
+              </svg>
+            </div>
+
+            <div className="relative grid size-12 place-items-center rounded-xl bg-[#eef0ff]">
               <svg
                 width="24"
                 height="24"
@@ -44,15 +93,30 @@ export function Services() {
                 <path d="M9 13v2" />
               </svg>
             </div>
-            <div className="flex flex-col gap-2.5">
+            <div className="relative flex flex-col gap-2.5">
               <h3 className="text-[27px] font-bold tracking-[-0.02em] text-ink">
                 AI chatboty a asistenti
               </h3>
-              <p className="max-w-[500px] text-base leading-relaxed text-mist-500">
+              <p className="max-w-[460px] text-base leading-relaxed text-mist-500">
                 Chatbot na vašom webe, ktorý odpovedá zákazníkom 24/7, alebo
                 interný AI asistent, ktorý zvládne e‑maily, ponuky aj zápisy zo
                 stretnutí.
               </p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {[
+                  "Podpora 24/7",
+                  "Rezervácie termínov",
+                  "Odpovede na e‑maily",
+                  "Kvalifikácia dopytov",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-line bg-cloud px-3 py-1 text-[12.5px] font-medium text-mist-500"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
               <span className="mt-1 inline-flex items-center gap-1.5 text-[15px] font-semibold text-indigo-500">
                 Zistiť viac →
               </span>
