@@ -5,6 +5,26 @@
 > Prostredie: doména + WP na **hostcreators.sk** (panel **WebAdmin**), frontend
 > na **Railway**.
 
+## STAV: technicky DOKONČENÉ ✅ (júl 2026)
+
+Cutover prebehol. Podrobný priebeh a ponaučenia sú v `dennik.md` („Fáza GO-LIVE").
+Zhrnutie a odchýlky od pôvodného runbooku nižšie:
+
+- **Zvolená „Cesta 2"** (nie apex ako hlavná, ako predpokladal runbook nižšie):
+  hlavná adresa je **`www.digitalnapomoc.sk`** (na Railway), **apex `digitalnapomoc.sk`
+  presmeruje na `www`**. Dôvod: Railway pre custom domény dáva **CNAME**, apex CNAME
+  klasický DNS nevie (potreboval by ALIAS/ANAME) a plán mal **limit 1 custom doména**.
+  Canonical = `www`; `SITE_URL = https://www.digitalnapomoc.sk`.
+- **Migrácia obsahu `www`→`wp`** cez plugin **Better Search Replace** (hostcreators
+  účet je **SFTP-only**, WP-CLI cez SSH nejde — shell aj exec zakázané).
+- **Web je živý, ale zámerne ešte skrytý pred Googlom** — `SITE_INDEXABLE` je
+  **nenastavené** (noindex). Zapneme ho ako úplne posledný krok po „Pred-Google
+  checkliste" (viď `dennik.md`): cookie lišta/GDPR, dizajn, štýl článkov,
+  stránkovanie blogu, ďalšie funkcie → potom `SITE_INDEXABLE=true` + Search Console.
+
+Runbook nižšie ostáva ako referencia (pozor: kroky 4–9 písal pre Cestu 1 = apex ako
+hlavná; my sme išli Cestou 2 — `www` hlavná, apex redirect).
+
 ## Kontext a stav (štart fázy — čítaj najprv)
 
 **Kde sme:** Fáza 4 dokončená — dvaja agenti (Writer + SEO/GEO) bežia 24/7

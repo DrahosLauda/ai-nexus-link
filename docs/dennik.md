@@ -3,6 +3,87 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Fáza GO-LIVE — technicky DOKONČENÁ ✅ (júl 2026)
+
+**Referencia spustená naostro na doméne.** Doména `digitalnapomoc.sk` teraz
+smeruje na náš Next.js frontend, WordPress presťahovaný na skrytú subdoménu.
+Web je **živý a funkčný**, ale **zámerne ešte skrytý pred Googlom** (`SITE_INDEXABLE`
+vypnuté) — Google pozveme až po doladení (viď „Pred-Google checklist" nižšie).
+
+**Výsledný stav (čo je naostro):**
+
+- `https://www.digitalnapomoc.sk` → **frontend** (Railway), platné SSL.
+- `https://digitalnapomoc.sk` (apex) → **presmeruje na `www`** (hostcreators, „Pripojiť URI" = Áno, zachová cestu).
+- `https://wp.digitalnapomoc.sk` → **WordPress** (admin/obsah), **noindex**.
+- Frontend číta obsah z `wp.` (`WP_URL`), orchestrátor publikuje na `wp.`.
+- Webhook (`nexus-revalidate.php`) volá `https://www.digitalnapomoc.sk/api/revalidate`.
+- `SITE_URL = https://www.digitalnapomoc.sk`; `SITE_INDEXABLE` **nenastavené** (web skrytý).
+
+**Zvolená stratégia — „Cesta 2" (www ako hlavná, apex presmeruje na www):**
+Railway pre custom domény vydáva **CNAME**, lenže apex (`digitalnapomoc.sk` bez
+`www`) CNAME v klasickom DNS mať nemôže (potreboval by ALIAS/ANAME) a Railway
+plán mal **limit 1 custom doména**. Preto je hlavná (canonical) adresa
+**`www.digitalnapomoc.sk`** na Railway a **apex len presmeruje na `www`** cez
+hostcreators (zadarmo, bez druhej custom domény). Canonical = `www`.
+
+**Kroky, ako to prebehlo:**
+
+*Fáza A (príprava, bez výpadku):*
+1. hostcreators: subdoména **`wp`** → document root **`/digitalnapomoc.sk/web`**
+   (ten istý WordPress ako `www`), PHP **8.3** (zhodne s hlavnou doménou).
+2. SSL pre `wp.` — hosting ho vydal **automaticky** (wildcard/Let's Encrypt),
+   žiadne manuálne tlačidlo. Overené: `Certifikát je platný` pre `wp.`.
+3. Railway → frontend `ai-nexus-link` → Networking: pridaná custom doména
+   **`www.digitalnapomoc.sk`** (port 8080). DNS ciele z Railway:
+   `www` **CNAME → `24wicioh.up.railway.app`** + **TXT `_railway-verify.www`**.
+
+*Fáza B (cutover):*
+4. **Migrácia URL v obsahu `www` → `wp`** (aby po prepnutí nezmizli obrázky):
+   spravené pluginom **Better Search Replace** (dry-run 76 buniek → ostro),
+   `https://www.digitalnapomoc.sk` → `https://wp.digitalnapomoc.sk`. Zmenil aj
+   `home`/`siteurl` → WP odteraz „býva" na `wp.`.
+5. Railway: **`WP_URL` → `https://wp.digitalnapomoc.sk`** na frontende aj
+   orchestrátori (deploy). Frontend tak nečíta „sám seba" po prepnutí DNS.
+6. hostcreators DNS zóna: pridaný **`www` CNAME → `24wicioh.up.railway.app`**
+   (konkrétny záznam **prebije wildcard** `*.digitalnapomoc.sk`) + **TXT
+   `_railway-verify.www`**. `wp` ostáva cez wildcard na hostingu.
+7. hostcreators: hlavná doména → **Presmerovanie → `https://www.digitalnapomoc.sk`**
+   („Pripojiť URI k presmerovaniu" = Áno).
+8. Webhook `nexus-revalidate.php`: URL host `ai-nexus-link-production.up.railway.app`
+   → **`www.digitalnapomoc.sk`** (`REVALIDATE_SECRET` bez zmeny).
+9. WP admin (`wp.`) → Nastavenia → Čítanie → **noindex** zapnuté.
+10. Railway → frontend: **`SITE_URL = https://www.digitalnapomoc.sk`**.
+    `SITE_INDEXABLE` **zámerne NEnastavené** (web ešte skrytý pred Googlom).
+
+**Ponaučenia:**
+
+1. **hostcreators účet je SFTP-only** — SSH pustí prihlásenie, ale odmietne shell
+   aj `exec` (`shell request failed` / `exec request failed`). WP-CLI cez SSH teda
+   nejde; hromadnú náhradu URL rob **pluginom Better Search Replace** vo wp-admin.
+2. **Wildcard `*.digitalnapomoc.sk CNAME digitalnapomoc.sk`** — preto `www` aj `wp`
+   fungovali „samé" (bez vlastného DNS). **Konkrétny záznam pre subdoménu prebije
+   wildcard** — tak sme `www` presmerovali na Railway a `wp` nechali na hostingu.
+3. **Headless sťahovanie WP na subdoménu = prepíš absolútne URL v obsahu.** Obrázky
+   článkov mali napevno `www…/wp-content/…`; bez náhrady `www→wp` by po cutovere
+   zmizli. Riešenie: search-replace v DB (`home`/`siteurl` + obsah).
+4. **Railway custom doména = CNAME; apex CNAME je problém.** Bezpečná cesta je
+   **www ako hlavná + apex redirect na www** („Cesta 2"). Šetrí aj limit custom domén.
+5. **Nový článok sa neukázal hneď** = 5-min ISR cache + timing migrácie, nie chyba
+   webhooku. Po tvrdom refreshi/uplynutí ISR nabehol. Netreba nič re-publikovať —
+   existujúce články sa zobrazujú automaticky, webhook je len na *okamžitú* obnovu.
+
+**Pred-Google checklist (než zapneme `SITE_INDEXABLE=true` + Search Console):**
+
+- [ ] 🍪 Cookie lišta + zásady ochrany osobných údajov (GDPR — web zbiera leady)
+- [ ] 🎨 Doladenie dizajnu
+- [ ] ✍️ Rôznorodejší štýl článkov (úprava Writer promptu/agenta)
+- [ ] 📄 Stránkovanie blogu (6 na stránku + „ďalšie")
+- [ ] ➕ Ďalšie funkcie podľa plánu
+- [ ] 🔎 Potom: `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
+
+**Rollback (keby bolo treba):** `www` CNAME v DNS naspäť / apex doménu späť na
+„Štandardné zobrazenie"; WP adresu späť opačnou náhradou `wp → www`.
+
 ## Fáza 4 — DOKONČENÁ ✅ (zhrnutie + changelog)
 
 **Fáza 4 uzavretá** — postavili sme druhého agenta a plnú automatizáciu reťazca.

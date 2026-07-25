@@ -38,10 +38,11 @@ Hotové:
 - ✅ Krok 5 — WP mu-plugin webhook (`nexus-revalidate.php` v `wp-content/mu-plugins/` na hostingu) — publikovaný/upravený článok je na stránke do ~10 s
 - ✅ Krok 6 — PR #1 zmergovaný do `main`; Railway nasadzuje z `main`
 - ✅ Wayland: obrázky k téme cez Google Gemini (fallback Z.ai CogView), natrvalo vo WP médiách; téma ako CLI argument; `fix_post_images.py` na opravu starších článkov
+- ✅ **Go-live (technicky)** — doména spustená „Cestou 2": `www.digitalnapomoc.sk` → frontend, apex → `www`, WordPress na `wp.digitalnapomoc.sk` (noindex). Web zámerne **ešte skrytý pred Googlom** (`SITE_INDEXABLE` vypnuté), kým nie je hotový „Pred-Google checklist" (cookie lišta/GDPR, dizajn, štýl článkov, stránkovanie blogu). Detaily: `docs/go-live.md` + `docs/dennik.md`.
 - [ ] Fáza 3 — orchestrátor ako Railway worker: cron + témy z `agent_config`, logy do `agent_logs`; SEO agent; publikuje ako draft (človek schvaľuje vo WP)
 - [ ] Fáza 4 — WooCommerce cez Store API (najprv embednutý checkout)
 - [ ] Fáza 5 — produktizácia: šablóna frontend+napojenie pre ďalších klientov
-- [ ] Neskôr: podstránky `/sluzby/[slug]`; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin); doména digitalnapomoc.sk → frontend (WP na subdoménu)
+- [ ] Neskôr: podstránky `/sluzby/[slug]`; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin)
 
 Podrobná dokumentácia: `docs/vizia.md` (kam to celé smeruje, hodnota, model
 dodania — SaaS), `docs/architektura.md` (ako systém funguje),
@@ -76,11 +77,11 @@ python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 
 | Premenná | Kde | Účel |
 |---|---|---|
-| `WP_URL` | frontend (Railway), orchestrátor `.env` | WordPress URL |
+| `WP_URL` | frontend (Railway), orchestrátor `.env` | WordPress URL (po go-live `https://wp.digitalnapomoc.sk`) |
 | `DIRECTUS_URL`, `DIRECTUS_TOKEN` | frontend (Railway), orchestrátor `.env` | Directus; frontend používa token `frontend-bot` (iba create na `client_leads`) |
 | `REVALIDATE_SECRET` | frontend (Railway) + WP mu-plugin | tajný kľúč pre `/api/revalidate` |
-| `SITE_URL` | frontend (Railway), voliteľné | verejná adresa frontendu (nie WP); default = Railway URL, pri doméne `https://digitalnapomoc.sk` |
-| `SITE_INDEXABLE` | frontend (Railway), voliteľné | `true` = indexovať web + povoliť AI roboty; inak skrytý (noindex) |
+| `SITE_URL` | frontend (Railway), voliteľné | verejná adresa frontendu (nie WP); po go-live `https://www.digitalnapomoc.sk` |
+| `SITE_INDEXABLE` | frontend (Railway), voliteľné | `true` = indexovať web + povoliť AI roboty; inak skrytý (noindex). **Po go-live zámerne vypnuté** — zapnúť až po „Pred-Google checkliste" |
 | `WP_USER`, `WP_APP_PASSWORD` | orchestrátor `.env` | WP publikovanie (application password) |
 | `ZAI_API_KEY` | orchestrátor `.env` | Z.ai GLM API |
 | `GEMINI_API_KEY` | orchestrátor `.env` | Google Gemini API (generovanie obrázkov k článkom) |
