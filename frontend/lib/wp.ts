@@ -5,6 +5,8 @@
  * @see https://developer.wordpress.org/rest-api/reference/posts/
  */
 
+import { SITE_URL } from "./seo";
+
 const WP_URL = process.env.WP_URL ?? "https://www.digitalnapomoc.sk";
 
 export interface WPPost {
@@ -56,6 +58,16 @@ function toMediaProxy(input: string): string {
 }
 
 /**
+ * Featured obrázok cez proxy /media, ale ABSOLÚTNE na našej doméne. next/image
+ * berie cestu s "/" ako lokálny súbor (obišiel by rewrite) — absolútnou URL ho
+ * donútime načítať cez HTTP, čo cez rewrite prejde. Návštevník `wp.` nevidí.
+ */
+function toFeaturedProxy(url: string): string {
+  const rel = toMediaProxy(url);
+  return rel.startsWith("/media/") ? `${SITE_URL}${rel}` : rel;
+}
+
+/**
  * Vyberie z featured image komprimovanú veľkosť, ktorú WordPress
  * automaticky generuje pri nahratí (medium_large ≈ 768 px stačí na kartu).
  */
@@ -68,7 +80,7 @@ function extractImageUrl(p: WPPostRaw): string | null {
     sizes?.large?.source_url ??
     media.source_url ??
     null;
-  return url ? toMediaProxy(url) : null;
+  return url ? toFeaturedProxy(url) : null;
 }
 
 /** Alt text featured obrázka z WP (ak ho agent/redaktor nastavil). */
