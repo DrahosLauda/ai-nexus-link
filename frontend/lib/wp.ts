@@ -20,6 +20,8 @@ export interface WPPost {
   readingTime: number;
   /** URL hlavného obrázka (featured image) vo vhodnej veľkosti, ak existuje. */
   imageUrl: string | null;
+  /** Alt text hlavného obrázka z WP (ak ho agent/redaktor nastavil). */
+  imageAlt: string | null;
 }
 
 /** Minimal raw shape we request from the REST API. */
@@ -35,6 +37,7 @@ interface WPPostRaw {
   _embedded?: {
     "wp:featuredmedia"?: Array<{
       source_url?: string;
+      alt_text?: string;
       media_details?: {
         sizes?: Record<string, { source_url: string }>;
       };
@@ -66,6 +69,12 @@ function extractImageUrl(p: WPPostRaw): string | null {
     media.source_url ??
     null;
   return url ? toMediaProxy(url) : null;
+}
+
+/** Alt text featured obrázka z WP (ak ho agent/redaktor nastavil). */
+function extractImageAlt(p: WPPostRaw): string | null {
+  const alt = p._embedded?.["wp:featuredmedia"]?.[0]?.alt_text?.trim();
+  return alt ? alt : null;
 }
 
 /** Strip all HTML tags and decode the most common WP entities. */
@@ -122,6 +131,7 @@ function toPost(p: WPPostRaw): WPPost {
     modifiedISO: p.modified,
     readingTime: estimateReadingTime(p.content.rendered),
     imageUrl: extractImageUrl(p),
+    imageAlt: extractImageAlt(p),
   };
 }
 

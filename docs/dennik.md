@@ -3,6 +3,30 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Backlog — drobné úpravy a otvorené témy (živý zoznam)
+
+> Aby drobnosti neunikli. Dopĺňať/škrtať priebežne. Väčšie veci majú vlastný
+> záznam nižšie. Súvisí s „Pred-Google checklistom" (viď GO-LIVE nižšie) —
+> cieľ je **profesionálna úroveň SEO/GEO** a **agent, ktorý sa dá zlepšovať**.
+
+**Agent / orchestrátor (SEO/GEO, kvalita obsahu):**
+
+- [ ] **Rôznorodejšie úvody článkov** — Writer často začína rovnakým vzorcom
+  („Predstavte si, je piatok večer…"). Doladiť `system_prompt` (Directus) +
+  príp. základný prompt v `wp_writer_agent.py`, nech úvody striedajú formu.
+- [ ] **Jednoduchšie obrázky** — časť generovaných obrázkov je na naše témy
+  príliš zložitá. Obmedziť/spresniť obrázkový prompt (jednoduchší, čistejší motív).
+- [ ] **Alt texty generovaných obrázkov** — agent ich pri in-článkových obrázkoch
+  už niekedy nastavuje; dotiahnuť **konzistenciu a kvalitu** (popisný alt vždy).
+
+**Frontend:**
+
+- [x] Náhľady preberajú `alt` z WP (fallback názov článku) — *(tento PR)*
+- [ ] **Responzivita (mobil)** — pár detailov na doladenie (doplniť konkrétne
+  po prehliadke na mobile).
+- [ ] Interné odkazy v tele článku po migrácii `www→wp` ukazujú na `wp.` —
+  prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
+
 ## Fáza GO-LIVE — technicky DOKONČENÁ ✅ (júl 2026)
 
 **Referencia spustená naostro na doméne.** Doména `digitalnapomoc.sk` teraz

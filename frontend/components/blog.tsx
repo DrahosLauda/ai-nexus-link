@@ -10,6 +10,7 @@ export interface BlogCardPost {
   tag?: string;
   external?: boolean;
   imageUrl?: string | null;
+  imageAlt?: string | null;
 }
 
 const gradients = [
@@ -51,7 +52,7 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
                 {post.imageUrl ? (
                   <Image
                     src={post.imageUrl}
-                    alt=""
+                    alt={post.imageAlt || post.title}
                     fill
                     sizes="(min-width: 768px) 33vw, 100vw"
                     className="object-cover"
