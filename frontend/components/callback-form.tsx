@@ -4,7 +4,7 @@ import { useState } from "react";
 import { submitLead } from "@/lib/submit-lead";
 
 const inputClasses =
-  "rounded-[10px] border border-white/[0.12] bg-white/[0.05] px-4 py-[13px] text-[15px] text-white placeholder:text-fog-500 outline-none transition-colors focus:border-indigo-400";
+  "rounded-[10px] border border-line bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-mist-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
 
 export function CallbackForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
@@ -30,18 +30,18 @@ export function CallbackForm() {
   }
 
   return (
-    <div className="flex flex-col gap-3.5 rounded-[20px] border border-white/[0.12] bg-white/[0.05] p-[30px] shadow-[0_24px_64px_rgba(0,0,0,0.35)] backdrop-blur-[20px]">
-      <h3 className="text-xl font-bold tracking-[-0.01em] text-white">
+    <div className="flex flex-col gap-3.5 rounded-[20px] border border-line bg-white p-[30px] shadow-[0_24px_64px_rgba(23,23,50,0.10)]">
+      <h3 className="text-xl font-bold tracking-[-0.01em] text-ink">
         Zistite, kde vám AI ušetrí čas
       </h3>
-      <p className="text-sm leading-[1.55] text-fog-400">
+      <p className="text-sm leading-[1.55] text-mist-500">
         Nechajte nám kontakt a ozveme sa do 24 hodín.
       </p>
 
       {status === "done" ? (
         <p
           role="status"
-          className="rounded-[10px] border border-indigo-400/40 bg-indigo-400/10 px-4 py-[13px] text-[15px] text-indigo-300"
+          className="rounded-[10px] border border-emerald-200 bg-emerald-50 px-4 py-[13px] text-[15px] text-emerald-700"
         >
           Ďakujeme! Ozveme sa vám do 24 hodín.
         </p>
@@ -70,21 +70,21 @@ export function CallbackForm() {
             className="hidden"
           />
           {error && (
-            <p role="alert" className="text-[13.5px] text-red-400">
+            <p role="alert" className="text-[13.5px] text-red-500">
               {error}
             </p>
           )}
           <button
             type="submit"
             disabled={status === "sending"}
-            className="cursor-pointer rounded-[10px] bg-gradient-to-br from-indigo-500 to-violet-500 px-5 py-3.5 text-[15.5px] font-semibold text-white shadow-[0_0_28px_rgba(99,102,241,0.4)] transition-shadow hover:shadow-[0_0_40px_rgba(99,102,241,0.6)] disabled:cursor-default disabled:opacity-60"
+            className="cursor-pointer rounded-[10px] bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3.5 text-[15.5px] font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 disabled:cursor-default disabled:opacity-60 disabled:hover:translate-y-0"
           >
             {status === "sending" ? "Odosielam…" : "Zavolajte mi späť"}
           </button>
         </form>
       )}
 
-      <div className="flex flex-wrap gap-3.5 text-[12.5px] text-fog-500">
+      <div className="flex flex-wrap gap-3.5 text-[12.5px] text-mist-400">
         <span>✓ Odpoveď do 24 h</span>
         <span>✓ Nezáväzné</span>
         <span>✓ GDPR</span>

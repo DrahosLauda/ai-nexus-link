@@ -3,30 +3,30 @@ import { CallbackForm } from "./callback-form";
 
 export function Hero() {
   return (
-    <div className="relative overflow-hidden">
-      {/* Glow orbs */}
+    <div className="relative overflow-hidden bg-white">
+      {/* Jemné svetlé orby */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-[180px] left-[8%] size-[520px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.28)_0%,rgba(99,102,241,0)_70%)] blur-[40px] animate-[orb-float_14s_ease-in-out_infinite]"
+        className="pointer-events-none absolute -top-[160px] left-[6%] size-[520px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.16)_0%,rgba(99,102,241,0)_70%)] blur-[30px] animate-[orb-float_14s_ease-in-out_infinite]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-[120px] top-60 size-[460px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.20)_0%,rgba(168,85,247,0)_70%)] blur-[40px] animate-[orb-float-2_18s_ease-in-out_infinite]"
+        className="pointer-events-none absolute -right-[120px] top-60 size-[460px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.14)_0%,rgba(168,85,247,0)_70%)] blur-[30px] animate-[orb-float-2_18s_ease-in-out_infinite]"
       />
 
       <header className="relative z-[5] mx-auto grid max-w-[1320px] items-center gap-12 px-5 pb-[88px] pt-[130px] sm:px-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pt-[150px]">
         <div className="flex flex-col gap-[22px]">
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-indigo-400/25 bg-indigo-400/10 px-4 py-[7px] text-[13px] text-indigo-300">
-            <span className="size-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]" />
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-[7px] text-[13px] font-medium text-indigo-600">
+            <span className="size-1.5 rounded-full bg-indigo-500" />
             Pre firmy a ľudí, ktorí chcú rásť bez stresu
           </div>
-          <h1 className="text-balance text-[40px] font-extrabold leading-[1.06] tracking-[-0.03em] text-white sm:text-[56px]">
+          <h1 className="text-balance text-[40px] font-extrabold leading-[1.06] tracking-[-0.03em] text-ink sm:text-[56px]">
             Nahraďte rutinnú prácu a{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
               ušetrite hodiny týždenne
             </span>
           </h1>
-          <p className="max-w-[520px] text-pretty text-lg leading-relaxed text-fog-400">
+          <p className="max-w-[520px] text-pretty text-lg leading-relaxed text-mist-500">
             Napojíme AI nástroje na váš e‑mail, fakturáciu či web v priebehu
             dní. Bez zložitej integrácie, s výsledkami od prvého mesiaca.
           </p>
@@ -34,14 +34,14 @@ export function Hero() {
             {heroBullets.map((text) => (
               <li
                 key={text}
-                className="flex items-start gap-2.5 text-[15.5px] leading-normal text-fog-200"
+                className="flex items-start gap-2.5 text-[15.5px] leading-normal text-mist-700"
               >
                 <svg
                   width="18"
                   height="18"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#818cf8"
+                  stroke="#6366f1"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -56,13 +56,13 @@ export function Hero() {
           <div className="mt-1.5 flex flex-wrap gap-3.5">
             <a
               href="#kontakt"
-              className="inline-flex items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 px-7 py-3.5 text-base font-semibold text-white shadow-[0_0_32px_rgba(99,102,241,0.45)] transition-shadow hover:shadow-[0_0_48px_rgba(99,102,241,0.65)]"
+              className="inline-flex items-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5"
             >
               Zistiť, kde vám AI ušetrí čas
             </a>
             <a
               href="#sluzby"
-              className="inline-flex items-center rounded-xl border border-white/[0.12] bg-white/[0.05] px-6 py-3.5 text-base font-medium text-fog-100 backdrop-blur-md transition-colors hover:bg-white/[0.10] hover:text-white"
+              className="inline-flex items-center rounded-xl border border-line bg-white px-6 py-3.5 text-base font-medium text-mist-700 transition-colors hover:border-mist-400/60"
             >
               Naše služby
             </a>
@@ -81,12 +81,12 @@ export function Hero() {
           {stats.map((stat) => (
             <div
               key={stat.value}
-              className="flex flex-col gap-1.5 rounded-2xl border border-white/[0.06] bg-white/[0.04] p-6 backdrop-blur-2xl transition-colors duration-250 hover:border-indigo-400/60"
+              className="flex flex-col gap-1.5 rounded-2xl border border-line bg-white p-6 shadow-[0_8px_28px_rgba(23,23,50,0.05)] transition-colors duration-250 hover:border-indigo-300"
             >
-              <div className="text-[34px] font-extrabold tracking-[-0.02em] text-white">
+              <div className="text-[34px] font-extrabold tracking-[-0.02em] text-ink">
                 {stat.value}
               </div>
-              <div className="text-[13.5px] leading-[1.45] text-fog-500">
+              <div className="text-[13.5px] leading-[1.45] text-mist-400">
                 {stat.label}
               </div>
             </div>
