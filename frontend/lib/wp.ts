@@ -43,6 +43,16 @@ interface WPPostRaw {
 }
 
 /**
+ * Skryje pôvod obrázkov: absolútnu WP adresu médií (…/wp-content/uploads/…)
+ * prepíše na proxy cestu `/media/…` na našej doméne (rewrite v next.config.ts).
+ * Návštevník tak v adrese obrázka nevidí subdoménu `wp.`. Funguje aj vnútri
+ * HTML (viac výskytov naraz).
+ */
+function toMediaProxy(input: string): string {
+  return input.replace(/https?:\/\/[^/"'\s]+\/wp-content\/uploads\//g, "/media/");
+}
+
+/**
  * Vyberie z featured image komprimovanú veľkosť, ktorú WordPress
  * automaticky generuje pri nahratí (medium_large ≈ 768 px stačí na kartu).
  */
@@ -50,12 +60,12 @@ function extractImageUrl(p: WPPostRaw): string | null {
   const media = p._embedded?.["wp:featuredmedia"]?.[0];
   if (!media) return null;
   const sizes = media.media_details?.sizes;
-  return (
+  const url =
     sizes?.medium_large?.source_url ??
     sizes?.large?.source_url ??
     media.source_url ??
-    null
-  );
+    null;
+  return url ? toMediaProxy(url) : null;
 }
 
 /** Strip all HTML tags and decode the most common WP entities. */
@@ -193,7 +203,7 @@ export async function fetchPostsPage(
  * - samostatné oddeľovače: `<hr>` a odseky s len pomlčkou/hviezdičkami.
  */
 function cleanContentHtml(html: string): string {
-  return html
+  const cleaned = html
     // Markdown tučné → HTML (model občas nechá **text** namiesto <strong>).
     .replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>")
     .replace(/__([^_\n]+)__/g, "<strong>$1</strong>")
@@ -201,6 +211,8 @@ function cleanContentHtml(html: string): string {
     .replace(/<hr[^>]*\/?>/gi, "")
     .replace(/<p[^>]*>(?:\s|&nbsp;|[-–—*_])*<\/p>/gi, "")
     .trim();
+  // Obrázky vnútri článku: skryť pôvod (wp.) → proxy /media na našej doméne.
+  return toMediaProxy(cleaned);
 }
 
 /** Jeden článok podľa slugu (URL mena), s celým HTML obsahom. */
