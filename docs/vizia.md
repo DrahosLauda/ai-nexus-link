@@ -151,14 +151,28 @@ Neskôr: z náhľadu jedným klikom spraviť reálny frontend (produktizácia, F
 svetlým pozadím** (viac ako má apertia, resp. ako predloha z vlastnej landing
 page). Dnešný web je tmavý glassmorphism; ideme skôr k **svetlému, minimalistickému**.
 
-**Súčasť dizajnu — nová stránka „Čo je headless WordPress":**
+**Potvrdené rozhodnutia (júl 2026):**
 
+- ✅ **Svetlý hlavný obsah = priorita čitateľnosti.** Dlhé texty na čiernom
+  pozadí unavujú — apertia má hero tmavý, ale to nechceme kopírovať. Hlavný
+  obsah svetlý (biela / jemná šedá, tmavý text). Tmavú farbu použiť len
+  **striedmo ako akcent** (napr. pätička alebo jeden CTA blok, ako pätička apertie).
+- ✅ **Kalkulačka NEjde na hlavnú stránku.** Domovská predáva nás; kalkulačka +
+  vysvetlenie headless patria na **samostatnú vzdelávaciu/ukážkovú stránku**.
+
+**Nová samostatná stránka — vysvetlenie headless WP + kalkulačka:**
+
+- Pracovný názov: **„Prečo headless"** (`/preco-headless`) — *na potvrdenie*
+  (alternatívy: `/headless-wordpress`, `/kalkulacka-uspor`, `/usetrite`).
 - Vysvetlí **jednoducho a vizuálne**, čo je headless WP a prečo je to výhoda
   (rýchlosť, bezpečnosť, moderný web bez straty známeho admina).
 - **Kalkulačka úspory nákladov za pluginy** — návštevník zadá, koľko platí za
   WP pluginy (SEO, cache, formuláre, zálohy…), a uvidí, koľko **ušetrí** s naším
   headless riešením (my tie funkcie nahrádzame frontendom + agentmi). Predajný
   a zároveň vzdelávací prvok — presne to, o čo ide: ukázať hodnotu číslom.
+- Základ preklopíme z `docs/index.html` (vlastná landing) natívne do Next.js +
+  Tailwind v4 (bez CDN). Neskôr môže zapadnúť pod `/ukazky` (portfólio ukážok,
+  kam raz pribudnú výstupy mockup agenta — §9).
 
 **Referencie (ktoré Claude v cloude nevidí — nutné dodať obsah/screenshoty):**
 `apertia.ai` (403 pri stiahnutí) a vlastná landing page
