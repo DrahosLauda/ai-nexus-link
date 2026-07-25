@@ -3,9 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
-import { fetchLatestPosts, type WPPost } from "@/lib/wp";
+import { fetchPostsPage, type PostsPage } from "@/lib/wp";
 
 export const revalidate = 300;
+
+/** Počet článkov na jednu stránku blogu. */
+const PER_PAGE = 6;
 
 export const metadata: Metadata = {
   // Šablóna z layout.tsx doplní „ – digitalnapomoc.sk".
@@ -21,13 +24,24 @@ const gradients = [
   "linear-gradient(135deg, rgba(59,130,246,0.4), rgba(99,102,241,0.35))",
 ];
 
-export default async function BlogIndex() {
-  let posts: WPPost[] = [];
+/** Odkaz na stránku N — prvá strana bez parametra (čistá `/blog`). */
+function pageHref(n: number): string {
+  return n <= 1 ? "/blog" : `/blog?page=${n}`;
+}
+
+type Props = { searchParams: Promise<{ page?: string }> };
+
+export default async function BlogIndex({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams;
+  const page = Math.max(1, Math.floor(Number(pageParam) || 1));
+
+  let data: PostsPage = { posts: [], totalPages: 1 };
   try {
-    posts = await fetchLatestPosts(24);
+    data = await fetchPostsPage(page, PER_PAGE);
   } catch {
-    posts = [];
+    data = { posts: [], totalPages: 1 };
   }
+  const { posts, totalPages } = data;
 
   return (
     <div className="min-h-screen bg-night text-fog-100">
@@ -52,54 +66,111 @@ export default async function BlogIndex() {
             znova.
           </p>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post, i) => (
-              <article
-                key={post.id}
-                className="flex flex-col overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] backdrop-blur-2xl transition-[border-color,box-shadow] duration-250 hover:border-indigo-400/65 hover:shadow-[0_0_32px_rgba(99,102,241,0.15)]"
-              >
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="relative grid h-[150px] place-items-center overflow-hidden"
-                  style={{ background: gradients[i % gradients.length] }}
-                  aria-label={post.title}
+          <>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post, i) => (
+                <article
+                  key={post.id}
+                  className="flex flex-col overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] backdrop-blur-2xl transition-[border-color,box-shadow] duration-250 hover:border-indigo-400/65 hover:shadow-[0_0_32px_rgba(99,102,241,0.15)]"
                 >
-                  {post.imageUrl && (
-                    <Image
-                      src={post.imageUrl}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-300 hover:scale-[1.03]"
-                    />
-                  )}
-                </Link>
-                <div className="flex flex-1 flex-col gap-3 p-6">
-                  <span className="text-[12.5px] text-fog-500">
-                    <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
-                    {post.readingTime} min čítania
-                  </span>
-                  <h2 className="text-balance text-[18.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white">
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="text-white transition-colors hover:text-indigo-200"
-                    >
-                      {post.title}
-                    </Link>
-                  </h2>
-                  <p className="flex-1 text-sm leading-[1.55] text-fog-400">
-                    {post.excerpt}
-                  </p>
                   <Link
                     href={`/blog/${post.slug}`}
-                    className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+                    className="relative grid h-[150px] place-items-center overflow-hidden"
+                    style={{ background: gradients[i % gradients.length] }}
+                    aria-label={post.title}
                   >
-                    Čítať článok →
+                    {post.imageUrl && (
+                      <Image
+                        src={post.imageUrl}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-300 hover:scale-[1.03]"
+                      />
+                    )}
                   </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+                  <div className="flex flex-1 flex-col gap-3 p-6">
+                    <span className="text-[12.5px] text-fog-500">
+                      <time dateTime={post.dateISO}>{post.date}</time> ·{" "}
+                      {post.readingTime} min čítania
+                    </span>
+                    <h2 className="text-balance text-[18.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white">
+                      <Link
+                        href={`/blog/${post.slug}`}
+                        className="text-white transition-colors hover:text-indigo-200"
+                      >
+                        {post.title}
+                      </Link>
+                    </h2>
+                    <p className="flex-1 text-sm leading-[1.55] text-fog-400">
+                      {post.excerpt}
+                    </p>
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+                    >
+                      Čítať článok →
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <nav
+                aria-label="Stránkovanie článkov"
+                className="flex flex-wrap items-center justify-center gap-2 pt-2"
+              >
+                {page > 1 ? (
+                  <Link
+                    href={pageHref(page - 1)}
+                    rel="prev"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-semibold text-fog-200 transition-colors hover:border-indigo-400/65 hover:text-white"
+                  >
+                    ← Predošlá
+                  </Link>
+                ) : (
+                  <span className="rounded-xl border border-white/[0.05] px-4 py-2 text-sm font-semibold text-fog-600">
+                    ← Predošlá
+                  </span>
+                )}
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) =>
+                  n === page ? (
+                    <span
+                      key={n}
+                      aria-current="page"
+                      className="min-w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 px-3.5 py-2 text-center text-sm font-bold text-white"
+                    >
+                      {n}
+                    </span>
+                  ) : (
+                    <Link
+                      key={n}
+                      href={pageHref(n)}
+                      className="min-w-10 rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-2 text-center text-sm font-semibold text-fog-200 transition-colors hover:border-indigo-400/65 hover:text-white"
+                    >
+                      {n}
+                    </Link>
+                  ),
+                )}
+
+                {page < totalPages ? (
+                  <Link
+                    href={pageHref(page + 1)}
+                    rel="next"
+                    className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-semibold text-fog-200 transition-colors hover:border-indigo-400/65 hover:text-white"
+                  >
+                    Ďalšia →
+                  </Link>
+                ) : (
+                  <span className="rounded-xl border border-white/[0.05] px-4 py-2 text-sm font-semibold text-fog-600">
+                    Ďalšia →
+                  </span>
+                )}
+              </nav>
+            )}
+          </>
         )}
       </main>
       <Footer />

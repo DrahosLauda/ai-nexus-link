@@ -115,13 +115,15 @@ function toPost(p: WPPostRaw): WPPost {
   };
 }
 
+// _embed pribalí featured image; _fields musí preto obsahovať aj
+// _links a _embedded, inak WP embed z odpovede vyreže.
+const LIST_FIELDS = "id,slug,link,date,modified,title,excerpt,content,_links,_embedded";
+
 async function wpGet(params: Record<string, string>): Promise<WPPostRaw[]> {
   const search = new URLSearchParams({
     status: "publish",
-    // _embed pribalí featured image; _fields musí preto obsahovať aj
-    // _links a _embedded, inak WP embed z odpovede vyreže.
     _embed: "wp:featuredmedia",
-    _fields: "id,slug,link,date,modified,title,excerpt,content,_links,_embedded",
+    _fields: LIST_FIELDS,
     ...params,
   });
   const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {
@@ -147,6 +149,41 @@ export async function fetchLatestPosts(count = 3): Promise<WPPost[]> {
     order: "desc",
   });
   return raw.map(toPost);
+}
+
+/** Jedna stránka článkov + celkový počet strán — pre stránkovaný blog. */
+export interface PostsPage {
+  posts: WPPost[];
+  totalPages: number;
+}
+
+/**
+ * Načíta jednu stránku publikovaných článkov (pre `/blog?page=N`).
+ * Počet strán berie z hlavičky `X-WP-TotalPages`, ktorú WP REST vracia.
+ */
+export async function fetchPostsPage(
+  page = 1,
+  perPage = 6,
+): Promise<PostsPage> {
+  const search = new URLSearchParams({
+    status: "publish",
+    _embed: "wp:featuredmedia",
+    _fields: LIST_FIELDS,
+    per_page: String(perPage),
+    page: String(page),
+    orderby: "date",
+    order: "desc",
+  });
+  const res = await fetch(`${WP_URL}/wp-json/wp/v2/posts?${search}`, {
+    next: { revalidate: 300 },
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) {
+    throw new Error(`WP API responded ${res.status}`);
+  }
+  const totalPages = Math.max(1, Number(res.headers.get("X-WP-TotalPages") ?? "1"));
+  const raw = (await res.json()) as WPPostRaw[];
+  return { posts: raw.map(toPost), totalPages };
 }
 
 /**
