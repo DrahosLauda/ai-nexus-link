@@ -3,13 +3,24 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
-## Backlog — drobné úpravy a otvorené témy (živý zoznam)
+## Backlog — nevyriešené úlohy, zadania a doplnky (živý zoznam)
 
-> Aby drobnosti neunikli. Dopĺňať/škrtať priebežne. Väčšie veci majú vlastný
-> záznam nižšie. Súvisí s „Pred-Google checklistom" (viď GO-LIVE nižšie) —
-> cieľ je **profesionálna úroveň SEO/GEO** a **agent, ktorý sa dá zlepšovať**.
+> **Jediné miesto pravdy pre otvorené drobnosti a doplnky.** Dopĺňať/škrtať
+> priebežne. Väčšie veci majú vlastný záznam nižšie. Súvisí s „Pred-Google
+> checklistom" (viď GO-LIVE nižšie) — cieľ je **profesionálna úroveň SEO/GEO**,
+> **agent, ktorý sa dá zlepšovať**, a **web pripravený na spustenie do Googlu**.
+> Poradie v zozname ≠ priorita; väčšie fázy sa riešia podľa roadmapy (`vizia.md`).
 
-**Agent / orchestrátor (SEO/GEO, kvalita obsahu):**
+**🔴 Gatuje spustenie do Googlu (Pred-Google checklist):**
+
+- [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** (GDPR — web zbiera leady
+  cez formuláre). Bez toho web nesmieme spustiť do Googlu.
+- [ ] 📄 **Stránkovanie blogu** — 6 článkov na stránku + „ďalšie" (`/blog`).
+- [ ] 🎨 **Doladenie dizajnu** — priebežné vizuálne vylepšenia na expertnú úroveň.
+- [ ] 🔎 **Spustenie:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
+  — až po odškrtnutí bodov vyššie.
+
+**🟡 Agent / orchestrátor (kvalita obsahu):**
 
 - [ ] **Rôznorodejšie úvody článkov** — Writer často začína rovnakým vzorcom
   („Predstavte si, je piatok večer…"). Doladiť `system_prompt` (Directus) +
@@ -19,13 +30,45 @@
 - [ ] **Alt texty generovaných obrázkov** — agent ich pri in-článkových obrázkoch
   už niekedy nastavuje; dotiahnuť **konzistenciu a kvalitu** (popisný alt vždy).
 
-**Frontend:**
+**🟡 Frontend:**
 
-- [x] Náhľady preberajú `alt` z WP (fallback názov článku) — *(tento PR)*
 - [ ] **Responzivita (mobil)** — pár detailov na doladenie (doplniť konkrétne
   po prehliadke na mobile).
-- [ ] Interné odkazy v tele článku po migrácii `www→wp` ukazujú na `wp.` —
+- [ ] **Interné odkazy v tele článku** po migrácii `www→wp` ukazujú na `wp.` —
   prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
+
+**🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–10):**
+
+- [ ] **Viac ukážkových agentov = demo automatizácií** — chatbot/zák. podpora,
+  rezervačný/objednávkový, e-mail auto-odpoveď. Každý agent = live demo služby.
+  Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).
+- [ ] **Woo služby napárované na agentov** — reálne produkty vo WooCommerce
+  (embednutý checkout, Store API), aby bolo vidieť headless WP ↔ frontend naostro.
+- [ ] **Frontend „mockup" agent** — z promptu podľa biznisu/biznis plánu klienta
+  vygeneruje náhľad webu; hotové ukážky do portfólia (predajný nástroj).
+- [ ] 🎨 **Redizajn webu → svetlý/čistý štýl à la apertia.ai** (viac bieleho
+  pozadia než apertia, príp. podľa vlastnej landing page). Dnes tmavý glassmorphism.
+- [ ] **Stránka „Čo je headless WordPress" + kalkulačka úspory za pluginy**
+  (vzdelávací + predajný prvok — hodnota vyjadrená číslom).
+- [ ] ⚠️ **Dodať dizajnové referencie do repa** — `apertia.ai` (blokuje sťahovanie)
+  a vlastná landing page (`LandingGH-Digitalnapomoc/index.html`) sú pre cloud
+  sedenie neviditeľné; pri realizácii vložiť screenshoty/HTML alebo opis.
+
+**🟢 Doplnky / neskôr (nie sú blokery):**
+
+- [ ] Podstránky služieb `/sluzby/[slug]`.
+- [ ] Fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`).
+- [ ] Reálny telefón v pätičke.
+- [ ] Vlastná obmedzená rola pre orchestrátor token (teraz admin) — least privilege.
+- [ ] Maskot značky (fialový robot) + jemné efekty na článkových obrázkoch (viď
+  „Nápady na neskôr" nižšie, Cesta A/C).
+- [ ] SEO+GEO agent v2 — automatické prelinkovanie + HowTo schéma (viď roadmapa nižšie).
+
+**✅ Nedávno vyriešené (pre kontext):**
+
+- [x] **Obrázky článkov po migrácii `www→wp`** — zobrazujú sa v tele článku aj
+  v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
+- [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
 ## Fáza GO-LIVE — technicky DOKONČENÁ ✅ (júl 2026)
 

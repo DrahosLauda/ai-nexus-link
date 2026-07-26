@@ -4,7 +4,7 @@ import { useState } from "react";
 import { submitLead } from "@/lib/submit-lead";
 
 const inputClasses =
-  "rounded-[10px] border border-white/[0.15] bg-[rgba(8,8,13,0.4)] px-4 py-[13px] text-[15px] text-white placeholder:text-fog-500 outline-none transition-colors focus:border-indigo-400";
+  "rounded-[10px] border border-line bg-white px-4 py-[13px] text-[15px] text-ink placeholder:text-mist-400 outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100";
 
 export function ContactCta() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
@@ -31,21 +31,17 @@ export function ContactCta() {
   }
 
   return (
-    <div id="kontakt" className="scroll-mt-16 bg-night">
-      <section className="mx-auto max-w-[1320px] px-5 pb-16 sm:px-10 lg:pb-24">
-        <div className="relative flex flex-col items-center gap-5 overflow-hidden rounded-3xl border border-indigo-400/30 bg-[linear-gradient(150deg,rgba(99,102,241,0.22),rgba(168,85,247,0.12))] px-6 py-12 text-center backdrop-blur-2xl sm:px-12 lg:py-16">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-[120px] left-1/2 h-60 w-[400px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.35)_0%,rgba(129,140,248,0)_70%)] blur-[30px]"
-          />
-          <h2 className="relative text-balance text-4xl font-extrabold tracking-[-0.025em] text-white lg:text-[42px]">
+    <div id="kontakt" className="scroll-mt-16 bg-cloud">
+      <section className="mx-auto max-w-[1320px] px-5 pb-16 pt-16 sm:px-10 lg:pb-24 lg:pt-24">
+        <div className="flex flex-col items-center gap-5 rounded-3xl border border-line bg-white px-6 py-12 text-center shadow-[0_8px_28px_rgba(23,23,50,0.05)] sm:px-12 lg:py-16">
+          <h2 className="text-balance text-4xl font-extrabold tracking-[-0.025em] text-ink lg:text-[42px]">
             Poďme sa porozprávať
           </h2>
-          <p className="relative max-w-[480px] text-[17px] leading-relaxed text-fog-200">
+          <p className="max-w-[480px] text-[17px] leading-relaxed text-mist-500">
             Prvá konzultácia je zadarmo a nezáväzná. Zistíme, kde vám digitál
             ušetrí najviac času.
           </p>
-          <div className="relative mt-0.5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[13.5px] text-indigo-300">
+          <div className="mt-0.5 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[13.5px] font-medium text-indigo-600">
             <span>✓ Konzultácia zdarma</span>
             <span>✓ Bez záväzku</span>
             <span>✓ Odpovieme do 24 hodín</span>
@@ -54,14 +50,14 @@ export function ContactCta() {
           {status === "done" ? (
             <p
               role="status"
-              className="relative mt-3.5 w-full max-w-[560px] rounded-[10px] border border-indigo-400/40 bg-indigo-400/10 px-4 py-[15px] text-[15px] text-indigo-300"
+              className="mt-3.5 w-full max-w-[560px] rounded-[10px] border border-emerald-200 bg-emerald-50 px-4 py-[15px] text-[15px] text-emerald-700"
             >
               Ďakujeme za správu! Ozveme sa vám do 24 hodín.
             </p>
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="relative mt-3.5 grid w-full max-w-[560px] gap-3 text-left sm:grid-cols-2"
+              className="mt-3.5 grid w-full max-w-[560px] gap-3 text-left sm:grid-cols-2"
             >
               <input
                 type="text"
@@ -93,14 +89,14 @@ export function ContactCta() {
                 className="hidden"
               />
               {error && (
-                <p role="alert" className="text-[13.5px] text-red-400 sm:col-span-2">
+                <p role="alert" className="text-[13.5px] text-red-500 sm:col-span-2">
                   {error}
                 </p>
               )}
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="cursor-pointer rounded-[10px] bg-gradient-to-br from-indigo-500 to-violet-500 px-5 py-[15px] text-base font-semibold text-white shadow-[0_0_32px_rgba(99,102,241,0.45)] transition-shadow hover:shadow-[0_0_48px_rgba(99,102,241,0.65)] disabled:cursor-default disabled:opacity-60 sm:col-span-2"
+                className="cursor-pointer rounded-[10px] bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-[15px] text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition hover:-translate-y-0.5 disabled:cursor-default disabled:opacity-60 disabled:hover:translate-y-0 sm:col-span-2"
               >
                 {status === "sending"
                   ? "Odosielam…"

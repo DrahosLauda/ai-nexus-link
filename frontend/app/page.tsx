@@ -41,7 +41,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-night text-fog-100">
+    <div className="min-h-screen bg-white text-ink">
       <JsonLd data={[organizationSchema(), websiteSchema(), faqSchema(faqs)]} />
       <Navbar />
       <main>

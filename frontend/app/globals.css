@@ -28,8 +28,8 @@ html {
 }
 
 body {
-  background: var(--color-night);
-  color: var(--color-fog-100);
+  background: #ffffff;
+  color: var(--color-ink);
   font-family: var(--font-sans), sans-serif;
 }
 
