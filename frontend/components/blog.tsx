@@ -21,20 +21,20 @@ const gradients = [
 
 export function Blog({ posts }: { posts: BlogCardPost[] }) {
   return (
-    <div id="blog" className="scroll-mt-16 bg-white">
+    <div id="blog" className="scroll-mt-16 bg-night">
       <section className="mx-auto flex max-w-[1320px] flex-col gap-10 px-5 py-16 sm:px-10 lg:py-24">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="flex flex-col gap-3">
-            <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-indigo-600">
+            <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-indigo-400">
               Blog
             </span>
-            <h2 className="text-4xl font-extrabold tracking-[-0.025em] text-ink lg:text-[42px]">
+            <h2 className="text-4xl font-extrabold tracking-[-0.025em] text-white lg:text-[42px]">
               Najnovšie články
             </h2>
           </div>
           <Link
             href="/blog"
-            className="inline-flex shrink-0 items-center gap-2 rounded-[10px] border border-line bg-white px-5 py-[11px] text-[14.5px] font-medium text-mist-700 transition-colors hover:border-indigo-300 hover:text-indigo-600"
+            className="inline-flex shrink-0 items-center gap-2 rounded-[10px] border border-white/[0.12] bg-white/[0.05] px-5 py-[11px] text-[14.5px] font-medium text-fog-100 backdrop-blur-md transition-colors hover:bg-white/[0.10] hover:text-white"
           >
             Všetky články →
           </Link>
@@ -43,7 +43,7 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
           {posts.map((post, i) => (
             <article
               key={post.title}
-              className="flex flex-col overflow-hidden rounded-[20px] border border-line bg-white shadow-[0_8px_28px_rgba(23,23,50,0.05)] transition-[border-color,box-shadow] duration-250 hover:border-indigo-300 hover:shadow-[0_14px_40px_rgba(99,102,241,0.14)]"
+              className="flex flex-col overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] backdrop-blur-2xl transition-[border-color,box-shadow] duration-250 hover:border-indigo-400/65 hover:shadow-[0_0_32px_rgba(99,102,241,0.15)]"
             >
               <div
                 className="relative grid h-[150px] place-items-center overflow-hidden"
@@ -66,13 +66,13 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-3 p-6">
-                <span className="text-[12.5px] text-mist-400">
+                <span className="text-[12.5px] text-fog-500">
                   {post.date} · {post.read} min čítania
                 </span>
-                <h3 className="text-balance text-[18.5px] font-bold leading-[1.35] tracking-[-0.01em] text-ink">
+                <h3 className="text-balance text-[18.5px] font-bold leading-[1.35] tracking-[-0.01em] text-white">
                   {post.title}
                 </h3>
-                <p className="flex-1 text-sm leading-[1.55] text-mist-500">
+                <p className="flex-1 text-sm leading-[1.55] text-fog-400">
                   {post.excerpt}
                 </p>
                 <a
@@ -80,7 +80,7 @@ export function Blog({ posts }: { posts: BlogCardPost[] }) {
                   {...(post.external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-indigo-600 transition-colors hover:text-indigo-500"
+                  className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
                 >
                   Čítať článok →
                 </a>

@@ -43,7 +43,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-white text-ink">
       <JsonLd data={[organizationSchema(), websiteSchema(), faqSchema(faqs)]} />
-      <Navbar variant="light" />
+      <Navbar />
       <main>
         <Hero />
         <Services />
