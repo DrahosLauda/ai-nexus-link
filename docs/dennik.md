@@ -65,6 +65,9 @@
 - [ ] Maskot značky (fialový robot) + jemné efekty na článkových obrázkoch (viď
   „Nápady na neskôr" nižšie, Cesta A/C).
 - [ ] SEO+GEO agent v2 — automatické prelinkovanie + HowTo schéma (viď roadmapa nižšie).
+- [ ] **Zvážiť SessionStart hook** — aby nové sedenie **automaticky (tvrdo)** načítalo
+  `docs/dennik.md` + `docs/vizia.md`, nie len cez „mäkký" pokyn v `CLAUDE.md`.
+  (Claude Code skill `session-start-hook`; nastavuje sa v `.claude/settings.json`.)
 
 **✅ Nedávno vyriešené (pre kontext):**
 
