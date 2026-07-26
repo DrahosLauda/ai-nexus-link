@@ -68,17 +68,19 @@ function toFeaturedProxy(url: string): string {
 }
 
 /**
- * Vyberie z featured image komprimovanú veľkosť, ktorú WordPress
- * automaticky generuje pri nahratí (medium_large ≈ 768 px stačí na kartu).
+ * Featured obrázok berieme v PLNEJ veľkosti (source_url). `next/image` si podľa
+ * `sizes` sám vyžiada menšiu variantu pre malú kartu a väčšiu pre celoširočný
+ * hero v článku — tým sa hero nerozmazáva (predtým sme brali medium_large
+ * ≈ 768 px, čo na celú šírku nestačilo).
  */
 function extractImageUrl(p: WPPostRaw): string | null {
   const media = p._embedded?.["wp:featuredmedia"]?.[0];
   if (!media) return null;
   const sizes = media.media_details?.sizes;
   const url =
-    sizes?.medium_large?.source_url ??
-    sizes?.large?.source_url ??
     media.source_url ??
+    sizes?.large?.source_url ??
+    sizes?.medium_large?.source_url ??
     null;
   return url ? toFeaturedProxy(url) : null;
 }

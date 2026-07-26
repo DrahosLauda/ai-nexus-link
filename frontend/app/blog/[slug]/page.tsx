@@ -74,6 +74,7 @@ export default async function BlogPost({ params }: Props) {
               alt={post.imageAlt || post.title}
               fill
               sizes="100vw"
+              quality={90}
               priority
               className="object-cover"
             />
