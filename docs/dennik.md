@@ -37,8 +37,11 @@
 - [ ] **Interné odkazy v tele článku** po migrácii `www→wp` ukazujú na `wp.` —
   prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
 
-**🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–10):**
+**🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–11):**
 
+- [ ] **RAG chatbot naživo na našom webe (prvé demo)** — odpovedá z nášho obsahu
+  (RAG + `pgvector` v existujúcom Postgrese). Keď ponúkame nasadenie chatbotov,
+  musíme mať aspoň jedného živého. Zároveň predajná služba pre klientov. Viď `vizia.md` §11.
 - [ ] **Viac ukážkových agentov = demo automatizácií** — chatbot/zák. podpora,
   rezervačný/objednávkový, e-mail auto-odpoveď. Každý agent = live demo služby.
   Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).

@@ -50,7 +50,8 @@ dodania — SaaS), `docs/architektura.md` (ako systém funguje),
 (terminálový ťahák), `docs/wayland-ferrox.md` (poznámka k Wayland app),
 `docs/zdroje-pravdy.md` (kde čo žije a kam ukladať — tri zdroje pravdy),
 `docs/directus.md` (Directus ťahák — kolekcie, úkony, tokeny/role),
-`docs/go-live.md` (spustenie referencie — doména → frontend, WP na wp. subdoménu).
+`docs/go-live.md` (spustenie referencie — doména → frontend, WP na wp. subdoménu),
+`docs/rag-chatbot.md` (štartový runbook pre RAG chatbot agenta — prvé živé demo).
 
 ## Príkazy
 

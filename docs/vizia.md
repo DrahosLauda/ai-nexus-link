@@ -41,7 +41,7 @@ Tento vzor je **kľúč k produktizácii**: pridať schopnosť = pridať modul.
 | **Social agent** | Tvorí a uverejňuje príspevky na sociálne siete | 🔜 plán |
 | **Frontend/dizajn agent** | Pomáha s dizajnom sekcií, vizuálmi, úpravami vzhľadu | 🔜 plán |
 | **Mockup / náhľad agent** | Z **agentského promptu podľa biznisu/biznis plánu** vygeneruje **náhľad stránky pre klienta** (hotové ukážky do portfólia) | 🔜 plán — viď §8 |
-| **Chatbot / zák. podpora agent** | Odpovedá návštevníkom, kvalifikuje leady, rezervácie | 🔜 plán — showcase |
+| **Chatbot / zák. podpora agent (RAG)** | Odpovedá návštevníkom **z nášho obsahu** (RAG), kvalifikuje leady | 🔜 plán — prvé živé demo (§11) |
 | **Rezervačný / objednávkový agent** | Auto-potvrdenia, kalendár, napojenie na nástroje klienta | 🔜 plán — showcase |
 | **E-mail / auto-odpoveď agent** | Automatická odpoveď a triedenie dopytov z formulárov | 🔜 plán — showcase |
 | **WooCommerce / „produkt" agent** | Pridá reálnu službu ako WooCommerce produkt + presmerovanie do pokladne | 🔜 plán (Fáza 6) |
@@ -178,3 +178,52 @@ page). Dnešný web je tmavý glassmorphism; ideme skôr k **svetlému, minimali
 `apertia.ai` (403 pri stiahnutí) a vlastná landing page
 `LandingGH-Digitalnapomoc/index.html#pricing` (lokálny súbor na Macu). Pri
 realizácii ich treba vložiť do repa alebo opísať (farby, fonty, sekcie).
+
+## 11. RAG chatbot agent — prvé živé demo automatizácie
+
+**Prečo (biznisový dôvod):** na webe ponúkame „nasadenie AI chatbotov a
+asistentov". Aby tá služba mala **váhu a dôveryhodnosť**, musíme mať **aspoň
+jedného chatbota naživo na vlastnom webe** — presne v duchu „**ukáž, nepovedz**"
+(§8). Náš web sa tak stáva živou ukážkou toho, čo predávame; návštevník si to
+vyskúša a hneď vidí hodnotu.
+
+**Čo to bude:** chatbot, ktorý **odpovedá z NÁŠHO obsahu** (články z WP, FAQ,
+stránka „Headless WordPress") — teda **RAG** (Retrieval‑Augmented Generation),
+nie „ukecaný" model, čo si vymýšľa. Odpovede sú podložené našimi dátami a vie
+odkázať na zdroj (článok).
+
+**Ako funguje RAG (v skratke):** obsah rozsekáme na kúsky → každý kúsok
+premeníme na **vektor** (embedding = zoznam čísel zachytávajúci význam) → uložíme
+do **vektorovej databázy** → pri otázke nájdeme **významovo najbližšie** kúsky a
+priložíme ich modelu → model odpovie z nich. (Sémantické hľadanie: „auto" nájde
+aj „vozidlo".)
+
+**Technický plán (zapadá do „lego" vzoru):**
+
+- **Vektorová DB = `pgvector` v existujúcom Postgrese.** Directus u nás beží na
+  **PostgreSQL** (Railway) — pridaním rozšírenia `pgvector` máme vektorové úložisko
+  **v tom istom systéme, bez novej služby**. Nová tabuľka/kolekcia na embeddingy
+  (kúsok textu + vektor + odkaz na zdroj).
+- **Indexovací modul** (`orchestrator/`): prejde WP články + FAQ + statické
+  stránky → rozseká → zavolá **embeddings API** (Gemini/OpenAI/Voyage) → uloží
+  vektory. Spúšťa sa pri publikovaní článku (webhook) alebo cronom.
+- **Odpovedací modul:** frontendová API route (`/api/chat`) — otázku embedne,
+  vytiahne top‑k kúskov z `pgvector`, poskladá prompt a nechá model
+  (Gemini/GLM/Claude) odpovedať + priloží zdroje.
+- **Frontend widget:** chat bublina vpravo dole (ako má apertia), volá `/api/chat`.
+- **Config + logy** v Directuse (`agent_config` riadok `chatbot`, `agent_logs`);
+  vlastný token s minimálnymi právami. Rovnaký vzor ako Writer/SEO agent.
+
+**Produktová línia:** ten istý agent = **predajná služba** — nasadíme RAG
+chatbota **klientovi nad JEHO obsahom** (jeho web, FAQ, produkty). U nás je to
+demo, u klienta platená automatizácia. Zapadá aj do „AI Knihovník" typu služby.
+
+**Otvorené rozhodnutia (na neskôr):** ktorý model na generovanie odpovede
+(Gemini/GLM/Claude — cena vs kvalita), poskytovateľ embeddingov, koľko kúskov
+priložiť (k), a stratégia proti halucináciám (keď odpoveď nie je v dátach →
+„toto neviem, napíšte nám"). Bezpečnosť: chatbot iba **číta** (nikdy nezapisuje
+do WP/Directusu okrem vlastných logov).
+
+**Bonus — „chat s Obsidianom":** rovnaký RAG vzor sa dá pustiť aj nad vlastným
+Obsidian vaultom (poznámky → embeddingy → chat). Ten istý princíp ako klientský
+chatbot; dobrý interný test technológie pred nasadením klientom.
