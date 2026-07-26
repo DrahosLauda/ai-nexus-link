@@ -2,6 +2,10 @@
 
 Kontext pre Claude Code sedenia v tomto repozitári. Jazyk komunikácie aj obsahu: **slovenčina**.
 
+> **⭐ Štart každého sedenia:** najprv si prečítaj `docs/dennik.md` a `docs/vizia.md`
+> — kvôli aktuálnemu stavu, rozhodnutiam a ponaučeniam. A **každý „štartový prompt"
+> pre nové sedenie musí túto inštrukciu obsahovať** (najprv prečítať dennik + vizia).
+
 ## Čo je AI Nexus Link
 
 Modulárna platforma na „headless" modernizáciu WordPress webov + AI automatizáciu.
