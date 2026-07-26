@@ -70,6 +70,27 @@ git reset --hard origin/main  # zROVNAJ lokálnu vetvu presne s GitHubom (POZOR:
 git config user.email <email> # nastav identitu autora commitov
 ```
 
+### Push vs Pull vs Clone — a synchronizácia s Obsidianom
+
+Tri kľúčové slová, ktoré si treba osvojiť:
+
+- **`git clone <adresa>`** = úplne prvé stiahnutie celého repa z GitHubu k sebe
+  (spravíš raz). Vytvorí priečinok s projektom.
+- **`git pull`** = *stiahni* najnovšie zmeny z GitHubu **k sebe** (⬇️ nadol).
+  Toto robíš **ty na Macu**, keď chceš mať aktuálne súbory (aj v Obsidiane).
+- **`git push`** = *odošli* svoje commity **na GitHub** (⬆️ nahor). Toto za teba
+  robí Claude sedenie — ty pushovať nemusíš.
+
+```bash
+git clone <adresa-repa>       # prvé stiahnutie (raz)
+git pull                      # stiahni najnovší stav z GitHubu (bežne používaš toto)
+```
+
+**Náš tok (zapamätaj si):** *sedenie pushuje → ty pull‑uješ.* Repo máš naklonované
+na Macu; keď chceš zmeny vidieť v **Obsidiane**, spravíš **`git pull`** (alebo to
+robí automaticky plugin „Obsidian Git"). GitHub = hlavná záloha, Obsidian = ďalšia
+lokálna záloha tvojich poznámok (`docs/`).
+
 ---
 
 ## NPM a NEXT.JS — frontend (priečinok `frontend/`)

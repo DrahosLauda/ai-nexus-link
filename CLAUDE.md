@@ -94,6 +94,10 @@ python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
 ## Konvencie a bezpečnosť
 
 - Obsah a texty: slovenčina.
+- **Zálohy / pamäť projektu:** GitHub je hlavný zdroj pravdy; používateľ má repo
+  naklonované na Macu a `docs/` synchronizuje do **Obsidianu** ako ďalšiu zálohu.
+  Tok: **sedenie pushuje → používateľ pull‑uje** (`git pull`, príp. plugin
+  „Obsidian Git"). Preto všetko podstatné píšeme do `docs/` (nielen do kódu).
 - Tajomstvá výhradne v env premenných (Railway Variables / `.env`), nikdy v kóde.
 - Každý systém má vlastný token s minimálnymi právami (zásada least privilege).
 - Leady a logy nikdy do WP; obsah webu nikdy do Directusu — inak sa systém nedá replikovať.
