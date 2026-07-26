@@ -15,7 +15,7 @@
 
 - [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** (GDPR — web zbiera leady
   cez formuláre). Bez toho web nesmieme spustiť do Googlu.
-- [ ] 📄 **Stránkovanie blogu** — 6 článkov na stránku + „ďalšie" (`/blog`).
+- [x] 📄 **Stránkovanie blogu** — 6 článkov na stránku + „ďalšie" (`/blog`). *(hotové)*
 - [ ] 🎨 **Doladenie dizajnu** — priebežné vizuálne vylepšenia na expertnú úroveň.
 - [ ] 🔎 **Spustenie:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
   — až po odškrtnutí bodov vyššie.
@@ -46,13 +46,12 @@
   (embednutý checkout, Store API), aby bolo vidieť headless WP ↔ frontend naostro.
 - [ ] **Frontend „mockup" agent** — z promptu podľa biznisu/biznis plánu klienta
   vygeneruje náhľad webu; hotové ukážky do portfólia (predajný nástroj).
-- [ ] 🎨 **Redizajn webu → svetlý/čistý štýl à la apertia.ai** (viac bieleho
-  pozadia než apertia, príp. podľa vlastnej landing page). Dnes tmavý glassmorphism.
-- [ ] **Stránka „Čo je headless WordPress" + kalkulačka úspory za pluginy**
-  (vzdelávací + predajný prvok — hodnota vyjadrená číslom).
-- [ ] ⚠️ **Dodať dizajnové referencie do repa** — `apertia.ai` (blokuje sťahovanie)
-  a vlastná landing page (`LandingGH-Digitalnapomoc/index.html`) sú pre cloud
-  sedenie neviditeľné; pri realizácii vložiť screenshoty/HTML alebo opis.
+- [x] 🎨 **Redizajn webu → svetlejší štýl à la apertia.ai** — hotový (zmiešaný
+  layout: tmavý hero + blog + pätička, svetlý stred; svetlé články). *(viď záznam nižšie)*
+- [x] **Stránka „Čo je headless WordPress" + kalkulačka úspory za pluginy** —
+  hotová na `/headless-wordpress` (bez cenníka, CSS grafika).
+- [x] ⚠️ **Dizajnové referencie** — apertia screenshoty dodal používateľ; vlastná
+  landing je v repe (`docs/index.html`).
 
 **🟢 Doplnky / neskôr (nie sú blokery):**
 
@@ -69,6 +68,51 @@
 - [x] **Obrázky článkov po migrácii `www→wp`** — zobrazujú sa v tele článku aj
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
+
+## Júl 2026 — sedenie: redizajn webu (svetlejší, apertia štýl) + svetlé články
+
+**Čo sa urobilo (PR #20, #21, #22 → `main`):**
+
+- **Nová stránka `/headless-wordpress`** — vysvetlenie headless WP + interaktívna
+  kalkulačka úspory za pluginy (bez cenníka, bez grafovej knižnice; CSS pruhy).
+  Prepojená z domovskej sekcie Služby (karta „Weby a e‑shopy"), v sitemape.
+- **Redizajn homepage — zmiešaný layout:** hero **tmavý** (podľa 1. Claude návrhu
+  — centrovaný „Digitálna pomoc, ktorá pracuje za vás"), stred **svetlý** (Služby,
+  Ako to funguje, Referencie, O nás, FAQ), **blog tmavý**, kontakt svetlý,
+  **pätička tmavá**.
+- **Sekcia Služby** prerobená na rovnomernú mriežku **6 kariet** (+ karta
+  „AI obsah a SEO"), data‑driven (pole + `map`).
+- **Svetlé články** (`/blog/[slug]`): svetlá téma + typografia `.wp-article`,
+  **náhľadový obrázok navrchu na celú šírku** (à la apertia), nadpis pod ním,
+  **širší text** (760→880 px, 17 px). Zoznam `/blog` zámerne ostal tmavý.
+- **Menu lišta + logo:** vyššia lišta; vylepšené logo (gradient + sklenený odlesk,
+  akcent na `.sk`) + jemná **shine** animácia hrajúca len počas scrollu.
+- **Ostrejší featured obrázok:** frontend berie **plnú veľkosť** (predtým
+  `medium_large` ~768 px, čo sa na celoširočnom hero rozmazalo); `next/image`
+  sizuje podľa `sizes`, hero `quality=90`.
+
+**Ponaučenia:**
+
+1. **Tri pôvodné Claude návrhy nie sú v publikovaných artefaktoch** — v účte je
+   len 1 artefakt (finálny dizajn). Návrhy zostali v pôvodnej Claude konverzácii;
+   z web sedenia sa k iným konverzáciám nedostaneme → dizajn dodať screenshotom.
+2. **Next.js — priečinok s `_` prefixom = privátny (nie route).** Dočasná ukážková
+   stránka musí mať názov bez podčiarkovníka (napr. `preview-article`).
+3. **Featured obrázok: `medium_large` ≈ 768 px stačí na kartu, nie na celoširočný
+   hero.** Brať `source_url` (plnú veľkosť), variantu dorieši `next/image` cez `sizes`.
+4. **Lokálny náhľad — pozor na staré inštancie servera.** `rm -rf .next` počas
+   bežiaceho `next start` = nekonzistentný build (CSS 404/500, stránka bez štýlov).
+   Pred rebuildom ukončiť starý server; overiť CSS `HTTP 200`.
+5. **Živý web / apertia / WP z cloud sedenia nevidno** (egress allowlist) — náhľady
+   cez lokálny `next start` + screenshot z predinštalovaného Chromium (CDP);
+   dizajnové referencie cez screenshoty od používateľa.
+
+**Proces:** merge do `main` **len po výslovnom súhlase používateľa**. Záchranný
+bod pred redizajnom: `87c06a7`.
+
+**Súvisiace otvorené:** ak featured obrázky aj po oprave nie sú dosť ostré,
+generovať v orchestrátori širšie obrázky (napr. ≥1536 px). Zoznam `/blog` možno
+neskôr tiež zosvetliť (zatiaľ tmavý, zámerne).
 
 ## Fáza GO-LIVE — technicky DOKONČENÁ ✅ (júl 2026)
 
