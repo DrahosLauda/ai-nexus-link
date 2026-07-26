@@ -58,6 +58,17 @@ body {
   }
 }
 
+/* Jemný „shine" cez logo — hrá len počas pohybu lišty (scroll). */
+@keyframes logo-shine {
+  0% {
+    transform: translateX(-120%);
+  }
+  55%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
 /* Obsah článku z WordPressu (headless) — typografia na svetlom pozadí */
 .wp-article {
   font-size: 17px;

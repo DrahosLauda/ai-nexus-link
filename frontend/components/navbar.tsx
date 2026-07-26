@@ -1,26 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { navLinks } from "@/lib/content";
 
 type Variant = "dark" | "light";
 
 /**
- * Navigácia. Predvolene tmavá (dnešný web). Variant `light` je pre nový
- * svetlý dizajn (napr. stránka /headless-wordpress) — biele pozadie, tmavý
- * text, gradientové CTA ako na apertia.ai. Pätička ostáva tmavá v oboch.
+ * Navigácia. Predvolene tmavá (dnešný web). Variant `light` je pre svetlé
+ * stránky (článok, /headless-wordpress). Logo má jemnú „shine" animáciu, ktorá
+ * hrá len počas pohybu lišty (pri scrollovaní).
  */
 export function Navbar({ variant = "dark" }: { variant?: Variant }) {
   const [scrolled, setScrolled] = useState(false);
+  const [moving, setMoving] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const light = variant === "light";
+  const moveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+      setMoving(true);
+      if (moveTimer.current) clearTimeout(moveTimer.current);
+      moveTimer.current = setTimeout(() => setMoving(false), 450);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (moveTimer.current) clearTimeout(moveTimer.current);
+    };
   }, []);
 
   const solid = scrolled || menuOpen;
@@ -32,6 +42,7 @@ export function Navbar({ variant = "dark" }: { variant?: Variant }) {
       ? "bg-[rgba(8,8,13,0.72)] border-white/[0.08]"
       : "bg-transparent border-transparent";
   const wordmark = light ? "text-ink" : "text-white";
+  const dotAccent = light ? "text-indigo-500" : "text-indigo-400";
   const linkText = light
     ? "text-mist-500 hover:text-ink"
     : "text-fog-300 hover:text-white";
@@ -52,17 +63,41 @@ export function Navbar({ variant = "dark" }: { variant?: Variant }) {
     <nav
       className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-[18px] transition-colors duration-300 ${barBg}`}
     >
-      <div className="mx-auto flex max-w-[1320px] items-center justify-between px-5 py-4 sm:px-10">
+      <div className="mx-auto flex max-w-[1320px] items-center justify-between px-5 py-[22px] sm:px-10">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="grid size-[30px] place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 text-[15px] font-extrabold text-white">
-            d
+          <div
+            className={`relative grid size-[32px] place-items-center overflow-hidden rounded-[11px] bg-gradient-to-br from-indigo-500 via-violet-500 to-purple-500 text-[15px] font-extrabold text-white shadow-sm ring-1 ring-white/10 transition-transform duration-300 ${
+              moving ? "scale-[1.06]" : ""
+            }`}
+          >
+            {/* Sklenený odlesk v rohu */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_20%_0%,rgba(255,255,255,0.5),transparent_55%)]"
+            />
+            {/* Shine — hrá len počas pohybu lišty */}
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,transparent_38%,rgba(255,255,255,0.75)_50%,transparent_62%)] ${
+                moving
+                  ? "animate-[logo-shine_1s_ease-in-out_infinite]"
+                  : "-translate-x-[120%]"
+              }`}
+            />
+            <span className="relative">d</span>
           </div>
-          <span className={`text-base font-bold tracking-[-0.01em] ${wordmark}`}>
-            digitalnapomoc.sk
+          <span
+            className={`text-base font-bold tracking-[-0.01em] ${wordmark}`}
+          >
+            digitalnapomoc<span className={dotAccent}>.sk</span>
           </span>
         </Link>
 
-        <div className={`hidden items-center gap-7 text-sm md:flex ${light ? "text-mist-500" : "text-fog-300"}`}>
+        <div
+          className={`hidden items-center gap-7 text-sm md:flex ${
+            light ? "text-mist-500" : "text-fog-300"
+          }`}
+        >
           {navLinks.map((link) => (
             <Link
               key={link.href}

@@ -68,7 +68,7 @@ export default async function BlogPost({ params }: Props) {
       <main className="flex-1">
         {/* Náhľadový obrázok na celú šírku — navrchu (à la apertia) */}
         {post.imageUrl && (
-          <div className="relative mt-[64px] h-[300px] w-full overflow-hidden bg-cloud sm:h-[420px] lg:h-[520px]">
+          <div className="relative mt-[76px] h-[300px] w-full overflow-hidden bg-cloud sm:h-[420px] lg:h-[520px]">
             <Image
               src={post.imageUrl}
               alt={post.imageAlt || post.title}
