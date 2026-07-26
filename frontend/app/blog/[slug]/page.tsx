@@ -66,8 +66,26 @@ export default async function BlogPost({ params }: Props) {
       <JsonLd data={[articleSchema(post), breadcrumbSchema(crumbs)]} />
       <Navbar variant="light" />
       <main className="flex-1">
-        {/* Hlavička článku */}
-        <div className="mx-auto flex max-w-[880px] flex-col gap-5 px-5 pt-[130px] sm:px-10 lg:pt-[150px]">
+        {/* Náhľadový obrázok na celú šírku — navrchu (à la apertia) */}
+        {post.imageUrl && (
+          <div className="relative mt-[64px] h-[300px] w-full overflow-hidden bg-cloud sm:h-[420px] lg:h-[520px]">
+            <Image
+              src={post.imageUrl}
+              alt={post.imageAlt || post.title}
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover"
+            />
+          </div>
+        )}
+
+        {/* Hlavička článku — pod obrázkom */}
+        <div
+          className={`mx-auto flex max-w-[880px] flex-col gap-5 px-5 sm:px-10 ${
+            post.imageUrl ? "pt-12" : "pt-[130px] lg:pt-[150px]"
+          }`}
+        >
           <nav
             aria-label="Omrvinková navigácia"
             className="flex flex-wrap items-center gap-1.5 text-[13.5px] text-mist-400"
@@ -88,20 +106,6 @@ export default async function BlogPost({ params }: Props) {
             {post.title}
           </h1>
         </div>
-
-        {/* Náhľadový obrázok na celú šírku */}
-        {post.imageUrl && (
-          <div className="relative mt-8 h-[260px] w-full overflow-hidden bg-cloud sm:mt-10 sm:h-[380px] lg:h-[460px]">
-            <Image
-              src={post.imageUrl}
-              alt={post.imageAlt || post.title}
-              fill
-              sizes="100vw"
-              priority
-              className="object-cover"
-            />
-          </div>
-        )}
 
         {/* Telo článku + CTA */}
         <div className="mx-auto flex max-w-[880px] flex-col gap-8 px-5 pb-16 pt-10 sm:px-10 lg:pb-24">
