@@ -11,12 +11,14 @@
 ## 📋 Prompt na spustenie nového sedenia (skopíruj do nového Claude sedenia)
 
 ```
-Pracujeme na RAG chatbotovi podľa docs/rag-chatbot.md a docs/vizia.md §11.
-Cieľ: prvé živé demo chatbota na našom webe, ktorý odpovedá Z NÁŠHO obsahu
-(WP články + FAQ + stránka /headless-wordpress) cez RAG (vektorové hľadanie
-v pgvector v našom Postgrese). Postupuj po krokoch z runbooku. Commit + push
-do vetvy môžeš, ale pred mergom do main a pred zmenami v Railway/DB počkaj na
-moje "áno". Začni Krokom 1 (príprava DB) a najprv mi povedz, čo mám naklikať ja.
+Najprv si prečítaj docs/dennik.md a docs/vizia.md (kontext, rozhodnutia,
+ponaučenia). Potom pracujeme na RAG chatbotovi podľa docs/rag-chatbot.md a
+docs/vizia.md §11. Cieľ: prvé živé demo chatbota na našom webe, ktorý odpovedá
+Z NÁŠHO obsahu (WP články + FAQ + stránka /headless-wordpress) cez RAG
+(vektorové hľadanie v pgvector v našom Postgrese). Postupuj po krokoch
+z runbooku. Commit + push do vetvy môžeš, ale pred mergom do main a pred
+zmenami v Railway/DB počkaj na moje "áno". Začni Krokom 1 (príprava DB) a
+najprv mi povedz, čo mám naklikať ja.
 ```
 
 ## Cieľ a prečo
