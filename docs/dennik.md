@@ -75,6 +75,36 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Júl 2026 — sedenie: RAG chatbot (Krok 1) + ponaučenie „vetva vs Obsidian"
+
+**Urobené (vetva `claude/rag-chatbot-first-demo-9bwo1w`, zatiaľ NEzlúčené do `main`):**
+
+- **Krok 1 — databáza pre RAG hotová.** V existujúcej PostGIS vytvorená tabuľka
+  `rag_chunks` (`CREATE TABLE` + `CREATE INDEX` overené používateľom).
+- **Rozhodnutie „Cesta B" (bez pgvectora):** PostGIS image `pgvector` nemá a ručná
+  inštalácia by pri redeploy zmizla. Preto vektor ukladáme ako pole `real[]` a
+  kosínusovú podobnosť počíta `/api/chat` v pamäti — **0 € navyše, žiadna nová
+  Railway služba** (dôležité pri nízkom kredite). Prechod na pravý pgvector
+  (Cesta A, ~5 €/mes.) necháme na neskôr, keď bude veľa obsahu. Detaily a plán:
+  `docs/rag-chatbot.md`, klikací návod `docs/rag-krok1-db.md`.
+- **Schéma v repe:** `orchestrator/rag_schema.sql`.
+
+**⚠️ Ponaučenie (proces — GitHub/Obsidian):** Práca na **feature vetve** znamená,
+že používateľov zabehnutý **`git pull` na `main` súbory NEUKÁŽE** (a teda ani
+Obsidian, ktorý zálohuje `main`). Toto **treba povedať hneď na začiatku**, keď
+zakladáme vetvu — inak sa zbytočne hľadá, „kde sú súbory".
+- Zabehnutý tok projektu (viď `CLAUDE.md` → „Zálohy / pamäť projektu"): **sedenie
+  pushuje → používateľ `git pull` na `main`**. Docs (pamäť projektu) sa doteraz
+  vždy dostali do Obsidianu až **po merge do `main`**.
+- **Pravidlo ostáva:** merge do `main` len po výslovnom súhlase používateľa.
+- **Preto:** pri každej práci na vetve buď (a) hneď na úvod upozorniť „toto je na
+  vetve X, tvoj `git pull` na main to neukáže, kým to nezlúčime; medzitým si to
+  pozrieš cez `git checkout X`", alebo (b) ak sú to len **docs** (bezpečné, Railway
+  frontend deploy sa spúšťa len zmenou v `frontend/`), ponúknuť skorší merge do
+  `main`, nech to padne do Obsidianu bežným pullom.
+- Súvisí s backlog bodom „Zvážiť SessionStart hook" — tvrdé načítanie `dennik.md`
+  + `vizia.md` na štarte sedenia.
+
 ## Júl 2026 — sedenie: redizajn webu (svetlejší, apertia štýl) + svetlé články
 
 **Čo sa urobilo (PR #20, #21, #22 → `main`):**
