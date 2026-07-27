@@ -58,6 +58,21 @@ CREATE INDEX
 **Overenie (nepovinné):** vlož `\d rag_chunks` + Enter → vypíše stĺpce tabuľky.
 Von z konzoly sa dostaneš cez `\q`.
 
+### Ak sa nedá vložiť celý blok / spadol si do shellu `root@...:/#`
+
+Po preloadnutí stránky sa `psql` konzola zavrie a ostaneš v príkazovom riadku
+kontajnera (`root@...:/#` = Linux shell, kde databáza beží). Viacriadkový blok
+sa do týchto webových konzol často nedá vložiť. Riešenie — **jeden riadok**,
+ktorý sa spojí s DB, vykoná oba príkazy a odpojí sa:
+
+```
+psql "$DATABASE_URL" -c "CREATE TABLE IF NOT EXISTS rag_chunks (id BIGSERIAL PRIMARY KEY, source_url TEXT NOT NULL, source_type TEXT NOT NULL DEFAULT 'article', title TEXT, chunk_index INT NOT NULL DEFAULT 0, chunk_text TEXT NOT NULL, content_hash TEXT, embedding real[] NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), updated_at TIMESTAMPTZ NOT NULL DEFAULT now());" -c "CREATE UNIQUE INDEX IF NOT EXISTS rag_chunks_source_chunk_idx ON rag_chunks (source_url, chunk_index);"
+```
+
+Úspech = vypíše `CREATE TABLE` a `CREATE INDEX`.
+Ak `could not connect`, skús `psql -U postgres railway -c "SELECT 1;"` a podľa
+výsledku upraviť pripojenie.
+
 ---
 
 ## Časť B — pridať connection string ako env premennú (nasleduje po časti A)
