@@ -75,28 +75,27 @@ výsledku upraviť pripojenie.
 
 ---
 
-## Časť B — pridať connection string ako env premennú (nasleduje po časti A)
+## Časť B — connection string (spravíme až pri kóde, ktorý ho použije)
 
-Aby k databáze dosiahol náš kód (orchestrátor ju plní vektormi, frontend z nej
-číta), obom službám pridáme rovnaký „connection string" pod názvom
-`RAG_DATABASE_URL`.
+K databáze potrebujú dosiahnuť dve miesta a **každé cez inú adresu**:
 
-1. Railway → služba **orchestrátor** (cron worker) → záložka **Variables** →
-   **New Variable**:
-   - názov: `RAG_DATABASE_URL`
-   - hodnota: `${{ PostGIS.DATABASE_URL }}`  ← napíš presne takto; Railway sám
-     doplní adresu aj heslo referenciou na PostGIS (nič nekopíruješ ručne).
-2. Railway → služba **frontend** (`ai-nexus-link`) → **Variables** → to isté:
-   - `RAG_DATABASE_URL` = `${{ PostGIS.DATABASE_URL }}`
+- **Frontend `/api/chat`** beží na Railway → použije **vnútornú** adresu
+  (`...railway.internal`, funguje len medzi službami Railway, zadarmo bez egressu).
+  V Railway → služba **frontend** (`ai-nexus-link`) → **Variables** → **New Variable**:
+  názov `RAG_DATABASE_URL`, do hodnoty napíš `${{` a z ponuky, čo vyskočí, vyber
+  DB službu a jej `DATABASE_URL` (názov služby môže byť `Postgres` aj `PostGIS` —
+  ponuka ukáže ten správny, takže sa netreba trafiť ručne). *Nastavíme v Kroku 3.*
+- **Indexovací modul `rag_index.py`** zatiaľ beží **lokálne u teba na Macu** →
+  potrebuje **verejnú** adresu databázy (Railway ju má ako `DATABASE_PUBLIC_URL`
+  na DB službe). Skopíruje sa do lokálneho `orchestrator/.env` ako
+  `RAG_DATABASE_URL=postgresql://…`. *Nastavíme v Kroku 2, keď budeme indexer testovať.*
 
-> Ak by referencia `${{ PostGIS.DATABASE_URL }}` nefungovala (služba sa volá
-> inak), napíš — dáme tam plný `postgresql://…` reťazec ručne.
-
-Túto časť netreba hneď deployovať — kód, čo premennú použije, príde v Kroku 2.
+> Preto teraz env premennú **nenastavujeme** — spravíme to presne vtedy, keď na
+> ňu bude kód, aby sme nezadali nesprávnu adresu.
 
 ---
 
 ## Stav Kroku 1
 
-- [ ] Časť A — spustené `CREATE TABLE` + `CREATE INDEX` (tabuľka `rag_chunks` stojí)
-- [ ] Časť B — `RAG_DATABASE_URL` pridaná do orchestrátora aj frontendu
+- [x] Časť A — spustené `CREATE TABLE` + `CREATE INDEX` (tabuľka `rag_chunks` stojí) ✅
+- [ ] Časť B — `RAG_DATABASE_URL` (frontend = vnútorná v Kroku 3; lokálny indexer = verejná v Kroku 2)
