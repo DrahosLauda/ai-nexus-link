@@ -6,6 +6,7 @@ import {
   SITE_NAME,
   SITE_URL,
 } from "@/lib/seo";
+import { ChatWidget } from "@/components/chat-widget";
 import "./globals.css";
 
 const geist = Geist({
@@ -51,7 +52,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sk" className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ChatWidget />
+      </body>
     </html>
   );
 }
