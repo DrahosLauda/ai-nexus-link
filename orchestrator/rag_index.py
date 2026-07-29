@@ -124,7 +124,11 @@ def fetch_wp_articles():
         )
         if r.status_code == 400:  # WP vráti 400, keď požiadaš stránku za koncom
             break
-        r.raise_for_status()
+        if r.status_code != 200:
+            raise RuntimeError(
+                f"WordPress na {WP_URL} vrátil {r.status_code}. Over WP_URL v .env "
+                "(po go-live má byť https://wp.digitalnapomoc.sk, nie www)."
+            )
         posts = r.json()
         if not posts:
             break
@@ -241,9 +245,41 @@ def index_source(conn, src):
     return len(src["chunks"])
 
 
+def prune(conn, keep_urls, gathered_articles):
+    """Zmaže z `rag_chunks` kúsky zdrojov, ktoré už NIE sú medzi aktuálnymi
+    (napr. článok zmazaný na WP). Zmaže IBA to, čo tam nemá byť — existujúce
+    zdroje nechá tak.
+
+    Poistky proti nechcenému vymazaniu:
+    - keď sme nezozbierali žiadne URL (napr. výpadok), neurobí nič;
+    - keď WP nevrátil ani jeden článok, no v DB nejaké sú (podozrivé, skôr
+      výpadok WP než reálne zmazanie), články radšej nechá a len upozorní.
+    """
+    if not keep_urls:
+        return 0
+    with conn.cursor() as cur:
+        cur.execute("SELECT count(DISTINCT source_url) FROM rag_chunks WHERE source_type = 'article'")
+        db_articles = cur.fetchone()[0]
+    conn.rollback()
+    if gathered_articles == 0 and db_articles > 0:
+        print("⚠️  Prune preskočený — WP nevrátil žiadne články (podozrivé), DB nechávam nedotknutú.")
+        return 0
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM rag_chunks WHERE NOT (source_url = ANY(%s))", (list(keep_urls),))
+            deleted = cur.rowcount
+    if deleted:
+        print(f"🧹 Prune: zmazaných {deleted} kúskov zo zdrojov, ktoré už neexistujú.")
+    return deleted
+
+
 def run(dry_run=False):
     print("🔎 Zbieram obsah (WP články + FAQ)…")
-    sources = gather_sources()
+    try:
+        sources = gather_sources()
+    except Exception as e:
+        print(f"❌ Nepodarilo sa načítať obsah: {e}")
+        sys.exit(1)
     total_chunks = sum(len(s["chunks"]) for s in sources)
     print(f"📚 Zdrojov: {len(sources)}, kúskov spolu: {total_chunks}")
 
@@ -262,7 +298,7 @@ def run(dry_run=False):
 
     import psycopg2
 
-    indexed_sources = indexed_chunks = skipped = errors = 0
+    indexed_sources = indexed_chunks = skipped = errors = pruned = 0
     conn = psycopg2.connect(RAG_DATABASE_URL)
     try:
         for src in sources:
@@ -276,12 +312,18 @@ def run(dry_run=False):
             except Exception as e:
                 errors += 1
                 print(f"⚠️  Zdroj „{src['title']}“ zlyhal, nechávam starú verziu: {e}")
+
+        # Po indexovaní: zmaž kúsky zdrojov, ktoré už neexistujú (napr. článok
+        # zmazaný na WP). Nespúšťame pri chybách zberu — tie skončia vyššie.
+        keep_urls = [s["source_url"] for s in sources]
+        gathered_articles = sum(1 for s in sources if s["source_type"] == "article")
+        pruned = prune(conn, keep_urls, gathered_articles)
     finally:
         conn.close()
 
     summary = (
         f"Indexácia hotová: {indexed_sources} zdrojov / {indexed_chunks} kúskov nových, "
-        f"{skipped} bez zmeny, {errors} chýb."
+        f"{skipped} bez zmeny, {pruned} zmazaných (neexistujúce), {errors} chýb."
     )
     print(f"\n🎉 {summary}")
     zapis_log("error" if errors else "success", topic="rag_index", message=summary, agent_name=AGENT_NAME)
