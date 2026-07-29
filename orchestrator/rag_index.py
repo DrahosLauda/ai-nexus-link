@@ -42,9 +42,20 @@ SITE_URL = os.getenv("SITE_URL", "https://www.digitalnapomoc.sk")
 RAG_DATABASE_URL = os.getenv("RAG_DATABASE_URL")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# Gemini embeddings — 768-rozmerný vektor. Rovnaký model použije aj /api/chat
-# na otázku (tam s taskType RETRIEVAL_QUERY), tu pre obsah RETRIEVAL_DOCUMENT.
-EMBED_MODEL = "text-embedding-004"
+# Gemini embeddings. Rovnaký model musí použiť aj /api/chat na otázku (inak sa
+# vektory nedajú porovnávať) — tam s taskType RETRIEVAL_QUERY, tu RETRIEVAL_DOCUMENT.
+# Názvy modelov sa časom menia; skúšame kandidátov po poradí a použijeme prvý
+# funkčný (vlastný sa dá vynútiť cez GEMINI_EMBED_MODEL v .env). Zapamätaný
+# funkčný model sa vypíše — ten istý nastavíme aj frontendu v Kroku 3.
+EMBED_MODEL_CANDIDATES = [
+    m for m in [
+        os.getenv("GEMINI_EMBED_MODEL"),
+        "gemini-embedding-001",
+        "text-embedding-005",
+        "text-embedding-004",
+    ] if m
+]
+_working_embed_model = None
 
 AGENT_NAME = "rag_index"
 
@@ -191,19 +202,33 @@ def gather_sources():
 # ── Embeddingy (Gemini) ────────────────────────────────────────────────────
 
 def embed(text, task_type="RETRIEVAL_DOCUMENT"):
-    """Premení text na 768-rozmerný vektor cez Gemini. Vráti zoznam floatov."""
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{EMBED_MODEL}:embedContent"
-    payload = {
-        "model": f"models/{EMBED_MODEL}",
-        "content": {"parts": [{"text": text}]},
-        "taskType": task_type,
-    }
+    """Premení text na vektor cez Gemini. Skúša kandidátov, prvý funkčný si
+    zapamätá (ďalšie kúsky idú rovno naň). Vráti zoznam floatov."""
+    global _working_embed_model
     headers = {"x-goog-api-key": GEMINI_API_KEY, "Content-Type": "application/json"}
-    r = requests.post(url, headers=headers, json=payload, timeout=60)
-    data = r.json()
-    if r.status_code != 200:
-        raise RuntimeError(f"Gemini embedding zlyhal: {r.status_code} {str(data)[:300]}")
-    return data["embedding"]["values"]
+    models = [_working_embed_model] if _working_embed_model else EMBED_MODEL_CANDIDATES
+    last_err = None
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
+        payload = {
+            "model": f"models/{model}",
+            "content": {"parts": [{"text": text}]},
+            "taskType": task_type,
+        }
+        r = requests.post(url, headers=headers, json=payload, timeout=60)
+        if r.status_code == 404:  # model neexistuje → skús ďalšieho kandidáta
+            last_err = f"{model}: 404 (nedostupný)"
+            continue
+        data = r.json()
+        if r.status_code != 200:
+            raise RuntimeError(f"Gemini embedding zlyhal ({model}): {r.status_code} {str(data)[:200]}")
+        if _working_embed_model != model:
+            _working_embed_model = model
+            print(f"ℹ️  Embedding model: {model}  (ten istý nastav aj frontendu v Kroku 3)")
+        return data["embedding"]["values"]
+    raise RuntimeError(
+        f"Žiadny embedding model nefunguje ({', '.join(EMBED_MODEL_CANDIDATES)}). Posledná chyba: {last_err}"
+    )
 
 
 # ── Zápis do databázy ──────────────────────────────────────────────────────
