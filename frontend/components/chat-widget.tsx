@@ -100,7 +100,12 @@ export function ChatWidget() {
         >
           {/* Hlavička */}
           <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3.5 text-white">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-lg">🤖</span>
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.5l1.7 5.05a3 3 0 001.9 1.9L20.5 11l-4.9 1.55a3 3 0 00-1.9 1.9L12 19.5l-1.7-5.05a3 3 0 00-1.9-1.9L3.5 11l4.9-1.55a3 3 0 001.9-1.9L12 2.5z" />
+                <path d="M18.5 14.5l.7 2.05a1.5 1.5 0 00.95.95l2.05.7-2.05.7a1.5 1.5 0 00-.95.95l-.7 2.05-.7-2.05a1.5 1.5 0 00-.95-.95L15 18.2l2.05-.7a1.5 1.5 0 00.95-.95l.5-2.05z" opacity="0.85" />
+              </svg>
+            </span>
             <div className="flex-1">
               <p className="text-[15px] font-semibold leading-tight">Asistent · digitálna pomoc</p>
               <p className="text-[12px] leading-tight text-white/70">Odpovedá z nášho obsahu</p>
@@ -204,14 +209,9 @@ export function ChatWidget() {
             <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M21 11.5a8.38 8.38 0 01-8.5 8.5 8.5 8.5 0 01-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 01-.9-3.8A8.38 8.38 0 0112.5 3 8.5 8.5 0 0121 11.5z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2.5l1.7 5.05a3 3 0 001.9 1.9L20.5 11l-4.9 1.55a3 3 0 00-1.9 1.9L12 19.5l-1.7-5.05a3 3 0 00-1.9-1.9L3.5 11l4.9-1.55a3 3 0 001.9-1.9L12 2.5z" />
+            <path d="M18.5 14.5l.7 2.05a1.5 1.5 0 00.95.95l2.05.7-2.05.7a1.5 1.5 0 00-.95.95l-.7 2.05-.7-2.05a1.5 1.5 0 00-.95-.95L15 18.2l2.05-.7a1.5 1.5 0 00.95-.95l.5-2.05z" opacity="0.85" />
           </svg>
         )}
       </button>
