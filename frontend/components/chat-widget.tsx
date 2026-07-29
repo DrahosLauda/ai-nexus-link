@@ -21,6 +21,32 @@ interface Msg {
   greeting?: boolean;
 }
 
+/** Fialový robot-maskot (vektor). `wave` zapne mávajúcu ruku; svietenie/hojdanie
+ *  riešia CSS triedy (mascot-btn/mascot-bob) v globals.css. Biely na gradiente. */
+function RobotMascot({ size = 30, wave = false }: { size?: number; wave?: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      {/* anténka */}
+      <line x1="10.5" y1="6.6" x2="10.5" y2="3.6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <circle cx="10.5" cy="2.8" r="1" fill="currentColor" />
+      {/* uši */}
+      <rect x="3.2" y="10" width="1.4" height="3.4" rx="0.7" fill="currentColor" />
+      <rect x="16.4" y="10" width="1.4" height="3.4" rx="0.7" fill="currentColor" />
+      {/* hlava */}
+      <rect x="4.4" y="6.6" width="12" height="10.6" rx="3.2" fill="currentColor" />
+      {/* oči + úsmev */}
+      <circle cx="8" cy="11" r="1.25" fill="#4f46e5" />
+      <circle cx="12.9" cy="11" r="1.25" fill="#4f46e5" />
+      <path d="M8 14.2 Q10.45 15.9 12.9 14.2" stroke="#4f46e5" strokeWidth="1" fill="none" strokeLinecap="round" />
+      {/* mávajúca ruka */}
+      <g className={wave ? "mascot-hand" : undefined}>
+        <path d="M15.8 10.2 L19.2 6.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        <circle cx="19.9" cy="6" r="1.7" fill="currentColor" />
+      </g>
+    </svg>
+  );
+}
+
 const GREETING: Msg = {
   role: "assistant",
   greeting: true,
@@ -100,11 +126,8 @@ export function ChatWidget() {
         >
           {/* Hlavička */}
           <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3.5 text-white">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 2.5l1.7 5.05a3 3 0 001.9 1.9L20.5 11l-4.9 1.55a3 3 0 00-1.9 1.9L12 19.5l-1.7-5.05a3 3 0 00-1.9-1.9L3.5 11l4.9-1.55a3 3 0 001.9-1.9L12 2.5z" />
-                <path d="M18.5 14.5l.7 2.05a1.5 1.5 0 00.95.95l2.05.7-2.05.7a1.5 1.5 0 00-.95.95l-.7 2.05-.7-2.05a1.5 1.5 0 00-.95-.95L15 18.2l2.05-.7a1.5 1.5 0 00.95-.95l.5-2.05z" opacity="0.85" />
-              </svg>
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/15 text-white">
+              <RobotMascot size={22} />
             </span>
             <div className="flex-1">
               <p className="text-[15px] font-semibold leading-tight">Asistent · digitálna pomoc</p>
@@ -202,17 +225,18 @@ export function ChatWidget() {
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Zavrieť chat" : "Otvoriť chat s asistentom"}
         aria-expanded={open}
-        className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5"
+        className={`grid h-14 w-14 place-items-center rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white transition hover:-translate-y-0.5 ${
+          open ? "shadow-lg shadow-indigo-500/30" : "mascot-btn"
+        }`}
       >
         {open ? (
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         ) : (
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2.5l1.7 5.05a3 3 0 001.9 1.9L20.5 11l-4.9 1.55a3 3 0 00-1.9 1.9L12 19.5l-1.7-5.05a3 3 0 00-1.9-1.9L3.5 11l4.9-1.55a3 3 0 001.9-1.9L12 2.5z" />
-            <path d="M18.5 14.5l.7 2.05a1.5 1.5 0 00.95.95l2.05.7-2.05.7a1.5 1.5 0 00-.95.95l-.7 2.05-.7-2.05a1.5 1.5 0 00-.95-.95L15 18.2l2.05-.7a1.5 1.5 0 00.95-.95l.5-2.05z" opacity="0.85" />
-          </svg>
+          <span className="mascot-bob grid place-items-center">
+            <RobotMascot size={32} wave />
+          </span>
         )}
       </button>
     </div>

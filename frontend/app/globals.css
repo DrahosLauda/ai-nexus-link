@@ -210,3 +210,29 @@ body {
   color: var(--color-ink);
   font-weight: 600;
 }
+
+/* ── Chat maskot (fialový robot) — jemné svietenie, mávanie, hojdanie ─────── */
+@keyframes mascot-glow {
+  0%, 100% { box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35); }
+  50%      { box-shadow: 0 10px 34px rgba(139, 92, 246, 0.75); }
+}
+@keyframes mascot-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1.5px); }
+}
+@keyframes mascot-wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  70%           { transform: rotate(-22deg); }
+  80%           { transform: rotate(12deg); }
+  90%           { transform: rotate(-22deg); }
+}
+
+/* Bublina jemne pulzuje žiarou; robot sa jemne hojdá; ruka občas zamáva. */
+.mascot-btn { animation: mascot-glow 3.2s ease-in-out infinite; }
+.mascot-bob { animation: mascot-bob 3.2s ease-in-out infinite; transform-origin: center; }
+.mascot-hand { animation: mascot-wave 3.6s ease-in-out infinite; transform-origin: 50% 100%; transform-box: fill-box; }
+
+/* Rešpektuj používateľov, čo majú vypnuté animácie (prístupnosť). */
+@media (prefers-reduced-motion: reduce) {
+  .mascot-btn, .mascot-bob, .mascot-hand { animation: none; }
+}

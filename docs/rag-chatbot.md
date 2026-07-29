@@ -204,3 +204,30 @@ embeddingy → chat). Dobrý interný test technológie pred nasadením klientom
 „kosínusová podobnosť", názvom modelov. Ak treba, nahraď prirovnaním
 („AI si spraví akúsi mapu významov vášho obsahu"). Článok nie je technická
 dokumentácia, ale predajný/vzdelávací obsah pre laika.
+
+---
+
+## 9. Widget — vzhľad, maskot a hlas (roadmap)
+
+**Vzhľad (hotové, Krok 4):** plávajúca bublina vpravo dole na každej stránke,
+po kliknutí panel s chatom v našom glassmorphism štýle (indigo/violet hlavička).
+Odpoveď + odkazy na zdroje (`www…/blog/…`) → buduje dôveru (nevymýšľa si).
+Prístupné: klávesnica (Enter odošle, Escape zavrie), aria, mobil.
+
+**Maskot (hotové/vo vývoji):** ikonu tvorí **fialový robot-maskot** (vektorový
+SVG) — jemne **svieti** a **máva** (CSS animácie, s ohľadom na
+`prefers-reduced-motion`). Zámerne vektor, nie zapečený raster z článkových
+obrázkov (ten je plochý a nedá sa animovať). Rovnaký maskot vieme neskôr
+použiť aj inde (hero, e-maily) ako prvok značky.
+
+**Hlas (fáza 2 — neskôr):** prvé demo je **písaný chat** (jednoduché, spoľahlivé,
+prakticky zadarmo). Hlas sa dá pridať ako vylepšenie, dve cesty:
+- **Zadarmo, vstavané v prehliadači** (Web Speech API): mikrofón → text a text →
+  hlas. Výhoda: 0 €. Nevýhoda: **slovenčina je slabšia** (roboticky znejúca,
+  na mobiloch nekonzistentná).
+- **Platené hlasové služby** (kvalitný TTS/STT): slovenčina znie prirodzene, ale
+  **stojí to** mesačne/za minútu — pri nízkom Railway kredite zatiaľ počkať.
+
+Odporúčanie: hlas je skvelý „wow" prvok na demo aj predaj, ale pridať ho až keď
+písaný základ šľape a rozhodneme sa medzi lacnou (browser) a kvalitnou (platenou)
+cestou.
