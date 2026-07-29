@@ -39,9 +39,9 @@
 
 **🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–11):**
 
-- [ ] **RAG chatbot naživo na našom webe (prvé demo)** — odpovedá z nášho obsahu
-  (RAG + `pgvector` v existujúcom Postgrese). Keď ponúkame nasadenie chatbotov,
-  musíme mať aspoň jedného živého. Zároveň predajná služba pre klientov. Viď `vizia.md` §11.
+- [x] **RAG chatbot naživo na našom webe (prvé demo)** — ✅ NASADENÝ a funguje
+  (odpovedá z nášho obsahu + cituje zdroje). Cesta B (bez pgvectora — vektor `real[]`,
+  kosínus v pamäti). Detaily nižšie „RAG chatbot — DOKONČENÉ (prvé demo)".
 - [ ] **Viac ukážkových agentov = demo automatizácií** — chatbot/zák. podpora,
   rezervačný/objednávkový, e-mail auto-odpoveď. Každý agent = live demo služby.
   Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).
@@ -74,6 +74,60 @@
 - [x] **Obrázky článkov po migrácii `www→wp`** — zobrazujú sa v tele článku aj
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
+
+## Júl 2026 — RAG chatbot — DOKONČENÉ (prvé živé AI demo) ✅
+
+**Prvé živé AI demo na webe funguje.** Chatbot odpovedá z nášho obsahu a cituje
+zdroje (overené naostro: na „aké ponúkate služby?" dal štruktúrovanú odpoveď z
+článkov + 3 odkazy na zdroje). Nasadené na `www.digitalnapomoc.sk`.
+
+**Čo sme postavili (Kroky 1–4 + nasadenie):**
+
+- **Krok 1 — DB:** tabuľka `rag_chunks` v existujúcej PostGIS. **Cesta B** (bez
+  pgvectora — PostGIS ho nemá a ručná inštalácia by pri redeploy zmizla): vektor
+  ako `real[]`, kosínus počíta `/api/chat` v pamäti. 0 € navyše, žiadna nová
+  služba. Schéma `orchestrator/rag_schema.sql`. Návod `docs/rag-krok1-db.md`.
+- **Krok 2 — Indexer** (`orchestrator/rag_index.py`): WP články (REST) + FAQ
+  (z `frontend/lib/content.ts`) → chunky → Gemini embeddingy → `rag_chunks`.
+  `content_hash` (preskočí nezmenené), `prune` (zmaže kúsky zmazaných článkov),
+  `--dry-run`. Beží lokálne (verejná DB URL). Naplnené: 93 kúskov (89 článkové
+  + 4 FAQ). Návod `docs/rag-krok2-spustenie.md`.
+- **Krok 3 — Mozog** (`frontend/lib/rag.ts` + `app/api/chat/route.ts`): embedding
+  otázky → načíta kúsky (5-min cache) → kosínus → top-k → odpoveď cez
+  `gemini-3.5-flash` IBA z kontextu (anti-halucinácia + odkaz na kontakt) +
+  zdroje. Rate limit 15/10 min + honeypot (vzor podľa `/api/lead`).
+- **Krok 4 — Widget** (`frontend/components/chat-widget.tsx`): plávajúca bublina
+  vpravo dole → panel (glassmorphism), zdroje pod odpoveďou, prístupné. Ikona =
+  **fialový robot-maskot** (SVG, svieti/máva/hojdá sa, rešpektuje reduced-motion).
+- **Nasadenie:** frontend na Railway číta `RAG_DATABASE_URL` (verejná URL) +
+  `GEMINI_API_KEY` (referencia na orchestrátor `sincere-motivation`). Merge vetvy
+  `claude/rag-chatbot-first-demo-9bwo1w` → `main` (po súhlase).
+
+**Použité modely:** embedding `gemini-embedding-001` (starý `text-embedding-004`
+vracia 404 — Gemini ho už cez embedContent nepozná; indexer skúša kandidátov a
+`/api/chat` musí použiť ten istý → zhoda cez `GEMINI_EMBED_MODEL` default);
+odpovede `gemini-3.5-flash`.
+
+**Ponaučenia:**
+
+1. **`text-embedding-004` je mŕtvy** (404 na embedContent). Funguje
+   `gemini-embedding-001`. Indexer aj `/api/chat` MUSIA mať rovnaký embed model,
+   inak sa vektory nedajú porovnávať.
+2. **Po go-live číta obsah `WP_URL=https://wp.digitalnapomoc.sk`** (nie `www` —
+   to je už frontend, `/wp-json` tam vracia 404). Lokálny `.env` orchestrátora
+   mal ešte starú `www` — opravené.
+3. **`WP_URL` je serverové čítanie na pozadí** — headless princíp neporušuje
+   (návštevník `wp.` nevidí; zdroje chatbota staviame z `SITE_URL` = `www`).
+
+**Ešte na rade (RAG v2 — neblokujúce):**
+
+- **Automatické doindexovanie** po publikovaní článku (cron na Railway alebo
+  napojiť existujúci WP webhook) — teraz treba ručne spustiť `python rag_index.py`.
+- **Krok 5 — config/logy chatbota** v Directuse (model, k, prompt) + vlastný token.
+- **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS.
+  Detaily `docs/rag-chatbot.md` §9.
+- **Optimalizácia:** frontend na **vnútornú** DB adresu (teraz verejná kvôli
+  jednoduchosti); ladenie promptu/dĺžky odpovedí.
 
 ## Júl 2026 — sedenie: RAG chatbot (Krok 1) + ponaučenie „vetva vs Obsidian"
 
