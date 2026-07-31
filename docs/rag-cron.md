@@ -1,4 +1,34 @@
-# RAG — automatické doindexovanie (denný Railway cron) — návod
+# RAG — automatické doindexovanie — návod
+
+> ⚠️ **Cesta A (nová služba = denný cron) vyžaduje Railway upgrade na Hobby**
+> ($5/mes.) — free plán nedovolí pridať ďalšiu službu. Preto sme zvolili
+> **Cestu B (zadarmo, bez novej služby)**: reindex je pripojený na koniec
+> existujúceho `run_pipeline.py`, takže beží pri každom behu orchestrátora
+> (Po/St/Pi). Nastavenie B je nižšie v sekcii „Cesta B". Cesta A (celý postup
+> s novou službou) ostáva popísaná pre prípad, že sa raz rozhodneš pre denný
+> cron s upgradom.
+
+## Cesta B — reindex v existujúcom pipeline (zvolené, zadarmo)
+
+Kód už je hotový (`run_pipeline.py` na konci volá `rag_index.run()`; bezpečne —
+chýbajúca konfigurácia ani chyba nezhodia Writer beh). Treba len:
+
+1. **Jedna premenná na existujúcom orchestrátori** (služba `sincere-motivation`) —
+   žiadny upgrade, len nová Variable:
+   - `RAG_DATABASE_URL` = verejná adresa DB (`postgresql://…railway.app:PORT/railway`,
+     tá istá ako v `orchestrator/.env` a vo frontende).
+   - (`GEMINI_API_KEY` a `WP_URL` tam už sú — Writer ich používa.)
+2. **Zlúčiť do `main`** → orchestrátor sa prenasadí (zmena je v `orchestrator/`).
+3. Odvtedy sa reindex spustí **pri každom behu pipeline** (Po/St/Pi 06:00 UTC).
+   Nový ručne publikovaný článok naskočí do chatbota do najbližšieho behu.
+   (Kedykoľvek vieš spustiť aj ručne: `python rag_index.py`.)
+
+Overenie: po najbližšom behu (alebo „Run now" na orchestrátori) v jeho logu
+uvidíš `🔄 Doindexovanie RAG…` a `🎉 Indexácia hotová…`.
+
+---
+
+## Cesta A — samostatný denný cron (vyžaduje Hobby upgrade)
 
 > Aby sa nové/upravené WP články samy dostali do chatbota — bez ručného
 > spúšťania. Cesta A: druhý Railway cron worker, ktorý raz denne spustí

@@ -11,20 +11,47 @@ Ručné spustenie jednotlivých agentov ostáva (`python wp_writer_agent.py`,
 `python seo_geo_agent.py`).
 """
 
+import os
+
+import rag_index
 from seo_geo_agent import optimalizuj
 from wp_writer_agent import generate_and_post_article
 
 
+def reindex_rag():
+    """Doindexovanie do RAG chatbota (publikované články → rag_chunks).
+
+    Beží pri každom behu pipeline, aby sa nové/ručne publikované články samy
+    dostali do chatbota (Cesta B — bez samostatného cronu). Je oddelené od
+    Writera a NIKDY nezhodí hlavný beh: chýbajúca konfigurácia či chyba sa len
+    vypíše. Reindex je „šikovný" (preskočí nezmenené), takže je lacný.
+    """
+    if not os.getenv("RAG_DATABASE_URL"):
+        print("ℹ️  RAG_DATABASE_URL nie je nastavené — doindexovanie preskočené.")
+        return
+    try:
+        print("🔄 Doindexovanie RAG (nové publikované články)…")
+        rag_index.run()
+    except SystemExit as e:
+        print(f"⚠️  RAG doindexovanie skončilo predčasne (kód {e.code}) — pokračujem.")
+    except Exception as e:
+        print(f"⚠️  RAG doindexovanie zlyhalo (pokračujem): {e}")
+
+
 def main():
-    print("▶️  Reťazec: Writer → SEO+GEO agent")
+    print("▶️  Reťazec: Writer → SEO+GEO agent → RAG reindex")
 
     post_id = generate_and_post_article()
-    if not post_id:
+    if post_id:
+        print(f"➡️  Odovzdávam článok ID {post_id} SEO+GEO agentovi…")
+        optimalizuj(post_id=post_id)
+        print("✅ Writer + SEO+GEO dokončené.")
+    else:
         print("⏹️  Writer nevytvoril koncept — SEO+GEO agent preskočený.")
-        return
 
-    print(f"➡️  Odovzdávam článok ID {post_id} SEO+GEO agentovi…")
-    optimalizuj(post_id=post_id)
+    # Doindexovanie beží vždy (nezávisle od Writera) — zachytí aj ručne
+    # publikované články od posledného behu.
+    reindex_rag()
     print("✅ Reťazec dokončený.")
 
 
