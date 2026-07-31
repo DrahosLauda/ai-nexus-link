@@ -61,6 +61,12 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
 
+  // Na mobile: o koľko klávesnica prekrýva spodok obrazovky — o toľko celý
+  // widget nadvihneme, nech vstup ostane nad klávesnicou (iOS/Android).
+  const [kbOffset, setKbOffset] = useState(0);
+  // Viditeľná výška (bez klávesnice) — strop výšky panela, nech sa vždy zmestí.
+  const [availH, setAvailH] = useState(0);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -71,6 +77,23 @@ export function ChatWidget() {
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      const overlap = window.innerHeight - vv.height - vv.offsetTop;
+      setKbOffset(Math.max(0, Math.round(overlap)));
+      setAvailH(Math.round(vv.height));
+    };
+    vv.addEventListener("resize", onResize);
+    vv.addEventListener("scroll", onResize);
+    onResize();
+    return () => {
+      vv.removeEventListener("resize", onResize);
+      vv.removeEventListener("scroll", onResize);
+    };
+  }, []);
 
   async function send() {
     const question = input.trim();
@@ -114,7 +137,10 @@ export function ChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
+    <div
+      className="fixed right-5 z-50 flex flex-col items-end print:hidden"
+      style={{ bottom: `calc(1.25rem + ${kbOffset}px)` }}
+    >
       {open && (
         <div
           role="dialog"
@@ -122,7 +148,8 @@ export function ChatWidget() {
           onKeyDown={(e) => {
             if (e.key === "Escape") setOpen(false);
           }}
-          className="mb-3 flex h-[70vh] max-h-[560px] w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-[20px] border border-line bg-white shadow-[0_24px_64px_rgba(23,23,50,0.22)] sm:w-[380px]"
+          style={{ maxHeight: availH ? `${Math.max(320, Math.min(560, availH - 96))}px` : "70vh" }}
+          className="mb-3 flex w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-[20px] border border-line bg-white shadow-[0_24px_64px_rgba(23,23,50,0.22)] sm:w-[380px]"
         >
           {/* Hlavička */}
           <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-3.5 text-white">
@@ -146,7 +173,7 @@ export function ChatWidget() {
           </div>
 
           {/* Správy */}
-          <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto bg-cloud px-4 py-4">
+          <div ref={scrollRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-cloud px-4 py-4">
             {messages.map((m, i) => (
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
                 <div
@@ -185,28 +212,36 @@ export function ChatWidget() {
             )}
           </div>
 
-          {/* Vstup */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              send();
-            }}
-            className="flex items-center gap-2 border-t border-line bg-white px-3 py-3"
-          >
+          {/* Vstup — zámerne NIE <form>, aby iOS neponúkal heslá/karty/kontakty. */}
+          <div className="flex items-center gap-2 border-t border-line bg-white px-3 py-3">
             <label htmlFor="chat-input" className="sr-only">
               Napíšte otázku
             </label>
             <input
               id="chat-input"
               ref={inputRef}
+              type="text"
+              name="dnp-chat-message"
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
               placeholder="Napíšte otázku…"
               autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="sentences"
+              spellCheck={false}
+              enterKeyHint="send"
+              inputMode="text"
               className="flex-1 rounded-full border border-line bg-cloud px-4 py-2.5 text-[14.5px] text-ink outline-none transition-colors placeholder:text-mist-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
             />
             <button
-              type="submit"
+              type="button"
+              onClick={send}
               disabled={!input.trim() || sending}
               aria-label="Odoslať"
               className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white transition hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
@@ -215,7 +250,7 @@ export function ChatWidget() {
                 <path d="M4 12l16-8-6 8 6 8-16-8z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
               </svg>
             </button>
-          </form>
+          </div>
         </div>
       )}
 
@@ -235,7 +270,7 @@ export function ChatWidget() {
           </svg>
         ) : (
           <span className="mascot-bob grid place-items-center">
-            <RobotMascot size={32} wave />
+            <RobotMascot size={40} wave />
           </span>
         )}
       </button>
