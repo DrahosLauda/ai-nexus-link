@@ -99,9 +99,13 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
-## Aug 2026 — Rezervačný agent, Krok R0: dátový model ✅ (na vetve)
+## Aug 2026 — Rezervačný agent, Krok R0: dátový model ✅ HOTOVÉ (zlúčené + naklikané)
 
-**Urobené (vetva `claude/booking-agent-r0-gq6j35`, zatiaľ NEzlúčené do `main`):**
+**Kód zlúčený do `main` (PR #32).** Klik-časť naostro dokončená používateľom —
+Directus kolekcie, DB constraint, token aj seed dáta stoja. **Základ rezervačného
+agenta je pripravený**, môže sa stavať R1.
+
+**Kód (PR #32 → `main`):**
 
 - **Referenčná schéma `orchestrator/booking_schema.sql`** (vzor podľa
   `rag_schema.sql`) — 5 kolekcií: `booking_resources`, `booking_services`,
@@ -111,22 +115,51 @@
 - **Exclusion constraint proti dvojitej rezervácii** (`btree_gist`,
   `EXCLUDE USING gist (resource WITH =, tstzrange(start,end) WITH &&) WHERE
   status='confirmed'`) — DB fyzicky nedovolí prekryv na tom istom zdroji.
-- **`docs/directus.md` doplnený** — rezervačné kolekcie (tabuľka + klik-návod na
-  založenie), token **`reservation-bot`** (least privilege: read katalógu,
-  read+create+update `bookings`, create `client_leads`) + recept na politiku/rolu/token.
+- **`docs/directus.md`** — rezervačné kolekcie (tabuľka + klik-návod na založenie),
+  token **`reservation-bot`** (least privilege) + recept na politiku/rolu/token.
+- **`docs/booking-r0-klik-navod.md`** — jednoduchý klik-návod krok po kroku (A–D).
 
 **Overené v sedení (lokálny Postgres 16):** schéma sa aplikuje čisto a je
 **idempotentná** (druhý beh len NOTICE „already exists"). Constraint otestovaný
 naostro: prekryv potvrdených → `ERROR` (blokované); prekryv so `status=cancelled`
 → prejde; dotyk slotov (10:30–10:30, `[)` half-open) → prejde. Presne ako má byť.
 
-**Klik-časť (po súhlase — návod v `docs/directus.md`):** založiť 5 kolekcií
-v Directus admine (M2O väzby), spustiť `booking_schema.sql` v Railway Postgrese
-(kvôli exclusion constraintu — cez UI sa nedá), vytvoriť token `reservation-bot`,
-naseedovať demo dáta (1–2 zdroje, služby, Po–Pia 9:00–17:00).
+**Klik-časť — DOKONČENÁ naostro (Directus + Railway), stav živých systémov:**
 
-**Ďalší krok:** Krok R1 — engine `frontend/lib/booking.ts` + widget `/rezervacia`
-+ `lib/email.ts` (hosting SMTP). Až po zlúčení R0 a založení kolekcií.
+- **Directus kolekcie:** všetkých 5 založených cez UI (Data Model), presné názvy
+  polí podľa schémy. M2O väzby: `booking_services.resource`,
+  `booking_availability.resource` (required), `booking_blackouts.resource`
+  (nullable), `bookings.service/resource/lead` (`lead → client_leads`).
+  Optional field `sort` zapnutý na katalógových kolekciách, `date_created`
+  na `bookings`. Kľúčové `start`/`end`/`weekday` sú Timestamp/Integer, časy Time.
+- **DB constraint:** v Railway → PostGIS → Data (Query) spustené ručne
+  `CREATE EXTENSION btree_gist` + `ALTER TABLE bookings ADD CONSTRAINT
+  bookings_no_overlap …`. Overené `SELECT conname … = 'bookings_no_overlap'` → 1 row. ✅
+- **Token `reservation-bot`:** politika „Rezervácie — booking + leady"
+  (App/Admin Access **vypnuté**; `booking_*` = Read, `bookings` =
+  Create+Read+Update, `client_leads` = Create), rola „Rezervácie", user
+  `reservation-bot@digitalnapomoc.sk`, statický token → Railway (frontend)
+  `RESERVATION_TOKEN`.
+- **Seed dáta:** `Poradca 1` (id 1); služba „Konzultácia 30 min" (`duration_min=30`);
+  dostupnosť Po–Pia (weekday 1–5) 09:00–17:00 pre Poradcu 1 (5 riadkov).
+
+**Ponaučenia (klik-časť):**
+
+1. **Railway „Data → Query" beží po jednom príkaze** — viac statementov naraz
+   radšej nie; DDL s `DROP` vyhodí „destructive action" varovanie (pri
+   `DROP CONSTRAINT IF EXISTS` je bezpečné, nič neexistuje → Confirm).
+   `CREATE EXTENSION`/`ALTER` vracajú „0 rows" = úspech (nie chyba).
+2. **Directus token sa dá vygenerovať až po uložení používateľa** (pri vytváraní
+   je pole Token neaktívne). Token sa ukáže **iba raz** → hneď skopírovať;
+   potom pole hlási „Value securely saved" (hodnota sa už nezobrazí).
+3. **Kolekcie zakladané cez UI = tabuľky spraví Directus**, takže z `booking_schema.sql`
+   stačí ručne dobehnúť len `btree_gist` + exclusion constraint (zvyšok `CREATE
+   TABLE IF NOT EXISTS` by aj tak preskočil).
+
+**Ďalší krok:** Krok R1 — engine `frontend/lib/booking.ts` (+ unit testy),
+API `GET /api/booking/slots` a `POST /api/booking/create`, `lib/email.ts`
+(hosting SMTP), widget `/rezervacia`. Klik-časť R1 = SMTP údaje schránky
+(napr. `rezervacie@digitalnapomoc.sk`) + env premenné na Railway.
 
 ## Júl 2026 — RAG chatbot — DOKONČENÉ (prvé živé AI demo) ✅
 
