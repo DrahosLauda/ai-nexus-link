@@ -220,7 +220,12 @@ s R2 (chatbot už bude vedieť vytvárať rezervácie/leady).
 
 ---
 
-## Štartový prompt pre REALIZAČNÉ sedenie (Krok R0 — copy-paste)
+## Štartové prompty pre REALIZAČNÉ sedenia (copy-paste, jeden krok = jedno sedenie)
+
+> Každý krok samostatné sedenie. Rob až po dokončení a zlúčení predošlého kroku.
+> Sedenie si prečíta celý plán (R0–R4), ale spraví **iba uvedený krok**.
+
+**Krok R0 — dátový model:**
 ```
 Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
 Realizačné sedenie: sprav Krok R0 rezervačného agenta z plan-agenti.md
@@ -231,6 +236,61 @@ docs/directus.md o rezervačné kolekcie a token reservation-bot (least privileg
 Kód „na hrubo", čistý a replikovateľný. Vetva claude/... , commit + push;
 merge do main a zmeny v Railway/Directus až po mojom súhlase. Klik-časti
 (zakladanie kolekcií, token, seed dáta, spustenie SQL) mi vypíš ako návod.
+```
+
+**Krok R1 — engine + widget + e-mail (predpoklad: R0 hotové a zlúčené):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+Realizačné sedenie: sprav Krok R1 rezervačného agenta z plan-agenti.md.
+Postav čistú logiku frontend/lib/booking.ts (computeFreeSlots, bez I/O, s unit
+testami), frontend/lib/booking-data.ts (čítanie/zápis cez Directus REST),
+API routes GET /api/booking/slots a POST /api/booking/create (validácia,
+honeypot, rate limit vzor /api/lead, re-check slotu pred zápisom, zápis do
+client_leads), frontend/lib/email.ts s vymeniteľným poskytovateľom (hlavná
+cesta hosting SMTP cez nodemailer, Resend ako záloha) a widget /rezervacia
+(components/booking-widget.tsx, dizajn v štýle webu, prístupný, mobil).
+Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/ (frontend/AGENTS.md).
+Časy v UTC v DB, zobrazenie Europe/Bratislava. Over lint + build + testy.
+Vetva claude/... , commit + push; merge do main a zmeny v Railway/Directus/Resend
+až po mojom súhlase. Klik-časti (SMTP údaje, env premenné, seed dáta) mi vypíš.
+```
+
+**Krok R2 — konverzačný chatbot (predpoklad: R1 hotové a zlúčené):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+Realizačné sedenie: sprav Krok R2 rezervačného agenta z plan-agenti.md.
+Rozšír /api/chat o nástroje (Gemini function calling) najdi_sloty a
+vytvor_rezervaciu, ktoré volajú ten istý lib/booking.ts a booking-data.ts
+(žiadna duplicita logiky). Chatbot vedie konverzačný tok: služba a preferovaný
+čas → ponúkne voľné termíny → po explicitnom potvrdení vytvorí rezerváciu →
+e-mail + lead. Osobnosť z agent_config. Bezpečnosť: chatbot smie iba čítať
+sloty a vytvoriť rezerváciu, nič iné. Pred písaním Next.js kódu čítaj
+node_modules/next/dist/docs/. Over lint + build + testy. Vetva claude/... ,
+commit + push; merge do main a zmeny v Railway/Directus až po mojom súhlase.
+```
+
+**Krok R3 — pripomienky v orchestrátori (predpoklad: R1 hotové a zlúčené):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+Realizačné sedenie: sprav Krok R3 rezervačného agenta z plan-agenti.md.
+Vytvor orchestrator/reminder_agent.py (lego vzor ako wp_writer/seo_geo:
+nacitaj_config("reservation_reminder"), zapis_log): prečíta nadchádzajúce
+rezervácie z Directus a pošle pripomienku deň vopred cez hosting SMTP
+(Python smtplib — bez novej závislosti). Bez rezervácií nič nerobí, chyby
+nezhodia beh. Over py_compile + import. Vetva claude/... , commit + push;
+merge do main a zmeny v Railway (cron, env, agent_config) až po mojom súhlase.
+Klik-časti (Railway cron, env, riadok agent_config) mi vypíš ako návod.
+```
+
+**Krok R4 — replikácia pre klienta (neskôr, po dohode):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+Realizačné sedenie: sprav Krok R4 rezervačného agenta z plan-agenti.md
+(replikácia). Priprav postup a config pre nasadenie rezervácií u klienta
+(nová sada services/resources/availability, branding e-mailov, from adresa —
+bez nového kódu) a navrhni cestu k multi-tenant (tenant_id na booking_*
+kolekciách + izolácia dát/tokenov) ako plán pre Fázu 5. Vetva claude/... ,
+commit + push; merge do main a zmeny v Railway/Directus až po mojom súhlase.
 ```
 
 ## Štartový prompt pre PLÁNOVACIE sedenie (pôvodný — na ďalšie ciele)
