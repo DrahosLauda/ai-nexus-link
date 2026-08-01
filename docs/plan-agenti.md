@@ -32,7 +32,7 @@ Preto sú rozhodnutia vedené replikovateľnosťou a čistotou, nie skratkami.
 |---|---|---|
 | **Kde žijú termíny/kalendár** | **Directus kolekcie** (`booking_*`) | Jediná cesta k „krabici" pre všetky odvetvia; klient spravuje v admine; prepojenie na CRM `client_leads`; rovnaký token/lego vzor. Google Calendar/Woo viažu na jedného klienta → zamietnuté pre v1. |
 | **Ako zákazník rezervuje** | **Engine najprv → widget ako prvé demo → chatbot v 2. kroku** | Logika je spoločná (`lib/booking.ts`). Widget = nízke riziko, stabilné demo. Konverzačný agent (vízia „agent dohodne všetko") sa napojí na ten istý engine bez prepisu. |
-| **E-mail (spoločný pre všetky 3 agenty)** | **Resend** (transakčná služba) | Kvalitné doručovanie, SPF/DKIM, free tier (~3000/mes.). Tenký `lib/email.ts` cez `fetch` — žiadna zbytočná závislosť. Hosting SMTP padá do spamu a viaže na jeden hosting. |
+| **E-mail (spoločný pre všetky 3 agenty)** | **Hosting SMTP** (hostcreators) — hlavná cesta; **Resend** ako záložný plán | Schránku už máme, 0 € navyše, žiadna registrácia. Keďže posielame **cez SMTP server hostingu**, doména `digitalnapomoc.sk` má **SPF/DKIM už nastavené** → dobré doručovanie (pôvodný argument proti hostingu odpadá). Pre „krabicu" prirodzené — každý klient má vlastnú schránku. `lib/email.ts` píšeme **s vymeniteľným poskytovateľom** → prechod na Resend (vyššie objemy/analytika) je neskôr len zmena configu, nie prepis. |
 | **Kde beží** | **Frontend Next.js API** (real-time zápis + potvrdenie); **orchestrátor** až na pripomienky (cron) | Rezervácia je interakcia na webe → `/api/booking/*` (ako `/api/lead`, `/api/chat`). Pripomienky „deň vopred" sú prirodzene cron → orchestrátor. |
 
 **Zásada proti dvojitej rezervácii:** Postgres **exclusion constraint**
@@ -124,24 +124,31 @@ rezervácie cez Directus REST (vzor `submit-lead.ts` / `/api/lead`).
   (constraint chytí súbeh → 409 „termín obsadený"); zápis/prepojenie
   `client_leads` (source `rezervacia`); odoslanie e-mailov.
 
-**E-mail:** `frontend/lib/email.ts` — jeden `fetch` na `https://api.resend.com/emails`
-(žiadny SDK). Dve správy: **potvrdenie zákazníkovi** (kedy, čo, kde, možnosť
-zrušenia) + **notifikácia prevádzke** (`BUSINESS_NOTIFY_EMAIL`). Slovenské šablóny.
+**E-mail:** `frontend/lib/email.ts` — **poskytovateľ vymeniteľný** (jednoduché
+rozhranie „pošli e-mail"). Hlavná implementácia = **hosting SMTP** (hostcreators)
+cez `nodemailer` (štandardná, čistá knižnica; SMTP funguje, lebo frontend beží na
+Railway ako **Node server**, nie edge). Záložná implementácia = **Resend** cez
+`fetch` — zapne sa zmenou configu, bez prepisu volajúceho kódu. Dve správy:
+**potvrdenie zákazníkovi** (kedy, čo, kde, možnosť zrušenia) + **notifikácia
+prevádzke** (`BUSINESS_NOTIFY_EMAIL`). Slovenské šablóny.
 
 **Widget:** `frontend/app/rezervacia/page.tsx` + `components/booking-widget.tsx`
 - Tok: služba → (zdroj, ak treba) → kalendár (deň) → voľné sloty → kontakt → potvrdenie.
 - Dizajn: v štýle webu (svetlý, prístupný, mobil), stavy načítania/chyby/úspechu.
 - Prepojiť z domovskej sekcie Služby ako živé demo („Vyskúšajte rezerváciu").
 
-**Env (Railway frontend):** `RESEND_API_KEY`, `BOOKING_FROM_EMAIL`
+**Env (Railway frontend):** `SMTP_HOST`, `SMTP_PORT` (zvyčajne 587), `SMTP_USER`,
+`SMTP_PASS` (schránka na hostcreators), `BOOKING_FROM_EMAIL`
 (napr. `rezervacie@digitalnapomoc.sk`), `BUSINESS_NOTIFY_EMAIL`, rezervačný
 `DIRECTUS` token (buď zdieľať s existujúcim, alebo pridať `RESERVATION_TOKEN`).
+*(Záložná cesta Resend: `RESEND_API_KEY` + prepínač poskytovateľa — neaktívne.)*
 
-**Klik-časť (po súhlase):** Resend účet + overenie domény (SPF/DKIM DNS na
-`digitalnapomoc.sk`); Railway Variables; seed dáta z R0.
+**Klik-časť (po súhlase):** vytvoriť/použiť schránku na hostcreators
+(napr. `rezervacie@digitalnapomoc.sk`) + získať SMTP údaje; Railway Variables;
+seed dáta z R0. *(Overenie domény cez DNS netreba — hosting SPF/DKIM už rieši.)*
 
 **Overiteľné v sedení:** `lint` + `build`; unit testy `booking.ts` (sloty,
-prekryvy, blackouty, minulosť, časové pásmo). Naživo (Directus/Resend) až na Railway.
+prekryvy, blackouty, minulosť, časové pásmo). Naživo (Directus/SMTP) až na Railway.
 
 ## Krok R2 — Konverzačný agent (chatbot „dohodne všetko")
 
@@ -165,7 +172,7 @@ chatbot o rezervačný tok, aby vedel nájsť termín a potvrdiť ho v konverzá
 **Cieľ:** znížiť no-show — pripomienka deň vopred.
 
 - `orchestrator/reminder_agent.py` — číta nadchádzajúce rezervácie z Directus,
-  pošle pripomienku (Resend), zapíše `agent_logs`. Rovnaký lego vzor
+  pošle pripomienku (hosting SMTP), zapíše `agent_logs`. Rovnaký lego vzor
   (config `nacitaj_config("reservation_reminder")`, `zapis_log`).
 - Railway **cron** (denne ráno). `agent_config` riadok `reservation_reminder`.
 - Neskôr: **SMS** (Twilio) namiesto/popri e-maile — pre pripomienky často účinnejšia.
@@ -181,8 +188,9 @@ chatbot o rezervačný tok, aby vedel nájsť termín a potvrdiť ho v konverzá
 
 ## Prierezové (platí pre celý balík)
 
-- **Spoločný stavebný kameň — e-mail:** `lib/email.ts` (Resend) použijú všetky
-  tri ciele (rezervácie, chatbot-leady, e-mail auto-odpoveď). Postaviť raz, čisto.
+- **Spoločný stavebný kameň — e-mail:** `lib/email.ts` (hosting SMTP, poskytovateľ
+  vymeniteľný, Resend ako záloha) použijú všetky tri ciele (rezervácie,
+  chatbot-leady, e-mail auto-odpoveď). Postaviť raz, čisto, s abstrakciou.
 - **GDPR:** rezervácie ukladajú osobné údaje (meno/e-mail/telefón) → nadväzuje
   na **Pred-Google checklist** (cookie lišta + zásady ochrany OÚ). Pri spustení
   rezervácií na verejnom webe musí byť GDPR vyriešené.
@@ -193,7 +201,8 @@ chatbot o rezervačný tok, aby vedel nájsť termín a potvrdiť ho v konverzá
 
 ## Otvorené drobnosti (doriešiť pri realizácii — operatíva, netreba blokovať plán)
 - Konkrétny zoznam našich demo služieb + otváracie hodiny (seed dáta R0).
-- `from` adresa a overenie domény v Resende (DNS SPF/DKIM).
+- `from` adresa (schránka na hostcreators, napr. `rezervacie@digitalnapomoc.sk`)
+  + jej SMTP údaje (host/port/user/pass). *(Resend + DNS len ak raz prejdeme naň.)*
 - Či zrušenie rezervácie riešime hneď (link v e-maile → `status=cancelled`)
   alebo až neskôr. (Návrh: jednoduchý zrušovací link už vo v1.)
 
@@ -203,7 +212,7 @@ chatbot o rezervačný tok, aby vedel nájsť termín a potvrdiť ho v konverzá
 
 **E-mail auto-odpoveď:** schránka + prístup (IMAP na hostingu?); **draft na
 schválenie** (bezpečnejšie ako auto-send); párovanie odpovede s obsahom (RAG)
-a s CRM (lead). Beží v orchestrátore (Python), e-mail cez ten istý `lib`/Resend.
+a s CRM (lead). Beží v orchestrátore (Python), e-mail cez ten istý `lib` (SMTP).
 
 **Chatbot leady:** rozšíriť `/api/chat` o zachytenie kontaktu → zápis
 `client_leads` + potvrdzovací e-mail (znovupoužije `lib/email.ts`). Prekrýva sa
