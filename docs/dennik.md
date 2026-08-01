@@ -37,14 +37,38 @@
 - [ ] **Interné odkazy v tele článku** po migrácii `www→wp` ukazujú na `wp.` —
   prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
 
+**🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
+
+- [ ] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
+- [ ] **Krok 5 — config v Directuse** — presunúť nastavenia chatbota (model,
+  system prompt/osobnosť, počet kúskov `k`) do `agent_config` (riadok `chatbot`),
+  aby sa dali meniť klikaním bez zásahu do kódu; logy chatov do `agent_logs`;
+  vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
+- [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
+  (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
+- [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
+  (detaily `docs/rag-chatbot.md` §9).
+- [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
+  jednoduchosti); prípadne instantné doindexovanie cez WP webhook (dnes 3×/týždeň
+  v pipeline — `docs/rag-cron.md` Cesta B).
+
 **🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–11):**
 
 - [x] **RAG chatbot naživo na našom webe (prvé demo)** — ✅ NASADENÝ a funguje
   (odpovedá z nášho obsahu + cituje zdroje). Cesta B (bez pgvectora — vektor `real[]`,
   kosínus v pamäti). Detaily nižšie „RAG chatbot — DOKONČENÉ (prvé demo)".
-- [ ] **Viac ukážkových agentov = demo automatizácií** — chatbot/zák. podpora,
-  rezervačný/objednávkový, e-mail auto-odpoveď. Každý agent = live demo služby.
+- [ ] **Vlastné „krabicové" riešenia (produktová línia) + demo agenti** — namiesto
+  odkazovania na cudzie nástroje mať **vlastné hotové moduly**, ktoré vieme nasadiť
+  klientovi a zároveň ukázať ako živé demo na našom webe. Prví kandidáti:
+  - **Rezervácie / objednávky** (kalendár, potvrdenia, SMS/e-mail pripomienky),
+  - **Dohadovanie schôdzok / stretnutí** (ponuka termínov, potvrdenie, pripomienky),
+  - **Zápis poznámok zo stretnutí** (prepis → zhrnutie → úlohy/ďalšie kroky),
+  - chatbot/zák. podpora (✅ prvé demo hotové), e-mail auto-odpoveď.
   Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).
+- [ ] **Obsahová stratégia blogu = predávať NAŠE riešenia** — články majú ukazovať
+  a viesť k **našim krabicovým riešeniam** (rezervácie, schôdzky, poznámky…), nie
+  len opisovať cudzie nástroje. Doladiť Writer `system_prompt`, nech spomína naše
+  moduly ako hotové riešenie a smeruje na kontakt/demo.
 - [ ] **Woo služby napárované na agentov** — reálne produkty vo WooCommerce
   (embednutý checkout, Store API), aby bolo vidieť headless WP ↔ frontend naostro.
 - [ ] **Frontend „mockup" agent** — z promptu podľa biznisu/biznis plánu klienta
