@@ -99,6 +99,35 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Rezervačný agent, Krok R0: dátový model ✅ (na vetve)
+
+**Urobené (vetva `claude/booking-agent-r0-gq6j35`, zatiaľ NEzlúčené do `main`):**
+
+- **Referenčná schéma `orchestrator/booking_schema.sql`** (vzor podľa
+  `rag_schema.sql`) — 5 kolekcií: `booking_resources`, `booking_services`,
+  `booking_availability`, `booking_blackouts`, `bookings`. Odvetvovo neutrálny
+  model **zdroj × služba × dostupnosť** → engine počíta voľné sloty. Časy v UTC
+  (`timestamptz`). `bookings.lead` prepája rezerváciu na CRM `client_leads`.
+- **Exclusion constraint proti dvojitej rezervácii** (`btree_gist`,
+  `EXCLUDE USING gist (resource WITH =, tstzrange(start,end) WITH &&) WHERE
+  status='confirmed'`) — DB fyzicky nedovolí prekryv na tom istom zdroji.
+- **`docs/directus.md` doplnený** — rezervačné kolekcie (tabuľka + klik-návod na
+  založenie), token **`reservation-bot`** (least privilege: read katalógu,
+  read+create+update `bookings`, create `client_leads`) + recept na politiku/rolu/token.
+
+**Overené v sedení (lokálny Postgres 16):** schéma sa aplikuje čisto a je
+**idempotentná** (druhý beh len NOTICE „already exists"). Constraint otestovaný
+naostro: prekryv potvrdených → `ERROR` (blokované); prekryv so `status=cancelled`
+→ prejde; dotyk slotov (10:30–10:30, `[)` half-open) → prejde. Presne ako má byť.
+
+**Klik-časť (po súhlase — návod v `docs/directus.md`):** založiť 5 kolekcií
+v Directus admine (M2O väzby), spustiť `booking_schema.sql` v Railway Postgrese
+(kvôli exclusion constraintu — cez UI sa nedá), vytvoriť token `reservation-bot`,
+naseedovať demo dáta (1–2 zdroje, služby, Po–Pia 9:00–17:00).
+
+**Ďalší krok:** Krok R1 — engine `frontend/lib/booking.ts` + widget `/rezervacia`
++ `lib/email.ts` (hosting SMTP). Až po zlúčení R0 a založení kolekcií.
+
 ## Júl 2026 — RAG chatbot — DOKONČENÉ (prvé živé AI demo) ✅
 
 **Prvé živé AI demo na webe funguje.** Chatbot odpovedá z nášho obsahu a cituje

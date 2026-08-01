@@ -12,9 +12,63 @@
 | **`client_leads`** | Leady z formulárov | `name, email, phone, message, source, date_created` | `frontend-bot` (len create) |
 | **`agent_config`** | Ovládací panel agentov | `agent_name, is_active, text_provider, text_model, system_prompt` (+ `topics, post_status` pre Writera) | ručne (človek) |
 | **`agent_logs`** | Denník behov agentov | `agent_name, status, topic, message, wp_post_id, date_created` | `orchestrator-bot` (len create) |
+| **`booking_resources`** | Zdroje s kapacitou (zubár/kreslo/maklér…) | `name, is_active, sort` | ručne (klient v admine) |
+| **`booking_services`** | Čo sa rezervuje | `name, duration_min, buffer_min, slot_step_min, description, is_active, resource` (M2O) | ručne (klient v admine) |
+| **`booking_availability`** | Otváracie hodiny (zdroj × deň) | `resource` (M2O), `weekday` (0–6), `start_time, end_time` | ručne (klient v admine) |
+| **`booking_blackouts`** | Blokované termíny (dovolenka/sviatok/obed) | `resource` (M2O, nullable), `start, end, reason` | ručne (klient v admine) |
+| **`bookings`** | Samotné rezervácie | `service, resource` (M2O), `start, end, customer_name, customer_email, customer_phone, note, status, source, lead` (M2O `client_leads`), `created_at` | `reservation-bot` (read+create) |
 
 Riadky v `agent_config`: **`wp_writer`** (Writer) a **`seo_geo`** (SEO+GEO agent).
 `agent_name` rozlišuje agentov — jeden riadok = jeden agent.
+
+## Rezervačné kolekcie (`booking_*`) — dátový model
+
+Odvetvovo neutrálny „krabicový" model pre rezervácie. Tri univerzálne pojmy —
+**zdroj × služba × dostupnosť** — z ktorých engine (`frontend/lib/booking.ts`)
+počíta voľné sloty. Referenčná SQL vrátane **exclusion constraintu** proti
+prekryvu: `orchestrator/booking_schema.sql`.
+
+- **Časy v UTC** (`timestamptz`), zobrazenie Europe/Bratislava. Nikdy „naivný" lokálny čas.
+- **`bookings.lead`** prepája rezerváciu na CRM `client_leads` (rovnaké leady ako z formulárov).
+- **Dvojitú rezerváciu blokuje DB** (Postgres exclusion constraint na `bookings` —
+  `resource` + prekryv `tstzrange(start,end)` pre `status = 'confirmed'`), nie iba appka.
+
+### Klik-návod: založiť rezervačné kolekcie (po súhlase)
+
+Settings → Data Model → **Create Collection** pre každú kolekciu. Poradie kvôli
+M2O väzbám: najprv `booking_resources`, potom zvyšok.
+
+1. **`booking_resources`** — polia `name` (String, required), `is_active`
+   (Boolean, default `true`), `sort` (Integer, voliteľné).
+2. **`booking_services`** — `name` (String, required), `duration_min` (Integer,
+   required), `buffer_min` (Integer, default `0`), `slot_step_min` (Integer,
+   nullable — prázdne = použije sa `duration_min`), `description` (Text),
+   `is_active` (Boolean, default `true`), `resource` (**Many-to-One** →
+   `booking_resources`, nullable = ktorýkoľvek zdroj).
+3. **`booking_availability`** — `resource` (M2O → `booking_resources`, required),
+   `weekday` (Integer, 0–6; 0 = nedeľa), `start_time` (Time), `end_time` (Time).
+4. **`booking_blackouts`** — `resource` (M2O → `booking_resources`, nullable =
+   platí pre všetkých), `start` (Timestamp), `end` (Timestamp), `reason` (String).
+5. **`bookings`** — `service` (M2O → `booking_services`), `resource` (M2O →
+   `booking_resources`, required), `start` (Timestamp), `end` (Timestamp),
+   `customer_name` (String, required), `customer_email` (String, required),
+   `customer_phone` (String), `note` (Text), `status` (String, default
+   `confirmed` — hodnoty `confirmed`/`cancelled`), `source` (String, default
+   `web-widget` — hodnoty `web-widget`/`chatbot`), `lead` (M2O →
+   `client_leads`), `created_at` (Timestamp, default „Save (Create)").
+
+Potom **spustiť SQL** (exclusion constraint sa cez UI nedá): Railway → Postgres →
+Console → `psql "$DATABASE_URL"` → vlož `orchestrator/booking_schema.sql`
+(idempotentné; `CREATE TABLE IF NOT EXISTS` nič neprepíše, doplní len constraint).
+
+### Seed dáta pre naše demo (po založení kolekcií)
+
+Content → jednotlivé kolekcie → **Create Item**:
+
+- 1–2 **zdroje** (napr. „Poradca 1"), `is_active` ✅.
+- zopár **služieb** (napr. „Konzultácia 30 min" `duration_min = 30`).
+- **dostupnosť**: Po–Pia (weekday 1–5) `09:00–17:00` pre daný zdroj (5 riadkov).
+- **blackouty** podľa potreby (dovolenka/sviatok) — voliteľné.
 
 ## Navigácia
 
@@ -53,6 +107,22 @@ nedá bezpečne replikovať.
 |---|---|---|
 | `frontend-bot` | len **create** `client_leads` | Railway (frontend) `DIRECTUS_TOKEN` |
 | `orchestrator-bot` | **read** `agent_config` + **create** `agent_logs` | Railway (orchestrátor) + `orchestrator/.env` `DIRECTUS_TOKEN` |
+| `reservation-bot` | **read** `booking_services`/`booking_resources`/`booking_availability`/`booking_blackouts`, **read+create+update** `bookings`, **create** `client_leads` | Railway (frontend) `RESERVATION_TOKEN` |
+
+**Klik-návod: politika, rola a token `reservation-bot` (po súhlase)** — rovnaký
+vzor ako `frontend-bot`/`orchestrator-bot`, zásada least privilege:
+
+1. **Settings → Access Policies → Create Policy** „Rezervácie — booking + leady":
+   - `booking_resources`, `booking_services`, `booking_availability`,
+     `booking_blackouts` → **Read** (číta katalóg a dostupnosť).
+   - `bookings` → **Read + Create + Update** (update len na zrušenie:
+     `status = cancelled`; ideálne obmedziť Field Permissions na `status`).
+   - `client_leads` → **Create** (rezervácia založí lead; rovnako ako `frontend-bot`).
+   - Nič iné (žiadny `agent_config`, `agent_logs`, WP, ani obsah).
+2. **Settings → Roles → Create Role** „Rezervácie" → priraď politiku z bodu 1.
+3. **User Directory → Create User** `reservation-bot` → rola „Rezervácie" →
+   **Generate Token** → **Save**. Token sa ukáže **iba raz** → skopíruj do
+   Railway (frontend) `RESERVATION_TOKEN`.
 
 **Vygenerovať/rotovať statický token používateľa:**
 1. **User Directory** → klikni používateľa.
