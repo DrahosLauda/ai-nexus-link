@@ -6,7 +6,8 @@
 
 ## Pracovný režim (šetrenie tokenov)
 - **Plánovacie sedenie:** prečítať `dennik.md` + `vizia.md` + tento súbor →
-  dohodnúť rozhodnutia → napísať podrobný plán po krokoch sem → skončiť.
+  dohodnúť rozhodnutia → napísať podrobný plán po krokoch sem **+ hotový
+  štartovací prompt pre realizačné sedenie** (na copy-paste) → skončiť.
   Nič sa needuplikuje, nekóduje — len plán.
 - **Realizačné sedenia:** vziať plán a spraviť jeden ucelený krok (kód na vetve,
   test, merge po súhlase). „Na hrubo", dolaďovať neskôr.
