@@ -99,6 +99,67 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Rezervačný agent, Krok R1: engine + widget + e-mail ✅ (vetva, čaká na merge)
+
+**Kód hotový na vetve `claude/booking-agent-r1-8q6ern`** (NEzlúčené do `main`).
+Prvé živé demo rezervačného agenta — engine, API, widget `/rezervacia`, e-maily.
+Klik-časť (SMTP schránka + env na Railway) je v `docs/booking-r1-klik-navod.md`.
+
+**Čo pribudlo (`frontend/`):**
+
+- **`lib/booking.ts`** — čistý engine bez I/O: `computeFreeSlots(...)` z dostupnosti,
+  rezervácií a blackoutov spočíta voľné začiatky slotov. Krok `slot_step_min`,
+  blok `duration_min + buffer_min`, filter minulosti + predstih (`minLeadMin`).
+  **Časové pásmo:** otváracie hodiny sú nástenný čas Europe/Bratislava → prevod
+  na UTC instant (dvojpriechodová korekcia, zvláda letný/zimný čas). `slotEndIso`.
+- **`lib/booking.test.ts`** — 10 unit testov (Node natívny runner, **bez novej
+  závislosti** — `npm test` = `node --test`, Node 22 stripuje typy). Pokrýva sloty,
+  krok < dĺžka, buffer, prekryv s rezerváciou (aj dotyk hrany), blackout,
+  minulosť/predstih, obedná prestávka (2 riadky), DST leto vs zima.
+- **`lib/booking-data.ts`** — čítanie katalógu a zápis cez **Directus REST**
+  (token `RESERVATION_TOKEN`, vzor `/api/lead`). `getFreeSlots`, `createReservation`
+  (re-check slotu → lead → booking; konflikt z DB constraintu → „obsadené").
+  Formátovanie času do Bratislavy (`formatSlotHuman`).
+- **`lib/email.ts`** — **vymeniteľný poskytovateľ**: SMTP (nodemailer, default)
+  hlavná cesta, **Resend** (fetch) záloha cez `EMAIL_PROVIDER=resend`. Prechod =
+  zmena env, nie prepis kódu. `lib/booking-emails.ts` — SK šablóny (potvrdenie
+  zákazníkovi + notifikácia prevádzke), posielané „best effort".
+- **API:** `GET /api/booking/slots` (katalóg / voľné sloty) a
+  `POST /api/booking/create` (validácia, honeypot `website`, rate limit 5/10 min
+  na IP — vzor `/api/lead`; re-check pred zápisom; 409 pri obsadenom termíne).
+- **Widget:** `app/rezervacia/page.tsx` + `components/booking-widget.tsx` —
+  tok služba → deň → termíny → kontakt → potvrdenie; svetlý dizajn webu,
+  prístupný (fieldset/legend, `aria-pressed`, `aria-live`), mobil. Prepojené zo
+  sekcie **Služby** (karta „Rezervácie a objednávky") + v `sitemap.xml`.
+
+**Nová závislosť:** `nodemailer` (+ `@types/nodemailer`) — jediná; SMTP je
+štandardná čistá knižnica, importuje sa dynamicky (mimo edge bundle). Zvyšok
+`fetch`/`Intl`/`pg` už bol. Testy **bez** frameworku (Node runner).
+
+**Overené v sedení:** `npm run lint` čistý, `npm run build` prešiel (`/rezervacia`
+statická, API routes dynamické), `npm test` → 10/10. Naživo (Directus/SMTP) až
+na Railway po nastavení env.
+
+**Ponaučenia:**
+
+1. **React 19 / Next 16 má lint pravidlo `react-hooks/set-state-in-effect`** —
+   synchronný `setState` priamo v tele `useEffect` je chyba. Riešenie: resety aj
+   fetch dať do **vnorenej async funkcie** vnútri efektu (nie do tela efektu).
+2. **Node 22 vie spustiť `.ts` testy natívne** (`node --test`, type-stripping od
+   22.18) — netreba jest/vitest. Test súbory sme vylúčili z `tsconfig` (`exclude`
+   `**/*.test.ts`), nech ich `next build` nekontroluje (importujú `.ts` príponu).
+3. **Re-check slotu pod explicitným lokálnym dňom, nie z UTC časti ISO** — slot
+   tesne po polnoci UTC by inak spadol na nesprávny deň. `/create` preto berie aj
+   `date` (YYYY-MM-DD, pásmo prevádzky) popri `start`.
+
+**Klik-časť (po súhlase, `docs/booking-r1-klik-navod.md`):** vytvoriť schránku
+`rezervacie@digitalnapomoc.sk` na hostingu + SMTP údaje; na Railway (frontend)
+pridať `SMTP_HOST/PORT/USER/PASS`, `BOOKING_FROM_EMAIL`, `BUSINESS_NOTIFY_EMAIL`.
+`RESERVATION_TOKEN`/`DIRECTUS_URL`/`SITE_URL` sú z R0. Potom merge do `main`.
+
+**Ďalší krok:** Krok R2 — konverzačný chatbot (`/api/chat` + Gemini function
+calling) volajúci ten istý `lib/booking.ts` / `booking-data.ts`.
+
 ## Aug 2026 — Rezervačný agent, Krok R0: dátový model ✅ HOTOVÉ (zlúčené + naklikané)
 
 **Kód zlúčený do `main` (PR #32).** Klik-časť naostro dokončená používateľom —
