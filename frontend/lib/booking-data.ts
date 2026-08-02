@@ -57,7 +57,7 @@ async function directusGet<T>(collection: string, query: Query = {}): Promise<T[
   return json.data;
 }
 
-async function directusCreate<T>(collection: string, item: unknown): Promise<T> {
+async function directusCreate<T>(collection: string, item: unknown): Promise<T | null> {
   const res = await fetch(`${DIRECTUS_URL}/items/${collection}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
@@ -72,6 +72,10 @@ async function directusCreate<T>(collection: string, item: unknown): Promise<T> 
     }
     throw err;
   }
+  // Token iba s právom Create (napr. `client_leads`) nevie prečítať vytvorenú
+  // položku späť → Directus vráti prázdne telo. To NIE je chyba (položka vznikla),
+  // len nepoznáme jej id (napr. na prepojenie leadu na rezerváciu).
+  if (!text) return null;
   return (JSON.parse(text) as { data: T }).data;
 }
 
@@ -253,7 +257,9 @@ export async function createReservation(
       message: input.note?.slice(0, 5000) || null,
       source: "rezervacia",
     });
-    leadId = lead.id;
+    // Pri create-only tokene je `lead` null (Directus nevráti telo) — lead vznikol,
+    // len ho nevieme prepojiť. Prepojenie funguje, ak token dostane aj Read.
+    leadId = lead?.id ?? null;
   } catch (e) {
     console.error("booking: lead sa nepodarilo vytvoriť (pokračujem)", e);
   }
@@ -274,7 +280,12 @@ export async function createReservation(
     });
     return {
       ok: true,
-      booking: { id: booking.id, start: input.startIso, end: endIso, serviceName: service.name },
+      booking: {
+        id: booking?.id ?? 0,
+        start: input.startIso,
+        end: endIso,
+        serviceName: service.name,
+      },
     };
   } catch (e) {
     if ((e as { conflict?: boolean }).conflict) {

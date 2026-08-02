@@ -53,6 +53,10 @@ async function getTransporter() {
     // 465 = implicitné TLS; 587/25 = STARTTLS (secure=false + upgrade).
     secure: port === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    // Zlyhaj rýchlo (blokovaný port/IP), nech sa neseká 2 min na CONN timeoute.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 20_000,
   });
   return transporter;
 }
