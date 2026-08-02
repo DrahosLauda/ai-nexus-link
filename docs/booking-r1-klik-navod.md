@@ -1,9 +1,17 @@
 # Rezervačný agent R1 — klik-návod (engine + widget + e-mail)
 
-> „Klik-časť" kroku R1: sfunkčniť odosielanie e-mailov (hosting SMTP) a nastaviť
-> env premenné na Railway. Kód (engine `lib/booking.ts`, API `/api/booking/*`,
-> widget `/rezervacia`, e-mail `lib/email.ts`) je hotový vo vetve a po merge sa
-> nasadí na Railway. Dátový model + token `RESERVATION_TOKEN` sú z R0 (hotové).
+> „Klik-časť" kroku R1: sfunkčniť odosielanie e-mailov a nastaviť env premenné na
+> Railway. Kód (engine `lib/booking.ts`, API `/api/booking/*`, widget
+> `/rezervacia`, e-mail `lib/email.ts`) je zlúčený a nasadený. Dátový model +
+> token `RESERVATION_TOKEN` sú z R0 (hotové).
+
+> ## ✅ SKUTOČNÝ STAV (aug 2026): e-maily idú cez **Resend**, nie hosting SMTP
+>
+> **Hosting SMTP (hostcreators) sa z Railway NEDÁ použiť** — spojenie končí
+> `ETIMEDOUT` (blokujú cudzie/dátacentrové IP), na 465 aj 587. Preto beží
+> **Resend** (HTTPS/443, nič sa neblokuje). **Rovno rob ČASŤ A-RESEND nižšie**;
+> pôvodná SMTP časť (A/B) je len historická referencia. Pre klientov s
+> hostingovým SMTP čakaj to isté — rovno choď na Resend.
 
 **Predpoklad (z R0, už naostro):** kolekcie `booking_*` v Directuse, DB constraint
 `bookings_no_overlap`, token `reservation-bot` → `RESERVATION_TOKEN` na Railway,
@@ -11,7 +19,43 @@ seed dáta (Poradca 1, „Konzultácia 30 min", dostupnosť Po–Pia 09:00–17:
 
 ---
 
-## ČASŤ A — E-mailová schránka na hostcreators (SMTP)
+## ČASŤ A-RESEND — E-maily cez Resend (funkčná cesta) ✅
+
+Kód netreba meniť — `lib/email.ts` má poskytovateľa vymeniteľného
+(`EMAIL_PROVIDER=resend`).
+
+1. **Účet** na [resend.com](https://resend.com) (free: 3 000 e-mailov/mes,
+   100/deň — na demo bohato).
+2. **Add Domain** → `digitalnapomoc.sk`. **Prepni UI do angličtiny** — slovenský
+   auto-preklad mrší typy záznamov (`TXT`→„SMS", `MX`→„Mexiko").
+3. **Pridaj 3 DNS záznamy** v hostcreators (DNS zóna, „Pridať nový"). Host je
+   **relatívny** (panel dopĺňa `.digitalnapomoc.sk`), oranžové „dorob A záznam"
+   **ignoruj** (mailové subdomény web nezobrazujú):
+
+   | Typ | Host | Hodnota | Priorita |
+   |---|---|---|---|
+   | `TXT` | `resend._domainkey` | `p=…QIDAQAB` (celý DKIM kľúč, Copy z Resendu) | — |
+   | `MX` | `send` | `feedback-smtp.…amazonses.com` | `10` |
+   | `TXT` | `send` | `v=spf1 include:amazonses.com ~all` | — |
+
+   **Nič nemaž** — root SPF (`…include:_spf.hostcreators.sk -all`) aj `_dmarc`
+   nechaj tak. Resend používa subdoménu `send` → žiadny konflikt s existujúcou
+   poštou.
+4. Späť v Resende **„I've added the records"** → počkaj na **Verified**
+   (~pár minút).
+5. Resend → **API Keys → Create** (Sending access) → skopíruj `re_…`.
+6. **Railway → frontend → Variables:**
+   - `EMAIL_PROVIDER` = `resend`
+   - `RESEND_API_KEY` = `re_…`
+   - `BOOKING_FROM_EMAIL` = `rezervacie@digitalnapomoc.sk`
+   - `BUSINESS_NOTIFY_EMAIL` = `info@digitalnapomoc.sk`
+
+Po redeployi otestuj — e-mail dorazí. Odoslané správy vidíš v Resend → **Emails**
+(status Sent/Delivered).
+
+---
+
+## ČASŤ A — E-mailová schránka na hostcreators (SMTP) — ⚠️ nefunguje z Railway
 
 Rezervácie posielajú **potvrdenie zákazníkovi** + **notifikáciu prevádzke**.
 Hlavná cesta = **SMTP hostingu** (SPF/DKIM pre `digitalnapomoc.sk` už rieši hosting).
