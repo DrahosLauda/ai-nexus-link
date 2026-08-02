@@ -120,8 +120,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "Služba sa nenašla." }, { status: 404 });
     }
 
-    // Potvrdenia e-mailom — best effort, rezerváciu už máme uloženú.
-    await sendBookingEmails({
+    // Potvrdenia e-mailom posielame na pozadí — rezervácia je uložená, netreba
+    // na SMTP čakať (Railway = trvalý Node proces, nie serverless). Chyby si
+    // berie na starosť sendBookingEmails (best effort, nikdy nehodí).
+    void sendBookingEmails({
       serviceName: result.booking.serviceName,
       start: result.booking.start,
       name,

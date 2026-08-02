@@ -64,9 +64,21 @@ nastaviť `EMAIL_PROVIDER=resend` + `RESEND_API_KEY` — kód sa nemení.
 4. Skús rezervovať **ten istý** termín druhýkrát → má prísť hláška
    „termín je už obsadený" (constraint + re-check fungujú).
 
-**Ak e-maily nechodia:** skontroluj `SMTP_*` (host/port/heslo), a či hosting
-nevyžaduje port 465 (`SMTP_PORT=465`). Rezervácia sa uloží aj keď e-mail zlyhá
-(pošle sa „best effort"); chybu nájdeš v logoch Railway.
+**Ak e-maily nechodia:** rezervácia sa uloží aj tak (e-mail je „best effort");
+chybu nájdeš v **Railway → frontend → Deploy Logs** (`booking: e-mail zlyhal`).
+Podľa kódu chyby:
+
+| Chyba (`code`/text) | Príčina | Oprava |
+|---|---|---|
+| `ETIMEDOUT`, `command: 'CONN'` | port zvonku blokovaný (Railway sa nedostal na SMTP port) | **skús `SMTP_PORT=587`** (STARTTLS); ak stále timeout → hosting blokuje cudzie IP → prejdi na Resend (nižšie) |
+| `ENOTFOUND` | `SMTP_HOST` má `http://` / preklep | len `smtp.hostcreators.sk` |
+| `EAUTH`, `Invalid login` | zlé heslo / `SMTP_USER` nie je celá adresa | over `SMTP_USER` = celá adresa + heslo |
+| `Mail from ... not allowed` | `BOOKING_FROM_EMAIL` ≠ prihlásená schránka | daj rovnakú adresu ako `SMTP_USER` |
+
+**Prechod na Resend (záloha, ak hosting SMTP nejde):** zaregistruj doménu na
+[resend.com](https://resend.com) (SPF/DKIM cez DNS), potom na Railway pridaj
+`EMAIL_PROVIDER=resend` + `RESEND_API_KEY`. Kód sa nemení — `lib/email.ts` má
+poskytovateľa vymeniteľného.
 
 ---
 
