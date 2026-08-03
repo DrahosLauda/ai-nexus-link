@@ -52,6 +52,36 @@
   jednoduchosti); prípadne instantné doindexovanie cez WP webhook (dnes 3×/týždeň
   v pipeline — `docs/rag-cron.md` Cesta B).
 
+**🟡 Rezervačný agent — ďalšie kroky (R1 hotový naživo; pokračovať po rozšírení služieb):**
+
+- [ ] **Rozšíriť `booking_services`** na 2–3 reálne konzultačné typy (my sme
+  agentúra → rezervuje sa konzultácia). Návrh: „Bezplatná úvodná konzultácia
+  30 min", „Technický audit / hlbšia konzultácia 60 min", „Online demo
+  automatizácií 30 min". Klik v Directuse (`booking_services`), žiadny kód.
+  *(Fiktívne odvetvové služby — kaderníctvo/autoservis — patria až do demo u
+  klienta = Krok R4 replikácia.)*
+- [ ] **Krok R2 — chatbot rezervuje v konverzácii** (prompt v `plan-agenti.md`).
+  Rozšíriť `/api/chat` o Gemini function calling `najdi_sloty` +
+  `vytvor_rezervaciu`, volajúce ten istý `lib/booking.ts`/`booking-data.ts`
+  (žiadna duplicita). Tok: služba+čas → ponúkne termíny → po výslovnom potvrdení
+  rezervuje → e-mail+lead. Osobnosť z `agent_config`. Bezpečnosť: iba čítať sloty
+  + vytvoriť rezerváciu. **Robiť až po rozšírení služieb** (nech má bot čo ponúkať).
+- [ ] **Zrušovací link v potvrdzovacom e-maile** (`status=cancelled`) — R1 „na
+  hrubo" ho zatiaľ nemá (návrh z `plan-agenti.md` otvorených drobností).
+- [ ] **Krok R3 — pripomienky** (orchestrátor cron, deň vopred) a **R4 —
+  replikácia u klienta** (viď `plan-agenti.md`).
+
+**🟣 Dedikované produktové podstránky (dotiahnuť, keď rozširujeme služby):**
+
+- [ ] **Produktové stránky pre jednotlivé služby** — dnes karty v sekcii Služby
+  len odkazujú (napr. `/rezervacia` = demo), ale chýba predajná podstránka typu
+  „Rezervačný systém pre vašu firmu" (čo to vie, pre koho, ceny/kontakt).
+  Podobne chatbot nemá vlastnú predajnú podstránku. Doplniť pri spúšťaní webu
+  do Googlu, nech má každá služba „kam odkázať". *(Súvisí s `vizia.md` §8 —
+  párovanie agent ↔ Woo služba.)*
+- [ ] **Chýbajúci agenti z vízie (§3)** — e-mail auto-odpoveď agent, mockup/náhľad
+  agent (frontend agent, §9) — zatiaľ len plán, ani karta ani demo.
+
 **🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–11):**
 
 - [x] **RAG chatbot naživo na našom webe (prvé demo)** — ✅ NASADENÝ a funguje
