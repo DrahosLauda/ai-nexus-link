@@ -703,6 +703,15 @@ plán vieme prepnúť. Default vyššie je moje odporúčanie.)*
 (Lighthouse) aj naprieč zariadeniami. **B (scroll-scrub)** len ak po teste na
 mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
 
+**Kto generuje video (deľba práce):**
+- **Teraz:** majiteľ vygeneruje video v **Higgsfielde** (web UI, podľa návodu) a
+  odovzdá súbor; **sedenie spraví celú web stranu** (kompresia, kodeky, poster,
+  fallbacky, zapojenie, kontrola LCP/Lighthouse). Higgsfield **nemá overený MCP
+  konektor** — priame generovanie zo sedenia zatiaľ nie je možné.
+- **Neskôr (ak pribudne Higgsfield API/konektor):** generovanie videa sa presunie
+  **priamo do Claude Code sedenia** (customizačný agent) — zapadá do modelu
+  „asset generation = sedenie". Do tej doby ostáva krok ručný.
+
 ### Výkonové a a11y mantinely (povinné, súčasť kvalitnej brány)
 
 - **Len `transform` a `opacity`** (GPU) — nikdy neanimovať `width/height/top/left`
