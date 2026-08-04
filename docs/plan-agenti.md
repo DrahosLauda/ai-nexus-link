@@ -301,3 +301,80 @@ otvorené rozhodnutia z plan-agenti.md a výsledok — podrobný plán po krokoc
 zapíš do docs/plan-agenti.md. Commit + push do vetvy môžeš, merge do main
 a zmeny v Railway/DB až po mojom súhlase.
 ```
+
+---
+
+# ZADANIE pre nasledujúce PLÁNOVACIE sedenie — Frontend agent = knižnica odvetvových šablón
+
+> Rozhodnuté (aug 2026, majiteľ): frontend agent nie je jednorazový mockup, ale
+> **knižnica viacstránkových odvetvových šablón** (à la GeneratePress Site
+> Library) na **špičkovej dev+dizajn úrovni** (nerozoznateľné od AI), s neskorším
+> pripojením špecializovaných modulov (rezervačný chatbot/widget).
+>
+> **Prieskum repa (aug 2026):** produktoví agenti už žijú v tomto repe
+> (`frontend/` + `orchestrator/`), žiadny monorepo nástroj, `frontend` je jediný
+> Next.js app na Railway (Root Directory `frontend`). Referencia na build
+> sub-agentov: `github.com/msitarzewski/agency-agents` (knižnica AI „osobností"
+> pre coding nástroje — **build-time pomôcka**, nie generátor webov). Odporúčaný
+> prístup: kurátorské šablóny (postavené so špecializovanými build sub-agentmi v
+> `.claude/agents/`) + customizačný agent + ľudská revízia — **nie** naivné
+> „jeden prompt → celý web".
+
+Štartový prompt (copy-paste do nového plánovacieho sedenia):
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+
+Toto je PLÁNOVACIE sedenie (šetríme tokeny): nič nekóduj, len plánuj. Cieľ:
+presne naplánovať FRONTEND agenta prehodnoteného ako KNIŽNICA ODVETVOVÝCH
+ŠABLÓN webov (à la GeneratePress Site Library: https://generatepress.com/site-library/).
+
+VÍZIA (od majiteľa):
+- Výstup = VIACSTRÁNKOVÉ landing weby, nie jednostránkový mockup. Na začiatok
+  knižnica šablón pre konkrétne odvetvia: kaderníctvo, automechanik/autoservis,
+  zubár (a postupne ďalšie).
+- Kvalita = ŠPIČKOVÁ developerská aj dizajnová úroveň — nesmie byť poznať, že
+  to generovala AI (senior-dev/dizajn úroveň, prístupnosť, výkon, čistý kód).
+- Neskôr sa ku každej šablóne pripojí ŠPECIALIZOVANÝ CHATBOT/modul (napr.
+  rezervačný — volá existujúci lib/booking.ts) a booking widget.
+- Smeruje k produktizácii (Fáza 5 vízie): šablóna → nasadenie a customizácia
+  pre reálneho klienta.
+
+DÔLEŽITÝ POSUN V PRÍSTUPE (na potvrdenie v pláne): cieľová kvalita sa
+nedosiahne „jeden prompt → celý web". Navrhni model:
+  1) KURÁTORSKÉ ŠABLÓNY — pár ručne vypiplaných špičkových šablón na odvetvie,
+     postavené s pomocou špecializovaných BUILD sub-agentov (senior frontend
+     dev, UI/UX dizajnér, QA — inšpirácia github.com/msitarzewski/agency-agents,
+     uložené v .claude/agents/ tohto repa) + ľudská kontrola;
+  2) CUSTOMIZAČNÝ AGENT — prispôsobí zvolenú šablónu klientovi (texty, farby,
+     biznis údaje, obrázky) a pripojí správny modul (rezervačný chatbot/widget).
+Porovnaj to s naivným generovaním a odporuč cestu.
+
+OTVORENÉ ROZHODNUTIA, ktoré so mnou vyrieš:
+1. Kde žije knižnica šablón: (a) nový Next.js app v tomto repe (napr.
+   site-library/) ako ďalšia Railway služba, (b) samostatný repozitár
+   (čistejšie pre multi-tenant), (c) route group vo frontend/ (/ukazky/[odvetvie]).
+   Zvaž zdieľanie dizajn-tokenov a nasaditeľnosť u klienta. Návrh odôvodni.
+2. Build sub-agenti: prevezmeme kurátorský výber z agency-agents do .claude/agents/
+   (frontend dev, dizajnér, QA)? Ktoré konkrétne a ako ich zapojíme do workflowu.
+3. Ako presne dosiahnuť „nerozoznateľné od AI": dizajn systém (tokeny, typografia,
+   sekcie), zdroj obrázkov (stock/gen + licencie), copywriting, checklist kvality
+   (Lighthouse, a11y, žiadne generické AI frázy), povinná ľudská revízia.
+4. Lego vzor: ako customizačný agent zapadne (config v agent_config riadok napr.
+   „site_builder", logy v agent_logs, token). Beží v orchestrátore alebo ako
+   nástroj v Claude Code sedení?
+5. Napojenie modulov: ako sa k šablóne pripojí rezervačný chatbot/widget bez
+   duplicity (volá lib/booking.ts / booking-data.ts).
+6. Model na texty/dizajnové rozhodnutia: prepínateľný cez agent_config (default?).
+7. Prvý konkrétny cieľ (MVP): jedno odvetvie na špičkovej úrovni (napr.
+   kaderníctvo) ako vzor, potom replikovať na ďalšie.
+
+Zohľadni prieskum repa: produktoví agenti už žijú tu (frontend/ + orchestrator/),
+žiadny monorepo nástroj, frontend je jediný Next.js app deployovaný na Railway
+(Root Directory frontend). Rešpektuj CLAUDE.md (minimalizmus, slovenčina, tri
+zdroje pravdy, least privilege).
+
+Výstup sedenia: podrobný plán po krokoch (M1, M2…) + hotový štartový prompt pre
+prvé realizačné sedenie, zapísaný do docs/plan-agenti.md (nová sekcia
+„Frontend agent — knižnica odvetvových šablón"). Commit + push do vetvy môžeš,
+merge do main a zmeny v Railway/Directus až po mojom súhlase.
+```
