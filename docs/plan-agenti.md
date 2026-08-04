@@ -378,3 +378,497 @@ prvé realizačné sedenie, zapísaný do docs/plan-agenti.md (nová sekcia
 „Frontend agent — knižnica odvetvových šablón"). Commit + push do vetvy môžeš,
 merge do main a zmeny v Railway/Directus až po mojom súhlase.
 ```
+
+---
+
+# Frontend agent — knižnica odvetvových šablón (plánovacie sedenie, aug 2026)
+
+> **Posun v prístupe (rozhodnutý majiteľom):** frontend agent nie je jednorazový
+> „mockup z jedného promptu", ale **knižnica viacstránkových odvetvových šablón**
+> (à la GeneratePress Site Library) na **špičkovej dev + dizajn úrovni**
+> (nerozoznateľné od AI), ku ktorým sa neskôr pripájajú špecializované moduly
+> (rezervačný widget/chatbot volajúci existujúci `lib/booking.ts`). Smeruje k
+> produktizácii (Fáza 5): šablóna → nasadenie a customizácia pre reálneho klienta.
+
+## Naivná cesta vs kurátorská cesta — a prečo kurátorská
+
+| | Naivné „jeden prompt → celý web" | **Kurátorské šablóny + customizačný agent (zvolené)** |
+|---|---|---|
+| Kvalita | Nestabilná, priemerná, „cítiť AI" (generické sekcie, prázdne frázy, rozbitý a11y) | Špičková, konzistentná — pár ručne vypiplaných šablón, ľudsky odsúhlasených |
+| Opakovateľnosť | Zakaždým iný výsledok, ťažká údržba | Šablóna je pevný základ; customizácia je malá, riaditeľná zmena |
+| Riziko u klienta | Vysoké (nepredvídateľný výstup naostro) | Nízke (predaj overenej šablóny, mení sa len obsah/branding) |
+| Náklad na model | Vysoký (generuje sa všetko zakaždým) | Nízky (šablóna hotová; agent mení len texty/farby/údaje) |
+
+**Odporúčanie a rozhodnutie:** ideme **kurátorskou cestou**. Cieľová kvalita
+(„nesmie byť poznať, že to je AI") sa **jedným promptom nedosiahne**. Postavíme
+**málo, ale perfektných** šablón s pomocou špecializovaných build sub-agentov +
+**povinná ľudská revízia**; klientovi ich potom prispôsobí **customizačný agent**.
+
+## Rozhodnutia tohto sedenia
+
+| # | Rozhodnutie | Voľba | Poznámka |
+|---|---|---|---|
+| 1 | **Kde žije knižnica** | **Route group vo `frontend/`** (`/ukazky/[odvetvie]`) | Každá šablóna = samostatný **prenosný balík** (`frontend/templates/<odvetvie>/`). 0 novej infry, zdieľa `lib/booking.ts` + widget priamo, portfólio hneď na našom webe. U klienta sa balík **vyliftuje** do čistého deployu. |
+| 2 | **Kde beží customizačný agent** | **Claude Code sedenie + skill** ✅ potvrdené | Customizácia = editácia kódu/obsahu → doména Claude Code, nie headless cron. Config/log riadok `site_builder` v Directuse pre stopu (lego vzor). Po M2 **tvorí šablóny aj majiteľ** cez sedenia s build sub-agentmi. |
+| 3 | **Poradie odvetví** | **1. Kvetinárstvo → 2. Kaderníctvo** → ďalšie | Odvetvie je vedľajšie — prvá šablóna je spôsob, akým sa **ukuje samotný systém** (náradie M1 sa vyladí na reálnej práci M2). Každá ďalšia je rýchlejšia. |
+| 4 | **Build sub-agenti** | **Všetci štyria** (frontend dev, UI/UX dizajnér, QA/a11y, SK copywriter) | Adaptované (nie slepo skopírované) z `agency-agents` do `.claude/agents/`. **Živé definície** — zlepšujú sa retrospektívami (viď „Učiaca sa slučka"). |
+| 5 | **Modely pre sub-agentov** | **Fable/Opus** na dizajn + dev; **Sonnet** na copy + QA (v hlavičkách `.claude/agents/*.md`) | Vkus a architektúra = najsilnejší model; mechanická kontrola a textové iterácie = lacnejší. Povýšiť rolu = zmena jedného riadku. *(Build agenti = model v definícii; produktoví 24/7 agenti = model v `agent_config`.)* |
+| 6 | **Náhľad pre klienta = platená služba** | **Platený náhľad, odpočítateľný z ceny projektu** | Filtruje zvedavcov, drží prémiové pozicionovanie; pre vážneho klienta je to záloha, nie výdavok. Sumy → kolo o cenových balíkoch (neskôr). |
+| 7 | **Vstupy customizácie** | **Ľubovoľná kombinácia:** vízia (chat) / biznis plán (PDF) / starý web (URL) / referenčné weby (inšpirácia) | Nezávisí len od starého webu. Referencie = extrakcia dizajnového smeru, **nie kópia** (právne čisté; základ je vždy naša šablóna). |
+| 8 | **Zber online, výroba riadená** | Klient zadá všetko online (chat/formulár + prílohy) → náhľad vyrábame **my, riadene, s bránou kvality** (~24 h) | Plný automat „klik → web" by obišiel bránu kvality a vrátil generický AI výstup + riziko zneužitia nákladov. Osobné doručenie je aj silnejší predajný moment. Plná automatizácia = až Fáza 5. |
+
+## Architektúra umiestnenia — route group + prenosné balíky
+
+Cieľ: **jeden repo, žiadna nová infra**, no zároveň **portovateľné ku klientovi**.
+
+```
+frontend/
+  app/ukazky/                     # portfólio (index + jednotlivé odvetvia)
+    page.tsx                      # zoznam šablón (naše referencie)
+    [odvetvie]/…                  # mount konkrétnej šablóny (route)
+  templates/                      # ← PRENOSNÉ BALÍKY (jadro knižnice)
+    kvetinarstvo/
+      theme.css                   # scoped dizajn-tokeny (Tailwind v4 @theme, prefix flora-*)
+      content.ts                  # všetok obsah/texty šablóny (jedno miesto na customizáciu)
+      sections/                   # hero, sluzby, galeria, o-nas, cennik, referencie, kontakt…
+      images/                     # licencované obrázky (+ LICENSES.md)
+      page.tsx / layout.tsx       # zloženie viacstránkového webu
+  lib/                            # ZDIEĽANÉ (booking.ts, booking-data.ts, email.ts, seo.ts)
+  components/booking-widget.tsx   # ZDIEĽANÝ modul (šablóna ho len importuje)
+```
+
+**Prečo to takto funguje pre obidva ciele:**
+
+- **Portfólio na našom webe** = route group `/ukazky/[odvetvie]` mountne balík z
+  `templates/`. Hneď živá referencia, zdieľa `lib/` aj rezervačný widget.
+- **Nasadenie u klienta** = skopíruj `templates/<odvetvie>/` + potrebné `lib/*`
+  do čistého Next.js appu (alebo klonu `frontend/`). Balík je **sebestačný**
+  (vlastné tokeny, obsah, obrázky) → žiadny nový kód, len customizácia obsahu.
+  Multi-tenant (Fáza 5) príde až neskôr; teraz zámerne **jedno-balíkové lifty**.
+
+**Dizajn-tokeny bez kolízie s naším webom (Tailwind v4):** hlavný web má tokeny
+globálne v `app/globals.css` (`@theme`). Každá šablóna má **vlastný `theme.css`**
+s **prefixovanými** tokenmi (`--color-flora-500`, `--font-flora-display`…),
+importovaný len v jej `layout.tsx`. Šablóna tak má **svoju vizuálnu identitu**
+(iný web než digitalnapomoc.sk), bez zásahu do našich tokenov. Žiadne globálne
+prepisovanie farieb.
+
+**SEO/GEO pozor — demo obsah `noindex`:** ukážkové šablóny majú **fiktívny**
+obsah (fiktívne kvetinárstvo). Nesmú sa dostať do Googla ani znečistiť naše SEO
+→ `/ukazky/*` dostane **`robots: noindex`** (metadata v route group layout).
+Sitemap/llms.txt ich **nezaraďuje**. (Naša reálna referencia = digitalnapomoc.sk,
+nie fiktívny demo web.)
+
+## Ako dosiahnuť „nerozoznateľné od AI" — kvalitná brána
+
+Toto je jadro zadania. Bez brány sa cieľ nedá splniť. Štyri piliere:
+
+1. **Dizajn systém (per šablóna):** definované tokeny (paleta, typografia —
+   výrazný display font + čitateľný text, škála medzier 4/8 px, rádiusy, tiene),
+   sada sekcií a ich rytmus, konzistentný grid. Žiadne „default Tailwind demo"
+   vzory — každá šablóna má **rozpoznateľný vlastný charakter** (kvetinárstvo =
+   organické tvary, sezónne farby, veľká fotografia).
+2. **Obrázky + licencie:** primárne **licencovaný stock** (Unsplash/Pexels
+   licencia — voľné na komerčné použitie) alebo generované (Gemini, už máme),
+   ale **kurátorsky vybrané, aby pôsobili reálne** (nie zjavné „AI plasty").
+   Ku každej šablóne **`images/LICENSES.md`** (zdroj + licencia každého obrázka)
+   — čisté právne pozadie pre klienta.
+3. **Copywriting (SK copywriter sub-agent):** konkrétny odvetvový jazyk, reálne
+   znejúce ponuky/ceny/CTA. **Zakázané generické AI frázy** („posúvame hranice",
+   „v dnešnej uponáhľanej dobe", „inovatívne riešenia na mieru", prázdne
+   superlatívy). Texty píše/reviduje copywriter agent proti tomuto zoznamu.
+4. **Checklist kvality (povinný pred „hotovo"):**
+   - **Lighthouse ≥ 95** (Performance/SEO/Best Practices), **a11y = 100** cieľ.
+   - **WCAG AA** — kontrast, fokus, `alt`, sémantické landmarky, klávesnica,
+     `prefers-reduced-motion`.
+   - **Responzivita** — mobil/tablet/desktop overené (predinštalovaný Chromium,
+     screenshoty).
+   - **Čistý kód** — žiadne lorem ipsum, žiadne mŕtve `TODO`, `lint` + `build` OK,
+     komponenty data-driven (obsah z `content.ts`, nie natvrdo v JSX).
+   - **Žiadne AI klišé** (kontrola copywriter agentom).
+   - **Skutočné meta/OG** pre šablónu (aj keď `noindex`, nech je hlavička čistá).
+5. **Povinná ľudská revízia (majiteľ):** brána sa neobíde. Sub-agenti pripravia,
+   QA agent skontroluje, **človek odsúhlasí** vizuál aj texty pred „hotovo".
+
+## Build sub-agenti (`.claude/agents/`)
+
+Adaptujeme (nie slepo kopírujeme) kurátorský výber inšpirovaný
+`github.com/msitarzewski/agency-agents`. **Nie sú to generátory webov** — sú to
+build-time „osobnosti", ktoré Claude Code sedenie používa pri stavaní šablóny:
+
+| Sub-agent (súbor v `.claude/agents/`) | Rola vo workflowe |
+|---|---|
+| `frontend-dev` | Píše čistý Next.js 16 / Tailwind v4 kód, výkon, a11y na úrovni seniora. Pred písaním číta `node_modules/next/dist/docs/` (frontend/AGENTS.md). |
+| `ui-ux-designer` | Navrhne dizajn systém šablóny (tokeny, typografia, sekcie, hierarchia), rozvrhne stránky. |
+| `qa-a11y` | Kontroluje checklist kvality (WCAG, Lighthouse, responzivita, žiadne klišé). Gatekeeper pred ľudskou revíziou. |
+| `sk-copywriter` | Odvetvové SK texty, kontrola proti zoznamu zakázaných AI fráz. |
+
+**Workflow jednej šablóny:** `ui-ux-designer` (dizajn systém + rozvrh) →
+`frontend-dev` (implementácia sekcií) + `sk-copywriter` (texty do `content.ts`) →
+`qa-a11y` (brána kvality) → **ľudská revízia** → hotovo. Sedenie ich orchestruje;
+Claude Code ich spúšťa cez `Agent` tool podľa `.claude/agents/*.md`.
+
+## Lego vzor — customizačný agent
+
+Customizačný agent **prispôsobí zvolenú šablónu klientovi** (názov, texty, farby,
+biznis údaje, kontakt, obrázky) a **pripojí správny modul** (rezervačný widget).
+
+- **Kde beží:** **Claude Code sedenie + skill** (`.claude/skills/site-customizer/`
+  — jednoduchý runbook: vyber šablónu → vyplň klientský `content.ts` a `theme.css`
+  → zapoj modul → prejdi kvalitnú bránu → lift do deployu). Customizácia je
+  editácia kódu, nie práca pre headless Python cron.
+- **Lego stopa (voliteľne, konzistencia s Writer/SEO):** riadok
+  `agent_config.site_builder` (model, prompt/pravidlá značky) + zápis do
+  `agent_logs` (čo a pre koho sa prispôsobilo). **Least privilege** token ako pri
+  ostatných agentoch (read `agent_config`, create `agent_logs`).
+- **Prečo nie orchestrátor:** orchestrátor je pre **headless API úkony na pozadí**
+  (WP publikovanie, embeddingy, e-maily). Generovanie špičkového frontend kódu
+  nie je jeho práca. (Ak by sme neskôr chceli „samoobslužný náhľad z webu",
+  orchestrátor môže spustiť Claude Code hlavičku — ale to je Fáza 5+.)
+
+## Napojenie modulov (rezervácie/chatbot) bez duplicity
+
+Šablóna **nič nekopíruje** — **importuje** existujúce:
+
+- `components/booking-widget.tsx` + `lib/booking.ts` / `lib/booking-data.ts`
+  (engine je odvetvovo neutrálny — už postavené v krokoch R0–R1).
+- Šablóna dodá len **konfiguráciu** (ktoré `booking_services`/`booking_resources`
+  v Directuse patria danému klientovi) a **vizuálny obal** (widget v jej dizajne).
+- RAG chatbot rovnako — `components/chat-widget.tsx` + `/api/chat`, napojené na
+  klientov obsah. **Žiadna duplicita logiky**, len napojenie + branding.
+
+Toto je priamy dôsledok „lego" princípu z vízie: nová schopnosť = zapojenie
+existujúceho modulu, nie prepis.
+
+## Podrobný plán po míľnikoch
+
+> Každý míľnik = jedno realizačné sedenie (ucelený, overiteľný celok). Vetva,
+> commit, push; **merge do `main` a zmeny v Railway/Directus až po súhlase**.
+
+### M1 — Základ knižnice (infra, bez hotovej šablóny)
+
+**Cieľ:** postaviť to, bez čoho sa špičková šablóna nedá stavať konzistentne.
+
+- **`.claude/agents/`** — štyria sub-agenti (`frontend-dev`, `ui-ux-designer`,
+  `qa-a11y`, `sk-copywriter`), adaptované do nášho kontextu (Next.js 16 / Tailwind
+  v4, slovenčina, minimalizmus, a11y). Krátke, ostré `*.md` definície.
+- **Konvencia balíka** — `frontend/templates/<odvetvie>/` (theme.css, content.ts,
+  sections/, images/ + LICENSES.md, page/layout) + **route group**
+  `app/ukazky/` (index + `[odvetvie]` mount) s **`noindex`** metadatami.
+- **Kvalitná brána (dokument)** — `docs/sablony-kvalita.md`: checklist
+  (Lighthouse/a11y/responzivita/čistý kód), zoznam **zakázaných AI fráz**,
+  postup ľudskej revízie. Jedno miesto pravdy pre „nerozoznateľné od AI".
+- **Skill kostra** — `.claude/skills/site-customizer/` (zatiaľ runbook, bez behu).
+
+**Overiteľné:** `lint` + `build` (prázdny route group + placeholder), sub-agenti
+a skill načítateľné. Žiadny fiktívny obsah zatiaľ.
+
+### M2 — Vlajková šablóna: **kvetinárstvo** (špičková úroveň + motion)
+
+> Rozdelené na **M2a (statická špička)** a **M2b (motion vrstva)** — detail a
+> motion spec v sekcii „Vlajková šablóna kvetinárstvo" nižšie. M2a musí obstáť aj
+> bez animácií (je fallbackom pre `reduced-motion`); M2b pridá Framer Motion navrch.
+
+**Cieľ:** jeden odvetvový web na úrovni, ktorú by senior dev + dizajnér podpísali —
+a ktorý na obchodnom stretnutí funguje ako dôkaz „takéto weby staviame".
+
+- **Dizajn systém** (`ui-ux-designer`) → `theme.css` (paleta, typografia, rytmus).
+- **Sekcie/stránky** (`frontend-dev` + `sk-copywriter`): domov (hero, sezónna
+  ponuka, o nás, galéria, referencie, kontakt), stránka **Ponuka/služby**,
+  **O nás**, **Kontakt** (viacstránkové, nie jeden mockup). Obsah v `content.ts`.
+- **Obrázky** licencované + `LICENSES.md`.
+- **Kvalitná brána** (`qa-a11y`) → **ľudská revízia** (majiteľ odsúhlasí).
+- Zaradiť do `/ukazky` indexu ako referenciu (interne; `noindex`).
+
+**Overiteľné:** `lint` + `build`, Lighthouse ≥ 95, a11y, responzívne screenshoty.
+
+### M3 — Napojenie rezervačného modulu na šablónu kvetinárstva
+
+**Cieľ:** ukázať „šablóna + špecializovaný modul" naostro.
+
+- Zapojiť `booking-widget` + `lib/booking.ts`/`booking-data.ts` do kvetinárskej
+  šablóny (vizuálny obal v jej dizajne), napojené na demo `booking_*` config.
+- Prípadne demo chatbot (`chat-widget`) — voliteľné.
+- **Bez duplicity** — len import + konfigurácia + branding.
+
+**Overiteľné:** tok rezervácie funguje v šablóne; testy `booking.ts` netreba meniť.
+
+### M4 — Customizačný agent (skill) + lego config
+
+**Cieľ:** z hotovej šablóny spraviť klientský web zmenou obsahu, nie kódu.
+
+- Dopísať `.claude/skills/site-customizer/` (vyber šablónu → vyplň `content.ts`
+  + `theme.css` klientskými údajmi/farbami → zapoj modul → kvalitná brána → lift).
+- Voliteľne `agent_config.site_builder` (model default Claude, pravidlá značky) +
+  `agent_logs` stopa + least-privilege token (klik-časť po súhlase).
+
+**Overiteľné:** suchý beh customizácie na fiktívnom „klientovi" (2. sada obsahu
+tej istej šablóny) → dva rôzne weby z jednej šablóny.
+
+> **Od M2 ďalej platí:** systém je ukutý — **šablóny tvorí aj majiteľ** cez
+> Claude Code sedenia s build sub-agentmi („postav šablónu pre odvetvie X").
+> Druhá šablóna = **kaderníctvo** (môže vzniknúť kedykoľvek po M2 ako overenie
+> replikovateľnosti; nie je viazaná na poradie M3–M5). Najprémiovejšie kusy →
+> showroom `/ukazky` → predaj a nasadenie klientom.
+
+### M5 — Náhľadový agent online (zber na webe, výroba riadená)
+
+**Cieľ:** potenciálny klient si **online** objedná platený náhľad svojho webu —
+cez chat agenta (alebo formulár) na digitalnapomoc.sk. *(= vízia §9 „Mockup
+agent" v zrelej podobe; predpokladá M2 + M4.)*
+
+**Tok:**
+
+```
+Návštevník → CHAT AGENT („Chcem nový web")     ← rozšírenie /api/chat (vzor R2)
+  │  konverzačný dotazník (à la B12): odvetvie, predstava, štýl, ciele
+  │  + ľubovoľné vstupy: URL starého webu / biznis plán PDF / referenčné weby
+  │  + platba za náhľad (odpočítateľná z projektu)
+  ▼
+LEAD v Directuse (typ „žiadosť o náhľad", prílohy v Directus Files) → notifikácia nám
+  ▼
+CUSTOMIZAČNÝ AGENT (Claude Code sedenie, spúšťame my):
+  scrape starého webu + Gemini prečíta biznis plán (PDF natívne, žiadny NotebookLM
+  netreba) + extrakcia smeru z referencií → naleje do šablóny odvetvia
+  ▼
+BRÁNA KVALITY → ľudská revízia → NÁHĽAD na /ukazky/demo/[id] (noindex, unikátny
+  odkaz) → e-mail klientovi + pozvanie na konzultáciu (~24 h od objednávky)
+```
+
+- **Scraping:** klientsky web zvládne sedenie samo (fetch + Chromium, 0 €).
+  **Apify** (má oficiálny MCP konektor, free tier 5 $ kreditov/mes.) zapneme až
+  keď narazíme na ťažké ciele — Google Maps recenzie, Instagram. Žiadny fixný
+  náklad vopred.
+- **Video upload do hero** (klientove/generované video pre motion) = **fáza 2**
+  tohto agenta — v prvej verzii stačí URL + PDF. Upload = útočná plocha (limit
+  veľkosti, validácia typu, rate limit).
+- **GDPR:** dotazník/plán/prílohy sú osobné a firemné dáta → viaže sa na cookie
+  lištu + zásady OÚ z Pred-Google checklistu; bez toho agenta nespúšťame naživo.
+- **Lego:** `agent_config` riadok (osobnosť chatu, otázky dotazníka klikaním),
+  logy `agent_logs`, vlastný token (least privilege).
+- **Predajný ťah „vaša stará WP stránka v novom šate":** ten istý tok vieme
+  spustiť aj my pred obchodným stretnutím — personalizované demo z klientovych
+  reálnych dát predáva lepšie než fiktívna ukážka. Sedí na naše jadro (headless
+  modernizácia WP — klientovi ostáva jeho admin).
+
+### M6 — Produktizácia / lift-to-client (väzba na Fázu 5)
+
+**Cieľ:** zdokumentovaný postup nasadenia šablóny reálnemu klientovi.
+
+- Runbook: skopíruj `templates/<x>/` + `lib/*` do čistého deployu, napoj Directus
+  (booking/leady/chatbot), branding, doména. Návrh cesty k **multi-tenant**
+  (`tenant_id`, izolácia) ako plán, nie realizácia.
+- Balíky služieb: šablóna + **lego agenti ako upsell** (Writer/copywriter,
+  rezervácie, objednávky, chatbot) — párovanie agent ↔ služba (vízia §8).
+  Cenové balíky sa navrhnú v samostatnom kole (rozhodnutie majiteľa: neskôr).
+
+## Vlajková šablóna „kvetinárstvo" — motion + prezentačná úroveň (detail)
+
+> **Zámer majiteľa:** kvetinárstvo nie je len prvá šablóna, je to **vlajková
+> ukážka** — „pozrite, takéto weby (za desiatky tisíc €) vieme robiť". Musí mať
+> **motion grafiku** na úrovni prémiovej agentúry a slúžiť ako **živý predajný
+> argument** v našich službách.
+
+### Poctivé priznanie na úvod (čo je tu ťažké)
+
+Cieľ „motion ako web za €desiatky tisíc" **a zároveň** Lighthouse ≥ 95 +
+prístupnosť je **najnáročnejšia časť celého projektu**. Nie je to nemožné — ale
+len ak sa držíme pevných mantinelov (nižšie). Preto motion **plánujeme, nie
+improvizujeme**: čo sa hýbe, ako, prečo, a čo sa stane pri `reduced-motion`.
+
+### Odporúčaná technológia (na potvrdenie)
+
+- **Primárne: Framer Motion (`motion/react`)** — React-natívny štandard pre Next.js,
+  deklaratívny, rieši `prefers-reduced-motion`, `whileInView`, layout animácie.
+  **Jedna závislosť**, ktorá sa v tomto projekte oplatí (motion JE tu produkt —
+  presne ten prípad z „rebríka minimalizmu", keď nižšie priečky nestačia).
+- **Doplnkovo: natívne CSS** na jednoduché veci (organické pozadia, Ken Burns
+  zoom, jemný parallax cez `animation-timeline: view()` tam, kde je podpora).
+- **GSAP + ScrollTrigger** držíme **v zálohe len na 1–2 „set-piecy"** (scroll-scrub
+  kinematika), a to iba ak sa preukáže, že to Framer/CSS nezvládnu vkusne. Nejdeme
+  „celé na GSAP" — zbytočne by to zaťažilo Lighthouse a údržbu.
+- **Intenzita: „prémiovo jemná" (editorial / luxury-brand)** — pôsobí draho bez
+  cirkusu; istejšia cesta k vkusu aj výkonu než „award-site" preplácanie.
+
+*(Ak chceš ísť odvážnejšie kinematicky alebo naopak úplne bez závislosti, povedz —
+plán vieme prepnúť. Default vyššie je moje odporúčanie.)*
+
+### Konkrétne motion prvky (aby bolo vidieť tú „drahú" úroveň)
+
+1. **Hero (prvý dojem) = SCROLL VIDEO HERO** *(rozhodnuté majiteľom)*. V hero
+   sekcii je **generované video** (Higgsfield + model). Nad videom je nadpis + CTA
+   (jemný reveal). Zvyšné hero efekty (lupienky, bloby, SVG kresba) sa **nepoužijú**
+   — hero nesie video, nie „ozdôbky". Dva možné režimy (rozhodnúť podľa vzhľadu +
+   výkonu, viď „Hero video — pipeline" nižšie):
+   - **A) Kinematický loop na pozadí** *(odporúčané, bezpečné):* krátke (~6–10 s)
+     bezšvové video sa prehráva dokola, obsah scrolluje ponad. `autoplay muted
+     playsinline loop`, **poster = prvý snímok** (drží LCP), na mobile ľahšia
+     verzia alebo len poster.
+   - **B) Scroll-scrub („Apple" efekt):* video sa **posúva podľa scrollu**
+     (`currentTime` viazaný na pozíciu). Najväčší „wow", ale rizikovejšie
+     (seek stutter, mobil throttluje) → treba dôsledné testovanie a fallback.
+2. **Scroll reveals:** sekcie a karty prichádzajú staggerom (fade + jemný posun
+   nahor), `whileInView` s `once: true` (animuje sa raz, keď prvok vojde do obrazu).
+3. **Sezónna galéria kytíc:** hover **mask-reveal + zoom**, prípadne horizontálny
+   scroll so „scrub" efektom (tu by prišiel GSAP, ak vôbec).
+4. **Signature set-piece (moment „wow"):** buď **skladajúca sa kytica** (jednotlivé
+   kvety priletia a poskladajú sa počas scrollu), alebo **padajúce lupienky, ktoré
+   sa usadia**. Jeden taký moment stačí — nesmie sa preháňať.
+5. **Počítadlá:** roky na trhu / spokojní klienti / dodané kytice — count-up pri
+   vojdení do obrazu.
+6. **Mikro-interakcie:** magnetické CTA tlačidlá, jemný tilt/lift kariet, hover
+   zoom obrázkov, animované podčiarknutie odkazov, sticky názvy sekcií.
+7. **Prechody medzi stránkami:** **View Transitions API** (natívne, Next 16 ho
+   podporuje) alebo Framer — plynulý fade/slide medzi podstránkami.
+
+### Hero video — pipeline (Higgsfield + model)
+
+**Asset (čo vygenerovať):**
+- **Formát/pomer:** landscape 16:9, master v čo najvyššej kvalite; z neho odvodíme
+  web verzie. Pripraviť aj **orezanie na výšku pre mobil** (alebo použiť poster).
+- **Dĺžka:** krátke a **bezšvovo loopovateľné** (~6–10 s) — pri režime A. Pri
+  režime B (scrub) dĺžka podľa výšky hero scrollu.
+- **Motív:** pomalé, „editorial" zábery (napr. rozkvitajúca kytica, jemný pohyb
+  kvetov, ruky viažuce kyticu) — pomalé pôsobí draho; rýchly strih pôsobí lacno.
+- **Zvuk:** žiadny (hero je `muted`).
+
+**Web nasadenie (povinné pre výkon):**
+- **Kompresia + dva kodeky:** `WebM` (VP9/AV1) + `MP4` (H.264) fallback. Cieľ
+  desktop verzie **rádovo nízke jednotky MB**, nie desiatky. Mobil ešte ľahší.
+- **`poster` = prvý snímok (statický obrázok)** — načíta sa okamžite, drží **LCP**
+  a je to fallback, kým sa video stiahne (alebo natrvalo pri `reduced-motion`/mobile).
+- **Lazy/priorita:** video `preload="metadata"`/`none` + spustiť po načítaní;
+  poster cez `next/image` s prioritou. **Nikdy** blokovať prvé vykreslenie videom.
+- **`prefers-reduced-motion` / šetrenie dát:** namiesto videa **statický poster**
+  (žiadny autoplay). Rovnako fallback, ak sa video nepodarí načítať.
+- **Hosting videa:** začať súborom v `public/` (jednoduché); ak by bol veľký/pomalý,
+  zvážiť CDN. *(Rozhodnúť pri realizácii podľa veľkosti.)*
+
+**Rozhodnutie A vs B:** default **A (loop na pozadí)** — istá kvalita čísel
+(Lighthouse) aj naprieč zariadeniami. **B (scroll-scrub)** len ak po teste na
+mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
+
+**Kto generuje video (deľba práce):**
+- **Teraz:** majiteľ vygeneruje video v **Higgsfielde** (web UI, podľa návodu) a
+  odovzdá súbor; **sedenie spraví celú web stranu** (kompresia, kodeky, poster,
+  fallbacky, zapojenie, kontrola LCP/Lighthouse). Higgsfield **nemá overený MCP
+  konektor** — priame generovanie zo sedenia zatiaľ nie je možné.
+- **Neskôr (ak pribudne Higgsfield API/konektor):** generovanie videa sa presunie
+  **priamo do Claude Code sedenia** (customizačný agent) — zapadá do modelu
+  „asset generation = sedenie". Do tej doby ostáva krok ručný.
+
+### Výkonové a a11y mantinely (povinné, súčasť kvalitnej brány)
+
+- **Len `transform` a `opacity`** (GPU) — nikdy neanimovať `width/height/top/left`
+  (layout thrash). `will-change` striedmo a cielene.
+- **Animovať až vo viewporte** (`whileInView` / IntersectionObserver), nie všetko
+  naraz na load → chráni prvé vykreslenie a Lighthouse.
+- **`prefers-reduced-motion`: tvrdý fallback** — nepodstatný motion sa vypne,
+  ostane **elegantný statický layout** (nie prázdna stránka). Testuje QA agent.
+- **Žiadny layout shift (CLS)** — rezervovať miesto pre obrázky/video (`next/image`,
+  pomery strán). Médiá lazy, hero s prioritou + poster.
+- **Rozpočet:** motion nesmie zhodiť **Lighthouse < 95** ani a11y. Ak zhodí →
+  prvok sa zjednoduší alebo vypustí. Kvalita čísla > efekt.
+
+### Mapa stránok (viacstránkový web, nie mockup)
+
+- **Domov:** hero → intro/„vitajte" → **sezónna ponuka** (featured kytice) →
+  **služby** (svadby a eventy, smútočná väzba, **predplatné kvetov**, firemné
+  dekorácie) → **galéria** → **o nás** (príbeh + tím) → proces objednávky →
+  **referencie** → CTA objednávka/rezervácia → kontakt (mapa, otváracie hodiny) →
+  pätička.
+- **Svadby a eventy** — samostatná predajná podstránka (portfólio, balíky, dopyt).
+- **Ponuka / kvety** — kategórie a sezónnosť (prezentačné, bez e-shopu vo v1).
+- **O nás** — príbeh, tím, hodnoty, fotografie.
+- **Kontakt / objednávka** — **rezervačný/objednávkový widget napojený na
+  `lib/booking.ts`** (napr. „konzultácia k svadobnej výzdobe" / „objednávka
+  kytice na termín"), formulár, mapa, otváracie hodiny.
+
+### Zaradenie do našich služieb (aby to reálne predávalo)
+
+- **`/ukazky` portfólio** (index šablón) — interné, `noindex` (fiktívny obsah).
+- **Predajná karta na digitalnapomoc.sk** — nová karta v sekcii **Služby**
+  („**Prémiové weby na kľúč**" / „Weby na úrovni, akú si všimnete") → odkaz na
+  **živú ukážku** `/ukazky/kvetinarstvo`. Táto karta/stránka **je** indexovateľná
+  (naša reálna služba), len **odkazuje** na noindex demo. Tým sa z ukážky stáva
+  konkrétny predajný argument, nie len „niečo v šuflíku".
+- Neskôr: viac ukážok (autoservis, zubár) → z `/ukazky` sa stane **portfólio
+  odvetví**, ktoré na obchodnom stretnutí otvoríš a klient si vyberie.
+
+### Dopad na míľniky
+
+- **M1** — do `docs/sablony-kvalita.md` pridať **motion pravidlá** (mantinely
+  vyššie) a rozhodnutie o Framer Motion (závislosť sa doinštaluje až v M2).
+- **M2** sa rozdelí na **M2a — statická špičková šablóna** (dizajn, sekcie, obsah,
+  a11y, Lighthouse) a **M2b — motion vrstva** (Framer + set-piecy) navrch. Dôvod:
+  najprv perfektný statický základ, ktorý obstojí aj bez animácií (a je fallbackom
+  pre `reduced-motion`), až potom motion. Každý pod-míľnik = ľudská revízia.
+- **M3** (rezervačný modul) a ďalšie ostávajú.
+
+## Učiaca sa slučka — agenti sa stále zdokonaľujú (požiadavka majiteľa)
+
+> Sub-agenti **neberú prvú šablónu ako zabetónovaný vzor** — musia sa priebežne
+> zlepšovať vo webovom dizajne, funkčnosti a všetkom súvisiacom. Tri slučky:
+
+1. **Retrospektíva po každej šablóne (povinná).** Po dokončení a ľudskej revízii
+   sa ponaučenia zapíšu späť do `.claude/agents/*.md` a `docs/sablony-kvalita.md`
+   (rovnaká kultúra ako ponaučenia v `dennik.md`). Čo majiteľ vytkol pri revízii,
+   ďalšia šablóna už nezopakuje — agenti si tieto súbory čítajú na štarte práce.
+   Definície agentov sú **živé súbory**.
+2. **Prieskum pred každou šablónou.** `ui-ux-designer` pred novým odvetvím vždy
+   spraví čerstvý prieskum (špičkové weby odvetvia, aktuálne trendy, nové web
+   API/CSS možnosti) — dizajn neskostnatie na vzoroch prvej šablóny; každé
+   odvetvie dostane vlastný dizajnový výskum, nie „kvetinárstvo v inej farbe".
+3. **Modely a nástroje rastú s trhom.** Model každej roly je jeden riadok v
+   hlavičke definície — nový lepší model = jedna zmena, celý tím sa zlepší.
+   To isté platí pre nástroje (napr. keď pribudne Higgsfield konektor,
+   generovanie videa sa presunie do sedenia).
+
+## Otvorené drobnosti (doriešiť pri realizácii)
+
+- **Motion technológia** — default „Framer Motion + natívne CSS, prémiovo jemná
+  intenzita" (GSAP len na 1–2 set-piecy podľa potreby); finálne slovo pri M2b.
+- Konkrétny zoznam sekcií/stránok kvetinárskej šablóny (rozvrhne `ui-ux-designer`
+  v M2, majiteľ odsúhlasí).
+- Zdroj obrázkov na finále (stock vs generované) — rozhodnúť v M2 podľa vzhľadu.
+- Či demo šablóny dostanú vlastnú (fiktívnu) doménu na plné „naostro" demo, alebo
+  ostanú len na `/ukazky` (`noindex`). Default: `/ukazky`.
+- Suma za platený náhľad + cenové balíky (šablóna + lego agenti) — samostatné
+  kolo o cenách, až po M2 (rozhodnutie majiteľa: neskôr).
+- Recenzie z Google ako referencie v šablóne klienta — len so súhlasom klienta
+  (GDPR); zvážiť pri prvom reálnom nasadení.
+
+## Štartový prompt pre PRVÉ realizačné sedenie (M1)
+
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md.
+
+Realizačné sedenie: sprav MÍĽNIK M1 z časti „Frontend agent — knižnica
+odvetvových šablón" v plan-agenti.md (ZÁKLAD knižnice, ešte bez hotovej šablóny).
+
+Konkrétne:
+1) Vytvor .claude/agents/ so štyrmi build sub-agentmi (frontend-dev,
+   ui-ux-designer, qa-a11y, sk-copywriter) — krátke, ostré .md definície
+   adaptované do nášho kontextu (Next.js 16 / Tailwind v4, slovenčina,
+   minimalizmus z CLAUDE.md, prístupnosť). Inšpirácia github.com/msitarzewski/
+   agency-agents, ale adaptuj, nekopíruj slepo.
+2) Zaveď konvenciu prenosného balíka frontend/templates/<odvetvie>/ (theme.css so
+   scoped Tailwind v4 @theme tokenmi s prefixom, content.ts, sections/, images/ +
+   LICENSES.md, page/layout) a route group app/ukazky/ (index page.tsx + [odvetvie]
+   mount) s povinným robots: noindex (demo obsah nesmie do Googla). Zatiaľ len
+   kostra + placeholder, žiadny fiktívny obsah.
+3) Napíš docs/sablony-kvalita.md — kvalitná brána: checklist (Lighthouse ≥95,
+   a11y/WCAG AA, responzivita, čistý kód, žiadne lorem/TODO), zoznam zakázaných
+   generických AI fráz, postup povinnej ľudskej revízie + šablóna RETROSPEKTÍVY
+   (učiaca sa slučka: ponaučenia po každej šablóne sa zapisujú späť do definícií
+   agentov a do tohto dokumentu). Motion pravidlá podľa sekcie „Vlajková šablóna".
+   Sub-agentom daj do definícií pokyn čítať tento dokument na štarte práce a
+   modely podľa rozhodnutia #5 (Fable/Opus dizajn+dev, Sonnet copy+QA).
+4) Založ kostru .claude/skills/site-customizer/ (zatiaľ runbook, bez behu).
+
+Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/ (frontend/AGENTS.md).
+Over npm run lint + npm run build (prázdny route group nech prejde). Nič nedeployuj.
+Vetva claude/... , commit + push; merge do main a zmeny v Railway/Directus až po
+mojom súhlase. Klik-časti (ak nejaké) mi vypíš ako návod.
+```
+
