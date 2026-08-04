@@ -560,9 +560,14 @@ existujúceho modulu, nie prepis.
 **Overiteľné:** `lint` + `build` (prázdny route group + placeholder), sub-agenti
 a skill načítateľné. Žiadny fiktívny obsah zatiaľ.
 
-### M2 — Prvá kurátorská šablóna: **kvetinárstvo** (špičková úroveň)
+### M2 — Vlajková šablóna: **kvetinárstvo** (špičková úroveň + motion)
 
-**Cieľ:** jeden odvetvový web na úrovni, ktorú by senior dev + dizajnér podpísali.
+> Rozdelené na **M2a (statická špička)** a **M2b (motion vrstva)** — detail a
+> motion spec v sekcii „Vlajková šablóna kvetinárstvo" nižšie. M2a musí obstáť aj
+> bez animácií (je fallbackom pre `reduced-motion`); M2b pridá Framer Motion navrch.
+
+**Cieľ:** jeden odvetvový web na úrovni, ktorú by senior dev + dizajnér podpísali —
+a ktorý na obchodnom stretnutí funguje ako dôkaz „takéto weby staviame".
 
 - **Dizajn systém** (`ui-ux-designer`) → `theme.css` (paleta, typografia, rytmus).
 - **Sekcie/stránky** (`frontend-dev` + `sk-copywriter`): domov (hero, sezónna
@@ -612,8 +617,111 @@ tej istej šablóny) → dva rôzne weby z jednej šablóny.
   (booking/leady/chatbot), branding, doména. Návrh cesty k **multi-tenant**
   (`tenant_id`, izolácia) ako plán, nie realizácia.
 
+## Vlajková šablóna „kvetinárstvo" — motion + prezentačná úroveň (detail)
+
+> **Zámer majiteľa:** kvetinárstvo nie je len prvá šablóna, je to **vlajková
+> ukážka** — „pozrite, takéto weby (za desiatky tisíc €) vieme robiť". Musí mať
+> **motion grafiku** na úrovni prémiovej agentúry a slúžiť ako **živý predajný
+> argument** v našich službách.
+
+### Poctivé priznanie na úvod (čo je tu ťažké)
+
+Cieľ „motion ako web za €desiatky tisíc" **a zároveň** Lighthouse ≥ 95 +
+prístupnosť je **najnáročnejšia časť celého projektu**. Nie je to nemožné — ale
+len ak sa držíme pevných mantinelov (nižšie). Preto motion **plánujeme, nie
+improvizujeme**: čo sa hýbe, ako, prečo, a čo sa stane pri `reduced-motion`.
+
+### Odporúčaná technológia (na potvrdenie)
+
+- **Primárne: Framer Motion (`motion/react`)** — React-natívny štandard pre Next.js,
+  deklaratívny, rieši `prefers-reduced-motion`, `whileInView`, layout animácie.
+  **Jedna závislosť**, ktorá sa v tomto projekte oplatí (motion JE tu produkt —
+  presne ten prípad z „rebríka minimalizmu", keď nižšie priečky nestačia).
+- **Doplnkovo: natívne CSS** na jednoduché veci (organické pozadia, Ken Burns
+  zoom, jemný parallax cez `animation-timeline: view()` tam, kde je podpora).
+- **GSAP + ScrollTrigger** držíme **v zálohe len na 1–2 „set-piecy"** (scroll-scrub
+  kinematika), a to iba ak sa preukáže, že to Framer/CSS nezvládnu vkusne. Nejdeme
+  „celé na GSAP" — zbytočne by to zaťažilo Lighthouse a údržbu.
+- **Intenzita: „prémiovo jemná" (editorial / luxury-brand)** — pôsobí draho bez
+  cirkusu; istejšia cesta k vkusu aj výkonu než „award-site" preplácanie.
+
+*(Ak chceš ísť odvážnejšie kinematicky alebo naopak úplne bez závislosti, povedz —
+plán vieme prepnúť. Default vyššie je moje odporúčanie.)*
+
+### Konkrétne motion prvky (aby bolo vidieť tú „drahú" úroveň)
+
+1. **Hero (prvý dojem):** kinetická typografia (slová nadpisu sa staggerom
+   vynoria s jemným blur-in), **organické animované pozadie** (pomaly plávajúce
+   gradientové „bloby", CSS), hero fotografia s **jemným parallaxom + Ken Burns**
+   spomaleným zoomom, **driftujúce lupienky** (pár ľahkých SVG s `transform`).
+   Voliteľný podpis: **SVG line-art kytica, ktorá sa sama „nakreslí"**
+   (`stroke-dashoffset`) pri načítaní.
+2. **Scroll reveals:** sekcie a karty prichádzajú staggerom (fade + jemný posun
+   nahor), `whileInView` s `once: true` (animuje sa raz, keď prvok vojde do obrazu).
+3. **Sezónna galéria kytíc:** hover **mask-reveal + zoom**, prípadne horizontálny
+   scroll so „scrub" efektom (tu by prišiel GSAP, ak vôbec).
+4. **Signature set-piece (moment „wow"):** buď **skladajúca sa kytica** (jednotlivé
+   kvety priletia a poskladajú sa počas scrollu), alebo **padajúce lupienky, ktoré
+   sa usadia**. Jeden taký moment stačí — nesmie sa preháňať.
+5. **Počítadlá:** roky na trhu / spokojní klienti / dodané kytice — count-up pri
+   vojdení do obrazu.
+6. **Mikro-interakcie:** magnetické CTA tlačidlá, jemný tilt/lift kariet, hover
+   zoom obrázkov, animované podčiarknutie odkazov, sticky názvy sekcií.
+7. **Prechody medzi stránkami:** **View Transitions API** (natívne, Next 16 ho
+   podporuje) alebo Framer — plynulý fade/slide medzi podstránkami.
+
+### Výkonové a a11y mantinely (povinné, súčasť kvalitnej brány)
+
+- **Len `transform` a `opacity`** (GPU) — nikdy neanimovať `width/height/top/left`
+  (layout thrash). `will-change` striedmo a cielene.
+- **Animovať až vo viewporte** (`whileInView` / IntersectionObserver), nie všetko
+  naraz na load → chráni prvé vykreslenie a Lighthouse.
+- **`prefers-reduced-motion`: tvrdý fallback** — nepodstatný motion sa vypne,
+  ostane **elegantný statický layout** (nie prázdna stránka). Testuje QA agent.
+- **Žiadny layout shift (CLS)** — rezervovať miesto pre obrázky/video (`next/image`,
+  pomery strán). Médiá lazy, hero s prioritou + poster.
+- **Rozpočet:** motion nesmie zhodiť **Lighthouse < 95** ani a11y. Ak zhodí →
+  prvok sa zjednoduší alebo vypustí. Kvalita čísla > efekt.
+
+### Mapa stránok (viacstránkový web, nie mockup)
+
+- **Domov:** hero → intro/„vitajte" → **sezónna ponuka** (featured kytice) →
+  **služby** (svadby a eventy, smútočná väzba, **predplatné kvetov**, firemné
+  dekorácie) → **galéria** → **o nás** (príbeh + tím) → proces objednávky →
+  **referencie** → CTA objednávka/rezervácia → kontakt (mapa, otváracie hodiny) →
+  pätička.
+- **Svadby a eventy** — samostatná predajná podstránka (portfólio, balíky, dopyt).
+- **Ponuka / kvety** — kategórie a sezónnosť (prezentačné, bez e-shopu vo v1).
+- **O nás** — príbeh, tím, hodnoty, fotografie.
+- **Kontakt / objednávka** — **rezervačný/objednávkový widget napojený na
+  `lib/booking.ts`** (napr. „konzultácia k svadobnej výzdobe" / „objednávka
+  kytice na termín"), formulár, mapa, otváracie hodiny.
+
+### Zaradenie do našich služieb (aby to reálne predávalo)
+
+- **`/ukazky` portfólio** (index šablón) — interné, `noindex` (fiktívny obsah).
+- **Predajná karta na digitalnapomoc.sk** — nová karta v sekcii **Služby**
+  („**Prémiové weby na kľúč**" / „Weby na úrovni, akú si všimnete") → odkaz na
+  **živú ukážku** `/ukazky/kvetinarstvo`. Táto karta/stránka **je** indexovateľná
+  (naša reálna služba), len **odkazuje** na noindex demo. Tým sa z ukážky stáva
+  konkrétny predajný argument, nie len „niečo v šuflíku".
+- Neskôr: viac ukážok (autoservis, zubár) → z `/ukazky` sa stane **portfólio
+  odvetví**, ktoré na obchodnom stretnutí otvoríš a klient si vyberie.
+
+### Dopad na míľniky
+
+- **M1** — do `docs/sablony-kvalita.md` pridať **motion pravidlá** (mantinely
+  vyššie) a rozhodnutie o Framer Motion (závislosť sa doinštaluje až v M2).
+- **M2** sa rozdelí na **M2a — statická špičková šablóna** (dizajn, sekcie, obsah,
+  a11y, Lighthouse) a **M2b — motion vrstva** (Framer + set-piecy) navrch. Dôvod:
+  najprv perfektný statický základ, ktorý obstojí aj bez animácií (a je fallbackom
+  pre `reduced-motion`), až potom motion. Každý pod-míľnik = ľudská revízia.
+- **M3** (rezervačný modul) a ďalšie ostávajú.
+
 ## Otvorené drobnosti (doriešiť pri realizácii)
 
+- **Potvrdiť motion technológiu a intenzitu** — default „Framer Motion +
+  natívne CSS, prémiovo jemná intenzita" (GSAP len na 1–2 set-piecy podľa potreby).
 - **Potvrdiť beh customizačného agenta** — default „Claude Code sedenie + skill"
   (rozhodnutie #2 vyššie ostalo neoznačené; ak chceš orchestrátor/hybrid, povedz).
 - Konkrétny zoznam sekcií/stránok kvetinárskej šablóny (rozvrhne `ui-ux-designer`
