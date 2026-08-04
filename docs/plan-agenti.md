@@ -409,10 +409,13 @@ merge do main a zmeny v Railway/Directus až po mojom súhlase.
 | # | Rozhodnutie | Voľba | Poznámka |
 |---|---|---|---|
 | 1 | **Kde žije knižnica** | **Route group vo `frontend/`** (`/ukazky/[odvetvie]`) | Každá šablóna = samostatný **prenosný balík** (`frontend/templates/<odvetvie>/`). 0 novej infry, zdieľa `lib/booking.ts` + widget priamo, portfólio hneď na našom webe. U klienta sa balík **vyliftuje** do čistého deployu. |
-| 2 | **Kde beží customizačný agent** | **Claude Code sedenie + skill** *(odporúčaný default — jediné otvorené na potvrdenie)* | Customizácia = editácia kódu/obsahu → doména Claude Code, nie headless cron. Config/log riadok `site_builder` v Directuse pre stopu (lego vzor). |
-| 3 | **Prvé odvetvie (MVP)** | **Kvetinárstvo** | Vizuálne vďačné (galéria, sezónne ponuky, o nás, cenník, kontakt) + jasný **rezervačný/objednávkový** modul → priamo ukáže napojenie na `lib/booking.ts`. |
-| 4 | **Build sub-agenti** | **Všetci štyria** (frontend dev, UI/UX dizajnér, QA/a11y, SK copywriter) | Adaptované (nie slepo skopírované) z `agency-agents` do `.claude/agents/`. |
-| 5 | **Model na texty/dizajn** | **Claude** (default, prepínateľné cez `agent_config.site_builder`) | Kvalita je priorita; lacnejší model (Gemini) voliteľne pre hromadné texty. |
+| 2 | **Kde beží customizačný agent** | **Claude Code sedenie + skill** ✅ potvrdené | Customizácia = editácia kódu/obsahu → doména Claude Code, nie headless cron. Config/log riadok `site_builder` v Directuse pre stopu (lego vzor). Po M2 **tvorí šablóny aj majiteľ** cez sedenia s build sub-agentmi. |
+| 3 | **Poradie odvetví** | **1. Kvetinárstvo → 2. Kaderníctvo** → ďalšie | Odvetvie je vedľajšie — prvá šablóna je spôsob, akým sa **ukuje samotný systém** (náradie M1 sa vyladí na reálnej práci M2). Každá ďalšia je rýchlejšia. |
+| 4 | **Build sub-agenti** | **Všetci štyria** (frontend dev, UI/UX dizajnér, QA/a11y, SK copywriter) | Adaptované (nie slepo skopírované) z `agency-agents` do `.claude/agents/`. **Živé definície** — zlepšujú sa retrospektívami (viď „Učiaca sa slučka"). |
+| 5 | **Modely pre sub-agentov** | **Fable/Opus** na dizajn + dev; **Sonnet** na copy + QA (v hlavičkách `.claude/agents/*.md`) | Vkus a architektúra = najsilnejší model; mechanická kontrola a textové iterácie = lacnejší. Povýšiť rolu = zmena jedného riadku. *(Build agenti = model v definícii; produktoví 24/7 agenti = model v `agent_config`.)* |
+| 6 | **Náhľad pre klienta = platená služba** | **Platený náhľad, odpočítateľný z ceny projektu** | Filtruje zvedavcov, drží prémiové pozicionovanie; pre vážneho klienta je to záloha, nie výdavok. Sumy → kolo o cenových balíkoch (neskôr). |
+| 7 | **Vstupy customizácie** | **Ľubovoľná kombinácia:** vízia (chat) / biznis plán (PDF) / starý web (URL) / referenčné weby (inšpirácia) | Nezávisí len od starého webu. Referencie = extrakcia dizajnového smeru, **nie kópia** (právne čisté; základ je vždy naša šablóna). |
+| 8 | **Zber online, výroba riadená** | Klient zadá všetko online (chat/formulár + prílohy) → náhľad vyrábame **my, riadene, s bránou kvality** (~24 h) | Plný automat „klik → web" by obišiel bránu kvality a vrátil generický AI výstup + riziko zneužitia nákladov. Osobné doručenie je aj silnejší predajný moment. Plná automatizácia = až Fáza 5. |
 
 ## Architektúra umiestnenia — route group + prenosné balíky
 
@@ -602,12 +605,51 @@ a ktorý na obchodnom stretnutí funguje ako dôkaz „takéto weby staviame".
 **Overiteľné:** suchý beh customizácie na fiktívnom „klientovi" (2. sada obsahu
 tej istej šablóny) → dva rôzne weby z jednej šablóny.
 
-### M5 — Replikácia: druhé odvetvie (autoservis alebo zubár)
+> **Od M2 ďalej platí:** systém je ukutý — **šablóny tvorí aj majiteľ** cez
+> Claude Code sedenia s build sub-agentmi („postav šablónu pre odvetvie X").
+> Druhá šablóna = **kaderníctvo** (môže vzniknúť kedykoľvek po M2 ako overenie
+> replikovateľnosti; nie je viazaná na poradie M3–M5). Najprémiovejšie kusy →
+> showroom `/ukazky` → predaj a nasadenie klientom.
 
-**Cieľ:** dôkaz, že proces je replikovateľný (nie jednorazovka).
+### M5 — Náhľadový agent online (zber na webe, výroba riadená)
 
-- Tým istým workflowom (sub-agenti → brána → revízia) postaviť druhú šablónu.
-- Cieľ: druhá šablóna za **výrazne kratší čas** vďaka zavedenej konvencii/bráne.
+**Cieľ:** potenciálny klient si **online** objedná platený náhľad svojho webu —
+cez chat agenta (alebo formulár) na digitalnapomoc.sk. *(= vízia §9 „Mockup
+agent" v zrelej podobe; predpokladá M2 + M4.)*
+
+**Tok:**
+
+```
+Návštevník → CHAT AGENT („Chcem nový web")     ← rozšírenie /api/chat (vzor R2)
+  │  konverzačný dotazník (à la B12): odvetvie, predstava, štýl, ciele
+  │  + ľubovoľné vstupy: URL starého webu / biznis plán PDF / referenčné weby
+  │  + platba za náhľad (odpočítateľná z projektu)
+  ▼
+LEAD v Directuse (typ „žiadosť o náhľad", prílohy v Directus Files) → notifikácia nám
+  ▼
+CUSTOMIZAČNÝ AGENT (Claude Code sedenie, spúšťame my):
+  scrape starého webu + Gemini prečíta biznis plán (PDF natívne, žiadny NotebookLM
+  netreba) + extrakcia smeru z referencií → naleje do šablóny odvetvia
+  ▼
+BRÁNA KVALITY → ľudská revízia → NÁHĽAD na /ukazky/demo/[id] (noindex, unikátny
+  odkaz) → e-mail klientovi + pozvanie na konzultáciu (~24 h od objednávky)
+```
+
+- **Scraping:** klientsky web zvládne sedenie samo (fetch + Chromium, 0 €).
+  **Apify** (má oficiálny MCP konektor, free tier 5 $ kreditov/mes.) zapneme až
+  keď narazíme na ťažké ciele — Google Maps recenzie, Instagram. Žiadny fixný
+  náklad vopred.
+- **Video upload do hero** (klientove/generované video pre motion) = **fáza 2**
+  tohto agenta — v prvej verzii stačí URL + PDF. Upload = útočná plocha (limit
+  veľkosti, validácia typu, rate limit).
+- **GDPR:** dotazník/plán/prílohy sú osobné a firemné dáta → viaže sa na cookie
+  lištu + zásady OÚ z Pred-Google checklistu; bez toho agenta nespúšťame naživo.
+- **Lego:** `agent_config` riadok (osobnosť chatu, otázky dotazníka klikaním),
+  logy `agent_logs`, vlastný token (least privilege).
+- **Predajný ťah „vaša stará WP stránka v novom šate":** ten istý tok vieme
+  spustiť aj my pred obchodným stretnutím — personalizované demo z klientovych
+  reálnych dát predáva lepšie než fiktívna ukážka. Sedí na naše jadro (headless
+  modernizácia WP — klientovi ostáva jeho admin).
 
 ### M6 — Produktizácia / lift-to-client (väzba na Fázu 5)
 
@@ -616,6 +658,9 @@ tej istej šablóny) → dva rôzne weby z jednej šablóny.
 - Runbook: skopíruj `templates/<x>/` + `lib/*` do čistého deployu, napoj Directus
   (booking/leady/chatbot), branding, doména. Návrh cesty k **multi-tenant**
   (`tenant_id`, izolácia) ako plán, nie realizácia.
+- Balíky služieb: šablóna + **lego agenti ako upsell** (Writer/copywriter,
+  rezervácie, objednávky, chatbot) — párovanie agent ↔ služba (vízia §8).
+  Cenové balíky sa navrhnú v samostatnom kole (rozhodnutie majiteľa: neskôr).
 
 ## Vlajková šablóna „kvetinárstvo" — motion + prezentačná úroveň (detail)
 
@@ -760,17 +805,38 @@ mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
   pre `reduced-motion`), až potom motion. Každý pod-míľnik = ľudská revízia.
 - **M3** (rezervačný modul) a ďalšie ostávajú.
 
+## Učiaca sa slučka — agenti sa stále zdokonaľujú (požiadavka majiteľa)
+
+> Sub-agenti **neberú prvú šablónu ako zabetónovaný vzor** — musia sa priebežne
+> zlepšovať vo webovom dizajne, funkčnosti a všetkom súvisiacom. Tri slučky:
+
+1. **Retrospektíva po každej šablóne (povinná).** Po dokončení a ľudskej revízii
+   sa ponaučenia zapíšu späť do `.claude/agents/*.md` a `docs/sablony-kvalita.md`
+   (rovnaká kultúra ako ponaučenia v `dennik.md`). Čo majiteľ vytkol pri revízii,
+   ďalšia šablóna už nezopakuje — agenti si tieto súbory čítajú na štarte práce.
+   Definície agentov sú **živé súbory**.
+2. **Prieskum pred každou šablónou.** `ui-ux-designer` pred novým odvetvím vždy
+   spraví čerstvý prieskum (špičkové weby odvetvia, aktuálne trendy, nové web
+   API/CSS možnosti) — dizajn neskostnatie na vzoroch prvej šablóny; každé
+   odvetvie dostane vlastný dizajnový výskum, nie „kvetinárstvo v inej farbe".
+3. **Modely a nástroje rastú s trhom.** Model každej roly je jeden riadok v
+   hlavičke definície — nový lepší model = jedna zmena, celý tím sa zlepší.
+   To isté platí pre nástroje (napr. keď pribudne Higgsfield konektor,
+   generovanie videa sa presunie do sedenia).
+
 ## Otvorené drobnosti (doriešiť pri realizácii)
 
-- **Potvrdiť motion technológiu a intenzitu** — default „Framer Motion +
-  natívne CSS, prémiovo jemná intenzita" (GSAP len na 1–2 set-piecy podľa potreby).
-- **Potvrdiť beh customizačného agenta** — default „Claude Code sedenie + skill"
-  (rozhodnutie #2 vyššie ostalo neoznačené; ak chceš orchestrátor/hybrid, povedz).
+- **Motion technológia** — default „Framer Motion + natívne CSS, prémiovo jemná
+  intenzita" (GSAP len na 1–2 set-piecy podľa potreby); finálne slovo pri M2b.
 - Konkrétny zoznam sekcií/stránok kvetinárskej šablóny (rozvrhne `ui-ux-designer`
   v M2, majiteľ odsúhlasí).
 - Zdroj obrázkov na finále (stock vs generované) — rozhodnúť v M2 podľa vzhľadu.
 - Či demo šablóny dostanú vlastnú (fiktívnu) doménu na plné „naostro" demo, alebo
   ostanú len na `/ukazky` (`noindex`). Default: `/ukazky`.
+- Suma za platený náhľad + cenové balíky (šablóna + lego agenti) — samostatné
+  kolo o cenách, až po M2 (rozhodnutie majiteľa: neskôr).
+- Recenzie z Google ako referencie v šablóne klienta — len so súhlasom klienta
+  (GDPR); zvážiť pri prvom reálnom nasadení.
 
 ## Štartový prompt pre PRVÉ realizačné sedenie (M1)
 
@@ -793,7 +859,11 @@ Konkrétne:
    kostra + placeholder, žiadny fiktívny obsah.
 3) Napíš docs/sablony-kvalita.md — kvalitná brána: checklist (Lighthouse ≥95,
    a11y/WCAG AA, responzivita, čistý kód, žiadne lorem/TODO), zoznam zakázaných
-   generických AI fráz, postup povinnej ľudskej revízie.
+   generických AI fráz, postup povinnej ľudskej revízie + šablóna RETROSPEKTÍVY
+   (učiaca sa slučka: ponaučenia po každej šablóne sa zapisujú späť do definícií
+   agentov a do tohto dokumentu). Motion pravidlá podľa sekcie „Vlajková šablóna".
+   Sub-agentom daj do definícií pokyn čítať tento dokument na štarte práce a
+   modely podľa rozhodnutia #5 (Fable/Opus dizajn+dev, Sonnet copy+QA).
 4) Založ kostru .claude/skills/site-customizer/ (zatiaľ runbook, bez behu).
 
 Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/ (frontend/AGENTS.md).
