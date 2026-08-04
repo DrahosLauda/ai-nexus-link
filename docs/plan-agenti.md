@@ -650,12 +650,18 @@ plán vieme prepnúť. Default vyššie je moje odporúčanie.)*
 
 ### Konkrétne motion prvky (aby bolo vidieť tú „drahú" úroveň)
 
-1. **Hero (prvý dojem):** kinetická typografia (slová nadpisu sa staggerom
-   vynoria s jemným blur-in), **organické animované pozadie** (pomaly plávajúce
-   gradientové „bloby", CSS), hero fotografia s **jemným parallaxom + Ken Burns**
-   spomaleným zoomom, **driftujúce lupienky** (pár ľahkých SVG s `transform`).
-   Voliteľný podpis: **SVG line-art kytica, ktorá sa sama „nakreslí"**
-   (`stroke-dashoffset`) pri načítaní.
+1. **Hero (prvý dojem) = SCROLL VIDEO HERO** *(rozhodnuté majiteľom)*. V hero
+   sekcii je **generované video** (Higgsfield + model). Nad videom je nadpis + CTA
+   (jemný reveal). Zvyšné hero efekty (lupienky, bloby, SVG kresba) sa **nepoužijú**
+   — hero nesie video, nie „ozdôbky". Dva možné režimy (rozhodnúť podľa vzhľadu +
+   výkonu, viď „Hero video — pipeline" nižšie):
+   - **A) Kinematický loop na pozadí** *(odporúčané, bezpečné):* krátke (~6–10 s)
+     bezšvové video sa prehráva dokola, obsah scrolluje ponad. `autoplay muted
+     playsinline loop`, **poster = prvý snímok** (drží LCP), na mobile ľahšia
+     verzia alebo len poster.
+   - **B) Scroll-scrub („Apple" efekt):* video sa **posúva podľa scrollu**
+     (`currentTime` viazaný na pozíciu). Najväčší „wow", ale rizikovejšie
+     (seek stutter, mobil throttluje) → treba dôsledné testovanie a fallback.
 2. **Scroll reveals:** sekcie a karty prichádzajú staggerom (fade + jemný posun
    nahor), `whileInView` s `once: true` (animuje sa raz, keď prvok vojde do obrazu).
 3. **Sezónna galéria kytíc:** hover **mask-reveal + zoom**, prípadne horizontálny
@@ -669,6 +675,33 @@ plán vieme prepnúť. Default vyššie je moje odporúčanie.)*
    zoom obrázkov, animované podčiarknutie odkazov, sticky názvy sekcií.
 7. **Prechody medzi stránkami:** **View Transitions API** (natívne, Next 16 ho
    podporuje) alebo Framer — plynulý fade/slide medzi podstránkami.
+
+### Hero video — pipeline (Higgsfield + model)
+
+**Asset (čo vygenerovať):**
+- **Formát/pomer:** landscape 16:9, master v čo najvyššej kvalite; z neho odvodíme
+  web verzie. Pripraviť aj **orezanie na výšku pre mobil** (alebo použiť poster).
+- **Dĺžka:** krátke a **bezšvovo loopovateľné** (~6–10 s) — pri režime A. Pri
+  režime B (scrub) dĺžka podľa výšky hero scrollu.
+- **Motív:** pomalé, „editorial" zábery (napr. rozkvitajúca kytica, jemný pohyb
+  kvetov, ruky viažuce kyticu) — pomalé pôsobí draho; rýchly strih pôsobí lacno.
+- **Zvuk:** žiadny (hero je `muted`).
+
+**Web nasadenie (povinné pre výkon):**
+- **Kompresia + dva kodeky:** `WebM` (VP9/AV1) + `MP4` (H.264) fallback. Cieľ
+  desktop verzie **rádovo nízke jednotky MB**, nie desiatky. Mobil ešte ľahší.
+- **`poster` = prvý snímok (statický obrázok)** — načíta sa okamžite, drží **LCP**
+  a je to fallback, kým sa video stiahne (alebo natrvalo pri `reduced-motion`/mobile).
+- **Lazy/priorita:** video `preload="metadata"`/`none` + spustiť po načítaní;
+  poster cez `next/image` s prioritou. **Nikdy** blokovať prvé vykreslenie videom.
+- **`prefers-reduced-motion` / šetrenie dát:** namiesto videa **statický poster**
+  (žiadny autoplay). Rovnako fallback, ak sa video nepodarí načítať.
+- **Hosting videa:** začať súborom v `public/` (jednoduché); ak by bol veľký/pomalý,
+  zvážiť CDN. *(Rozhodnúť pri realizácii podľa veľkosti.)*
+
+**Rozhodnutie A vs B:** default **A (loop na pozadí)** — istá kvalita čísel
+(Lighthouse) aj naprieč zariadeniami. **B (scroll-scrub)** len ak po teste na
+mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
 
 ### Výkonové a a11y mantinely (povinné, súčasť kvalitnej brány)
 
