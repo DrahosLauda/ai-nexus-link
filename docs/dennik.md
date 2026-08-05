@@ -129,6 +129,68 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Frontend agent M1: ZÁKLAD knižnice odvetvových šablón ✅ (vetva, NEzlúčené)
+
+**Míľnik M1 z `plan-agenti.md` („Frontend agent — knižnica odvetvových šablón")
+hotový na vetve `claude/m1-frontend-agent-templates-94ksdt`** (zatiaľ NEzlúčené do
+`main` → tvoj `git pull` na main to neukáže, kým to nezlúčime; medzitým
+`git checkout claude/m1-frontend-agent-templates-94ksdt`). Postavený je **základ**
+knižnice — infra a brána kvality, **žiadna hotová šablóna ani fiktívny obsah** (to
+je až M2 — vlajkové kvetinárstvo).
+
+**Čo pribudlo:**
+
+- **`.claude/agents/` — štyria build sub-agenti** (krátke, ostré definície
+  adaptované do nášho kontextu: Next.js 16 / Tailwind v4, slovenčina, minimalizmus,
+  a11y): `ui-ux-designer` (model **Fable**), `frontend-dev` (**Opus**),
+  `sk-copywriter` (**Sonnet**), `qa-a11y` (**Sonnet**) — modely podľa rozhodnutia #5.
+  Každý má v definícii pokyn **čítať `docs/sablony-kvalita.md` na štarte práce**
+  (učiaca sa slučka). Nie sú to generátory webov — sú to build-time „osobnosti",
+  ktoré sedenie spúšťa cez `Agent` tool pri stavaní šablóny.
+- **Konvencia prenosného balíka** `frontend/templates/<odvetvie>/` (theme.css so
+  scoped Tailwind v4 `@theme` tokenmi s prefixom, content.ts, sections/, images/ +
+  LICENSES.md, page/layout) — zdokumentované v `frontend/templates/README.md`.
+  **Register** `frontend/templates/registry.ts` (jediné miesto pravdy o šablónach,
+  zatiaľ prázdny) číta index aj mount.
+- **Route group `app/ukazky/`** — `layout.tsx` s **tvrdým `noindex, nofollow`**
+  pre celý podstrom (overené v build HTML), index `page.tsx` (prázdny stav, žiadny
+  fiktívny obsah) a `[odvetvie]/page.tsx` mount (`dynamicParams=false` + prázdny
+  `generateStaticParams` → neznáme cesty vracajú 404). Sitemap ani llms.txt
+  `/ukazky/*` **nezaraďujú** (demo obsah nesmie do Googla).
+- **`docs/sablony-kvalita.md`** — brána kvality (jediné miesto pravdy pre
+  „nerozoznateľné od AI"): checklist (Lighthouse ≥ 95, WCAG AA, responzivita, čistý
+  kód, žiadne lorem/TODO), **zoznam zakázaných generických AI fráz**, motion
+  mantinely (Framer Motion, len transform/opacity, reduced-motion fallback…),
+  postup povinnej ľudskej revízie a **šablóna RETROSPEKTÍVY** (ponaučenia sa
+  zapisujú späť do definícií agentov aj do tohto dokumentu).
+- **Kostra skillu** `.claude/skills/site-customizer/SKILL.md` — runbook (vyber
+  šablónu → vstupy klienta → content.ts + theme.css → zapoj modul → brána kvality
+  → lift). **Zatiaľ bez behu** (plný beh je M4).
+
+**Overené v sedení:** `npm run lint` čistý; `npm run build` prešiel (17/17 static
+pages; `/ukazky` static, `/ukazky/[odvetvie]` SSG bez vygenerovaných ciest → 404).
+`noindex, nofollow` potvrdené v `/ukazky` HTML. **Nič nedeployované.**
+
+**Ponaučenia:**
+
+1. **`node_modules` v cloud sedení nie je predinštalované** — pred lint/build a
+   pred čítaním `frontend/node_modules/next/dist/docs/` (povinné podľa
+   `frontend/AGENTS.md`) treba spustiť `npm ci` vo `frontend/`.
+2. **„Route group" tu = bežný segment `ukazky/` so zdieľaným `layout.tsx`**, nie
+   Next.js zátvorková `(skupina)`. URL má byť `/ukazky/[odvetvie]`, takže segment
+   ostáva v ceste; noindex sa dedí cez `metadata` v `layout.tsx`.
+3. **Prázdny `[odvetvie]` mount čisto:** `generateStaticParams` z registra
+   (prázdny) + `dynamicParams=false` → build nič nevygeneruje a všetky cesty 404,
+   bez mŕtveho kódu. Šablóna sa v M2 pridá jedným záznamom do registra.
+4. **`params` je `Promise`** (Next 16) — držať vzor existujúcich routes
+   (`type Props = { params: Promise<{…}> }`, `await params`).
+
+**Klik-časti:** žiadne (M1 je len kód/docs). Directus riadok `agent_config.site_builder`
++ token sú až M4 (po súhlase).
+
+**Ďalší krok:** M2 — vlajková šablóna **kvetinárstvo** (M2a statická špička →
+M2b motion vrstva), stavaná so sub-agentmi cez bránu kvality + ľudská revízia.
+
 ## Aug 2026 — Rezervačný agent R1 SPUSTENÝ NAŽIVO ✅ + ponaučenie SMTP→Resend
 
 **Rezervačný agent R1 beží naostro na `www.digitalnapomoc.sk/rezervacia`.** Celý

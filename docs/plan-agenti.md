@@ -545,7 +545,13 @@ existujúceho modulu, nie prepis.
 > Každý míľnik = jedno realizačné sedenie (ucelený, overiteľný celok). Vetva,
 > commit, push; **merge do `main` a zmeny v Railway/Directus až po súhlase**.
 
-### M1 — Základ knižnice (infra, bez hotovej šablóny)
+### M1 — Základ knižnice (infra, bez hotovej šablóny) ✅ HOTOVÉ (vetva, NEzlúčené)
+
+> ✅ Hotové (aug 2026, vetva `claude/m1-frontend-agent-templates-94ksdt`): štyria
+> sub-agenti v `.claude/agents/`, konvencia balíka `frontend/templates/` +
+> `registry.ts`, route group `app/ukazky/` (noindex), `docs/sablony-kvalita.md`,
+> kostra skillu `.claude/skills/site-customizer/`. Lint + build overené. Detaily a
+> ponaučenia v `docs/dennik.md`. **Ďalej: M2 (kvetinárstvo).**
 
 **Cieľ:** postaviť to, bez čoho sa špičková šablóna nedá stavať konzistentne.
 
