@@ -1,9 +1,9 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   Šablóna KVETINÁRSTVO („Ateliér Flóra") — dizajn-tokeny
+   Šablóna KVETINÁRSTVO — demo značka „Boma Flora" (kvetinový ateliér, Trenčín)
    Tailwind v4 @theme, všetko s prefixom `flora-` (žiadna kolízia s globals.css).
    Importuje sa VÝHRADNE v layout.tsx tejto šablóny; stránky obaľuje .flora-root.
-   Smer: botanický editorial — teplý papier, hlboká zeleň, terakota, veľká
-   fotografia, serif s charakterom (Fraunces). Nie „default Tailwind demo".
+   Smer: fotografia-first, pokojný editorial rytmus, sezónnosť — teplý papier,
+   hlboká zeleň, terakota, serif s charakterom (Fraunces). Nie „default Tailwind demo".
    Kontrastné páry overené na WCAG AA — pomery v komentároch.
    ──────────────────────────────────────────────────────────────────────────── */
 
