@@ -1,23 +1,30 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { contactTypyObjednavky } from "../content";
 
 /**
  * Objednávkový formulár. Prístupný (viditeľné labely, `autocomplete`, chyby
- * textom aj farbou, aria-live potvrdenie). Typ objednávky sa predvyplní z
- * `?typ=` (odkazy z menín a CTA). V M2a sa neodosiela — napojenie na lead/
- * booking widget je M3; po odoslaní ukáže úprimné demo potvrdenie.
+ * textom aj farbou, aria-live potvrdenie). Polia sú v statickom HTML aj bez JS
+ * (žiadny Suspense/`useSearchParams` gating) — progresívne vylepšenie.
+ *
+ * Predvyplnenie typu z `?typ=` (odkazy z menín a CTA) rieši malý `useEffect`,
+ * ktorý po načítaní prečíta `window.location.search` a nastaví neriadený
+ * `<select>`; `defaultValue` ostáva prvá hodnota, takže bez JS je pole platné.
+ * V M2a sa formulár neodosiela (demo) — napojenie na lead/booking je M3.
  */
 export function KontaktForm() {
-  const params = useSearchParams();
-  const preTyp = params.get("typ");
   const zoznam = contactTypyObjednavky;
-  const predvolenyTyp = zoznam.some((t) => t.hodnota === preTyp) ? (preTyp as string) : zoznam[0].hodnota;
-
   const [odoslane, setOdoslane] = useState(false);
+  const selectRef = useRef<HTMLSelectElement>(null);
   const uid = useId();
+
+  useEffect(() => {
+    const typ = new URLSearchParams(window.location.search).get("typ");
+    if (typ && selectRef.current && zoznam.some((t) => t.hodnota === typ)) {
+      selectRef.current.value = typ;
+    }
+  }, [zoznam]);
 
   if (odoslane) {
     return (
@@ -44,7 +51,7 @@ export function KontaktForm() {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <Pole id={`${uid}-meno`} label="Meno a priezvisko" autoComplete="name" required />
-        <Pole id={`${uid}-kontakt`} label="Telefón alebo e-mail" autoComplete="email" required />
+        <Pole id={`${uid}-kontakt`} label="Telefón alebo e-mail" autoComplete="off" required />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -53,9 +60,10 @@ export function KontaktForm() {
             Typ objednávky
           </label>
           <select
+            ref={selectRef}
             id={`${uid}-typ`}
             name="typ"
-            defaultValue={predvolenyTyp}
+            defaultValue={zoznam[0].hodnota}
             className="min-h-[48px] rounded-flora-sm border border-flora-line bg-flora-porcelain px-3.5 text-flora-body text-flora-ink"
           >
             {zoznam.map((t) => (

@@ -37,7 +37,7 @@ export function FloraFooter() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h2 className="text-flora-eyebrow font-semibold uppercase text-flora-clay-400">Kontakt</h2>
+          <h2 className="text-flora-eyebrow font-semibold uppercase text-flora-clay-200">Kontakt</h2>
           <address className="not-italic text-flora-small leading-relaxed text-flora-paper">
             {brand.adresaRiadok1}
             <br />
@@ -60,7 +60,7 @@ export function FloraFooter() {
         </div>
 
         <nav aria-label="Mapa stránok" className="flex flex-col gap-3">
-          <h2 className="text-flora-eyebrow font-semibold uppercase text-flora-clay-400">Stránky</h2>
+          <h2 className="text-flora-eyebrow font-semibold uppercase text-flora-clay-200">Stránky</h2>
           <ul className="flex flex-col gap-2">
             {footerNav.map((p) => (
               <li key={p.href}>

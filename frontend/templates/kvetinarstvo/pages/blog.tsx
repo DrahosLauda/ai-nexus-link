@@ -5,7 +5,7 @@
  */
 import Link from "next/link";
 import { href } from "../base";
-import { blogClanky, blogSubhero } from "../content";
+import { blogClanky, blogCta, blogSekcie, blogSubhero } from "../content";
 import { CtaPas } from "../sections/bloky";
 import { SubHero } from "../sections/hero";
 import { FloraFigure, type Odtien } from "../images/placeholder";
@@ -32,7 +32,7 @@ export function BlogPage() {
               {featured.titulok}
             </h2>
             <p className="text-flora-lead text-flora-moss">{featured.perex}</p>
-            <span className="text-[15px] font-semibold text-flora-clay-600">Čítať článok →</span>
+            <span className="text-[15px] font-semibold text-flora-clay-600">{blogSekcie.citajFeatured}</span>
           </div>
         </Link>
 
@@ -55,10 +55,7 @@ export function BlogPage() {
         </ul>
       </Sekcia>
 
-      <CtaPas
-        text="Kytica podľa sezóny? Objednajte."
-        primar={{ label: "Objednať kvety", href: "/kontakt" }}
-      />
+      <CtaPas text={blogCta.text} primar={blogCta.cta} />
     </>
   );
 }

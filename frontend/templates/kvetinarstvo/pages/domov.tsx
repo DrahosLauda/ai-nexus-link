@@ -9,6 +9,7 @@ import {
   homeKrokyObjednavky,
   homeManifest,
   homeReferencie,
+  homeSekcie,
   homeSluzby,
   seasonalEyebrow,
   seasonalKytice,
@@ -48,9 +49,9 @@ export function DomovPage() {
         <div className="flex flex-col gap-3">
           <Eyebrow>{seasonalEyebrow}</Eyebrow>
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink">Čo práve viažeme</h2>
+            <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink">{homeSekcie.sezonnyNadpis}</h2>
             <Cta k="/ponuka" variant="text">
-              Celá ponuka →
+              {homeSekcie.sezonnyOdkaz}
             </Cta>
           </div>
         </div>
@@ -61,7 +62,7 @@ export function DomovPage() {
 
       {/* Služby 01–05 */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie eyebrow="Čo pre vás robíme" nadpis="Od kytice dňa po svadobný deň" />
+        <ZahlavieSekcie {...homeSekcie.sluzby} />
         <SluzbyZoznam sluzby={homeSluzby} />
       </Sekcia>
 
@@ -77,7 +78,7 @@ export function DomovPage() {
 
       {/* Kroky objednávky */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie eyebrow="Ako to prebieha" nadpis="Tri kroky k vašej kytici" />
+        <ZahlavieSekcie {...homeSekcie.kroky} />
         <div className="mt-10">
           <Kroky kroky={homeKrokyObjednavky} />
         </div>
@@ -85,7 +86,7 @@ export function DomovPage() {
 
       {/* Referencie */}
       <Sekcia podklad="sand">
-        <ZahlavieSekcie eyebrow="Referencie" nadpis="Čo hovoria zákazníci" />
+        <ZahlavieSekcie {...homeSekcie.referencie} />
         <div className="mt-10">
           <Referencie referencie={homeReferencie} />
         </div>

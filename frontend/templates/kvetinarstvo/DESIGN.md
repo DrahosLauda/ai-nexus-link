@@ -197,9 +197,11 @@ Arch orez na blogu nepoužívame (arch = kytice/portréty) — blog drží mäkk
 1. **Kontakt + hodiny** — adresa (centrum Trenčína), telefón, e-mail, otváracie
    hodiny (tabuľka), mapa (statický obrázok mapy s odkazom — žiadny ťažký embed vo v1).
 2. **Objednávkový formulár** — meno, kontakt, typ (kytica / svadba / smútočná
-   väzba / predplatné / iné), termín, správa. M2: zapisuje ako lead; M3:
-   nahradí/rozšíri zdieľaný `booking-widget` vo vizuáli šablóny. Odkazy z meniny
-   prvku predvolia typ „kytica".
+   väzba / predplatné / iné), termín, správa. **M2a: demo bez odoslania** — polia
+   sú prítomné aj bez JS (progresívne vylepšenie), po odoslaní sa zobrazí úprimné
+   demo potvrdenie; ukážka v `/ukazky` zámerne **nevytvára reálne leady** v
+   Directuse. M3: reálne odoslanie (lead) / rozšírenie zdieľaným `booking-widget`
+   vo vizuáli šablóny. Odkazy z meniny prvku predvolia typ „kytica".
 3. **Krátke FAQ** — dokedy objednať kyticu (deň vopred), smútočná väzba (vieme
    aj do niekoľkých hodín — text `sk-copywriter`), svadby (3–6 mesiacov),
    doručenie po Trenčíne, platba.

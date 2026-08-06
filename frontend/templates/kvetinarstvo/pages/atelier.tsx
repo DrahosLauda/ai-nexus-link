@@ -7,6 +7,7 @@ import {
   studioCta,
   studioPribeh,
   studioPriestor,
+  studioSekcie,
   studioSubhero,
   studioTim,
 } from "../content";
@@ -38,7 +39,7 @@ export function AtelierPage() {
 
       {/* Príbeh */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie eyebrow="Príbeh" nadpis="Ako Boma Flora vznikla" />
+        <ZahlavieSekcie {...studioSekcie.pribeh} />
         <div className="mt-8 grid max-w-[70ch] gap-4">
           {studioPribeh.odseky.map((o) => (
             <p key={o} className="text-flora-lead text-flora-moss">
@@ -50,7 +51,7 @@ export function AtelierPage() {
 
       {/* Tím */}
       <Sekcia podklad="sand">
-        <ZahlavieSekcie eyebrow="Tím" nadpis="Kto viaže vaše kvety" />
+        <ZahlavieSekcie {...studioSekcie.tim} />
         <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {studioTim.map((clen) => (
             <li key={clen.meno} className="flex flex-col">
@@ -66,7 +67,7 @@ export function AtelierPage() {
       {/* Ako pracujeme */}
       <Sekcia podklad="paper">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <ZahlavieSekcie eyebrow="Ako pracujeme" nadpis="Konkrétne, nie prázdne sľuby" />
+          <ZahlavieSekcie {...studioSekcie.akoPracujeme} />
           <ul className="flex flex-col divide-y divide-flora-line border-y border-flora-line">
             {studioAkoPracujeme.map((f) => (
               <li key={f} className="flex gap-4 py-5">
@@ -82,7 +83,7 @@ export function AtelierPage() {
 
       {/* Priestor */}
       <Sekcia podklad="paper" zhustena>
-        <Eyebrow>Priestor</Eyebrow>
+        <Eyebrow>{studioSekcie.priestorEyebrow}</Eyebrow>
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           {studioPriestor.map((p, i) => (
             <li key={p.alt}>

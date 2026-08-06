@@ -10,7 +10,7 @@ import { href } from "../base";
 export function Eyebrow({ children, tmava = false }: { children: ReactNode; tmava?: boolean }) {
   return (
     <span
-      className={`text-flora-eyebrow font-semibold uppercase ${tmava ? "text-flora-clay-400" : "text-flora-500"}`}
+      className={`text-flora-eyebrow font-semibold uppercase ${tmava ? "text-flora-clay-200" : "text-flora-500"}`}
     >
       {children}
     </span>

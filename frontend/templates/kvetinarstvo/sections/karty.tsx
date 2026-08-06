@@ -39,7 +39,7 @@ export function Galeria({ obrazky }: { obrazky: { alt: string }[] }) {
         {a ? <FloraFigure alt={a.alt} pomer="3/4" odtien={odtiene[0]} className="sm:row-span-2" /> : null}
         {b ? <FloraFigure alt={b.alt} pomer="1/1" odtien={odtiene[1]} /> : null}
         {c ? <FloraFigure alt={c.alt} pomer="1/1" odtien={odtiene[2]} /> : null}
-        {d ? <FloraFigure alt={d.alt} pomer="1/1" odtien={odtiene[3]} /> : null}
+        {d ? <FloraFigure alt={d.alt} pomer="4/5" odtien={odtiene[3]} /> : null}
         {e ? <FloraFigure alt={e.alt} pomer="1/1" odtien={odtiene[4]} /> : null}
       </div>
       {f ? <FloraFigure alt={f.alt} pomer="21/9" odtien={odtiene[5]} /> : null}
@@ -59,7 +59,7 @@ export function AtelierTeaser() {
         className="max-w-[420px]"
       />
       <div className="flex flex-col gap-5">
-        <Eyebrow tmava>Ateliér</Eyebrow>
+        <Eyebrow tmava>{homeAtelierTeaser.eyebrow}</Eyebrow>
         {homeAtelierTeaser.odseky.map((o) => (
           <p key={o} className="text-flora-lead text-flora-mist">
             {o}
@@ -69,9 +69,9 @@ export function AtelierTeaser() {
         <div>
           <Link
             href={href(homeAtelierTeaser.href)}
-            className="inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-400 underline decoration-1 underline-offset-4 hover:text-flora-clay-200"
+            className="inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-200 underline decoration-1 underline-offset-4 hover:text-flora-paper"
           >
-            Spoznajte ateliér →
+            {homeAtelierTeaser.odkaz}
           </Link>
         </div>
       </div>

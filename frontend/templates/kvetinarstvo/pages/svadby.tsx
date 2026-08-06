@@ -8,6 +8,7 @@ import {
   weddingsProcessIntro,
   weddingsRealizacie,
   weddingsReferencie,
+  weddingsSekcie,
   weddingsSubhero,
 } from "../content";
 import { CenoveUrovne, CtaPas, Kroky, Referencie } from "../sections/bloky";
@@ -41,7 +42,7 @@ export function SvadbyPage() {
       <Sekcia podklad="paper">
         <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="flex flex-col gap-5">
-            <Eyebrow>Ako pracujeme s párom</Eyebrow>
+            <Eyebrow>{weddingsSekcie.procesEyebrow}</Eyebrow>
             <p className="text-flora-lead text-flora-ink">{weddingsProcessIntro}</p>
           </div>
           <FloraFigure
@@ -56,7 +57,7 @@ export function SvadbyPage() {
 
       {/* Realizácie */}
       <Sekcia podklad="sand">
-        <ZahlavieSekcie eyebrow="Realizácie" nadpis="Svadby, ktoré sme zdobili" />
+        <ZahlavieSekcie {...weddingsSekcie.realizacie} />
         <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {weddingsRealizacie.map((r, i) => (
             <li key={r.miesto} className="flex flex-col">
@@ -70,11 +71,7 @@ export function SvadbyPage() {
 
       {/* Cenové úrovne */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie
-          eyebrow="Rozsah a orientačné ceny"
-          nadpis="Tri úrovne spolupráce"
-          popis="Ceny sú orientačné a závisia od sezóny, počtu hostí a miesta. Presnú sumu dostanete v návrhu."
-        />
+        <ZahlavieSekcie {...weddingsSekcie.ceny} />
         <div className="mt-10">
           <CenoveUrovne urovne={weddingsCenoveUrovne} />
         </div>
@@ -82,7 +79,7 @@ export function SvadbyPage() {
 
       {/* Priebeh spolupráce */}
       <Sekcia podklad="paper" zhustena>
-        <ZahlavieSekcie eyebrow="Priebeh spolupráce" nadpis="Od dopytu po deň D" />
+        <ZahlavieSekcie {...weddingsSekcie.priebeh} />
         <div className="mt-10">
           <Kroky kroky={weddingsPriebeh} />
         </div>
@@ -90,7 +87,7 @@ export function SvadbyPage() {
 
       {/* Referencie */}
       <Sekcia podklad="sand">
-        <ZahlavieSekcie eyebrow="Referencie párov" nadpis="Ako to videli nevesty a ženísi" />
+        <ZahlavieSekcie {...weddingsSekcie.referencie} />
         <div className="mt-10">
           <Referencie referencie={weddingsReferencie} />
         </div>

@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { href } from "../base";
 import type { Clanok } from "../content";
-import { blogClanky } from "../content";
+import { blogClanky, blogCta, blogSekcie } from "../content";
 import { CtaPas } from "../sections/bloky";
 import { FloraFigure, type Odtien } from "../images/placeholder";
 import { Eyebrow } from "../sections/ui";
@@ -21,7 +21,7 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
       <article className="bg-flora-paper py-flora-section-sm">
         <div className="mx-auto w-full max-w-[760px] px-flora-gutter">
           <div className="flex flex-col gap-4 pt-6">
-            <Eyebrow>Z ateliéru Boma Flora</Eyebrow>
+            <Eyebrow>{blogSekcie.detailEyebrow}</Eyebrow>
             <h1 className="text-flora-h1 font-flora-display font-medium text-balance text-flora-ink">
               {clanok.titulok}
             </h1>
@@ -53,7 +53,7 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
       {/* Súvisiace články */}
       <section className="bg-flora-sand py-flora-section">
         <div className="mx-auto w-full max-w-[1200px] px-flora-gutter">
-          <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink">Ďalšie články</h2>
+          <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink">{blogSekcie.suvisiaceNadpis}</h2>
           <ul className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {suvisiace.map((c, i) => (
               <li key={c.slug}>
@@ -70,10 +70,7 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
         </div>
       </section>
 
-      <CtaPas
-        text="Kytica podľa sezóny? Objednajte."
-        primar={{ label: "Objednať kvety", href: "/kontakt" }}
-      />
+      <CtaPas text={blogCta.text} primar={blogCta.cta} />
     </>
   );
 }

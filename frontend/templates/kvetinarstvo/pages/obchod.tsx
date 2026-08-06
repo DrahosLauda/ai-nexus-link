@@ -3,7 +3,7 @@
  * nie sú nákupné: nesú textový štítok „Online nákup pripravujeme" (nie iba
  * farba) a CTA na objednávku formulárom. Layout znesie neskôr reálne produkty.
  */
-import { shopCta, shopKrokyBuduceho, shopSortiment, shopStitok, shopSubhero } from "../content";
+import { shopCta, shopKrokyBuduceho, shopSekcie, shopSortiment, shopStitok, shopSubhero } from "../content";
 import { CtaPas, Kroky } from "../sections/bloky";
 import { SubHero } from "../sections/hero";
 import { FloraFigure, type Odtien } from "../images/placeholder";
@@ -19,7 +19,7 @@ export function ObchodPage() {
       {/* Náhľad sortimentu */}
       <Sekcia podklad="paper">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <ZahlavieSekcie eyebrow="Sortiment" nadpis="Čo si u nás objednáte" />
+          <ZahlavieSekcie {...shopSekcie.sortiment} />
           <span className="inline-flex items-center rounded-flora-pill bg-flora-sand px-4 py-1.5 text-flora-small font-semibold text-flora-700">
             {shopStitok}
           </span>
@@ -37,16 +37,16 @@ export function ObchodPage() {
           ))}
         </ul>
         <p className="mt-10 max-w-[60ch] text-flora-body text-flora-moss">
-          Karty zatiaľ nie sú nákupné. Zatiaľ objednáte telefonicky alebo formulárom —{" "}
+          {shopSekcie.poznamkaPred}
           <Cta k="/kontakt" variant="text">
-            napíšte nám →
+            {shopSekcie.poznamkaOdkaz}
           </Cta>
         </p>
       </Sekcia>
 
       {/* Ako bude nákup fungovať */}
       <Sekcia podklad="sand">
-        <ZahlavieSekcie eyebrow="Ako to bude fungovať" nadpis="Nákup online, keď spustíme e-shop" />
+        <ZahlavieSekcie {...shopSekcie.ako} />
         <div className="mt-10">
           <Kroky kroky={shopKrokyBuduceho} />
         </div>

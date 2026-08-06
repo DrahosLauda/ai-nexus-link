@@ -3,8 +3,10 @@
  * meniny blok, sezónny kalendár, predplatné (tmavé), praktické info + FAQ, CTA.
  */
 import {
+  offerCta,
   offerFaq,
   offerKategorie,
+  offerSekcie,
   offerSubhero,
   praktickeInfo,
   predplatneFrekvencie,
@@ -23,7 +25,7 @@ export function PonukaPage() {
 
       {/* Kategórie */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie eyebrow="Čo viažeme" nadpis="Kategórie kytíc a väzby" />
+        <ZahlavieSekcie {...offerSekcie.kategorie} />
         <div className="mt-10">
           <KategorieKarty
             kategorie={offerKategorie}
@@ -39,11 +41,7 @@ export function PonukaPage() {
 
       {/* Sezónny kalendár */}
       <Sekcia podklad="paper">
-        <ZahlavieSekcie
-          eyebrow="Sezónny kalendár"
-          nadpis="Čo kvitne v akom období"
-          popis="Viažeme podľa toho, čo práve dozrelo. Tu je prehľad kvetov, ktoré v jednotlivých obdobiach vrcholia."
-        />
+        <ZahlavieSekcie {...offerSekcie.kalendar} />
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {sezonnyKalendar.map((s) => (
             <li key={s.obdobie} className="flex flex-col gap-3 rounded-flora-lg border border-flora-line bg-flora-porcelain p-6">
@@ -61,17 +59,12 @@ export function PonukaPage() {
       {/* Predplatné (tmavé) */}
       <section id="predplatne" className="scroll-mt-20 bg-flora-900 py-flora-section">
         <div className="mx-auto w-full max-w-[1200px] px-flora-gutter">
-          <ZahlavieSekcie
-            tmava
-            eyebrow="Predplatné kvetov"
-            nadpis="Čerstvé kvety pravidelne, bez starostí"
-            popis={predplatnePopis}
-          />
+          <ZahlavieSekcie tmava {...offerSekcie.predplatne} popis={predplatnePopis} />
           <ul className="mt-10 grid gap-6 sm:grid-cols-3">
             {predplatneFrekvencie.map((f) => (
               <li key={f.frekvencia} className="flex flex-col gap-2 rounded-flora-lg border border-white/15 bg-white/5 p-6">
                 <span className="text-flora-h3 font-flora-display font-medium text-flora-paper">{f.frekvencia}</span>
-                <span className="text-[15px] font-semibold text-flora-clay-400">{f.cena}</span>
+                <span className="text-[15px] font-semibold text-flora-clay-200">{f.cena}</span>
               </li>
             ))}
           </ul>
@@ -100,18 +93,14 @@ export function PonukaPage() {
           </div>
         </div>
         <div className="mt-12">
-          <Eyebrow>Časté otázky</Eyebrow>
+          <Eyebrow>{offerSekcie.faqEyebrow}</Eyebrow>
           <div className="mt-6">
             <Faq otazky={offerFaq} />
           </div>
         </div>
       </Sekcia>
 
-      <CtaPas
-        text="Máte v hlave konkrétnu kyticu? Napíšte nám ju."
-        primar={{ label: "Objednať kvety", href: "/kontakt" }}
-        sekundar={{ label: "Kúpiť online", href: "/obchod" }}
-      />
+      <CtaPas text={offerCta.text} primar={offerCta.ctaPrimarna} sekundar={offerCta.ctaSekundarna} />
     </>
   );
 }

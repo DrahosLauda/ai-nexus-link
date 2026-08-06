@@ -131,6 +131,13 @@ export interface NavPolozka {
   popis?: string;
 }
 
+/** Hlavička sekcie — eyebrow + nadpis (+ voliteľný popis). */
+export interface Zahlavie {
+  eyebrow?: string;
+  nadpis: string;
+  popis?: string;
+}
+
 // ---------------------------------------------------------------------------
 // Značka a globálne údaje (hlavička, pätička, kontakt)
 // ---------------------------------------------------------------------------
@@ -357,12 +364,23 @@ export const homeGaleria: { alt: string }[] = [
 ];
 
 export const homeAtelierTeaser = {
+  eyebrow: "Ateliér",
   odseky: [
     "Boma Flora funguje v centre Trenčína od roku 2014. Začínali sme v malej predajni na Ovocnej ulici, dnes máme ateliér s chladiarenskou miestnosťou a tímom troch floristiek.",
     "Kvety vyberáme osobne, dvakrát do týždňa, priamo na veľkoobchode. Zvyšok dopĺňame od pestovateľov spod Bielych Karpát.",
   ],
   podpis: "— Barbora Momčilová, zakladateľka Boma Flora",
+  odkaz: "Spoznajte ateliér →",
   href: "/atelier" as const,
+};
+
+/** Hlavičky sekcií a drobné UI texty Domova (data-driven, nie v JSX). */
+export const homeSekcie = {
+  sezonnyNadpis: "Čo práve viažeme",
+  sezonnyOdkaz: "Celá ponuka →",
+  sluzby: { eyebrow: "Čo pre vás robíme", nadpis: "Od kytice dňa po svadobný deň" } as Zahlavie,
+  kroky: { eyebrow: "Ako to prebieha", nadpis: "Tri kroky k vašej kytici" } as Zahlavie,
+  referencie: { eyebrow: "Referencie", nadpis: "Čo hovoria zákazníci" } as Zahlavie,
 };
 
 export const homeKrokyObjednavky: Krok[] = [
@@ -799,3 +817,82 @@ export const contactFaq: Otazka[] = [
     odpoved: "V ateliéri kartou aj v hotovosti, pri doručení hotovosťou kuriérovi alebo prevodom vopred.",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Sekčné hlavičky a UI mikrotexty podstránok (data-driven — nie v JSX)
+// ---------------------------------------------------------------------------
+
+/** Ponuka — hlavičky sekcií, FAQ eyebrow a záverečné CTA. */
+export const offerSekcie = {
+  kategorie: { eyebrow: "Čo viažeme", nadpis: "Kategórie kytíc a väzby" } as Zahlavie,
+  kalendar: {
+    eyebrow: "Sezónny kalendár",
+    nadpis: "Čo kvitne v akom období",
+    popis:
+      "Viažeme podľa toho, čo práve dozrelo. Tu je prehľad kvetov, ktoré v jednotlivých obdobiach vrcholia.",
+  } as Zahlavie,
+  predplatne: {
+    eyebrow: "Predplatné kvetov",
+    nadpis: "Čerstvé kvety pravidelne, bez starostí",
+  } as Zahlavie,
+  faqEyebrow: "Časté otázky",
+};
+
+export const offerCta = {
+  text: "Máte v hlave konkrétnu kyticu? Napíšte nám ju.",
+  ctaPrimarna: { label: "Objednať kvety", href: "/kontakt" } as Odkaz,
+  ctaSekundarna: { label: "Kúpiť online", href: "/obchod" } as Odkaz,
+};
+
+/** Svadby — hlavičky sekcií. */
+export const weddingsSekcie = {
+  procesEyebrow: "Ako pracujeme s párom",
+  realizacie: { eyebrow: "Realizácie", nadpis: "Svadby, ktoré sme zdobili" } as Zahlavie,
+  ceny: {
+    eyebrow: "Rozsah a orientačné ceny",
+    nadpis: "Tri úrovne spolupráce",
+    popis:
+      "Ceny sú orientačné a závisia od sezóny, počtu hostí a miesta. Presnú sumu dostanete v návrhu.",
+  } as Zahlavie,
+  priebeh: { eyebrow: "Priebeh spolupráce", nadpis: "Od dopytu po deň D" } as Zahlavie,
+  referencie: { eyebrow: "Referencie párov", nadpis: "Ako to videli nevesty a ženísi" } as Zahlavie,
+};
+
+/** Obchod — hlavičky sekcií a poznámka pod sortimentom. */
+export const shopSekcie = {
+  sortiment: { eyebrow: "Sortiment", nadpis: "Čo si u nás objednáte" } as Zahlavie,
+  ako: { eyebrow: "Ako to bude fungovať", nadpis: "Nákup online, keď spustíme e-shop" } as Zahlavie,
+  poznamkaPred: "Karty zatiaľ nie sú nákupné. Zatiaľ objednáte telefonicky alebo formulárom — ",
+  poznamkaOdkaz: "napíšte nám →",
+};
+
+/** Blog — mikrotexty zoznamu, detailu a záverečné CTA (zdieľané zoznam/detail). */
+export const blogSekcie = {
+  citajFeatured: "Čítať článok →",
+  detailEyebrow: "Z ateliéru Boma Flora",
+  suvisiaceNadpis: "Ďalšie články",
+};
+
+export const blogCta = {
+  text: "Kytica podľa sezóny? Objednajte.",
+  cta: { label: "Objednať kvety", href: "/kontakt" } as Odkaz,
+};
+
+/** Ateliér — hlavičky sekcií. */
+export const studioSekcie = {
+  pribeh: { eyebrow: "Príbeh", nadpis: "Ako Boma Flora vznikla" } as Zahlavie,
+  tim: { eyebrow: "Tím", nadpis: "Kto viaže vaše kvety" } as Zahlavie,
+  akoPracujeme: { eyebrow: "Ako pracujeme", nadpis: "Konkrétne, nie prázdne sľuby" } as Zahlavie,
+  priestorEyebrow: "Priestor",
+};
+
+/** Kontakt — h1, hlavičky a labely (mimo `contactIntro`/`contactFaq`). */
+export const contactSekcie = {
+  h1: "Kontakt a objednávka",
+  atelierEyebrow: "Ateliér",
+  hodinyNadpis: "Otváracie hodiny",
+  mapaOdkaz: "Otvoriť v mapách →",
+  formularNadpis: "Objednávkový formulár",
+  formularPopis: "Vyplňte, čo potrebujete, a ozveme sa vám späť. Polia označené * sú povinné.",
+  faqEyebrow: "Časté otázky",
+};
