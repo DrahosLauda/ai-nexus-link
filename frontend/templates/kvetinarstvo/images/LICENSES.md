@@ -4,16 +4,28 @@ Zdroj a licencia každého obrázka šablóny. Cieľ podľa `docs/sablony-kvalit
 `DESIGN.md` sekcie d): kurátorské **reálne fotografie** (Unsplash / Pexels —
 komerčne voľné) v jednotnej teplej atmosfére „ráno v ateliéri".
 
-## Stav (M2a)
+## Hero video (M2b) — hotové ✅
 
-**Zatiaľ bez rastrových fotografií.** V tomto prostredí sa fotky nedali
-spoľahlivo stiahnuť, preto šablóna používa **vlastný obrazový placeholder**
-(`placeholder.tsx`): inline botanické SVG v palete `theme.css`, s korektnými
-pomermi strán (žiadny CLS), arch orezom (`.flora-arch`) a popisnými `alt` textami
-z `content.ts`. Placeholder **neblokuje build** ani a11y.
+Zdroj: **Kling (kling.ai)**, generované cez MCP na účte majiteľa
+(Standard/VIP plán → **komerčná licencia**). Súbory v `frontend/public/kvetinarstvo/`:
 
-Hero (M2a) je „poster" v štýle motívu „ruky + kytica" (tmavý variant placeholderu
-+ gradient overlay), pripravený na neskoršiu výmenu za video (M2b).
+| Súbor | Obsah | Model | Licencia |
+|---|---|---|---|
+| `hero.mp4` / `hero.webm` | 10 s transformácia: kytica → kvetinový veniec (scroll-scrub hero) | Kling 3.0 (image_to_video, start+end frame) | Kling, komerčné použitie (plán majiteľa) |
+| `hero-poster.jpg` | Prvý snímok videa = kytica (poster/LCP, mobil, reduced-motion) | odvodený z videa (ffmpeg) | odvodené z hore uvedeného |
+
+Start/end framy generované modelom **Nano Banana 2** (Gemini 3.1 Flash) v Klingu.
+Video na webe: WebM (VP9) + MP4 (H.264), krátky GOP kvôli plynulému scroll-scrubu,
+poster drží LCP; mobil/`reduced-motion` = statický poster.
+
+## Statické obrázky (M2a) — placeholder, follow-up
+
+Ostatné obrazové sloty (galéria, karty, portréty, blog, obchod) zatiaľ používajú
+**vlastný obrazový placeholder** (`placeholder.tsx`): inline botanické SVG v palete
+`theme.css`, s korektnými pomermi strán (žiadny CLS), arch orezom (`.flora-arch`)
+a popisnými `alt` textami z `content.ts`. Nahradia sa kurátorskými fotkami rovnako
+ako hero (Kling / vlastné fotky klienta) — `FloraFigure` → `next/image`, bez zmeny
+rozvrhu. Doplniť sem záznam pri každom obrázku (súbor, motív, model/zdroj, licencia).
 
 ## Follow-up (pred ľudskou revíziou / go-live šablóny)
 

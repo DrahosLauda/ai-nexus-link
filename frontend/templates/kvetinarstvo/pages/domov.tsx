@@ -16,7 +16,7 @@ import {
 } from "../content";
 import { AtelierTeaser, Galeria, KyticeKarty } from "../sections/karty";
 import { CtaPas, Kroky, Referencie, SluzbyZoznam } from "../sections/bloky";
-import { HomeHero } from "../sections/hero";
+import { HomeHero } from "../sections/hero-video";
 import { MeninyPas } from "../sections/meniny";
 import { Cta, Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
