@@ -288,9 +288,9 @@ export const homeHero = {
 
 /** Manifest (sekcia 3) — zvýraznené slovo oddelené, aby ho vedel dev obaliť kurzívou. */
 export const homeManifest = {
-  leadPred: "Za každou kyticou stojí ",
-  leadDoraz: "rozhodnutie",
-  leadPo: " — aké kvety, odkiaľ a pre koho.",
+  leadPred: "Pri každej kytici sa ",
+  leadDoraz: "rozhodujeme",
+  leadPo: ", aké kvety vybrať, odkiaľ ich máme a pre koho kyticu viažeme.",
   odseky: [
     "Sme kvetinový ateliér v centre Trenčína. Kvety nakupujeme od lokálnych pestovateľov, ale aj priamo z Holandska, Ekvádoru a Kolumbie, takže vieme poskladať kyticu presne na to, čo potrebujete — od bežného dňa až po svadobnú výzdobu.",
     "Väčšinu kytíc viažeme bez floristickej peny, tak, ako kvety rástli.",
@@ -349,7 +349,7 @@ export const homeSluzby: Sluzba[] = [
   {
     cislo: "05",
     nazov: "Firemné kvety",
-    popis: "Pravidelná výzdoba recepcie či prevádzky, dohodnutý harmonogram a fakturácia na firmu.",
+    popis: "Pravidelná výzdoba recepcie či prevádzky podľa dohodnutých termínov, faktúra priamo na firmu.",
     href: "/kontakt?typ=ine",
   },
 ];
@@ -423,7 +423,7 @@ export const homeReferencie: Referencia[] = [
 export const homeCtaPas = {
   text: "Kvety na dnes, na budúci týždeň, aj na veľký deň o pol roka.",
   ctaPrimarna: { label: "Objednať kvety", href: "/kontakt" } as Odkaz,
-  ctaSekundarna: { label: "Nezáväzná konzultácia", href: "/kontakt?typ=svadba" } as Odkaz,
+  ctaSekundarna: { label: "Dohodnúť konzultáciu", href: "/kontakt?typ=svadba" } as Odkaz,
 };
 
 // ---------------------------------------------------------------------------
@@ -481,7 +481,7 @@ export const predplatneFrekvencie: PredplatneFrekvencia[] = [
 ];
 
 export const predplatnePopis =
-  "Pri každej dodávke vymeníme vodu aj kvety vo vlastnej váze, ktorú necháme u vás pri prvej dodávke. Platí sa mesačne vopred, zrušiť môžete kedykoľvek e-mailom.";
+  "Pri prvej dodávke vám necháme vlastnú vázu. Pri každej ďalšej v nej vymeníme vodu aj kvety. Platíte mesačne vopred a zrušiť môžete kedykoľvek e-mailom.";
 
 export const praktickeInfo = {
   doprava: {
@@ -523,7 +523,7 @@ export const weddingsSubhero = {
 };
 
 export const weddingsProcessIntro =
-  "Prvé stretnutie je nezáväzné a bez poplatku — prídete do ateliéru alebo si dohodneme videohovor. Spolu prejdeme farby, miesto aj rozpočet a do týždňa dostanete moodboard s návrhom kvetov. Termín odporúčame potvrdiť aspoň 8 týždňov vopred, v hlavnej sezóne (máj – september) pokojne aj skôr.";
+  "Prvé stretnutie je zadarmo a nič nezaväzuje — príďte do ateliéru, alebo si dohodneme videohovor. Prejdeme spolu farby, miesto aj rozpočet a do týždňa vám pošleme návrh kvetov s fotkami. Termín si potvrďte aspoň 8 týždňov vopred, v hlavnej sezóne (máj až september) radšej skôr.";
 
 export const weddingsRealizacie: Realizacia[] = [
   {
@@ -560,7 +560,7 @@ export const weddingsCenoveUrovne: CenovaUroven[] = [
 export const weddingsPriebeh: Krok[] = [
   { cislo: "01", nazov: "Dopyt", popis: "Napíšete termín, miesto a predstavu — ozveme sa do 2 dní." },
   { cislo: "02", nazov: "Konzultácia", popis: "Prejdeme detaily naživo alebo online, zadarmo a bez záväzku." },
-  { cislo: "03", nazov: "Návrh a rozpočet", popis: "Dostanete moodboard, zoznam kvetov a presnú cenu." },
+  { cislo: "03", nazov: "Návrh a rozpočet", popis: "Dostanete návrh kvetov s fotkami, zoznam kvetov a presnú cenu." },
   { cislo: "04", nazov: "Realizácia v deň D", popis: "Prídeme s kyticami aj výzdobou, postavíme a po akcii odvezieme." },
 ];
 
@@ -579,7 +579,7 @@ export const weddingsReferencie: Referencia[] = [
 
 export const weddingsCta = {
   text: "V hlavnej sezóne máme voľné víkendy obsadené aj pol roka vopred — ozvite sa čo najskôr.",
-  cta: { label: "Nezáväzný dopyt", href: "/kontakt?typ=svadba" } as Odkaz,
+  cta: { label: "Poslať dopyt", href: "/kontakt?typ=svadba" } as Odkaz,
 };
 
 // ---------------------------------------------------------------------------
@@ -829,7 +829,7 @@ export const offerSekcie = {
     eyebrow: "Sezónny kalendár",
     nadpis: "Čo kvitne v akom období",
     popis:
-      "Viažeme podľa toho, čo práve dozrelo. Tu je prehľad kvetov, ktoré v jednotlivých obdobiach vrcholia.",
+      "Viažeme podľa toho, čo práve kvitne. Tu vidíte, ktoré kvety majú sezónu v jednotlivých ročných obdobiach.",
   } as Zahlavie,
   predplatne: {
     eyebrow: "Predplatné kvetov",
