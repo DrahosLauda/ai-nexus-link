@@ -51,3 +51,14 @@ texty **po slovensky**.
 - Pred odovzdaním: `npm run lint` + `npm run build` čisté (spúšťaj vo `frontend/`).
 
 Hotový výstup odovzdávaš na bránu kvality (`qa-a11y`) a ľudskú revíziu.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Globálne prvky root layoutu presakujú do šablóny.** Šablóna beží vnútri
+  hlavnej appky, takže `app/layout.tsx` globály (napr. `ChatWidget`, bannery) sa
+  zobrazia aj na `/ukazky/*`. Vypni ich na tejto vetve (napr. `usePathname()` →
+  `null` pre `/ukazky`). *(M2a kvetinárstvo)*
+- **Nič podstatné negatuj cez `Suspense`/`useSearchParams` na SSG stránke** —
+  fallback skončí v statickom HTML a obsah zmizne bez JS. Formuláre a kľúčové
+  prvky rob ako progresívne vylepšenie (polia v HTML, prefill z URL cez efekt). *(M2a)*
+- **„Data-driven" platí aj pre sekčné hlavičky** (eyebrow + nadpis) — patria do
+  `content.ts`, nie natvrdo do JSX. *(M2a)*

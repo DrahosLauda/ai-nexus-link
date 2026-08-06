@@ -571,6 +571,14 @@ a skill načítateľné. Žiadny fiktívny obsah zatiaľ.
 
 ### M2 — Vlajková šablóna: **kvetinárstvo** (špičková úroveň + motion)
 
+> **M2a ✅ HOTOVÉ** (aug 2026, vetva `claude/m1-frontend-agent-templates-94ksdt`,
+> NEzlúčené): demo značka **Boma Flora** (Trenčín), 7 stránok + detail blogu,
+> meniny prvok, smútočné kytice, blog, obchod; postavené reťazcom sub-agentov
+> (dizajnér→copy→dev→QA) + revízia majiteľa. Lint/build čisté, screenshoty
+> hotové, retrospektíva v `docs/sablony-kvalita.md`. **Otvorené:** reálne fotky
+> (teraz SVG placeholder), potom **M2b** (motion + hero video Higgsfield). Detaily
+> a ponaučenia: `docs/dennik.md`.
+
 > Rozdelené na **M2a (statická špička)** a **M2b (motion vrstva)** — detail a
 > motion spec v sekcii „Vlajková šablóna kvetinárstvo" nižšie. M2a musí obstáť aj
 > bez animácií (je fallbackom pre `reduced-motion`); M2b pridá Framer Motion navrch.

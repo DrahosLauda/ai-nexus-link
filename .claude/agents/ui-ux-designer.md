@@ -47,3 +47,9 @@ obsah **po slovensky**.
   natvrdo do JSX.
 - Menej, ale dokonale. Každá sekcia musí mať dôvod existovať.
 - Neimplementuješ finálny kód sekcií (to je frontend-dev) — dodávaš systém a rozvrh.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Kontrast over na REÁLNOM použití tokenu, nie na deklarácii.** Nestačí napísať
+  „AA overené" — každý pár farba×podklad over podľa toho, ako sa token naozaj
+  použije (napr. malý text na tmavej ploche). Ak je token len na dekor/veľký text,
+  napíš to do `theme.css` komentára aj do briefu, nech to frontend-dev nedodrží omylom. *(M2a kvetinárstvo)*

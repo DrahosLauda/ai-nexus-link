@@ -129,6 +129,63 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Frontend agent M2a: vlajková šablóna KVETINÁRSTVO „Boma Flora" ✅ (vetva, NEzlúčené)
+
+**Míľnik M2a hotový na vetve `claude/m1-frontend-agent-templates-94ksdt`** (M1 už
+zlúčený v `main`; M2 stavia naň). Postavená prvá odvetvová šablóna — statická
+špičková úroveň, viacstránkový web. **Ešte NEzlúčené, nič nasadené.** Prvý raz
+sme naostro použili celý tím **sub-agentov** cez `Agent` tool.
+
+**Ako to prebehlo (reťazec agentov + ľudské brány):**
+1. **`ui-ux-designer` (Fable)** → dizajn systém `theme.css` (scoped `flora-*`
+   tokeny, paleta s WCAG AA, Fraunces+Figtree) + `DESIGN.md` (mapa stránok, motion,
+   hero video koncept). → **náhľad + revízia majiteľa** (2 kolá: pôvodný smer →
+   zmeny: Boma Flora/Trenčín, smútočné kytice, meniny, blog, obchod, preč „botanický
+   editorial").
+2. **`sk-copywriter` (Sonnet)** → reálne SK texty a dáta do `content.ts` (7 stránok,
+   demo blog články, typy), proti zoznamu zakázaných AI fráz.
+3. **`frontend-dev` (Opus)** → celý balík `templates/kvetinarstvo/`: 7 stránok +
+   detail blogu, viacstránkové routovanie (optional catch-all
+   `app/ukazky/[odvetvie]/[[...page]]`), fonty (next/font), meniny modul (SK tabuľka
+   mien s rodom, Europe/Bratislava), Tailwind wiring (flora `@theme` cez `@import`
+   v `globals.css`), `base.ts` pre lift.
+4. **`qa-a11y` (Sonnet)** → brána kvality: našla **3 blokujúce** nálezy → opravené.
+5. **Náhľad screenshotov pre majiteľa** (artefakt) → čaká sa na finálnu revíziu.
+
+**QA blokujúce nálezy (opravené) — a ponaučenia (zapísané späť do
+`.claude/agents/*.md` + `docs/sablony-kvalita.md`, retrospektíva tamže):**
+- **Globálny `ChatWidget` presakoval do dema** (cudzia identita, prekrytie obsahu)
+  → vypnutý na `/ukazky/*` (`usePathname`). *Lekcia: root-layout globály presakujú
+  do šablón.*
+- **Formulár zmizol bez JS** (Suspense/`useSearchParams` fallback na SSG) →
+  progresívne vylepšenie. *Lekcia: nič podstatné negatovať cez Suspense na SSG.*
+- **Kontrast `clay-400` na tmavej padal** (3.8:1, hoci dizajn tvrdil „AA overené")
+  → `clay-200`. *Lekcia: kontrast over na reálnom použití tokenu.*
+- +drobné: sekčné hlavičky do `content.ts` (data-driven), `autocomplete`, galéria 4:5.
+
+**Overené v sedení (sám, nie len agentom):** `npm run lint` + `npm run build` čisté;
+11 flora stránok, všetky `noindex`; produkčný `next start` + Chromium screenshoty
+375/768/1280 px → **0 horizontálny scroll**, chat widget preč, 1 h1/stránku.
+
+**Vedomý follow-up (nie chyba):** obrázky sú zatiaľ **palete verný SVG placeholder**
+— reálne fotky sa v cloud sedení nedali spoľahlivo stiahnuť. Layout ich prijme cez
+`next/image` bez prerábky (kurátorský stock so súhlasom / vlastné). Hero video +
+motion vrstva = M2b (Higgsfield, potrebuje platenú verziu).
+
+**Ponaučenia (proces/sedenie):**
+1. **Sub-agenti sa púšťajú SEKVENČNE na tom istom balíku** (copywriter → dev),
+   nie paralelne — inak si krížia súbory (`content.ts`). Paralelne len na
+   disjunktných súboroch.
+2. **Pozor na starý `next start` na fixnom porte** — QA agent nechal server bežať
+   na 4123; môj nový `npm run start` sa nenabindoval (`EADDRINUSE`) a screenshoty
+   boli zo starého buildu (pred opravou). Pred snímaním zabiť starý server + overiť.
+3. **Fonty/obrázky do artefaktu = data URI** (CSP blokuje CDN); reálne Google fonty
+   sa dajú stiahnuť cez `curl` a vložiť base64 (latin+latin-ext kvôli diakritike).
+
+**Ďalší krok (čaká na rozhodnutie majiteľa):** reálne fotky → M2b (motion + hero
+video) → merge M2a do `main`. Druhá šablóna (kaderníctvo) môže vzniknúť kedykoľvek
+po M2 ako overenie replikovateľnosti.
+
 ## Aug 2026 — Frontend agent M1: ZÁKLAD knižnice odvetvových šablón ✅ (vetva, NEzlúčené)
 
 **Míľnik M1 z `plan-agenti.md` („Frontend agent — knižnica odvetvových šablón")

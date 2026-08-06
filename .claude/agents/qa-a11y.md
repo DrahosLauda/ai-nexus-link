@@ -45,3 +45,11 @@ Nič si nedomýšľaj; over každý bod.
 
 Si posledná kontrola pred majiteľom — buď prísny. Po ľudskej revízii pomôž
 sformulovať retrospektívu do `docs/sablony-kvalita.md`.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Kontroluj presakovanie globálnych prvkov root layoutu** (chat widget, bannery)
+  do `/ukazky/*` — na demo vetve tam nemajú čo robiť (cudzia identita, prekrytie). *(M2a kvetinárstvo)*
+- **Testuj kľúčové prvky BEZ JS** — na SSG stránke over, či formuláre/podstatný
+  obsah sú v statickom HTML (Suspense/`useSearchParams` fallback ich vie skryť). *(M2a)*
+- **Kontrast over na reálnom použití**, nie na deklarácii dizajnu — najmä malý
+  text na tmavých/farebných plochách. *(M2a)*
