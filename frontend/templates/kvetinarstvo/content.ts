@@ -360,7 +360,7 @@ export const homeGaleria: { alt: string }[] = [
   { alt: "Detail rúk pri aranžovaní bielej svadobnej väzby" },
   { alt: "Hotová kytica z bielych ruží a eukalyptu v prírodnom papieri" },
   { alt: "Viazanie svadobnej kytice z bielych a ružových ruží" },
-  { alt: "Girlanda z eukalyptu a bielych ruží pripravená na svadobný stôl" },
+  { alt: "Girlanda z eukalyptu, ruží a dálií na svadobnom stole" },
 ];
 
 export const homeAtelierTeaser = {

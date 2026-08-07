@@ -24,5 +24,5 @@ export const galeriaFotky: (string | undefined)[] = [
   "/kvetinarstvo/img/galeria-3.webp",
   "/kvetinarstvo/img/galeria-4.webp",
   "/kvetinarstvo/img/galeria-5.webp",
-  undefined,
+  "/kvetinarstvo/img/galeria-6.webp",
 ];
