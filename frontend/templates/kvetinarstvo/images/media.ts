@@ -15,7 +15,7 @@ export const seasonalFotky: (string | undefined)[] = [
 ];
 
 /** Tmavý teaser ateliéru na domove (arch, 4:5). */
-export const atelierTeaserFoto: string | undefined = undefined;
+export const atelierTeaserFoto: string | undefined = "/kvetinarstvo/img/atelier.webp";
 
 /** Galéria na domove — index zodpovedá `homeGaleria`. */
 export const galeriaFotky: (string | undefined)[] = [
