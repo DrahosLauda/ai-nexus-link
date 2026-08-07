@@ -15,6 +15,7 @@ import {
   seasonalKytice,
 } from "../content";
 import { AtelierTeaser, Galeria, KyticeKarty } from "../sections/karty";
+import { galeriaFotky, seasonalFotky } from "../images/media";
 import { CtaPas, Kroky, Referencie, SluzbyZoznam } from "../sections/bloky";
 import { HomeHero } from "../sections/hero-video";
 import { MeninyPas } from "../sections/meniny";
@@ -56,7 +57,7 @@ export function DomovPage() {
           </div>
         </div>
         <div className="mt-10">
-          <KyticeKarty kytice={seasonalKytice} />
+          <KyticeKarty kytice={seasonalKytice} fotky={seasonalFotky} />
         </div>
       </Sekcia>
 
@@ -68,7 +69,7 @@ export function DomovPage() {
 
       {/* Galéria */}
       <Sekcia podklad="paper" zhustena>
-        <Galeria obrazky={homeGaleria} />
+        <Galeria obrazky={homeGaleria} fotky={galeriaFotky} />
       </Sekcia>
 
       {/* Tmavý teaser ateliéru */}
