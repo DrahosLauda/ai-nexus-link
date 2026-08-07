@@ -10,8 +10,8 @@
 /** Sezónny výber na domove — index zodpovedá `seasonalKytice`. */
 export const seasonalFotky: (string | undefined)[] = [
   "/kvetinarstvo/img/sezona-1.webp",
-  undefined,
-  undefined,
+  "/kvetinarstvo/img/sezona-2.webp",
+  "/kvetinarstvo/img/sezona-3.webp",
 ];
 
 /** Tmavý teaser ateliéru na domove (arch, 4:5). */
