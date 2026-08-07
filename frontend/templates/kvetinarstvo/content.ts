@@ -355,11 +355,11 @@ export const homeSluzby: Sluzba[] = [
 ];
 
 export const homeGaleria: { alt: string }[] = [
-  { alt: "Floristka viaže kyticu dálií na drevenom pracovnom stole" },
-  { alt: "Detail rúk pri zapichovaní ruže do svadobnej väzby" },
-  { alt: "Čerstvo narezané eukalyptové vetvičky pripravené na spracovanie" },
-  { alt: "Hotová kytica hortenzií a astrov zabalená do prírodného papiera" },
-  { alt: "Vedrá s čerstvými kvetmi v ateliéri v rannom svetle" },
+  { alt: "Floristka viaže kyticu s orgovánom v ateliéri Boma Flora" },
+  { alt: "Nevesta drží svadobnú kyticu z bielych ruží a eukalyptu" },
+  { alt: "Detail rúk pri aranžovaní bielej svadobnej väzby" },
+  { alt: "Hotová kytica z bielych ruží a eukalyptu v prírodnom papieri" },
+  { alt: "Viazanie svadobnej kytice z bielych a ružových ruží" },
   { alt: "Girlanda z eukalyptu a bielych ruží pripravená na svadobný stôl" },
 ];
 
