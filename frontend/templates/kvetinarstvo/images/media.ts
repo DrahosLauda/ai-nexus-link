@@ -19,7 +19,7 @@ export const atelierTeaserFoto: string | undefined = undefined;
 
 /** Galéria na domove — index zodpovedá `homeGaleria`. */
 export const galeriaFotky: (string | undefined)[] = [
-  undefined,
+  "/kvetinarstvo/img/galeria-1.webp",
   undefined,
   undefined,
   undefined,
