@@ -13,7 +13,8 @@ import {
 } from "../content";
 import { CenoveUrovne, CtaPas, Kroky, Referencie } from "../sections/bloky";
 import { weddingsPriebeh } from "../content";
-import { FloraFigure } from "../images/placeholder";
+import { Foto } from "../images/foto";
+import { weddingsProcesFoto, weddingsRealizacieFotky, weddingsSubheroFoto } from "../images/media";
 import { Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
 export function SvadbyPage() {
@@ -29,10 +30,12 @@ export function SvadbyPage() {
             <p className="text-flora-lead text-pretty text-flora-moss">{weddingsSubhero.text}</p>
           </div>
           <div className="mt-10">
-            <FloraFigure
+            <Foto
+              src={weddingsSubheroFoto}
               alt="Svadobná kvetinová inštalácia z eukalyptu a bielych ruží nad hlavným stolom"
               pomer="21/9"
               odtien="blush"
+              sizes="(max-width: 1200px) 100vw, 1200px"
             />
           </div>
         </div>
@@ -45,12 +48,14 @@ export function SvadbyPage() {
             <Eyebrow>{weddingsSekcie.procesEyebrow}</Eyebrow>
             <p className="text-flora-lead text-flora-ink">{weddingsProcessIntro}</p>
           </div>
-          <FloraFigure
+          <Foto
+            src={weddingsProcesFoto}
             alt="Floristka a nevesta prezerajú moodboard so vzorkami kvetov v ateliéri"
             pomer="4/5"
             arch
             odtien="sage"
             className="max-w-[420px] lg:justify-self-end"
+            sizes="(max-width: 1024px) 100vw, 420px"
           />
         </div>
       </Sekcia>
@@ -61,7 +66,14 @@ export function SvadbyPage() {
         <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {weddingsRealizacie.map((r, i) => (
             <li key={r.miesto} className="flex flex-col">
-              <FloraFigure alt={r.alt} pomer="4/5" arch odtien={i % 2 === 0 ? "clay" : "sage"} />
+              <Foto
+                src={weddingsRealizacieFotky[i]}
+                alt={r.alt}
+                pomer="4/5"
+                arch
+                odtien={i % 2 === 0 ? "clay" : "sage"}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
               <h3 className="mt-5 text-flora-h3 font-flora-display font-medium text-flora-ink">{r.miesto}</h3>
               <p className="mt-1.5 text-flora-body text-flora-moss">{r.popis}</p>
             </li>
