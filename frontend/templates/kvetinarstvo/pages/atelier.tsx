@@ -12,7 +12,8 @@ import {
   studioTim,
 } from "../content";
 import { CtaPas } from "../sections/bloky";
-import { FloraFigure } from "../images/placeholder";
+import { Foto } from "../images/foto";
+import { studioBarboraFoto, studioPriestorFotky, studioTimFotky } from "../images/media";
 import { Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
 export function AtelierPage() {
@@ -21,12 +22,14 @@ export function AtelierPage() {
       {/* Sub-hero s portrétom */}
       <section className="border-b border-flora-line bg-flora-sand">
         <div className="mx-auto grid w-full max-w-[1200px] items-center gap-10 px-flora-gutter py-flora-section-sm lg:grid-cols-[0.8fr_1.2fr]">
-          <FloraFigure
+          <Foto
+            src={studioBarboraFoto}
             alt="Portrét Barbory Momčilovej, zakladateľky ateliéru Boma Flora"
             pomer="4/5"
             arch
             odtien="clay"
             className="max-w-[360px]"
+            sizes="(max-width: 1024px) 100vw, 360px"
           />
           <div className="flex flex-col gap-4">
             <h1 className="text-flora-h1 font-flora-display font-medium text-balance text-flora-ink">
@@ -53,9 +56,16 @@ export function AtelierPage() {
       <Sekcia podklad="sand">
         <ZahlavieSekcie {...studioSekcie.tim} />
         <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {studioTim.map((clen) => (
+          {studioTim.map((clen, i) => (
             <li key={clen.meno} className="flex flex-col">
-              <FloraFigure alt={clen.alt} pomer="4/5" arch odtien="sage" />
+              <Foto
+                src={studioTimFotky[i]}
+                alt={clen.alt}
+                pomer="4/5"
+                arch
+                odtien="sage"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
               <h3 className="mt-5 text-flora-h3 font-flora-display font-medium text-flora-ink">{clen.meno}</h3>
               <span className="text-flora-small font-semibold text-flora-clay-600">{clen.rola}</span>
               <p className="mt-2 text-flora-body text-flora-moss">{clen.veta}</p>
@@ -87,7 +97,13 @@ export function AtelierPage() {
         <ul className="mt-6 grid gap-6 sm:grid-cols-3">
           {studioPriestor.map((p, i) => (
             <li key={p.alt}>
-              <FloraFigure alt={p.alt} pomer="3/4" odtien={i === 1 ? "clay" : "sage"} />
+              <Foto
+                src={studioPriestorFotky[i]}
+                alt={p.alt}
+                pomer="3/4"
+                odtien={i === 1 ? "clay" : "sage"}
+                sizes="(max-width: 640px) 100vw, 33vw"
+              />
             </li>
           ))}
         </ul>

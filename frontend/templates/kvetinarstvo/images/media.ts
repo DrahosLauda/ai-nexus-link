@@ -41,3 +41,18 @@ export const weddingsRealizacieFotky: (string | undefined)[] = [
   "/kvetinarstvo/img/svadby-r2.webp",
   "/kvetinarstvo/img/svadby-r3.webp",
 ];
+
+/* ── Ateliér `/atelier` ─────────────────────────────────────────────── */
+
+/** Barbora (zakladateľka) — tá istá fotka pre sub-hero aj 1. kartu tímu. */
+export const studioBarboraFoto: string | undefined = "/kvetinarstvo/img/atelier-barbora.webp";
+
+/** Tím — index zodpovedá `studioTim` (Barbora, Denisa, Tomáš). */
+export const studioTimFotky: (string | undefined)[] = [
+  studioBarboraFoto,
+  "/kvetinarstvo/img/atelier-denisa.webp",
+  "/kvetinarstvo/img/atelier-tomas.webp",
+];
+
+/** Priestor — index zodpovedá `studioPriestor` (stôl, chladnička, pult). Zatiaľ placeholder. */
+export const studioPriestorFotky: (string | undefined)[] = [undefined, undefined, undefined];
