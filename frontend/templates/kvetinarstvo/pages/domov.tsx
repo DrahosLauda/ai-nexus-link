@@ -29,8 +29,8 @@ export function DomovPage() {
 
       {/* Manifest — jedna editorial veta + text o ateliéri */}
       <Sekcia podklad="paper">
-        <div className="max-w-[24ch]">
-          <p className="text-flora-h1 font-flora-display font-medium text-balance text-flora-ink">
+        <div>
+          <p className="max-w-[24ch] text-flora-h1 font-flora-display font-medium text-balance text-flora-ink">
             {homeManifest.leadPred}
             <em className="italic text-flora-clay-600">{homeManifest.leadDoraz}</em>
             {homeManifest.leadPo}
