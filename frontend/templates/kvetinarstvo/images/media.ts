@@ -83,5 +83,5 @@ export const shopSortimentFotky: (string | undefined)[] = [
 
 /* ── Kontakt `/kontakt` ─────────────────────────────────────────────── */
 
-/** Statická mapa polohy (16:9). `undefined` = placeholder; dopĺňa klient/screenshot. */
-export const kontaktMapaFoto: string | undefined = undefined;
+/** Statická mapa polohy (16:9). Demo screenshot z Google Máp — klient nahradí svojou. */
+export const kontaktMapaFoto: string | undefined = "/kvetinarstvo/img/kontakt-mapa.webp";
