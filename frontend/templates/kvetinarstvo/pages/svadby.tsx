@@ -63,7 +63,7 @@ export function SvadbyPage() {
       {/* Realizácie */}
       <Sekcia podklad="sand">
         <ZahlavieSekcie {...weddingsSekcie.realizacie} />
-        <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-10 grid gap-8 sm:grid-cols-3">
           {weddingsRealizacie.map((r, i) => (
             <li key={r.miesto} className="flex flex-col">
               <Foto

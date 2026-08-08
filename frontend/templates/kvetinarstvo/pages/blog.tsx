@@ -39,7 +39,7 @@ export function BlogPage() {
         </Link>
 
         {/* Mriežka ostatných */}
-        <ul className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-16 grid gap-10 sm:grid-cols-3">
           {ostatne.map((c, i) => (
             <li key={c.slug}>
               <Link href={href(`/blog/${c.slug}`)} className="group flex h-full flex-col">

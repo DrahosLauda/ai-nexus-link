@@ -55,7 +55,7 @@ export function AtelierPage() {
       {/* Tím */}
       <Sekcia podklad="sand">
         <ZahlavieSekcie {...studioSekcie.tim} />
-        <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-10 grid gap-8 sm:grid-cols-3">
           {studioTim.map((clen, i) => (
             <li key={clen.meno} className="flex flex-col">
               <Foto

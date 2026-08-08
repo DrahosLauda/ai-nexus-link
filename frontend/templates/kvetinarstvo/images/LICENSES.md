@@ -18,27 +18,33 @@ Start/end framy generované modelom **Nano Banana 2** (Gemini 3.1 Flash) v Kling
 Video na webe: WebM (VP9) + MP4 (H.264), krátky GOP kvôli plynulému scroll-scrubu,
 poster drží LCP; mobil/`reduced-motion` = statický poster.
 
-## Statické obrázky (M2a) — placeholder, follow-up
+## Statické fotografie — hotové ✅ (AI-generované, komerčná licencia)
 
-Ostatné obrazové sloty (galéria, karty, portréty, blog, obchod) zatiaľ používajú
-**vlastný obrazový placeholder** (`placeholder.tsx`): inline botanické SVG v palete
-`theme.css`, s korektnými pomermi strán (žiadny CLS), arch orezom (`.flora-arch`)
-a popisnými `alt` textami z `content.ts`. Nahradia sa kurátorskými fotkami rovnako
-ako hero (Kling / vlastné fotky klienta) — `FloraFigure` → `next/image`, bez zmeny
-rozvrhu. Doplniť sem záznam pri každom obrázku (súbor, motív, model/zdroj, licencia).
+Všetky fotografie šablóny sú **AI-generované cez Kling (kling.ai)** na účte majiteľa
+(Standard/VIP plán → **komerčná licencia**, žiadny third-party stock). Modely:
+**Nano Banana 2** (Gemini 3.1 Flash Image) a **OBRAZ 3.0** (Kling image). Jednotná
+teplá atmosféra „ráno v ateliéri" (paleta `theme.css`), popisné `alt` v `content.ts`.
+Súbory v `frontend/public/kvetinarstvo/img/`:
 
-## Follow-up (pred ľudskou revíziou / go-live šablóny)
-
-Nahradiť placeholder kurátorskými fotkami a doplniť sem záznamy v tvare:
-
-| Súbor | Motív (alt) | Zdroj (URL) | Autor | Licencia |
+| Súbor(y) | Motív | Slot v šablóne | Model | Licencia |
 |---|---|---|---|---|
-| _(doplní sa)_ | | Unsplash / Pexels | | Unsplash / Pexels License |
+| `sezona-1..3.webp` | Sezónne kytice | Domov — sezónny výber | Kling (Nano Banana 2 / OBRAZ 3.0) | Kling, komerčné (plán majiteľa) |
+| `galeria-1..6.webp` | Kytice, detaily, girlanda | Domov — galéria | Kling (Nano Banana 2 / OBRAZ 3.0) | Kling, komerčné |
+| `atelier.webp` | Tmavý interiér ateliéru | Domov — teaser ateliéru | Kling | Kling, komerčné |
+| `atelier-barbora.webp` | Portrét zakladateľky | Ateliér — sub-hero + tím 1 | Kling (Nano Banana 2) | Kling, komerčné |
+| `atelier-denisa.webp`, `atelier-tomas.webp` | Portréty tímu | Ateliér — tím 2, 3 | Kling (Nano Banana 2) | Kling, komerčné |
+| `atelier-stol.webp`, `atelier-chladnicka.webp`, `atelier-pult.webp` | Pracovný stôl, chladnička, baliaci pult | Ateliér — priestor 1–3 | Kling (Nano Banana 2) | Kling, komerčné |
+| `svadby-subhero.webp`, `svadby-proces.webp` | Detail viazania, moodboard | Svadby — sub-hero, proces | Kling (Nano Banana 2) | Kling, komerčné |
+| `svadby-r1..r3.webp` | Realizácie (Omšenie, Skalka, Elizabeth) | Svadby — realizácie | Kling (Nano Banana 2) | Kling, komerčné |
+| `blog-dalie.webp` | Náruč dálií | Blog — hlavný článok | Kling (Nano Banana 2) | Kling, komerčné |
+| `blog-svadba.webp` | Svadobná kytica | Blog — článok „kvety na svadbu" | Kling (Nano Banana 2) | Kling, komerčné |
+| `obchod-kytica-dna.webp` | Balená kytica | Obchod — Kytica dňa | Kling (Nano Banana 2) | Kling, komerčné |
 
-Motívy podľa `DESIGN.md` d): ruky viažuce kyticu, detail textúry kvetov, kytice
-na neutrálnom pozadí (sezónny výber, obchod), svadobná inštalácia (svadby),
-decentná smútočná väzba, interiér ateliéru v dennom svetle, augustové sezónne
-kvety (dálie, hortenzie, ruže, eukalyptus).
+### Otvorené sloty (zatiaľ placeholder `FloraFigure`, dopĺňajú sa)
 
-Výmena je bez zásahu do rozvrhu: `FloraFigure` sa nahradí `next/image` so `sizes`
-pri rovnakých pomeroch strán.
+- Blog: „tri chyby…" a „bez floristickej peny" (2 zo 4 náhľadov).
+- Obchod: „Kytica na mieru", „Predplatné kvetov", „Darčekový poukaz" (3 zo 4 kariet).
+- Kontakt: statická mapa.
+
+Doplnenie je bez zásahu do rozvrhu (`FloraFigure` → `Foto`/`next/image` pri rovnakom
+pomere strán); po pridaní súboru sem pribudne riadok do tabuľky vyššie.

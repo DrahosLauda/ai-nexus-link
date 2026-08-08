@@ -50,11 +50,11 @@ function useScrubCapable(): boolean {
 /** Textový obsah hera (eyebrow + nadpis + perex + CTA). */
 function HeroCopy() {
   return (
-    <div className="max-w-[19ch] sm:max-w-[22ch]">
+    <div className="max-w-[32rem]">
       <span className="text-flora-eyebrow font-semibold uppercase tracking-[0.14em] text-flora-clay-600">
         Kvetinový ateliér · Trenčín
       </span>
-      <h1 className="mt-3 text-flora-hero font-flora-display font-medium text-balance text-flora-ink">
+      <h1 className="mt-3 max-w-[19ch] text-flora-hero font-flora-display font-medium text-balance text-flora-ink sm:max-w-[22ch]">
         {homeHero.h1}
       </h1>
       <p className="mt-5 max-w-[42ch] text-flora-lead text-pretty text-flora-moss">
@@ -126,7 +126,7 @@ export function HomeHero() {
   // Statický hero: mobil = skladaný (fotka + text pod), sm+ = poster + overlay text.
   if (!scrub) {
     return (
-      <section className="relative isolate overflow-hidden bg-flora-paper">
+      <section className="relative isolate overflow-hidden bg-flora-paper sm:min-h-[100svh]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={POSTER}

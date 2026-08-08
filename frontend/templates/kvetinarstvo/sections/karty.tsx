@@ -16,7 +16,7 @@ const KARTA_ODTIENE: Odtien[] = ["clay", "sage", "blush", "sand"];
 /** Mriežka kytíc ako arch karty (4:5). Používa sezónny výber aj náhľad Obchodu. */
 export function KyticeKarty({ kytice, fotky }: { kytice: Kytica[]; fotky?: (string | undefined)[] }) {
   return (
-    <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="grid gap-8 sm:grid-cols-3">
       {kytice.map((k, i) => (
         <li key={k.nazov} className="flex flex-col">
           <Foto

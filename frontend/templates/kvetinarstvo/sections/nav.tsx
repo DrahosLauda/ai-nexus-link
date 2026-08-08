@@ -46,7 +46,7 @@ export function FloraNav() {
               <Link
                 href={href(p.href)}
                 aria-current={jeAktivna(p.href) ? "page" : undefined}
-                className={`text-[15px] transition-colors hover:text-flora-clay-600 ${
+                className={`inline-flex min-h-[44px] items-center text-[15px] transition-colors hover:text-flora-clay-600 ${
                   jeAktivna(p.href) ? "text-flora-clay-600" : "text-flora-moss"
                 }`}
               >
