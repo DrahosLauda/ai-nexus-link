@@ -80,3 +80,8 @@ export const shopSortimentFotky: (string | undefined)[] = [
   undefined,
   undefined,
 ];
+
+/* ── Kontakt `/kontakt` ─────────────────────────────────────────────── */
+
+/** Statická mapa polohy (16:9). `undefined` = placeholder; dopĺňa klient/screenshot. */
+export const kontaktMapaFoto: string | undefined = undefined;

@@ -5,7 +5,8 @@
 import { brand, contactFaq, contactIntro, contactSekcie } from "../content";
 import { Faq } from "../sections/bloky";
 import { KontaktForm } from "../sections/kontakt-form";
-import { FloraFigure } from "../images/placeholder";
+import { Foto } from "../images/foto";
+import { kontaktMapaFoto } from "../images/media";
 import { Eyebrow, Sekcia } from "../sections/ui";
 
 export function KontaktPage() {
@@ -58,10 +59,12 @@ export function KontaktPage() {
             </div>
 
             <a href={mapaHref} className="group block max-w-[420px]" target="_blank" rel="noopener noreferrer">
-              <FloraFigure
+              <Foto
+                src={kontaktMapaFoto}
                 alt={`Mapa — ${brand.adresaRiadok1}, ${brand.adresaRiadok2}`}
                 pomer="16/9"
                 odtien="sage"
+                sizes="(max-width: 640px) 100vw, 420px"
               />
               <span className="mt-2 inline-flex text-flora-small font-semibold text-flora-clay-600 underline decoration-1 underline-offset-4">
                 {contactSekcie.mapaOdkaz}

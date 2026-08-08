@@ -131,7 +131,7 @@ export function HomeHero() {
         <img
           src={POSTER}
           alt={POSTER_ALT}
-          className="h-[52svh] w-full object-cover sm:absolute sm:inset-0 sm:h-full"
+          className="h-[52svh] w-full object-cover sm:absolute sm:inset-0 sm:h-full sm:translate-x-[12%] sm:scale-[1.08]"
           fetchPriority="high"
         />
         <LeftScrim />
@@ -150,7 +150,7 @@ export function HomeHero() {
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover translate-x-[12%] scale-[1.08]"
           poster={POSTER}
           muted
           playsInline
