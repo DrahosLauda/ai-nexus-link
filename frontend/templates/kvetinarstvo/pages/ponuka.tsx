@@ -57,7 +57,7 @@ export function PonukaPage() {
       </Sekcia>
 
       {/* Predplatné (tmavé) */}
-      <section id="predplatne" className="scroll-mt-20 bg-flora-900 py-flora-section">
+      <section id="predplatne" className="scroll-mt-20 bg-flora-night py-flora-section">
         <div className="mx-auto w-full max-w-[1200px] px-flora-gutter">
           <ZahlavieSekcie tmava {...offerSekcie.predplatne} popis={predplatnePopis} />
           <ul className="mt-10 grid gap-6 sm:grid-cols-3">

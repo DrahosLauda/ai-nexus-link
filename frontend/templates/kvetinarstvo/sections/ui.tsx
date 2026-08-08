@@ -92,7 +92,7 @@ export function Sekcia({
     paper: "bg-flora-paper",
     sand: "bg-flora-sand",
     porcelain: "bg-flora-porcelain",
-    night: "bg-flora-900",
+    night: "bg-flora-night",
     clay: "bg-flora-clay-600",
   };
   return (

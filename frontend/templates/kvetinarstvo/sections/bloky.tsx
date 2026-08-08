@@ -152,7 +152,7 @@ export function CtaPas({
 }) {
   const naTmavej = podklad === "night";
   return (
-    <section className={naTmavej ? "bg-flora-900" : "bg-flora-clay-600"}>
+    <section className={naTmavej ? "bg-flora-night" : "bg-flora-clay-600"}>
       <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-6 px-flora-gutter py-flora-section-sm md:flex-row md:items-center md:justify-between">
         <p className="max-w-[42ch] text-flora-h3 font-flora-display font-medium text-flora-paper">{text}</p>
         <div className="flex flex-wrap gap-3">

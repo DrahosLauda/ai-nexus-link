@@ -279,7 +279,7 @@ export const offerMeninyBlok = {
 // ---------------------------------------------------------------------------
 
 export const homeHero = {
-  h1: "Kytice viazané rukami, nie katalógom",
+  h1: "Ručne viazané kytice pre Radosť a Váš deň",
   podnadpis:
     "Kytice na počkanie aj na objednávku — od kytice dňa po svadobnú výzdobu, s doručením po celom Trenčíne.",
   ctaPrimarna: { label: "Objednať kvety", href: "/kontakt" } as Odkaz,

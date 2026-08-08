@@ -15,7 +15,7 @@ const socialne: { label: string; url: string }[] = [
 
 export function FloraFooter() {
   return (
-    <footer className="bg-flora-900 text-flora-mist">
+    <footer className="bg-flora-night text-flora-mist">
       <div className="mx-auto grid w-full max-w-[1200px] gap-10 px-flora-gutter py-flora-section-sm sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
         <div className="flex flex-col gap-4">
           <span className="text-[1.35rem] font-flora-display font-semibold text-flora-paper">
