@@ -56,7 +56,7 @@ export const studioTimFotky: (string | undefined)[] = [
 
 /** Priestor — index zodpovedá `studioPriestor` (stôl, chladnička, pult). */
 export const studioPriestorFotky: (string | undefined)[] = [
-  undefined, // pracovný stôl — dopĺňa sa
+  "/kvetinarstvo/img/atelier-stol.webp",
   "/kvetinarstvo/img/atelier-chladnicka.webp",
   "/kvetinarstvo/img/atelier-pult.webp",
 ];
