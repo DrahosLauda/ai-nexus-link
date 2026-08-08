@@ -770,8 +770,8 @@ export const studioAkoPracujeme: string[] = [
 
 export const studioPriestor: { alt: string }[] = [
   { alt: "Pracovný stôl v ateliéri s nožnicami, motúzom a prírodným baliacim papierom" },
-  { alt: "Chladiarenská miestnosť s vedrami rezaných kvetov" },
-  { alt: "Výklad ateliéru na Mierovom námestí v rannom svetle" },
+  { alt: "Presklená kvetinová chladnička s naaranžovanými kyticami" },
+  { alt: "Baliaci pult s hotovými kyticami pripravenými na odber" },
 ];
 
 export const studioCta = {
