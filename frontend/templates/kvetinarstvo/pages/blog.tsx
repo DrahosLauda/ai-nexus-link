@@ -8,7 +8,9 @@ import { href } from "../base";
 import { blogClanky, blogCta, blogSekcie, blogSubhero } from "../content";
 import { CtaPas } from "../sections/bloky";
 import { SubHero } from "../sections/hero";
-import { FloraFigure, type Odtien } from "../images/placeholder";
+import { Foto } from "../images/foto";
+import { blogFotky } from "../images/media";
+import { type Odtien } from "../images/placeholder";
 import { Sekcia } from "../sections/ui";
 
 const ODTIENE: Odtien[] = ["sage", "clay", "blush", "sand"];
@@ -23,7 +25,7 @@ export function BlogPage() {
       <Sekcia podklad="paper">
         {/* Najnovší článok */}
         <Link href={href(`/blog/${featured.slug}`)} className="group grid gap-6 lg:grid-cols-2 lg:items-center">
-          <FloraFigure alt={featured.obrazokAlt} pomer="21/9" odtien="sage" className="lg:h-full" />
+          <Foto src={blogFotky[0]} alt={featured.obrazokAlt} pomer="21/9" odtien="sage" className="lg:h-full" sizes="(max-width: 1024px) 100vw, 50vw" />
           <div className="flex flex-col gap-3">
             <span className="text-flora-small text-flora-moss">
               {featured.datum} · {featured.citanieMinut} min čítania
@@ -41,7 +43,7 @@ export function BlogPage() {
           {ostatne.map((c, i) => (
             <li key={c.slug}>
               <Link href={href(`/blog/${c.slug}`)} className="group flex h-full flex-col">
-                <FloraFigure alt={c.obrazokAlt} pomer="3/2" odtien={ODTIENE[(i + 1) % ODTIENE.length]} />
+                <Foto src={blogFotky[i + 1]} alt={c.obrazokAlt} pomer="3/2" odtien={ODTIENE[(i + 1) % ODTIENE.length]} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                 <span className="mt-4 text-flora-small text-flora-moss">
                   {c.datum} · {c.citanieMinut} min
                 </span>

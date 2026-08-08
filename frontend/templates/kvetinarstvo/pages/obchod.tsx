@@ -6,7 +6,9 @@
 import { shopCta, shopKrokyBuduceho, shopSekcie, shopSortiment, shopStitok, shopSubhero } from "../content";
 import { CtaPas, Kroky } from "../sections/bloky";
 import { SubHero } from "../sections/hero";
-import { FloraFigure, type Odtien } from "../images/placeholder";
+import { Foto } from "../images/foto";
+import { shopSortimentFotky } from "../images/media";
+import { type Odtien } from "../images/placeholder";
 import { Cta, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
 const ODTIENE: Odtien[] = ["clay", "sage", "blush", "sand"];
@@ -27,7 +29,14 @@ export function ObchodPage() {
         <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {shopSortiment.map((p, i) => (
             <li key={p.nazov} className="flex flex-col">
-              <FloraFigure alt={`${p.nazov} — ${p.popis}`} pomer="4/5" arch odtien={ODTIENE[i % ODTIENE.length]} />
+              <Foto
+                src={shopSortimentFotky[i]}
+                alt={`${p.nazov} — ${p.popis}`}
+                pomer="4/5"
+                arch
+                odtien={ODTIENE[i % ODTIENE.length]}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
               <div className="mt-5 flex items-baseline justify-between gap-3">
                 <h3 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{p.nazov}</h3>
                 <span className="whitespace-nowrap text-[15px] font-semibold text-flora-clay-600">{p.cena}</span>
