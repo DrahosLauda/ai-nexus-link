@@ -32,7 +32,7 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
               {clanok.titulok}
             </h1>
             <p className="text-flora-small text-flora-moss">
-              {clanok.datum} · {clanok.citanieMinut} min čítania
+              <time dateTime={clanok.datumISO}>{clanok.datum}</time> · {clanok.citanieMinut} min čítania
             </p>
           </div>
         </div>
@@ -69,19 +69,21 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
           <ul className="mt-10 grid gap-10 sm:grid-cols-3">
             {suvisiace.map(({ c, i }, pos) => (
               <li key={c.slug}>
-                <Link href={href(`/blog/${c.slug}`)} className="group flex h-full flex-col">
-                  <Foto
-                    src={blogFotky[i]}
-                    alt={c.obrazokAlt}
-                    pomer="3/2"
-                    odtien={ODTIENE[pos % ODTIENE.length]}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                  <h3 className="mt-4 text-flora-h3 font-flora-display font-medium text-flora-ink group-hover:text-flora-clay-600">
-                    {c.titulok}
-                  </h3>
-                  <p className="mt-2 text-flora-body text-flora-moss">{c.perex}</p>
-                </Link>
+                <article className="h-full">
+                  <Link href={href(`/blog/${c.slug}`)} className="group flex h-full flex-col">
+                    <Foto
+                      src={blogFotky[i]}
+                      alt={c.obrazokAlt}
+                      pomer="3/2"
+                      odtien={ODTIENE[pos % ODTIENE.length]}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    <h3 className="mt-4 text-flora-h3 font-flora-display font-medium text-flora-ink group-hover:text-flora-clay-600">
+                      {c.titulok}
+                    </h3>
+                    <p className="mt-2 text-flora-body text-flora-moss">{c.perex}</p>
+                  </Link>
+                </article>
               </li>
             ))}
           </ul>

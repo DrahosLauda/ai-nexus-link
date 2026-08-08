@@ -108,6 +108,8 @@ export interface Clanok {
   titulok: string;
   perex: string;
   datum: string;
+  /** Strojovo čitateľný dátum (ISO 8601) pre `<time dateTime>`. */
+  datumISO: string;
   citanieMinut: number;
   obrazokAlt: string;
   telo: ClanokBlok[];
@@ -627,6 +629,7 @@ export const blogClanky: Clanok[] = [
     perex:
       "Dálie majú v auguste najsilnejšie farby aj najdlhšiu výdrž vo váze — vysvetľujeme, prečo sú tento mesiac na prvom mieste našej ponuky.",
     datum: "2. august 2026",
+    datumISO: "2026-08-02",
     citanieMinut: 4,
     obrazokAlt: "Náruč čerstvo narezaných dálií na pracovnom stole ateliéru",
     telo: [
@@ -655,6 +658,7 @@ export const blogClanky: Clanok[] = [
     perex:
       "Najčastejšie sa kytica pokazí nie kvôli kvalite kvetov, ale kvôli tomu, ako sa s ňou zaobchádza doma. Tu sú tri veci, ktoré vidíme najčastejšie.",
     datum: "20. júl 2026",
+    datumISO: "2026-07-20",
     citanieMinut: 3,
     obrazokAlt: "Kytica v sklenenej váze na kuchynskom stole pri okne",
     telo: [
@@ -679,6 +683,7 @@ export const blogClanky: Clanok[] = [
     perex:
       "Pri prvej konzultácii s párom riešime tri veci: farby, sezónu a rozpočet. Poradíme, v akom poradí o nich premýšľať.",
     datum: "5. júl 2026",
+    datumISO: "2026-07-05",
     citanieMinut: 5,
     obrazokAlt: "Kytica nevesty z pivoniek a záhradných ruží na svetlom pozadí",
     telo: [
@@ -703,6 +708,7 @@ export const blogClanky: Clanok[] = [
     perex:
       "Floristická pena uľahčuje prácu, ale v pôde sa nerozloží ani po desiatkach rokov. Vysvetľujeme, ako viažeme bez nej a čo to znamená pre kyticu.",
     datum: "18. jún 2026",
+    datumISO: "2026-06-18",
     citanieMinut: 4,
     obrazokAlt: "Floristka viaže kyticu špirálovou technikou priamo v ruke",
     telo: [
