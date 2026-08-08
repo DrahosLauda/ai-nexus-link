@@ -25,7 +25,7 @@ export function BlogPage() {
       <Sekcia podklad="paper">
         {/* Najnovší článok */}
         <Link href={href(`/blog/${featured.slug}`)} className="group grid gap-6 lg:grid-cols-2 lg:items-center">
-          <Foto src={blogFotky[0]} alt={featured.obrazokAlt} pomer="21/9" odtien="sage" className="lg:h-full" sizes="(max-width: 1024px) 100vw, 50vw" />
+          <Foto src={blogFotky[0]} alt={featured.obrazokAlt} pomer="21/9" odtien="sage" sizes="(max-width: 1024px) 100vw, 50vw" />
           <div className="flex flex-col gap-3">
             <span className="text-flora-small text-flora-moss">
               {featured.datum} · {featured.citanieMinut} min čítania
