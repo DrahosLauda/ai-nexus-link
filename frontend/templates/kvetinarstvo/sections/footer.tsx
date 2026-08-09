@@ -27,7 +27,7 @@ export function FloraFooter() {
               <li key={s.label}>
                 <a
                   href={s.url}
-                  className="inline-flex min-h-[44px] items-center text-flora-small text-flora-mist underline decoration-1 underline-offset-4 hover:text-flora-paper"
+                  className="inline-flex min-h-[44px] items-center text-flora-small text-flora-mist underline decoration-1 underline-offset-4 transition-colors duration-150 ease-flora hover:text-flora-paper"
                 >
                   {s.label}
                 </a>
@@ -66,7 +66,7 @@ export function FloraFooter() {
               <li key={p.href}>
                 <Link
                   href={href(p.href)}
-                  className="inline-flex min-h-[44px] items-center text-flora-small text-flora-mist hover:text-flora-paper"
+                  className="inline-flex min-h-[44px] items-center text-flora-small text-flora-mist transition-colors duration-150 ease-flora hover:text-flora-paper"
                 >
                   {p.label}
                 </Link>

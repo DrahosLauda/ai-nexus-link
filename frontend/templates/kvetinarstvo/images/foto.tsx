@@ -25,6 +25,7 @@ export function Foto({
   odtien,
   arch = false,
   className = "",
+  hoverZoom = false,
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }: {
   src?: string;
@@ -33,6 +34,8 @@ export function Foto({
   odtien?: Odtien;
   arch?: boolean;
   className?: string;
+  /** Jemné priblíženie fotky pri hoveri rodičovskej `group` (len klikacie karty). */
+  hoverZoom?: boolean;
   sizes?: string;
 }) {
   if (!src) {
@@ -43,7 +46,17 @@ export function Foto({
       className={`relative overflow-hidden bg-flora-sand ${arch ? "flora-arch" : "rounded-flora-lg"} ${className}`}
       style={{ aspectRatio: POMER_AR[pomer] }}
     >
-      <Image src={src} alt={alt} fill sizes={sizes} className="object-cover" />
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={`object-cover ${
+          hoverZoom
+            ? "transition-transform duration-500 ease-flora group-hover:scale-[1.02] motion-reduce:group-hover:scale-100"
+            : ""
+        }`}
+      />
     </div>
   );
 }

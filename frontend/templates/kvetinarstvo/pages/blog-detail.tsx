@@ -76,9 +76,10 @@ export function BlogDetailPage({ clanok }: { clanok: Clanok }) {
                       alt={c.obrazokAlt}
                       pomer="3/2"
                       odtien={ODTIENE[pos % ODTIENE.length]}
+                      hoverZoom
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                    <h3 className="mt-4 text-flora-h3 font-flora-display font-medium text-flora-ink group-hover:text-flora-clay-600">
+                    <h3 className="mt-4 text-flora-h3 font-flora-display font-medium text-flora-ink transition-colors duration-150 ease-flora group-hover:text-flora-clay-600">
                       {c.titulok}
                     </h3>
                     <p className="mt-2 text-flora-body text-flora-moss">{c.perex}</p>

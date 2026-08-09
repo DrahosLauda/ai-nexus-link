@@ -46,7 +46,7 @@ export function FloraNav() {
               <Link
                 href={href(p.href)}
                 aria-current={jeAktivna(p.href) ? "page" : undefined}
-                className={`inline-flex min-h-[44px] items-center text-[15px] transition-colors hover:text-flora-clay-600 ${
+                className={`inline-flex min-h-[44px] items-center text-[15px] transition-colors duration-150 ease-flora hover:text-flora-clay-600 ${
                   jeAktivna(p.href) ? "text-flora-clay-600" : "text-flora-moss"
                 }`}
               >
@@ -59,7 +59,7 @@ export function FloraNav() {
         <div className="flex items-center gap-2">
           <Link
             href={href(headerCta.href)}
-            className="hidden min-h-[44px] items-center rounded-flora-pill bg-flora-clay-600 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-flora-clay-700 sm:inline-flex"
+            className="hidden min-h-[44px] items-center rounded-flora-pill bg-flora-clay-600 px-5 text-[15px] font-semibold text-white transition duration-150 ease-flora hover:bg-flora-clay-700 active:scale-[0.97] sm:inline-flex"
           >
             {headerCta.label}
           </Link>

@@ -63,13 +63,13 @@ function HeroCopy() {
       <div className="mt-8 flex flex-wrap gap-3">
         <Link
           href={href(homeHero.ctaPrimarna.href)}
-          className="inline-flex min-h-[48px] items-center rounded-flora-pill bg-flora-clay-600 px-7 text-[15px] font-semibold text-white transition-colors hover:bg-flora-clay-700"
+          className="inline-flex min-h-[48px] items-center rounded-flora-pill bg-flora-clay-600 px-7 text-[15px] font-semibold text-white transition duration-150 ease-flora hover:bg-flora-clay-700 active:scale-[0.97]"
         >
           {homeHero.ctaPrimarna.label}
         </Link>
         <Link
           href={href(homeHero.ctaSekundarna.href)}
-          className="inline-flex min-h-[48px] items-center rounded-flora-pill border border-flora-ink/30 px-7 text-[15px] font-semibold text-flora-ink transition-colors hover:bg-flora-ink/5"
+          className="inline-flex min-h-[48px] items-center rounded-flora-pill border border-flora-ink/30 px-7 text-[15px] font-semibold text-flora-ink transition duration-150 ease-flora hover:bg-flora-ink/5 active:scale-[0.97]"
         >
           {homeHero.ctaSekundarna.label}
         </Link>

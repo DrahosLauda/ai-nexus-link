@@ -47,7 +47,7 @@ export function ZahlavieSekcie({
 type CtaVariant = "primar" | "ghost" | "ghostTmava" | "text";
 
 const CTA_ZAKLAD =
-  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-flora-pill px-6 text-[15px] font-semibold transition-colors";
+  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-flora-pill px-6 text-[15px] font-semibold transition duration-150 ease-flora active:scale-[0.97]";
 
 const CTA_VARIANTY: Record<CtaVariant, string> = {
   primar: "bg-flora-clay-600 text-white hover:bg-flora-clay-700",
@@ -55,7 +55,7 @@ const CTA_VARIANTY: Record<CtaVariant, string> = {
     "border border-flora-500 text-flora-700 hover:bg-flora-100",
   ghostTmava:
     "border border-flora-mist/40 text-flora-paper hover:bg-white/10",
-  text: "min-h-0 rounded-none px-0 text-flora-clay-600 underline decoration-1 underline-offset-4 hover:text-flora-clay-700",
+  text: "min-h-0 rounded-none px-0 text-flora-clay-600 underline decoration-1 underline-offset-4 hover:text-flora-clay-700 active:scale-100",
 };
 
 /** Značkové CTA / odkaz. `k` je href v tvare z `content.ts` (prejde cez `href()`). */

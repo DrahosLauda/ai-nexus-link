@@ -26,12 +26,12 @@ export function BlogPage() {
         {/* Najnovší článok */}
         <article>
           <Link href={href(`/blog/${featured.slug}`)} className="group grid gap-6 lg:grid-cols-2 lg:items-center">
-            <Foto src={blogFotky[0]} alt={featured.obrazokAlt} pomer="21/9" odtien="sage" sizes="(max-width: 1024px) 100vw, 50vw" />
+            <Foto src={blogFotky[0]} alt={featured.obrazokAlt} pomer="21/9" odtien="sage" hoverZoom sizes="(max-width: 1024px) 100vw, 50vw" />
             <div className="flex flex-col gap-3">
               <span className="text-flora-small text-flora-moss">
                 <time dateTime={featured.datumISO}>{featured.datum}</time> · {featured.citanieMinut} min čítania
               </span>
-              <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink group-hover:text-flora-clay-600">
+              <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink transition-colors duration-150 ease-flora group-hover:text-flora-clay-600">
                 {featured.titulok}
               </h2>
               <p className="text-flora-lead text-flora-moss">{featured.perex}</p>
@@ -46,11 +46,11 @@ export function BlogPage() {
             <li key={c.slug}>
               <article className="h-full">
                 <Link href={href(`/blog/${c.slug}`)} className="group flex h-full flex-col">
-                  <Foto src={blogFotky[i + 1]} alt={c.obrazokAlt} pomer="3/2" odtien={ODTIENE[(i + 1) % ODTIENE.length]} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                  <Foto src={blogFotky[i + 1]} alt={c.obrazokAlt} pomer="3/2" odtien={ODTIENE[(i + 1) % ODTIENE.length]} hoverZoom sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
                   <span className="mt-4 text-flora-small text-flora-moss">
                     <time dateTime={c.datumISO}>{c.datum}</time> · {c.citanieMinut} min
                   </span>
-                  <h3 className="mt-1.5 text-flora-h3 font-flora-display font-medium text-flora-ink group-hover:text-flora-clay-600">
+                  <h3 className="mt-1.5 text-flora-h3 font-flora-display font-medium text-flora-ink transition-colors duration-150 ease-flora group-hover:text-flora-clay-600">
                     {c.titulok}
                   </h3>
                   <p className="mt-2 text-flora-body text-flora-moss">{c.perex}</p>

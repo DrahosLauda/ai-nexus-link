@@ -93,7 +93,7 @@ export function KontaktForm() {
       <div>
         <button
           type="submit"
-          className="inline-flex min-h-[48px] items-center rounded-flora-pill bg-flora-clay-600 px-7 text-[15px] font-semibold text-white transition-colors hover:bg-flora-clay-700"
+          className="inline-flex min-h-[48px] items-center rounded-flora-pill bg-flora-clay-600 px-7 text-[15px] font-semibold text-white transition duration-150 ease-flora hover:bg-flora-clay-700 active:scale-[0.97]"
         >
           Odoslať dopyt
         </button>

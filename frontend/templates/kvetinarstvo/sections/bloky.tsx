@@ -24,7 +24,7 @@ export function SluzbyZoznam({ sluzby }: { sluzby: Sluzba[] }) {
             </span>
             <span
               aria-hidden="true"
-              className="mt-1 text-flora-clay-600 transition-transform group-hover:translate-x-1"
+              className="mt-1 text-flora-clay-600 transition-transform duration-200 ease-flora group-hover:translate-x-1"
             >
               →
             </span>
@@ -127,7 +127,7 @@ export function Faq({ otazky }: { otazky: Otazka[] }) {
         <details key={o.otazka} className="group py-2">
           <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-4 py-2 text-flora-ink marker:content-none">
             <span className="text-[1.0625rem] font-medium">{o.otazka}</span>
-            <span aria-hidden="true" className="text-flora-clay-600 transition-transform group-open:rotate-45">
+            <span aria-hidden="true" className="text-flora-clay-600 transition-transform duration-200 ease-flora group-open:rotate-45">
               +
             </span>
           </summary>
@@ -158,7 +158,7 @@ export function CtaPas({
         <div className="flex flex-wrap gap-3">
           <Link
             href={href(primar.href)}
-            className={`inline-flex min-h-[48px] items-center rounded-flora-pill px-7 text-[15px] font-semibold transition-colors ${
+            className={`inline-flex min-h-[48px] items-center rounded-flora-pill px-7 text-[15px] font-semibold transition duration-150 ease-flora active:scale-[0.97] ${
               naTmavej ? "bg-flora-clay-600 text-white hover:bg-flora-clay-700" : "bg-flora-paper text-flora-900 hover:bg-white"
             }`}
           >
@@ -167,7 +167,7 @@ export function CtaPas({
           {sekundar ? (
             <Link
               href={href(sekundar.href)}
-              className="inline-flex min-h-[48px] items-center rounded-flora-pill border border-white/50 px-7 text-[15px] font-semibold text-flora-paper transition-colors hover:bg-white/10"
+              className="inline-flex min-h-[48px] items-center rounded-flora-pill border border-white/50 px-7 text-[15px] font-semibold text-flora-paper transition duration-150 ease-flora hover:bg-white/10 active:scale-[0.97]"
             >
               {sekundar.label}
             </Link>

@@ -10,7 +10,7 @@ import { meninyCopy, offerMeninyBlok } from "../content";
 import { denVTyzdni, meninyDnesZajtra, meninyNajblizsie } from "../meniny";
 
 const odkaz =
-  "inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-600 underline decoration-1 underline-offset-4 hover:text-flora-clay-700";
+  "inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-600 underline decoration-1 underline-offset-4 transition-colors duration-150 ease-flora hover:text-flora-clay-700";
 
 /** Tenký pás pod hero na Domove. */
 export function MeninyPas() {

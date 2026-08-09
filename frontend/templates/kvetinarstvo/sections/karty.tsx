@@ -81,7 +81,7 @@ export function AtelierTeaser() {
         <div>
           <Link
             href={href(homeAtelierTeaser.href)}
-            className="inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-200 underline decoration-1 underline-offset-4 hover:text-flora-paper"
+            className="inline-flex min-h-[44px] items-center text-[15px] font-semibold text-flora-clay-200 underline decoration-1 underline-offset-4 transition-colors duration-150 ease-flora hover:text-flora-paper"
           >
             {homeAtelierTeaser.odkaz}
           </Link>
