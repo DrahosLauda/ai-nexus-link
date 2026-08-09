@@ -560,7 +560,7 @@ export const weddingsCenoveUrovne: CenovaUroven[] = [
 ];
 
 export const weddingsPriebeh: Krok[] = [
-  { cislo: "01", nazov: "Dopyt", popis: "Napíšete termín, miesto a predstavu — ozveme sa do 2 dní." },
+  { cislo: "01", nazov: "Dopyt", popis: "Napíšete termín, miesto a predstavu — ozveme sa ihneď." },
   { cislo: "02", nazov: "Konzultácia", popis: "Prejdeme detaily naživo alebo online, zadarmo a bez záväzku." },
   { cislo: "03", nazov: "Návrh a rozpočet", popis: "Dostanete návrh kvetov s fotkami, zoznam kvetov a presnú cenu." },
   { cislo: "04", nazov: "Realizácia v deň D", popis: "Prídeme s kyticami aj výzdobou, postavíme a po akcii odvezieme." },
