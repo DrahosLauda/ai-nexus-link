@@ -66,9 +66,9 @@ export const studioPriestorFotky: (string | undefined)[] = [
 /** Náhľady článkov — index zodpovedá `blogClanky` (0 = hlavný, 21:9; ďalšie 3:2). */
 export const blogFotky: (string | undefined)[] = [
   "/kvetinarstvo/img/blog-dalie.webp", // dálie (hlavný)
-  undefined, // tri chyby — dopĺňa sa
+  "/kvetinarstvo/img/blog-tri-chyby.webp", // tri chyby
   "/kvetinarstvo/img/blog-svadba.webp", // kvety na svadbu
-  undefined, // bez floristickej peny — dopĺňa sa
+  "/kvetinarstvo/img/blog-pena.webp", // bez floristickej peny
 ];
 
 /* ── Obchod `/obchod` ───────────────────────────────────────────────── */
@@ -76,9 +76,9 @@ export const blogFotky: (string | undefined)[] = [
 /** Sortiment — index zodpovedá `shopSortiment` (Kytica dňa, na mieru, predplatné, poukaz). */
 export const shopSortimentFotky: (string | undefined)[] = [
   "/kvetinarstvo/img/obchod-kytica-dna.webp",
-  undefined,
-  undefined,
-  undefined,
+  "/kvetinarstvo/img/obchod-na-mieru.webp",
+  "/kvetinarstvo/img/obchod-predplatne.webp",
+  "/kvetinarstvo/img/obchod-poukaz.webp",
 ];
 
 /* ── Kontakt `/kontakt` ─────────────────────────────────────────────── */

@@ -660,7 +660,7 @@ export const blogClanky: Clanok[] = [
     datum: "20. júl 2026",
     datumISO: "2026-07-20",
     citanieMinut: 3,
-    obrazokAlt: "Kytica v sklenenej váze na kuchynskom stole pri okne",
+    obrazokAlt: "Náruč čerstvých tulipánov na drevenom stole v rannom svetle",
     telo: [
       {
         typ: "odsek",
