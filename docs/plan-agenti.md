@@ -852,6 +852,37 @@ mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
 - Recenzie z Google ako referencie v šablóne klienta — len so súhlasom klienta
   (GDPR); zvážiť pri prvom reálnom nasadení.
 
+## Nápad / backlog — interaktívny konfigurátor kytice („flower bar")
+
+> Nápad majiteľa (aug 2026). **Zatiaľ pre Boma Flora, ako súčasť šablóny
+> kvetinárstva.** Nerealizovať v sedení o šablóne — **patrí do vlastného
+> plánovacieho sedenia** (viď `docs/ako-viest-sedenia.md`).
+
+**Koncept:** zákazník vidí „stenu" kvetov vo vázach / dizajnových kýbloch (ako
+reálny výklad kvetinárstva). Pri každom kvete je **názov a cena za 1 ks**.
+Zákazník si naklikáva jednotlivé kvety (počty), aplikácia mu **skladá kyticu** a
+priebežne ukazuje **celkovú cenu**. Nakoniec vie kyticu objednať.
+
+**Prečo to sedí do stacku:**
+- Frontend (Next.js): mriežka kýblov/váz = klikacie položky s `+/−` počtom.
+- Dáta o kvetoch (názov, cena/ks, obrázok, farba, sklad) v **Directuse** →
+  klient si ich sám edituje; neskôr možné napojiť na WooCommerce (Fáza 4).
+- Výber + živý súčet = klientský stav.
+- Hotová „kytica + cena" → predvyplnenie objednávkového formulára (teraz),
+  reálny checkout (neskôr).
+
+**Kľúčové otvorené rozhodnutie = ako zobraziť výslednú kyticu** (blokátor MVP):
+1. **Zoznam + súčet** (triviálne, deterministické).
+2. **Skladaný obrázok z výrezov** — každý kvet PNG s priehľadným pozadím,
+   navrstvené do tvaru kytice. Pekné a predvídateľné. *(Odporúčaný cieľ MVP.)*
+3. **AI-generovaný obrázok** z výberu — efektné, ale pomalé, kreditovo drahé a
+   nedeterministické; skôr bonus než jadro.
+
+**Čo vyrieši plánovacie sedenie:** rozsah MVP, dátový zdroj (Directus vs Woo),
+úroveň vizualizácie (1/2/3), kde funkcia žije (stránka v šablóne), napojenie na
+objednávku/platbu, zaradenie do míľnikov (kandidát na **M7** alebo rozšírenie
+šablóny kvetinárstva). Hodnota: zvyšuje atraktivitu produktizovanej šablóny (Fáza 5).
+
 ## Štartový prompt pre PRVÉ realizačné sedenie (M1)
 
 ```
