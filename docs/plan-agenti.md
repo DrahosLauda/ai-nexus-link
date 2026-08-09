@@ -883,6 +883,27 @@ priebežne ukazuje **celkovú cenu**. Nakoniec vie kyticu objednať.
 objednávku/platbu, zaradenie do míľnikov (kandidát na **M7** alebo rozšírenie
 šablóny kvetinárstva). Hodnota: zvyšuje atraktivitu produktizovanej šablóny (Fáza 5).
 
+## Vylepšenie frontend agentov — externé skilly (vkus + motion)
+
+> Aug 2026. Cieľ: zdvihnúť „vkusovú" úroveň frontendu k „nerozoznateľné od AI".
+
+**Adoptované (hotové, MIT):** z `github.com/emilkowalski/skills` sme prevzali tri
+skilly do `.claude/skills/` a napojili ich:
+- `emil-design-eng` (filozofia vkusu / polish / detaily),
+- `animate` (+ `RECIPES.md`) — stavba motion správne,
+- `review-animations` (+ `STANDARDS.md`) — kritika motion podľa latky.
+Napojenie: `frontend-dev` (stavba/motion), `qa-a11y` + `docs/sablony-kvalita.md`
+(revízia). Atribúcia a zoznam v `.claude/skills/VENDORED.md`.
+
+**Backlog — pridať rovnako, keď bude treba (kópia priečinka do `.claude/skills/`):**
+- Ďalšie Emilove skilly: `apple-design`, `pick-ui-library`,
+  `find-animation-opportunities`, `improve-animations`, `animation-vocabulary`,
+  `prototype`.
+- **`ui-ux-pro-max-skill`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`, MIT) —
+  veľká knižnica dizajn systémov (84 štýlov, 192 paliet, 161 pravidiel, font páry,
+  tech stacky). Vhodné pre **`ui-ux-designer` pri rozbiehaní NOVEJ odvetvovej šablóny**,
+  nie do každého sedenia (veľký kontext → načítať výberovo).
+
 ## Štartový prompt pre PRVÉ realizačné sedenie (M1)
 
 ```

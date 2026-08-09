@@ -91,6 +91,12 @@ drž mantinely, inak sa efekt vypúšťa.
   neblokovať prvé vykreslenie videom.
 - **Rozpočet:** motion nesmie zhodiť **Lighthouse < 95** ani a11y. Ak zhodí →
   prvok sa zjednoduší alebo vypustí. **Kvalita čísla > efekt.**
+- **Remeselná latka (prevzaté skilly — Emil Kowalski, MIT):** pri stavbe motion
+  používaj skill **`animate`** (poradie rozhodnutí: či animovať → účel → nástroj →
+  vlastnosti → krivka/trvanie → prerušenie → exit) a pri revízii **`review-animations`**
+  (`STANDARDS.md` — schvaľuje sa až po splnení). Vkusové rozhodnutia o polish/detailoch
+  konzultuj cez **`emil-design-eng`**. Detaily a atribúcia: `.claude/skills/VENDORED.md`.
+  Tieto skilly **dopĺňajú** tieto mantinely, nenahrádzajú ich.
 
 ## Postup povinnej ľudskej revízie
 

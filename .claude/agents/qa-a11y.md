@@ -31,6 +31,9 @@ Nič si nedomýšľaj; over každý bod.
   ani horizontálny scroll.
 - **Motion mantinely**: len `transform`/`opacity`, animácie vo viewporte, motion
   nezhadzuje Lighthouse < 95; pri `reduced-motion` ostáva elegantný statický layout.
+  Pri netriviálnom motion použi prevzatý skill **`review-animations`** (Emil Kowalski,
+  MIT — `STANDARDS.md`): kritika podľa vysokej remeselnej latky (schvaľuje sa až po
+  splnení, nie automaticky). Viac v `.claude/skills/VENDORED.md`.
 - **Jazyk/copy**: žiadne zakázané generické AI frázy (zoznam v dokumente),
   zmysluplné meta/OG.
 - **Licencie obrázkov**: každý obrázok má záznam v `images/LICENSES.md`.
