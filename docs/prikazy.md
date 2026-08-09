@@ -83,7 +83,9 @@ Tri kľúčové slová, ktoré si treba osvojiť:
 
 ```bash
 git clone <adresa-repa>       # prvé stiahnutie (raz)
-git pull                      # stiahni najnovší stav z GitHubu (bežne používaš toto)
+git pull                      # stiahni najnovší stav aktuálnej vetvy z GitHubu
+git pull origin <vetva>       # stiahni konkrétnu vetvu explicitne
+                              # napr. git pull origin claude/m1-frontend-agent-templates-94ksdt
 ```
 
 **Náš tok (zapamätaj si):** *sedenie pushuje → ty pull‑uješ.* Repo máš naklonované
@@ -104,6 +106,45 @@ npm run start                 # spusti produkčnú verziu
 npm run lint                  # kontrola kvality kódu (ESLint)
 ```
 Poznámka: `npm run <nieco>` spúšťa skripty definované v `package.json`.
+
+---
+
+## LOKÁLNY NÁHĽAD — spustiť web a pozrieť ho (aj na mobile)
+
+Spustí sa vývojový server na tvojom Macu. Šablóna kvetinárstva žije na podceste
+`/ukazky/kvetinarstvo` (samotné `/` je projekt digitalnapomoc).
+
+```bash
+cd frontend                   # dev skript je v priečinku frontend/
+npm run dev                   # spusti server (nechaj bežať; vypíše Local + Network)
+```
+Server vypíše dve adresy:
+```
+- Local:    http://localhost:3000       # otvor na tom istom PC
+- Network:  http://192.168.1.230:3000    # otvor z iného zariadenia na tej istej WiFi
+```
+Šablónu otváraj vždy s celou cestou:
+```
+http://localhost:3000/ukazky/kvetinarstvo
+```
+
+### Pozrieť na mobile (telefón na rovnakej WiFi ako Mac)
+```bash
+ipconfig getifaddr en0        # zisti IP adresu Macu vo WiFi (napr. 192.168.1.230)
+# ak nič nevypíše, skús:  ipconfig getifaddr en1
+```
+Potom v prehliadači telefónu zadaj `http://<IP>:3000/ukazky/kvetinarstvo`
+(s `http://`, nie `https://`). Ak straší starý vzhľad, otvor to v **inkognito**
+okne (obíde cache).
+
+### Keď sa dev server nechce spustiť („port in use" / „Another next dev server")
+```bash
+kill <PID>                    # zastav starý server (číslo PID vypíše hláška)
+npm run dev                   # spusti nanovo
+```
+
+> Po `git pull` sa bežiaci dev server obnoví sám — netreba reštart, stačí
+> obnoviť prehliadač (na PC tvrdo: `Cmd+Shift+R`).
 
 ---
 
@@ -148,13 +189,18 @@ Vysvetlenie prepínačov: `-X` = metóda (POST/GET), `-H` = hlavička,
 ## PRÁCA SO SÚBORMI (základ)
 
 ```bash
+pwd               # vypíš, v ktorom priečinku práve si (print working directory)
 ls                # vypíš obsah priečinka
 ls -la            # vypíš aj skryté súbory + detaily (veľkosť, dátum)
-cd <priecinok>    # zmeň priečinok (change directory)
+cd <priecinok>    # vstúp do priečinka (change directory) — NIE git checkout!
+cd ..             # o priečinok vyššie (napr. z frontend/ späť do ai-nexus-link)
+cd /Users/<meno>/www/ai-nexus-link   # skoč presne na cestu (funguje odkiaľkoľvek)
 cp <zdroj> <ciel> # skopíruj súbor
 cp ~/Downloads/subor.md .   # skopíruj zo Stiahnutých do aktuálneho priečinka
 grep -n "<text>" <subor>    # nájdi text v súbore (s číslami riadkov)
 ```
+> Pozor na zámenu: **`cd`** mení priečinok (kde v počítači si). **`git checkout`**
+> prepína vetvy/verzie kódu. Sú to dve úplne rozdielne veci.
 
 ---
 
