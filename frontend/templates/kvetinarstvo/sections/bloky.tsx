@@ -36,14 +36,31 @@ export function SluzbyZoznam({ sluzby }: { sluzby: Sluzba[] }) {
 }
 
 /** Kroky procesu (číslované). Domov, Svadby, Obchod. */
+/** Počet stĺpcov na desktope podľa počtu krokov (žiadny prázdny stĺpec). */
+const KROKY_STLPCE: Record<number, string> = {
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+};
+
 export function Kroky({ kroky }: { kroky: Krok[] }) {
+  const stlpce = KROKY_STLPCE[kroky.length] ?? "lg:grid-cols-3";
   return (
-    <ol className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {kroky.map((k) => (
-        <li key={k.cislo} className="flex flex-col gap-3">
+    <ol className={`grid grid-cols-1 gap-10 lg:gap-x-12 ${stlpce}`}>
+      {kroky.map((k, i) => (
+        <li key={k.cislo} className="relative flex flex-col gap-3">
           <span className="font-flora-display text-[2.5rem] leading-none text-flora-clay-400">{k.cislo}</span>
           <h3 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{k.nazov}</h3>
           <p className="text-flora-body text-flora-moss">{k.popis}</p>
+          {i < kroky.length - 1 ? (
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute right-0 top-2 hidden translate-x-1/2 text-flora-clay-400 lg:block"
+            >
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" className="animate-flora-sipka">
+                <path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          ) : null}
         </li>
       ))}
     </ol>

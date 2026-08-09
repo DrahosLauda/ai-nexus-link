@@ -104,6 +104,18 @@
   /* ── Motion tokeny (M2b ich zdedí; len transform/opacity) */
   --ease-flora: cubic-bezier(0.22, 1, 0.36, 1); /* pokojný „editorial" dobeh */
   --ease-flora-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Jemné „plynutie" šípky medzi krokmi (naznačuje postupnosť). */
+  --animate-flora-sipka: flora-sipka 1.8s var(--ease-flora-in-out) infinite;
+  @keyframes flora-sipka {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+  }
 }
 
 /* ── Základ šablóny — scoped pod .flora-root (nič nepretečie do hlavného webu) */
