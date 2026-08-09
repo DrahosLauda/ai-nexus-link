@@ -37,14 +37,22 @@ Súbory v `frontend/public/kvetinarstvo/img/`:
 | `svadby-subhero.webp`, `svadby-proces.webp` | Detail viazania, moodboard | Svadby — sub-hero, proces | Kling (Nano Banana 2) | Kling, komerčné |
 | `svadby-r1..r3.webp` | Realizácie (Omšenie, Skalka, Elizabeth) | Svadby — realizácie | Kling (Nano Banana 2) | Kling, komerčné |
 | `blog-dalie.webp` | Náruč dálií | Blog — hlavný článok | Kling (Nano Banana 2) | Kling, komerčné |
-| `blog-svadba.webp` | Svadobná kytica | Blog — článok „kvety na svadbu" | Kling (Nano Banana 2) | Kling, komerčné |
+| `blog-tri-chyby.webp` | Tulipány na stole | Blog — „tri chyby" | Kling (Nano Banana 2) | Kling, komerčné |
+| `blog-svadba.webp` | Svadobná kytica | Blog — „kvety na svadbu" | Kling (Nano Banana 2) | Kling, komerčné |
+| `blog-pena.webp` | Ruky viažuce kyticu | Blog — „bez floristickej peny" | Kling (Nano Banana 2) | Kling, komerčné |
 | `obchod-kytica-dna.webp` | Balená kytica | Obchod — Kytica dňa | Kling (Nano Banana 2) | Kling, komerčné |
+| `obchod-na-mieru.webp` | Pastelová kytica | Obchod — Kytica na mieru | Kling (Nano Banana 2) | Kling, komerčné |
+| `obchod-predplatne.webp` | Pivonky vo váze | Obchod — Predplatné kvetov | Kling (Nano Banana 2) | Kling, komerčné |
+| `obchod-poukaz.webp` | Kytica + darčekový štítok | Obchod — Darčekový poukaz | Kling (Nano Banana 2) | Kling, komerčné |
 
-### Otvorené sloty (zatiaľ placeholder `FloraFigure`, dopĺňajú sa)
+### Kontakt — mapa
 
-- Blog: „tri chyby…" a „bez floristickej peny" (2 zo 4 náhľadov).
-- Obchod: „Kytica na mieru", „Predplatné kvetov", „Darčekový poukaz" (3 zo 4 kariet).
-- Kontakt: statická mapa.
+`kontakt-mapa.webp` — demo **screenshot z Google Máp** (Mierové námestie, Trenčín),
+len ilustračný pre šablónu. Reálny klient nahradí svojou polohou. (Screenshot mapy =
+faktický údaj o mieste, nie kreatívne dielo; pri nasadení klient použije vlastný.)
 
-Doplnenie je bez zásahu do rozvrhu (`FloraFigure` → `Foto`/`next/image` pri rovnakom
-pomere strán); po pridaní súboru sem pribudne riadok do tabuľky vyššie.
+### Stav slotov
+
+**Všetky obrazové sloty šablóny sú vyplnené reálnymi (AI-generovanými) fotkami.**
+Prípadné budúce nahradenie je bez zásahu do rozvrhu (`Foto`/`next/image` pri
+rovnakom pomere strán); po pridaní súboru pribudne riadok do tabuľky vyššie.
