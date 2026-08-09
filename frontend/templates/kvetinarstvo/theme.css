@@ -28,7 +28,7 @@
 
   /* ── Aliasové textové farby (nech sa v kóde číta zámer, nie číslo) */
   --color-flora-ink: #1e3528;   /* nadpisy a text na svetlom (12.2:1 na paper) */
-  --color-flora-night: #183222; /* podklad tmavých plôch (footer, night pásy) — tmavšia zelená */
+  --color-flora-night: #24362a; /* podklad tmavých plôch (footer, night pásy) — zelená podľa referencie */
   --color-flora-moss: #55645a;  /* tlmený text na svetlom (5.8:1 na paper) */
   --color-flora-mist: #c9d2c4;  /* tlmený text na flora-900 (8.5:1) */
 
