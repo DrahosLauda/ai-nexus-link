@@ -70,7 +70,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Asistent nie je nakonfigurovaný." }, { status: 503 });
   }
 
-  const history = Array.isArray(body.history) ? body.history : [];
+  // História: obmedzíme počet aj dĺžku správ (obrana proti zneužitiu nákladov
+  // na LLM). Samotná lib berie do promptu len posledných 6 správ.
+  const history: ChatMessage[] = (Array.isArray(body.history) ? body.history : [])
+    .slice(-6)
+    .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 1000) }));
 
   try {
     const { answer, sources } = await answerQuestion(question, history);

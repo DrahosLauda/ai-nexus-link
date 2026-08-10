@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Vyberte platný termín." }, { status: 400 });
   }
 
-  const name = body.name?.trim() ?? "";
+  const name = body.name?.trim().slice(0, 200) ?? "";
   if (name.length < 2) {
     return NextResponse.json({ ok: false, error: "Zadajte meno." }, { status: 400 });
   }
@@ -90,6 +90,10 @@ export async function POST(request: NextRequest) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ ok: false, error: "Zadajte platný e-mail." }, { status: 400 });
   }
+
+  // Dĺžkové stropy ako pri /api/lead — bránia zneužitiu (DB/e-mail zaťaženie).
+  const phone = body.phone?.trim().slice(0, 40) || undefined;
+  const note = body.note?.trim().slice(0, 2000) || undefined;
 
   if (!bookingConfigured()) {
     console.error("booking/create: DIRECTUS_URL / RESERVATION_TOKEN nie sú nastavené");
@@ -106,8 +110,8 @@ export async function POST(request: NextRequest) {
       startIso: new Date(start).toISOString(), // normalizácia na presný ISO tvar v DB
       name,
       email,
-      phone: body.phone?.trim() || undefined,
-      note: body.note?.trim() || undefined,
+      phone,
+      note,
     });
 
     if (!result.ok) {
@@ -128,8 +132,8 @@ export async function POST(request: NextRequest) {
       start: result.booking.start,
       name,
       email,
-      phone: body.phone?.trim() || undefined,
-      note: body.note?.trim() || undefined,
+      phone,
+      note,
     });
 
     return NextResponse.json({
