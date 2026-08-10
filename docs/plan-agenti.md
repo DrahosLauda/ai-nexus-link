@@ -852,6 +852,27 @@ mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
 - Recenzie z Google ako referencie v šablóne klienta — len so súhlasom klienta
   (GDPR); zvážiť pri prvom reálnom nasadení.
 
+## Šablóna kvetinárstvo — napojiteľnosť (RÁTAŤ S TÝM pri ďalšom vývoji)
+
+> Požiadavka majiteľa (aug 2026): základná šablóna sa má stavať tak, aby sa dala
+> kedykoľvek rozšíriť a napojiť na backend schopnosti projektu. Šablóna je
+> **dizajnová škrupina**, prispôsobenie = zmena dát (`content.ts`, `media.ts`,
+> `theme.css`), nie prepis komponentov. Naplánované cesty napojenia:
+
+| Rozšírenie | Ako | Väzba |
+|---|---|---|
+| Ďalšia stránka / podstránka (napr. `/sluzby/[slug]`) | nový page komponent + `registry.ts` (optional catch-all route) | `frontend-dev` |
+| **Obchod → reálny nákup** | WooCommerce Store API (embednutý checkout → plný); produkty vo WP | Fáza 4 |
+| **Blog → headless WordPress klienta** | prepnúť dátový zdroj z demo `content.ts` na WP REST (`lib/wp.ts`, ISR) | M4 / go-live klienta |
+| **Článkový agent** (písanie článkov → WP koncept) | `orchestrator/wp_writer_agent.py` → WP; cron worker + config v Directuse | Fáza 3 |
+| **Chatbot** (RAG) | zapojiť zdieľaný `chat-widget` + `/api/chat` (bez duplicity logiky) | `docs/rag-chatbot.md` |
+| **Leady / CRM** | formuláre → Directus `client_leads` | ✅ hotové |
+
+Dátové toky (vízia): návštevník → Next.js → číta WP / zapisuje leady do Directusu;
+agenti → čítajú config z Directusu → publikujú do WP → frontend zobrazí. Každé
+napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
+**architektúra je naň postavená** (lego princíp, `frontend-dev` moduly len zapája).
+
 ## Nápad / backlog — interaktívny konfigurátor kytice („flower bar")
 
 > Nápad majiteľa (aug 2026). **Zatiaľ pre Boma Flora, ako súčasť šablóny
