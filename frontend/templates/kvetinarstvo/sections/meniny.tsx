@@ -26,7 +26,10 @@ export function MeninyPas() {
           <>
             <p className="text-[15px] text-flora-moss">
               <span className="uppercase tracking-[0.12em] text-flora-500">{meninyCopy.eyebrowDnes} </span>
-              <time dateTime={dnes.iso} className="font-flora-display text-[1.25rem] italic text-flora-ink">
+              <time
+                dateTime={dnes.iso}
+                className="mx-0.5 inline-block rounded-md bg-flora-clay-100 px-2 py-0.5 font-flora-display text-[1.25rem] italic leading-tight text-flora-clay-700"
+              >
                 {dnes.meno}
               </time>
               {zajtra.meno ? (
@@ -70,8 +73,19 @@ export function MeninyBlok() {
 
         <ul className="grid w-full max-w-[420px] gap-px overflow-hidden rounded-flora-md border border-flora-line bg-flora-line">
           {dni.map((d, i) => (
-            <li key={d.iso} className="flex items-baseline justify-between gap-4 bg-flora-porcelain px-4 py-2.5">
-              <span className="text-flora-small text-flora-moss">
+            <li
+              key={d.iso}
+              className={`flex items-baseline justify-between gap-4 px-4 py-2.5 ${
+                i === 0 ? "bg-flora-clay-100" : "bg-flora-porcelain"
+              }`}
+            >
+              <span
+                className={
+                  i === 0
+                    ? "text-flora-small font-semibold uppercase tracking-[0.08em] text-flora-clay-700"
+                    : "text-flora-small text-flora-moss"
+                }
+              >
                 {i === 0 ? "Dnes" : denVTyzdni(d.iso)}
               </span>
               {d.meno ? (
@@ -79,7 +93,7 @@ export function MeninyBlok() {
                   dateTime={d.iso}
                   className={
                     i === 0
-                      ? "font-flora-display text-[1.35rem] italic text-flora-ink"
+                      ? "font-flora-display text-[1.35rem] italic text-flora-clay-700"
                       : "text-[15px] text-flora-ink"
                   }
                 >
