@@ -129,6 +129,88 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Frontend agent M2b: Boma Flora — reálne fotky, QA opravy, polish (Emil skilly), doladenia ✅ (vetva, NEzlúčené)
+
+**Vetva `claude/m1-frontend-agent-templates-94ksdt` (stále NEzlúčené do `main`).**
+Dlhé realizačné sedenie — z M2a kostry spravená kompletná, vyladená šablóna.
+
+**Reálne fotky na celej šablóne (AI cez Kling, po jednej):**
+- Tok kvôli egressu: používateľ generuje v **kling.ai** (režim Image, Nano Banana 2),
+  pošle fotku do chatu, ja ju **vyberiem z transkriptu (base64 v JSONL)** a zapojím.
+  Kling/OSM CDN je za proxy blokovaný (403) — priamo stiahnuť sa nedá.
+- Zapojené: Svadby (sub-hero, proces, 3 realizácie), Ateliér (Barbora=sub-hero+tím1,
+  Denisa, Tomáš, stôl, chladnička, pult), Blog (dálie, svadba, tri chyby=tulipány,
+  bez peny=ruky), Obchod (kytica dňa, na mieru, predplatné, poukaz), Kontakt (statická
+  mapa = screenshot Google Máp). Média vrstva `images/media.ts` + `Foto` slot, `LICENSES.md`
+  aktualizované (všetko Kling, komerčné; všetky sloty vyplnené). Fotky webp 33–86 KB.
+- Hero scroll-video (návrh 1) ponechaný; kytica posunutá **doprava do stredu**
+  (`translateX(12%) scale(1.08)` na poster+videu, ľavý okraj kryje scrim).
+
+**Brand / texty:**
+- Hero H1: „**Ručne viazané kytice pre Radosť a Váš deň**" (nahradilo „…nie katalógom").
+- Tmavé plochy (footer, night pásy, teaser, predplatné) → nový token `--color-flora-night`
+  **#24362a** (zelenšia). Hodnotu som **odmeral z pixelov referenčného screenshotu**
+  používateľa (PIL) — presné trafenie namiesto hádania.
+- Svadby krok 01: „ozveme sa ihneď" (zosúladené s budúcim agentom).
+
+**QA audit (subagent `qa-a11y`) → nájdené a opravené (ja som každý nález overil voči kódu + screenshotom):**
+- 🔴 **BLOCKER**: hero na Domove sa na tablete/dotyku/`reduced-motion` **zrútil na výšku 0**
+  (statická vetva: deti `sm:absolute inset-0`, sekcia bez výšky) → `sm:min-h-[100svh]`.
+- **Hero max-w**: `max-w-[19/22ch]` obopínal celý `HeroCopy` (aj perex+CTA) → presunuté len
+  na `<h1>`, obal `max-w-[32rem]` (CTA vedľa seba).
+- **Blog detail**: natvrdo `FloraFigure` → napojené `Foto`/`blogFotky`.
+- **Rytmus mriežok**: 3-kartové sekcie na tablete mali orphan (`sm:grid-cols-2 lg:grid-cols-3`
+  pri 3 kartách) → `sm:grid-cols-3`.
+- **Nav/pätička**: dotykové ciele `min-h-[44px]`.
+- **Blog featured obrázok pretekal cez text** na širokých monitoroch (`lg:h-full` + `aspectRatio`
+  vypočítalo prehnanú šírku) → odstránený `lg:h-full`.
+- **Manifest** na Domove sa lámal „na výšku" (`max-w-[24ch]` na **obale**, `ch` pri base fonte
+  ≈ 214 px) → presun na `<p>` (ch pri nadpisovom fonte).
+
+**Sémantika 100 %:** overená (skip-link, `header/main/footer`, `nav` s `aria-label`, 1×`h1`/stránka,
+`article/aside/figure/address/time`). Doplnené `<time dateTime>` a `<article>` na blog + `datumISO`.
+
+**Adopcia externých skillov (Emil Kowalski, MIT) — vkus + motion:**
+- Do `.claude/skills/` prevzaté `emil-design-eng`, `animate` (+RECIPES), `review-animations`
+  (+STANDARDS). Napojené: `frontend-dev` (stavba/motion), `qa-a11y` + `docs/sablony-kvalita.md`
+  (revízia). Atribúcia v `.claude/skills/VENDORED.md`. `review-animations` má
+  `disable-model-invocation` → len na `/review-animations` (človek).
+- `ui-ux-pro-max-skill` (nextlevelbuilder, MIT) NEprevzatý — pripomienka pri **novej šablóne**
+  je v `ui-ux-designer.md` + backlog (veľký, výberovo).
+
+**Polish/motion pass (test skillov na reálnom kóde):**
+- Tlačidlá: `active:scale-[0.97]` + `ease-flora`. Nadpisy kariet: plynulý `transition-colors`
+  (predtým skok). Blog karty: jemný `hoverZoom` (scale 1.02, `motion-reduce` guard). Ease token
+  zapojený všade.
+- Zistenie: `--ease-flora` token aj `:focus-visible` **už v `theme.css` existovali** (2 z 3
+  nálezov splnené) — overenie voči kódu sa vyplatilo. Tailwind v4 dáva `scale-*` do vlastnosti
+  **`scale`**, nie `transform` (`transition-transform` ju v4 pokrýva).
+
+**Doladenia na požiadanie:**
+- **Kroky** (Ako to prebieha): stĺpce podľa počtu (3→3, 4→4, žiadny prázdny stĺpec), väčší rozostup,
+  **animované šípky** medzi krokmi (`@keyframes flora-sipka`, len `lg`, `reduced-motion` gate).
+- **Meniny**: dnešný deň zvýraznený — chip v páse, celý dnešný riadok v týždennom bloku (clay-100).
+
+**Nové/aktualizované docs:** `ako-viest-sedenia.md` (konvencia delenia sedení — 1 sedenie = 1 cieľ),
+`prikazy.md` (lokálny náhľad + mobil cez Network IP, `cd` vs `git checkout`), `plan-agenti.md`
+(backlog: flower-bar konfigurátor, adopcia skillov, napojiteľnosť šablóny — obchod→Woo, headless WP,
+článkový agent, chatbot), `sablony-kvalita.md`, `LICENSES.md`, `VENDORED.md`.
+
+**Ponaučenia:**
+- **Over voči reálnemu kódu, nie od oka** — grep komponentov minul globálne pravidlá v `theme.css`
+  (`ease-flora`, `:focus-visible`). Emilova zásada „review your work".
+- **Tailwind v4**: `scale/translate/rotate` sú samostatné CSS vlastnosti (nie `transform`).
+- **Lokálny náhľad na mobile**: `Network` URL (`http://<IP>:3000/ukazky/kvetinarstvo`) na rovnakej
+  WiFi; v bežnom Chrome zavadzia **service worker/cache produkčného webu** → **inkognito** to obíde.
+- **Zdieľané komponenty** (Kroky, Foto): úpravy musia zvládnuť viac počtov/kontextov (3 aj 4 kroky).
+
+**Stav na konci:** šablóna kompletná a vyladená (reálne fotky, QA opravy, sémantika, motion/polish).
+NEzlúčené do `main`. **Publikovanie = merge do `main`** (Railway → `digitalnapomoc.sk/ukazky/kvetinarstvo`,
+`noindex`, ukážka na odkaz) — až na výslovný súhlas majiteľa.
+
+**Ďalší krok:** finálny `qa-a11y` gate + rozhodnutie o merge; potom M3 (rezervačný/objednávkový modul),
+M4 (`site-customizer` + `ui-ux-pro-max`), Fáza 3/4 (agent worker, WooCommerce) — v samostatných sedeniach.
+
 ## Aug 2026 — Frontend agent M2a: vlajková šablóna KVETINÁRSTVO „Boma Flora" ✅ (vetva, NEzlúčené)
 
 **Míľnik M2a hotový na vetve `claude/m1-frontend-agent-templates-94ksdt`** (M1 už
