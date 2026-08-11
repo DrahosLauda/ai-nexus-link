@@ -3,6 +3,56 @@
 > Zoznam cieľov a **rozhodnutí** pre nasledujúce sedenia. Podrobný plán
 > rezervačného agenta je nižšie (výstup plánovacieho sedenia, aug 2026).
 
+## ⭐ ĎALŠIE SEDENIE = PORADA (revízia plánovania, aug 2026)
+
+> **Stav pri zadaní:** vlajková šablóna kvetinárstvo (Boma Flora) je hotová,
+> QA-čistá (a11y 100, AA), naživo na `digitalnapomoc.sk/ukazky/kvetinarstvo` a
+> prepojená z domovskej stránky (nav „Ukážky" + sekcia „Weby, aké staviame" +
+> footer). Míľniky M1, M2a, M2b zlúčené. Sme na **inflexnom bode** — pred
+> ďalším veľkým krokom si spravíme **poradu** (nič sa nekóduje, len rozhodnutia).
+>
+> **Kľúčové zistenie na odpichnutie:** M3 „rezervačný modul do kvetinárstva"
+> **nesedí** — booking engine je pre termínové odvetvia (kaderníctvo, autoservis,
+> zubár: „služba → deň → slot"). Kvetinárstvo funguje na **objednávku kytice /
+> e-shop / svadobnú konzultáciu**, nie na sloty. → na poráde rozhodneme
+> **mapovanie modul ↔ odvetvie**, nie slepé poradie M3–M6.
+
+**Štartový prompt (copy-paste do nového sedenia):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(hlavne sekciu „ĎALŠIE SEDENIE = PORADA").
+
+Toto je PLÁNOVACIE sedenie = PORADA (šetríme tokeny): nič nekóduj, len
+rozhodujeme a zapisujeme. Cieľ: zrevidovať plánovanie po dokončení vlajkovej
+šablóny kvetinárstva a rozhodnúť ďalší veľký krok.
+
+AGENDA:
+1. Revízia roadmapy — čo má REÁLNU prioritu (nie poradie v zozname M3–M6).
+   Čo je hotové a naživo, čo je len na papieri.
+2. Mapovanie MODUL ↔ ODVETVIE — ktorý modul do ktorej šablóny:
+   - booking (termíny) → kaderníctvo/autoservis/zubár, NIE kvetinárstvo;
+   - kvetinárstvo → WooCommerce (nákup kytíc) / flower konfigurátor /
+     svadobná konzultácia (jediný „termínový" fit) / objednávkový formulár (už má);
+   - chatbot (RAG) → kamkoľvek.
+   Rozhodni, čo je pre kvetinárstvo najprirodzenejší ďalší modul.
+3. ĎALŠÍ VEĽKÝ KROK — porovnaj a odporuč:
+   (a) 2. šablóna = kaderníctvo + booking modul (dôkaz „lego" naostro,
+       overí replikovateľnosť + prirodzené využitie booking enginu);
+   (b) prehĺbenie kvetinárstva (WooCommerce alebo flower konfigurátor);
+   (c) customizačný agent M4 (z šablóny klientský web zmenou dát) + ui-ux-pro-max;
+   (d) produktoví agenti — Fáza 3 (orchestrátor ako Railway worker, cron).
+4. OBCHODNÝ UHOL — čo najviac pomôže získať PRVÉHO PLATIACEHO klienta
+   (referencia, demo, predajná podstránka služby)? Zosúladiť s vizia.md.
+5. PRED-GOOGLE CHECKLIST — cookie lišta/GDPR + kedy zapnúť SITE_INDEXABLE
+   (web je zámerne skrytý pred Googlom, viď dennik/go-live).
+
+VÝSTUP porady: rozhodnutia + priorita zapísané do docs/plan-agenti.md
+(aktualizovať míľniky/mapovanie modulov), a hotový ŠTARTOVÝ PROMPT pre prvé
+realizačné sedenie zvoleného kroku. Commit + push do vetvy môžeš; merge do main
+a zmeny v Railway/Directus až po mojom výslovnom súhlase. Rešpektuj CLAUDE.md
+(slovenčina, minimalizmus, tri zdroje pravdy, least privilege).
+```
+
 ## Pracovný režim (šetrenie tokenov)
 - **Plánovacie sedenie:** prečítať `dennik.md` + `vizia.md` + tento súbor →
   dohodnúť rozhodnutia → napísať podrobný plán po krokoch sem **+ hotový
