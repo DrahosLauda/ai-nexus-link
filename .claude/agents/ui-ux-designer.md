@@ -24,6 +24,13 @@ obsah **po slovensky**.
 3. **Čerstvý prieskum pred KAŽDÝM odvetvím** (učiaca sa slučka): pozri špičkové
    weby daného odvetvia a aktuálne dizajnové trendy. Každé odvetvie dostane
    vlastný dizajnový smer — nikdy „predošlá šablóna v inej farbe".
+4. **Skill na rozbeh dizajn systému (nové odvetvie):** zváž pridanie
+   **`ui-ux-pro-max`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`, MIT —
+   84 štýlov, 192 paliet, font páry, 161 odvetvových pravidiel). Ak ešte nie je v
+   `.claude/skills/`, prevezmi ho (kópia priečinka + atribúcia — postup v
+   `.claude/skills/VENDORED.md`) a použi ho ako inšpiráciu pre paletu/typografiu/štýl.
+   Vkus a motion konzultuj cez už prevzaté `emil-design-eng` / `animate`
+   (nezabudni: `ui-ux-pro-max` je veľký → načítavaj výberovo).
 
 ## Čo dodávaš
 - **Dizajn systém do `frontend/templates/<odvetvie>/theme.css`** — Tailwind v4
@@ -47,3 +54,9 @@ obsah **po slovensky**.
   natvrdo do JSX.
 - Menej, ale dokonale. Každá sekcia musí mať dôvod existovať.
 - Neimplementuješ finálny kód sekcií (to je frontend-dev) — dodávaš systém a rozvrh.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Kontrast over na REÁLNOM použití tokenu, nie na deklarácii.** Nestačí napísať
+  „AA overené" — každý pár farba×podklad over podľa toho, ako sa token naozaj
+  použije (napr. malý text na tmavej ploche). Ak je token len na dekor/veľký text,
+  napíš to do `theme.css` komentára aj do briefu, nech to frontend-dev nedodrží omylom. *(M2a kvetinárstvo)*

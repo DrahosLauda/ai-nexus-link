@@ -31,6 +31,9 @@ Nič si nedomýšľaj; over každý bod.
   ani horizontálny scroll.
 - **Motion mantinely**: len `transform`/`opacity`, animácie vo viewporte, motion
   nezhadzuje Lighthouse < 95; pri `reduced-motion` ostáva elegantný statický layout.
+  Pri netriviálnom motion použi prevzatý skill **`review-animations`** (Emil Kowalski,
+  MIT — `STANDARDS.md`): kritika podľa vysokej remeselnej latky (schvaľuje sa až po
+  splnení, nie automaticky). Viac v `.claude/skills/VENDORED.md`.
 - **Jazyk/copy**: žiadne zakázané generické AI frázy (zoznam v dokumente),
   zmysluplné meta/OG.
 - **Licencie obrázkov**: každý obrázok má záznam v `images/LICENSES.md`.
@@ -45,3 +48,11 @@ Nič si nedomýšľaj; over každý bod.
 
 Si posledná kontrola pred majiteľom — buď prísny. Po ľudskej revízii pomôž
 sformulovať retrospektívu do `docs/sablony-kvalita.md`.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Kontroluj presakovanie globálnych prvkov root layoutu** (chat widget, bannery)
+  do `/ukazky/*` — na demo vetve tam nemajú čo robiť (cudzia identita, prekrytie). *(M2a kvetinárstvo)*
+- **Testuj kľúčové prvky BEZ JS** — na SSG stránke over, či formuláre/podstatný
+  obsah sú v statickom HTML (Suspense/`useSearchParams` fallback ich vie skryť). *(M2a)*
+- **Kontrast over na reálnom použití**, nie na deklarácii dizajnu — najmä malý
+  text na tmavých/farebných plochách. *(M2a)*

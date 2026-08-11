@@ -571,6 +571,14 @@ a skill načítateľné. Žiadny fiktívny obsah zatiaľ.
 
 ### M2 — Vlajková šablóna: **kvetinárstvo** (špičková úroveň + motion)
 
+> **M2a ✅ HOTOVÉ** (aug 2026, vetva `claude/m1-frontend-agent-templates-94ksdt`,
+> NEzlúčené): demo značka **Boma Flora** (Trenčín), 7 stránok + detail blogu,
+> meniny prvok, smútočné kytice, blog, obchod; postavené reťazcom sub-agentov
+> (dizajnér→copy→dev→QA) + revízia majiteľa. Lint/build čisté, screenshoty
+> hotové, retrospektíva v `docs/sablony-kvalita.md`. **Otvorené:** reálne fotky
+> (teraz SVG placeholder), potom **M2b** (motion + hero video Higgsfield). Detaily
+> a ponaučenia: `docs/dennik.md`.
+
 > Rozdelené na **M2a (statická špička)** a **M2b (motion vrstva)** — detail a
 > motion spec v sekcii „Vlajková šablóna kvetinárstvo" nižšie. M2a musí obstáť aj
 > bez animácií (je fallbackom pre `reduced-motion`); M2b pridá Framer Motion navrch.
@@ -843,6 +851,79 @@ mobile drží výkon; inak ostane A. Kvalita čísla > efekt.
   kolo o cenách, až po M2 (rozhodnutie majiteľa: neskôr).
 - Recenzie z Google ako referencie v šablóne klienta — len so súhlasom klienta
   (GDPR); zvážiť pri prvom reálnom nasadení.
+
+## Šablóna kvetinárstvo — napojiteľnosť (RÁTAŤ S TÝM pri ďalšom vývoji)
+
+> Požiadavka majiteľa (aug 2026): základná šablóna sa má stavať tak, aby sa dala
+> kedykoľvek rozšíriť a napojiť na backend schopnosti projektu. Šablóna je
+> **dizajnová škrupina**, prispôsobenie = zmena dát (`content.ts`, `media.ts`,
+> `theme.css`), nie prepis komponentov. Naplánované cesty napojenia:
+
+| Rozšírenie | Ako | Väzba |
+|---|---|---|
+| Ďalšia stránka / podstránka (napr. `/sluzby/[slug]`) | nový page komponent + `registry.ts` (optional catch-all route) | `frontend-dev` |
+| **Obchod → reálny nákup** | WooCommerce Store API (embednutý checkout → plný); produkty vo WP | Fáza 4 |
+| **Blog → headless WordPress klienta** | prepnúť dátový zdroj z demo `content.ts` na WP REST (`lib/wp.ts`, ISR) | M4 / go-live klienta |
+| **Článkový agent** (písanie článkov → WP koncept) | `orchestrator/wp_writer_agent.py` → WP; cron worker + config v Directuse | Fáza 3 |
+| **Chatbot** (RAG) | zapojiť zdieľaný `chat-widget` + `/api/chat` (bez duplicity logiky) | `docs/rag-chatbot.md` |
+| **Leady / CRM** | formuláre → Directus `client_leads` | ✅ hotové |
+
+Dátové toky (vízia): návštevník → Next.js → číta WP / zapisuje leady do Directusu;
+agenti → čítajú config z Directusu → publikujú do WP → frontend zobrazí. Každé
+napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
+**architektúra je naň postavená** (lego princíp, `frontend-dev` moduly len zapája).
+
+## Nápad / backlog — interaktívny konfigurátor kytice („flower bar")
+
+> Nápad majiteľa (aug 2026). **Zatiaľ pre Boma Flora, ako súčasť šablóny
+> kvetinárstva.** Nerealizovať v sedení o šablóne — **patrí do vlastného
+> plánovacieho sedenia** (viď `docs/ako-viest-sedenia.md`).
+
+**Koncept:** zákazník vidí „stenu" kvetov vo vázach / dizajnových kýbloch (ako
+reálny výklad kvetinárstva). Pri každom kvete je **názov a cena za 1 ks**.
+Zákazník si naklikáva jednotlivé kvety (počty), aplikácia mu **skladá kyticu** a
+priebežne ukazuje **celkovú cenu**. Nakoniec vie kyticu objednať.
+
+**Prečo to sedí do stacku:**
+- Frontend (Next.js): mriežka kýblov/váz = klikacie položky s `+/−` počtom.
+- Dáta o kvetoch (názov, cena/ks, obrázok, farba, sklad) v **Directuse** →
+  klient si ich sám edituje; neskôr možné napojiť na WooCommerce (Fáza 4).
+- Výber + živý súčet = klientský stav.
+- Hotová „kytica + cena" → predvyplnenie objednávkového formulára (teraz),
+  reálny checkout (neskôr).
+
+**Kľúčové otvorené rozhodnutie = ako zobraziť výslednú kyticu** (blokátor MVP):
+1. **Zoznam + súčet** (triviálne, deterministické).
+2. **Skladaný obrázok z výrezov** — každý kvet PNG s priehľadným pozadím,
+   navrstvené do tvaru kytice. Pekné a predvídateľné. *(Odporúčaný cieľ MVP.)*
+3. **AI-generovaný obrázok** z výberu — efektné, ale pomalé, kreditovo drahé a
+   nedeterministické; skôr bonus než jadro.
+
+**Čo vyrieši plánovacie sedenie:** rozsah MVP, dátový zdroj (Directus vs Woo),
+úroveň vizualizácie (1/2/3), kde funkcia žije (stránka v šablóne), napojenie na
+objednávku/platbu, zaradenie do míľnikov (kandidát na **M7** alebo rozšírenie
+šablóny kvetinárstva). Hodnota: zvyšuje atraktivitu produktizovanej šablóny (Fáza 5).
+
+## Vylepšenie frontend agentov — externé skilly (vkus + motion)
+
+> Aug 2026. Cieľ: zdvihnúť „vkusovú" úroveň frontendu k „nerozoznateľné od AI".
+
+**Adoptované (hotové, MIT):** z `github.com/emilkowalski/skills` sme prevzali tri
+skilly do `.claude/skills/` a napojili ich:
+- `emil-design-eng` (filozofia vkusu / polish / detaily),
+- `animate` (+ `RECIPES.md`) — stavba motion správne,
+- `review-animations` (+ `STANDARDS.md`) — kritika motion podľa latky.
+Napojenie: `frontend-dev` (stavba/motion), `qa-a11y` + `docs/sablony-kvalita.md`
+(revízia). Atribúcia a zoznam v `.claude/skills/VENDORED.md`.
+
+**Backlog — pridať rovnako, keď bude treba (kópia priečinka do `.claude/skills/`):**
+- Ďalšie Emilove skilly: `apple-design`, `pick-ui-library`,
+  `find-animation-opportunities`, `improve-animations`, `animation-vocabulary`,
+  `prototype`.
+- **`ui-ux-pro-max-skill`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`, MIT) —
+  veľká knižnica dizajn systémov (84 štýlov, 192 paliet, 161 pravidiel, font páry,
+  tech stacky). Vhodné pre **`ui-ux-designer` pri rozbiehaní NOVEJ odvetvovej šablóny**,
+  nie do každého sedenia (veľký kontext → načítať výberovo).
 
 ## Štartový prompt pre PRVÉ realizačné sedenie (M1)
 

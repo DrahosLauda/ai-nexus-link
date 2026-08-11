@@ -12,16 +12,31 @@ Cieľ: jeden repozitár a žiadna nová infra pre naše portfólio, no zároveň
 
 ```
 templates/
-  registry.ts                 # register šablón (slug, odvetvie, popis, render)
+  registry.ts                 # register šablón (slug, odvetvie, popis, shell, pages)
   <odvetvie>/
     theme.css                 # scoped dizajn-tokeny (Tailwind v4 @theme, prefix <odvetvie>-*)
     content.ts                # všetok obsah/texty šablóny (jedno miesto na customizáciu)
-    sections/                 # hero, sluzby, galeria, o-nas, cennik, referencie, kontakt…
-    images/                   # licencované obrázky
+    base.ts                   # TEMPLATE_BASE + href() — centralizované interné cesty (kvôli liftu)
+    layout.tsx                # „shell" (fonty + navbar + pätička + .flora-root) okolo každej stránky
+    index.tsx                 # skladá TemplateEntry (shell + zoznam stránok cesta→render+meta)
+    sections/                 # hero, sluzby, galeria, meniny, referencie, kontakt-form…
+    pages/                    # jedna stránka viacstránkového webu = jeden súbor
+    images/                   # licencované obrázky (+ placeholder systém, kým nie sú)
       LICENSES.md             # zdroj + licencia KAŽDÉHO obrázka (právne čisté pre klienta)
-    layout.tsx                # importuje theme.css balíka; obal viacstránkového webu
-    page.tsx                  # zloženie domovskej stránky šablóny
 ```
+
+### Tailwind wiring (dôležité)
+
+Tokeny šablóny sú v `@theme` v jej `theme.css`. Aby z nich Tailwind v4 vygeneroval
+utility (`bg-flora-paper`, `text-flora-h1`, `font-flora-display`…), musí sa
+`theme.css` skompilovať v **jednom** Tailwind builde — preto ho **`@import`-uje
+`app/globals.css`** hneď za `@import "tailwindcss"`. Prefix (`flora-`) + scoping
+základových pravidiel pod `.flora-root` zabraňujú kolízii s hlavným webom, takže
+do zvyšku stránky nič nepresiakne. `layout.tsx` šablóny už `theme.css` **nenačítava**
+(bola by to duplicita) — len aplikuje `.flora-root` a CSS premenné fontov.
+
+> Pri lifte ku klientovi (viď nižšie) sa `@import` `theme.css` presunie do
+> `globals.css` cieľového appu — rovnaký princíp, jeden build.
 
 ## Princípy
 

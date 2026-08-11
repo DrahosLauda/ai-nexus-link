@@ -56,7 +56,8 @@ dodania — SaaS), `docs/architektura.md` (ako systém funguje),
 `docs/directus.md` (Directus ťahák — kolekcie, úkony, tokeny/role),
 `docs/go-live.md` (spustenie referencie — doména → frontend, WP na wp. subdoménu),
 `docs/rag-chatbot.md` (štartový runbook pre RAG chatbot agenta — prvé živé demo),
-`docs/obsidian-claude.md` (návod na prepojenie Obsidian ↔ Claude + na čo nám slúži).
+`docs/obsidian-claude.md` (návod na prepojenie Obsidian ↔ Claude + na čo nám slúži),
+`docs/ako-viest-sedenia.md` (konvencia, ako deliť a viesť sedenia — 1 sedenie = 1 súvislý cieľ).
 
 ## Príkazy
 

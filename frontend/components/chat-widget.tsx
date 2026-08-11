@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 /**
@@ -56,6 +57,7 @@ const GREETING: Msg = {
 };
 
 export function ChatWidget() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([GREETING]);
   const [input, setInput] = useState("");
@@ -135,6 +137,11 @@ export function ChatWidget() {
       setSending(false);
     }
   }
+
+  // Vetva /ukazky/* sú odvetvové demo šablóny s vlastnou identitou — globálny
+  // chat hlavného webu (digitalnapomoc.sk) tam nepatrí. Všetky hooky sú volané
+  // vyššie, takže tento skorý návrat neporušuje pravidlá hookov.
+  if (pathname?.startsWith("/ukazky")) return null;
 
   return (
     <div

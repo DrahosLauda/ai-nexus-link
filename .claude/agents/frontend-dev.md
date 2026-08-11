@@ -50,4 +50,23 @@ texty **po slovensky**.
 - **Minimalizmus**: neťahaj závislosť, kde stačí `fetch`/natívne API/jeden riadok.
 - Pred odovzdaním: `npm run lint` + `npm run build` čisté (spúšťaj vo `frontend/`).
 
+## Vkus a motion — používaj prevzaté skilly (Emil Kowalski, MIT)
+Dopĺňajú (nenahrádzajú) mantinely z `docs/sablony-kvalita.md`. Viac v `.claude/skills/VENDORED.md`.
+- **`emil-design-eng`** — konzultuj pri rozhodnutiach o polish, komponentoch a
+  neviditeľných detailoch; pri revízii UI kódu drž formát **Before/After tabuľky**.
+- **`animate`** — použi vždy, keď staviaš animáciu/prechod: rozhoduj v poradí
+  *či vôbec animovať → účel → nástroj → vlastnosti → krivka/trvanie → prerušenie → exit*
+  (len `transform`/`opacity`, `ease-out` pre vstup, `prefers-reduced-motion` fallback).
+
 Hotový výstup odovzdávaš na bránu kvality (`qa-a11y`) a ľudskú revíziu.
+
+## Ponaučenia z retrospektív (čítaj — učiaca sa slučka)
+- **Globálne prvky root layoutu presakujú do šablóny.** Šablóna beží vnútri
+  hlavnej appky, takže `app/layout.tsx` globály (napr. `ChatWidget`, bannery) sa
+  zobrazia aj na `/ukazky/*`. Vypni ich na tejto vetve (napr. `usePathname()` →
+  `null` pre `/ukazky`). *(M2a kvetinárstvo)*
+- **Nič podstatné negatuj cez `Suspense`/`useSearchParams` na SSG stránke** —
+  fallback skončí v statickom HTML a obsah zmizne bez JS. Formuláre a kľúčové
+  prvky rob ako progresívne vylepšenie (polia v HTML, prefill z URL cez efekt). *(M2a)*
+- **„Data-driven" platí aj pre sekčné hlavičky** (eyebrow + nadpis) — patria do
+  `content.ts`, nie natvrdo do JSX. *(M2a)*

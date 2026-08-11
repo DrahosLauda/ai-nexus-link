@@ -91,6 +91,12 @@ drž mantinely, inak sa efekt vypúšťa.
   neblokovať prvé vykreslenie videom.
 - **Rozpočet:** motion nesmie zhodiť **Lighthouse < 95** ani a11y. Ak zhodí →
   prvok sa zjednoduší alebo vypustí. **Kvalita čísla > efekt.**
+- **Remeselná latka (prevzaté skilly — Emil Kowalski, MIT):** pri stavbe motion
+  používaj skill **`animate`** (poradie rozhodnutí: či animovať → účel → nástroj →
+  vlastnosti → krivka/trvanie → prerušenie → exit) a pri revízii **`review-animations`**
+  (`STANDARDS.md` — schvaľuje sa až po splnení). Vkusové rozhodnutia o polish/detailoch
+  konzultuj cez **`emil-design-eng`**. Detaily a atribúcia: `.claude/skills/VENDORED.md`.
+  Tieto skilly **dopĺňajú** tieto mantinely, nenahrádzajú ich.
 
 ## Postup povinnej ľudskej revízie
 
@@ -151,4 +157,58 @@ model v Directus `agent_config`. Nemýliť si to.)*
 ## Retrospektívy
 
 > Sem pribúdajú záznamy po každej dokončenej šablóne (najnovšie navrch).
-> Zatiaľ žiadne — prvá pribudne po vlajkovej šablóne (M2).
+
+### Retrospektíva — kvetinárstvo „Boma Flora" (M2a, august 2026)
+
+**Čo fungovalo:** Reťazec sub-agentov (ui-ux-designer → sk-copywriter →
+frontend-dev → qa-a11y) dal konzistentný výsledok. Textová/dátová vrstva a
+`content.ts` boli hneď na úrovni; meniny (podpisový prvok) vyšli presne; QA
+zachytila reálne blokujúce chyby pred majiteľom (chatwidget, formulár bez JS,
+kontrast). Dvojkolo dizajnu (návrh → náhľad → revízia majiteľa) ušetrilo veľa
+prerábania — smer sa potvrdil skôr, než sa stavali sekcie.
+
+**Čo QA vytkla (a stálo to opravu):**
+1. **Globálny komponent hlavného webu presakoval do šablóny.** `ChatWidget`
+   z koreňového `app/layout.tsx` sa montoval aj na `/ukazky/*` — cudzia identita
+   + prekrytie obsahu. Lekcia: šablóna beží vnútri hlavnej appky, takže **globálne
+   prvky z root layoutu (widgety, bannery) do nej presakujú** — treba ich na
+   `/ukazky/*` vypnúť.
+2. **Deklarovaný kontrast ≠ overený kontrast.** Dizajn tvrdil „AA overené", no
+   `clay-400` sa reálne použil ako malý text na tmavej (3.8:1) — pričom komentár
+   v `theme.css` to sám zakazoval. Lekcia: kontrast sa overuje na **reálnom
+   použití tokenu**, nie na deklarácii.
+3. **Suspense/`useSearchParams` fallback na SSG stránke zmizne bez JS.** Formulár
+   sa stratil v statickom HTML. Lekcia: podstatný obsah nikdy negatovať cez
+   `useSearchParams`/`Suspense` na staticky prerendrovanej stránke — progresívne
+   vylepšenie.
+4. **„Data-driven" platí aj pre sekčné hlavičky.** Eyebrow/nadpis boli natvrdo
+   v JSX. Lekcia: do `content.ts` patria aj mikrotexty sekcií, nielen hlavné bloky.
+
+**Ponaučenia zapísané späť:**
+- `.claude/agents/frontend-dev.md` — globálne prvky root layoutu vypni na
+  `/ukazky/*`; nič podstatné negatovať cez Suspense/`useSearchParams` na SSG;
+  do `content.ts` patria aj sekčné eyebrow/nadpisy.
+- `.claude/agents/ui-ux-designer.md` — pri deklarácii kontrastu over pomer na
+  **reálnom** páre token×podklad podľa skutočného použitia (nie „od oka").
+- `.claude/agents/qa-a11y.md` — explicitne kontroluj presakovanie globálnych
+  komponentov do `/ukazky/*` a správanie kľúčových prvkov **bez JS**.
+- `docs/sablony-kvalita.md` (tu) — checklist doplnený nižšie (viď hviezdičky).
+
+**Obrázky (otvorený bod, nie chyba):** reálne fotky sa v cloud sedení nedali
+spoľahlivo stiahnuť → dočasný palete verný SVG placeholder systém (správne
+pomery, alt, bez CLS). Lekcia: **obrázky planuj ako samostatný krok** (kurátorský
+stock so súhlasom majiteľa alebo jeho vlastné) — layout musí byť odolný, aby ich
+prijal cez `next/image` bez prerábky. To sa podarilo.
+
+**Metriky:** `npm run lint` + `npm run build` čisté; 11 stránok, všetky `noindex`;
+0 horizontálny scroll na 375/768/1280 px; meniny presné (rod, `<time>`, bez CLS);
+0 zakázaných AI fráz. Lighthouse: neмeraný v sedení (CLI chýba) — domerať pred
+finálnym „hotovo"/spustením u klienta.
+
+**Doplnené do checklistu (z tejto šablóny):**
+- ☆ Over, že **globálne prvky root layoutu** (chat/bannery) nepresakujú do
+  `/ukazky/*` (na demo vetve majú byť vypnuté).
+- ☆ Kľúčové interaktívne prvky (formuláre) musia byť v HTML **aj bez JS** (žiadny
+  Suspense/`useSearchParams` gating podstatného obsahu na SSG).
+- ☆ Kontrast over na **reálnom** použití tokenu, nie na deklarácii v dokumente.
+- ☆ Do `content.ts` patria aj **sekčné hlavičky** (eyebrow + nadpis), nielen hlavné bloky.

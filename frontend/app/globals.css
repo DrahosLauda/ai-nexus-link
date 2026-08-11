@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Odvetvové šablóny (`templates/<odvetvie>/theme.css`) — ich `@theme` tokeny sa
+   musia skompilovať do Tailwind utilít v jednom builde. Prefix `flora-` (a pod.)
+   zabraňuje kolízii s tokenmi hlavného webu; základové pravidlá sú scoped pod
+   `.flora-root`, takže do zvyšku webu nič nepresiakne. Detail: templates/README.md. */
+@import "../templates/kvetinarstvo/theme.css";
+
 @theme {
   /* Section grounds */
   --color-night: #08080d;
