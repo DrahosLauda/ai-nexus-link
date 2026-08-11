@@ -5,6 +5,11 @@
 
 ## ⭐ ĎALŠIE SEDENIE = PORADA (strategická revízia CELÉHO projektu, aug 2026)
 
+> **✅ PORADA ODBYTÁ (aug 2026).** Výstup — rozhodnutia, priorita naprieč
+> projektom a štartový prompt pre prvý realizačný krok — je nižšie v sekcii
+> **„PORADA — strategická revízia CELÉHO projektu (VÝSTUP)"**. Zadanie nižšie
+> ostáva pre kontext.
+
 > **Toto NIE je porada len o šablónach.** Je to strategická revízia **celého
 > AI Nexus Link** — kam dať ďalšiu energiu naprieč všetkými vetvami projektu:
 > tri vrstvy (WP obsah · Directus CRM · agenti), referenčný web
@@ -66,6 +71,147 @@ vetvy môžeš; merge do main a zmeny v Railway/Directus až po mojom výslovnom
 súhlase. Rešpektuj CLAUDE.md (slovenčina, minimalizmus, tri zdroje pravdy,
 least privilege).
 ```
+
+---
+
+# PORADA — strategická revízia CELÉHO projektu (VÝSTUP, aug 2026)
+
+> Výstup strategickej porady (zadanie ↑). Rozhodnutia a priorita naprieč celým
+> AI Nexus Link. **Odporúčania sú moje (Claude); finálne poradie potvrdí
+> majiteľ.** Kým nepovie inak, prvý realizačný krok = **go-live (Pred-Google
+> checklist)**. Merge do `main` a zmeny v Railway/Directus výhradne po súhlase.
+
+## 0. Zoom-out — kde je projekt naprieč VŠETKÝMI vetvami
+
+| Vetva projektu | Stav | Poznámka |
+|---|---|---|
+| **Referenčný web `digitalnapomoc.sk`** | ✅ technicky naživo · ❌ **skrytý pred Googlom** | `SITE_INDEXABLE` vyp.; blokuje len cookie lišta + GDPR zásady |
+| **Tri vrstvy** (WP obsah · Directus CRM · agenti) | ✅ všetky tri žijú | `client_leads` zbiera leady; hranice čisté |
+| **Writer + SEO/GEO agent** | ✅ naživo (WP koncepty) | reťazec Writer→SEO beží; Fáza 3 worker ešte nie |
+| **RAG chatbot** | ✅ prvé demo naživo | odpovedá z nášho obsahu + cituje zdroje (hrubá verzia) |
+| **Rezervačný agent** | ✅ R1 naživo (widget `/rezervacia`) | R2 (chatbot rezervuje), R3 (pripomienky), R4 (replikácia) ešte nie |
+| **Frontend knižnica šablón** | ✅ M1 infra + M2 Boma Flora (7 str., reálne fotky, QA) | ⚠️ **NEzlúčené do `main`, na vetve `m1-frontend-agent-templates` → neviditeľné** |
+| **Fáza 3** (orchestrátor ako trvalý cron worker) | ❌ len plán | agenti bežia manuálne/v pipeline, nie ako 24/7 worker |
+| **Produktizácia / SaaS (Fáza 5)** | ❌ len na papieri | multi-tenant, centrálny admin |
+| **Platiaci klient** | ❌ **žiadny** | všetko referencia/demo |
+
+**Kľúčové zistenie porady:** najväčšia nevyužitá hodnota **nie je v novom kóde**
+— je v **už hotovej práci, ktorá nie je vidno**: (a) referenčný web je skrytý
+pred Googlom, (b) vlajková šablóna + booking + chatbot sedia na nezlúčených
+vetvách. Projekt má vybudované **jadro**; chýba mu **viditeľnosť a prvý
+zákazník**, nie ďalšie demo. → Priorita = **speňaž a zviditeľni hotové, potom
+stavaj nové.**
+
+## 1. Priorita naprieč projektom (odporúčané poradie)
+
+**① Go-live do Googla — Pred-Google checklist (cookie lišta + GDPR).** NAJPRV.
+Najlacnejší krok s najväčším odomknutím. Kým je web skrytý: neexistuje verejná
+referencia, na ktorú ukázať klientovi, a **nesmieme legálne zbierať osobné
+údaje** (leady/rezervácie/chatbot zbierajú meno/e-mail/telefón). Go-live je
+**predpoklad všetkého klientskeho**. Náklad malý: cookie lišta + stránka zásad
+OÚ + zapnúť `SITE_INDEXABLE` + Search Console. *(hodnota vysoká · náklad nízky ·
+blízkosť k príjmu: odomyká ju)*
+
+**② Konsolidácia + prvý platiaci klient.** Po revízii **zlúčiť hotovú šablónu
+Boma Flora do `main`** (aby bola vidno) a spraviť z hotového (šablóna + booking +
+chatbot) **konkrétnu predajnú ponuku**; osloviť **1 reálnu firmu**. Najkratšia
+cesta k prvému €. Nepíše sa nový produkt — speňažuje sa hotový. *(hodnota
+najvyššia · náklad stredný · blízkosť k príjmu: priama)*
+
+**③ Dotiahnuť produktových agentov (Fáza 3 worker) / 2. šablóna — až ťahané
+dopytom.** Cron worker, kaderníctvo, konfigurátor kytice, chatbot R2 majú
+hodnotu, ale **nepribližujú k príjmu ani viditeľnosti**. Robiť **reaktívne** —
+keď to vyžiada reálny klient, alebo keď ① + ② bežia — nie špekulatívne dopredu.
+*(hodnota stredná · náklad rôzny · blízkosť k príjmu: nepriama)*
+
+> **Princíp:** projekt má dosť dema; potrebuje **zákazníka a verejnú
+> referenciu**. Preto najprv ① (zviditeľni) a ② (speňaž), nové stavanie až potom.
+
+## 2. Mapovanie MODUL ↔ ODVETVIE
+
+| Modul | Sedí na odvetvie | Nesedí / poznámka |
+|---|---|---|
+| **Rezervačný engine/widget** (`lib/booking.ts`) | kaderníctvo, autoservis, zubár, kozmetika, reality — *„služba → deň → slot"* | **NIE kvetinárstvo** (nefunguje na sloty) |
+| **Kvetinárstvo** | objednávka kytice / e-shop (Woo) · **svadobná/event konzultácia** (booking = konzultácia, nie kúpa) · flower konfigurátor · objednávkový formulár (už má) | booking tu = konzultácia, nie predaj kytice |
+| **RAG chatbot** | **ktorékoľvek odvetvie** (číta klientov obsah) | univerzálny |
+| **Writer + SEO/GEO** | **ktorékoľvek** (obsahový marketing) | univerzálny |
+
+**Oprava pôvodného M3:** „rezervačný modul **do kvetinárstva**" bol
+nesprávny — booking je pre termínové odvetvia. V kvetinárstve má booking zmysel
+len ako **svadobná/event konzultácia**; kúpa kytice ide cez objednávku / Woo /
+konfigurátor. Prvé „šablóna + booking" demo naostro preto radšej na
+**kaderníctve/autoservise** (2. šablóna), nie na kvetinárstve.
+
+## 3. Obchodný model — najkratšia cesta k prvému €
+
+**Odporúčaný model: balík „web na kľúč + lego agenti ako upsell"** (vízia §4 SaaS
+smer, §8 párovanie agent ↔ služba):
+
+- **Vstup (jednorazovo):** odvetvový **šablónový web na kľúč** — customizácia
+  obsahu/brandingu, **nie kód** (M4). Boma Flora je dôkaz úrovne („takéto weby
+  staviame").
+- **Upsell (mesačne, opakovaný príjem = SaaS smer):** **lego agenti** — chatbot,
+  rezervácie, Writer+SEO obsah — každý napojený bez duplicity logiky.
+
+**Najkratšia cesta k prvému €:** vziať **jednu reálnu firmu** (ideálne z okruhu
+majiteľa) a **customizovať jej vlajkovú šablónu naostro** (M4 nie ako suchý beh,
+ale pre klienta) + ponuka aspoň jedného agenta mesačne. **Predpoklad
+dôveryhodnosti = go-live referencie (krok ①).**
+
+**Nižší prah (alternatíva):** nasadiť **jeden modul (chatbot / rezervácie)
+existujúcej firme na jej web** — menší záväzok pre klienta, hneď opakovaný
+príjem, priamo „ukáž nepovedz" z nášho živého dema. Sumy/cenové balíky =
+samostatné kolo (rozhodnutie majiteľa: neskôr).
+
+## 4. Pred-Google checklist (gate go-live) — konkrétne
+
+Zo `docs/dennik.md` backlogu, zoradené:
+
+- [ ] 🍪 **Cookie lišta + stránka „Zásady ochrany osobných údajov"** (GDPR — web
+  zbiera leady `client_leads` + rezervácie `bookings`). **Tvrdý blokér.**
+- [x] Stránkovanie blogu — *hotové.*
+- [ ] 🎨 Doladenie dizajnu — priebežné, **nie tvrdý blokér** (dá sa iterovať naživo).
+- [ ] 🔎 **Zapnúť:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`);
+  over `robots.ts`/`sitemap`/`llms.txt` (SEO/GEO skill je hotový). **Až po cookie/GDPR.**
+
+**Kedy `SITE_INDEXABLE`:** až po nasadení cookie lišty + zásad OÚ. Dizajn nie je
+tvrdý blokér indexovania; **GDPR áno**.
+
+**Minimalizmus (rebrík z CLAUDE.md):** ak web nemá zbytočný analytics/tracking a
+zbiera len funkčné cookies + leady cez formulár, stačí **jednoduchá informačná
+lišta + stránka zásad**, nie ťažký consent manager. Rozsah potvrdiť pri
+realizácii podľa toho, čo web reálne nastavuje (najprv skontrolovať, či beží
+nejaký analytics/tracking).
+
+## Štartový prompt pre PRVÉ realizačné sedenie (go-live — Pred-Google checklist)
+
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md, docs/go-live.md a
+docs/plan-agenti.md (sekcia „PORADA — strategická revízia CELÉHO projektu").
+
+Realizačné sedenie: sprav Pred-Google checklist pre spustenie digitalnapomoc.sk
+do Googla. Konkrétne:
+1) Zisti, čo web reálne nastavuje za cookies (beží nejaký analytics/tracking, či
+   len funkčné?) — podľa toho zvoľ rozsah: jednoduchá informačná cookie lišta
+   (ak žiadny tracking) vs. consent. Minimalizmus (rebrík z CLAUDE.md) — žiadny
+   ťažký consent manager, ak netreba.
+2) Stránka „Zásady ochrany osobných údajov" (GDPR) — web zbiera osobné údaje cez
+   formuláre (client_leads) a rezervácie (bookings). Slovenčina, dizajn webu.
+3) Cookie lišta komponent (prístupná: klávesnica, fokus, reduced-motion, mobil,
+   dotykové ciele) — napojená na stránku zásad OÚ.
+4) Priprav prepnutie SITE_INDEXABLE=true + Google Search Console (www) ako
+   klik-návod (Railway env + GSC) a over robots.ts/sitemap/llms.txt, že po
+   zapnutí bude web správne indexovateľný (SEO/GEO skill).
+Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/ (frontend/AGENTS.md).
+Over lint + build. Vetva claude/... , commit + push; merge do main a zmeny v
+Railway (SITE_INDEXABLE, GSC) až po mojom výslovnom súhlase. Klik-časti vypíš
+ako návod.
+```
+
+> **Poznámka k viditeľnosti hotovej práce (krok ②):** vlajková šablóna Boma
+> Flora + booking R1 sú na **nezlúčených vetvách**. Pri prechode na krok ② treba
+> najprv **revízia → merge do `main`** (po súhlase majiteľa), inak zostáva
+> najlepšia referencia neviditeľná.
 
 ## Pracovný režim (šetrenie tokenov)
 - **Plánovacie sedenie:** prečítať `dennik.md` + `vizia.md` + tento súbor →
