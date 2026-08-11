@@ -48,7 +48,7 @@ export function Kroky({ kroky }: { kroky: Krok[] }) {
     <ol className={`grid grid-cols-1 gap-10 lg:gap-x-12 ${stlpce}`}>
       {kroky.map((k, i) => (
         <li key={k.cislo} className="relative flex flex-col gap-3">
-          <span className="font-flora-display text-[2.5rem] leading-none text-flora-clay-400">{k.cislo}</span>
+          <span className="font-flora-display text-[2.5rem] leading-none text-flora-clay-500">{k.cislo}</span>
           <h3 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{k.nazov}</h3>
           <p className="text-flora-body text-flora-moss">{k.popis}</p>
           {i < kroky.length - 1 ? (
