@@ -25,6 +25,7 @@ export function Footer() {
           <span className="text-[13px] font-bold text-white">Spoločnosť</span>
           <Link href="/#sluzby" className={linkClasses}>Služby</Link>
           <Link href="/#postup" className={linkClasses}>Ako to funguje</Link>
+          <Link href="/ukazky" className={linkClasses}>Ukážky</Link>
           <Link href="/blog" className={linkClasses}>Blog</Link>
           <Link href="/#kontakt" className={linkClasses}>Kontakt</Link>
         </div>

@@ -110,6 +110,7 @@ export const fallbackPosts = [
 export const navLinks = [
   { href: "/#sluzby", label: "Služby" },
   { href: "/#postup", label: "Ako to funguje" },
+  { href: "/#ukazky", label: "Ukážky" },
   { href: "/#referencie", label: "Referencie" },
   { href: "/blog", label: "Blog" },
   { href: "/#faq", label: "FAQ" },

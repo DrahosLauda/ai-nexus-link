@@ -9,6 +9,7 @@ import { HowItWorks } from "@/components/how-it-works";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
 import { Services } from "@/components/services";
+import { Showcase } from "@/components/showcase";
 import { Testimonials } from "@/components/testimonials";
 import { fallbackPosts, faqs } from "@/lib/content";
 import { faqSchema, organizationSchema, websiteSchema } from "@/lib/seo";
@@ -49,6 +50,7 @@ export default async function Home() {
         <Services />
         <HowItWorks />
         <Testimonials />
+        <Showcase />
         <About />
         <Faq />
         <Blog posts={posts} />
