@@ -211,6 +211,26 @@ NEzlúčené do `main`. **Publikovanie = merge do `main`** (Railway → `digital
 **Ďalší krok:** finálny `qa-a11y` gate + rozhodnutie o merge; potom M3 (rezervačný/objednávkový modul),
 M4 (`site-customizer` + `ui-ux-pro-max`), Fáza 3/4 (agent worker, WooCommerce) — v samostatných sedeniach.
 
+**Bezpečnostná revízia šablóny + API (na požiadanie „aby boli všetky dvierka zavreté"):**
+- **Žiadny dátový bordel v DB** — potvrdené. Šablóna je **bezstavová**: texty v `content.ts`,
+  fotky v `images/media.ts`, tokeny v `theme.css`. Nič sa neukladá do žiadnej databázy
+  (na rozdiel od WP, kde šablóny/nastavenia zaneriadia `wp_options`/`postmeta`). Prispôsobenie
+  klienta = zmena dát v súboroch, nie zápis do DB.
+- **Útočná plocha šablóny — čistá.** Žiadny `eval`/`child_process`, žiadne tajomstvá v klientskom
+  kóde (všetky tokeny sú server-only cez env). Externá mapa má `rel="noopener noreferrer"`. Dve
+  `dangerouslySetInnerHTML` sú mimo šablóny (WP `contentHtml` na hlavnom blogu + `json-ld`) — WP obsah
+  je náš dôveryhodný zdroj, JSON-LD je serializovaný objekt.
+- **API „dvierka" — dobre zamknuté.** `/api/lead`, `/api/chat`, `/api/booking/create` majú honeypot
+  `website`, rate limit na IP a validáciu vstupov; `/api/revalidate` má tajný kľúč. Directus ide cez
+  REST s parametrami (žiadny surový SQL → žiadna SQL injection), RAG dáva otázku len ako float-embedding,
+  do promptu nie do SQL. Tokeny majú **least-privilege** práva.
+- **Spevnené (tento commit):** dĺžkové stropy na `booking/create` (name/phone/note 200/40/2000 — ako
+  `/api/lead`) a na `/api/chat` histórii (max 6 správ × 1000 znakov + validácia `role`) — obrana proti
+  zneužitiu nákladov na LLM a zaťaženiu DB/e-mailov.
+- **Zostáva (low severity, vedomé):** `x-forwarded-for` sa dá teoreticky sfalšovať (rate limit obíditeľný,
+  ale tlmí ho honeypot + least-privilege token); `/api/revalidate` porovnáva tajný kľúč nekonštantne v čase
+  (timing útok nepraktický cez sieť). Info: pri M4 customizeri validovať `http(s)` sociálne URL.
+
 ## Aug 2026 — Frontend agent M2a: vlajková šablóna KVETINÁRSTVO „Boma Flora" ✅ (vetva, NEzlúčené)
 
 **Míľnik M2a hotový na vetve `claude/m1-frontend-agent-templates-94ksdt`** (M1 už
