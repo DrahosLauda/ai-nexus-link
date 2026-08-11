@@ -3,19 +3,31 @@
 > Zoznam cieľov a **rozhodnutí** pre nasledujúce sedenia. Podrobný plán
 > rezervačného agenta je nižšie (výstup plánovacieho sedenia, aug 2026).
 
-## ⭐ ĎALŠIE SEDENIE = PORADA (revízia plánovania, aug 2026)
+## ⭐ ĎALŠIE SEDENIE = PORADA (strategická revízia CELÉHO projektu, aug 2026)
 
-> **Stav pri zadaní:** vlajková šablóna kvetinárstvo (Boma Flora) je hotová,
-> QA-čistá (a11y 100, AA), naživo na `digitalnapomoc.sk/ukazky/kvetinarstvo` a
-> prepojená z domovskej stránky (nav „Ukážky" + sekcia „Weby, aké staviame" +
-> footer). Míľniky M1, M2a, M2b zlúčené. Sme na **inflexnom bode** — pred
-> ďalším veľkým krokom si spravíme **poradu** (nič sa nekóduje, len rozhodnutia).
+> **Toto NIE je porada len o šablónach.** Je to strategická revízia **celého
+> AI Nexus Link** — kam dať ďalšiu energiu naprieč všetkými vetvami projektu:
+> tri vrstvy (WP obsah · Directus CRM · agenti), referenčný web
+> `digitalnapomoc.sk`, produktoví agenti (článkový/SEO/RAG/rezervačný),
+> WooCommerce a **produktizácia/SaaS (Fáza 5, `vizia.md`)**. Frontend šablóny sú
+> len JEDNA z vetiev — porada ich má zvážiť oproti ostatným, nie ich pokračovať
+> automaticky.
 >
-> **Kľúčové zistenie na odpichnutie:** M3 „rezervačný modul do kvetinárstva"
-> **nesedí** — booking engine je pre termínové odvetvia (kaderníctvo, autoservis,
-> zubár: „služba → deň → slot"). Kvetinárstvo funguje na **objednávku kytice /
-> e-shop / svadobnú konzultáciu**, nie na sloty. → na poráde rozhodneme
-> **mapovanie modul ↔ odvetvie**, nie slepé poradie M3–M6.
+> **Stav pri zadaní (naprieč projektom):**
+> - ✅ Referenčný web `digitalnapomoc.sk` (headless WP → Next.js), leady do
+>   Directusu, technicky go-live — ale **zámerne skrytý pred Googlom**
+>   (`SITE_INDEXABLE` vyp.), kým nie je „Pred-Google checklist" (cookie/GDPR…).
+> - ✅ Produktoví agenti čiastočne naživo: **článkový (Writer) + SEO/GEO** agent
+>   (WP koncepty), **RAG chatbot**, **rezervačný agent R1**. Fáza 3 (orchestrátor
+>   ako trvalý Railway worker s cronom) ešte nie.
+> - ✅ **Frontend agent** — knižnica šablón (M1) + vlajková šablóna kvetinárstvo
+>   (M2, Boma Flora) naživo na `/ukazky/kvetinarstvo`, prepojená z domova.
+> - ❌ **Zatiaľ žiadny platiaci klient** — všetko je referencia/demo.
+>
+> **Kľúčové zistenie na odpichnutie (šablóny):** M3 „rezervačný modul do
+> kvetinárstva" **nesedí** — booking engine je pre termínové odvetvia
+> (kaderníctvo, autoservis, zubár: „služba → deň → slot"). Kvetinárstvo funguje
+> na **objednávku kytice / e-shop / svadobnú konzultáciu**, nie na sloty.
 
 **Štartový prompt (copy-paste do nového sedenia):**
 ```
@@ -23,34 +35,36 @@ Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
 (hlavne sekciu „ĎALŠIE SEDENIE = PORADA").
 
 Toto je PLÁNOVACIE sedenie = PORADA (šetríme tokeny): nič nekóduj, len
-rozhodujeme a zapisujeme. Cieľ: zrevidovať plánovanie po dokončení vlajkovej
-šablóny kvetinárstva a rozhodnúť ďalší veľký krok.
+rozhodujeme a zapisujeme. Cieľ: STRATEGICKÁ REVÍZIA CELÉHO PROJEKTU AI Nexus
+Link (nie len frontend šablón) a rozhodnutie, kam dať ďalšiu energiu.
 
 AGENDA:
-1. Revízia roadmapy — čo má REÁLNU prioritu (nie poradie v zozname M3–M6).
-   Čo je hotové a naživo, čo je len na papieri.
-2. Mapovanie MODUL ↔ ODVETVIE — ktorý modul do ktorej šablóny:
-   - booking (termíny) → kaderníctvo/autoservis/zubár, NIE kvetinárstvo;
-   - kvetinárstvo → WooCommerce (nákup kytíc) / flower konfigurátor /
-     svadobná konzultácia (jediný „termínový" fit) / objednávkový formulár (už má);
-   - chatbot (RAG) → kamkoľvek.
-   Rozhodni, čo je pre kvetinárstvo najprirodzenejší ďalší modul.
-3. ĎALŠÍ VEĽKÝ KROK — porovnaj a odporuč:
-   (a) 2. šablóna = kaderníctvo + booking modul (dôkaz „lego" naostro,
-       overí replikovateľnosť + prirodzené využitie booking enginu);
-   (b) prehĺbenie kvetinárstva (WooCommerce alebo flower konfigurátor);
-   (c) customizačný agent M4 (z šablóny klientský web zmenou dát) + ui-ux-pro-max;
-   (d) produktoví agenti — Fáza 3 (orchestrátor ako Railway worker, cron).
-4. OBCHODNÝ UHOL — čo najviac pomôže získať PRVÉHO PLATIACEHO klienta
-   (referencia, demo, predajná podstránka služby)? Zosúladiť s vizia.md.
-5. PRED-GOOGLE CHECKLIST — cookie lišta/GDPR + kedy zapnúť SITE_INDEXABLE
-   (web je zámerne skrytý pred Googlom, viď dennik/go-live).
+0. ZOOM OUT na celý projekt — zhrň, kde je AI Nexus Link naprieč VŠETKÝMI
+   vetvami (podľa vizia.md): referenčný web digitalnapomoc.sk, tri vrstvy
+   (WP obsah / Directus CRM / agenti), produktoví agenti (Writer+SEO, RAG
+   chatbot, rezervačný), frontend knižnica šablón, produktizácia/SaaS (Fáza 5).
+   Čo je hotové a naživo vs. čo je len na papieri. Kde je najväčšia hodnota.
+1. PRIORITA NAPRIEČ PROJEKTOM — čo posunie projekt najviac dopredu:
+   (i) go-live digitalnapomoc.sk do Googla (Pred-Google checklist: cookie/GDPR);
+   (ii) dotiahnuť/nasadiť produktových agentov (Fáza 3 orchestrátor worker);
+   (iii) rozširovať frontend knižnicu šablón (2. odvetvie) alebo prehĺbiť
+        kvetinárstvo (Woo/konfigurátor);
+   (iv) customizačný agent M4 (z šablóny klientský web) — cesta k predaju;
+   (v) ZÍSKAŤ PRVÉHO PLATIACEHO KLIENTA — čo na to reálne treba.
+   Odporuč poradie s odôvodnením (hodnota vs. náklad vs. blízkosť k príjmu).
+2. Mapovanie MODUL ↔ ODVETVIE — booking→kaderníctvo/autoservis/zubár (NIE
+   kvetinárstvo); kvetinárstvo→WooCommerce / flower konfigurátor / svadobná
+   konzultácia / objednávkový formulár (už má); chatbot (RAG)→kamkoľvek.
+3. OBCHODNÝ MODEL — ako sa to celé speňaží (vizia.md: dodanie ako SaaS,
+   párovanie agent↔služba, cenové balíky). Čo je najkratšia cesta k prvému €.
+4. PRED-GOOGLE CHECKLIST — cookie lišta/GDPR + kedy zapnúť SITE_INDEXABLE.
 
-VÝSTUP porady: rozhodnutia + priorita zapísané do docs/plan-agenti.md
-(aktualizovať míľniky/mapovanie modulov), a hotový ŠTARTOVÝ PROMPT pre prvé
-realizačné sedenie zvoleného kroku. Commit + push do vetvy môžeš; merge do main
-a zmeny v Railway/Directus až po mojom výslovnom súhlase. Rešpektuj CLAUDE.md
-(slovenčina, minimalizmus, tri zdroje pravdy, least privilege).
+VÝSTUP porady: rozhodnutia + PRIORITA naprieč projektom zapísané do
+docs/plan-agenti.md (aktualizovať roadmapu/míľniky/mapovanie modulov), a hotový
+ŠTARTOVÝ PROMPT pre prvé realizačné sedenie zvoleného kroku. Commit + push do
+vetvy môžeš; merge do main a zmeny v Railway/Directus až po mojom výslovnom
+súhlase. Rešpektuj CLAUDE.md (slovenčina, minimalizmus, tri zdroje pravdy,
+least privilege).
 ```
 
 ## Pracovný režim (šetrenie tokenov)
