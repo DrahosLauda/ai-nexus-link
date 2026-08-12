@@ -191,11 +191,54 @@ def fetch_faq_source():
     return [make_source(f"{SITE_URL}/#faq", "faq", "Časté otázky (FAQ)", chunks)]
 
 
+def load_site_snippets():
+    """Kľúčový obsah „výkladnej skrine" z frontendu (jediný zdroj pravdy
+    `content.ts`) — čo ponúkame a ako to funguje. Aby chatbot vedel odpovedať
+    aj o našich službách, nielen z článkov. Pri zmene formátu len varuje."""
+    path = os.path.join(os.path.dirname(__file__), "..", "frontend", "lib", "content.ts")
+    try:
+        with open(path, encoding="utf-8") as f:
+            src = f.read()
+    except OSError as e:
+        print(f"ℹ️  Obsah webu preskočený (nedá sa čítať {path}): {e}")
+        return []
+
+    chunks = []
+    hero = re.search(r"export const heroBullets\s*=\s*\[(.*?)\];", src, re.DOTALL)
+    if hero:
+        bullets = [b.strip() for b in re.findall(r'"((?:[^"\\]|\\.)*)"', hero.group(1))]
+        if bullets:
+            chunks.append("Čo ponúkame malým firmám:\n- " + "\n- ".join(bullets))
+
+    steps = re.search(r"export const steps\s*=\s*\[(.*?)\];", src, re.DOTALL)
+    if steps:
+        pairs = re.findall(
+            r'title:\s*"((?:[^"\\]|\\.)*)"\s*,\s*body:\s*"((?:[^"\\]|\\.)*)"',
+            steps.group(1),
+            re.DOTALL,
+        )
+        for title, body in pairs:
+            chunks.append(f"Ako to funguje — {title.strip()}: {body.strip()}")
+
+    if not chunks:
+        print("ℹ️  Obsah webu preskočený (v content.ts som nenašiel heroBullets/steps).")
+    return chunks
+
+
+def fetch_site_content_source():
+    """„Výkladná skriňa" — čo ponúkame a ako to funguje — ako jeden zdroj."""
+    chunks = load_site_snippets()
+    if not chunks:
+        return []
+    return [make_source(f"{SITE_URL}/#sluzby", "page", "Naše služby a ako to funguje", chunks)]
+
+
 def gather_sources():
     """Všetok obsah na indexáciu. Nový zdroj = pridať sem jeden riadok."""
     sources = []
     sources += fetch_wp_articles()
     sources += fetch_faq_source()
+    sources += fetch_site_content_source()
     return sources
 
 

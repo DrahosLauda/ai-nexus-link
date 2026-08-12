@@ -67,8 +67,20 @@ def article_prompt(topic):
     - Používaj <ul>, <ol> a <li> pre zoznamy a tipy.
     - Zvýrazni dôležité kľúčové slová pomocou <strong>.
     - NEVKLADAJ žiadne <img> tagy ani obrázky — tie doplníme my.
-    - Píš konkrétne: reálne príklady zo slovenských malých firiem, čísla, kroky.
-    - Štýl písania nech je pútavý, moderný, ľudský a bez žargónu.
+
+    Obsah a štýl:
+    - Píš konkrétne a prakticky: reálne situácie slovenských malých firiem, jasné kroky.
+    - Úvod OBMIEŇAJ — nezačínaj vždy rovnakým vzorcom (napr. „Predstavte si, je piatok
+      večer…"). Striedaj formu: otázka, konkrétny príklad, prekvapivý fakt, priama téza.
+    - Kde to dáva zmysel, veď čitateľa k NÁŠMU riešeniu (AI automatizácia, moderný
+      headless web, náš chatbot / rezervácie / tvorba obsahu) namiesto odkazov na cudzie
+      platené nástroje. Rámcuj to ako PRÍNOS pre klienta (ušetrený čas a peniaze, viac
+      dopytov), nie ako výpočet funkcií.
+    - Na konci nenásilné CTA: nech firma napíše cez kontaktný formulár alebo vyskúša demo.
+    - Pravda nad efektom: NEvymýšľaj si presné štatistiky, percentá, ceny ani štúdie.
+      Ak nejde o všeobecne známy fakt, píš kvalitatívne („dokáže výrazne ušetriť čas“),
+      nie vymyslené číslo prezentované ako fakt.
+    - Štýl: pútavý, moderný, ľudský, bez žargónu a bez prázdnych fráz.
 
     Vygeneruj IBA titulok a HTML kód článku, nič iné.
     """
