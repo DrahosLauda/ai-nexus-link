@@ -72,6 +72,9 @@ def article_prompt(topic):
     - Píš konkrétne a prakticky: reálne situácie slovenských malých firiem, jasné kroky.
     - Úvod OBMIEŇAJ — nezačínaj vždy rovnakým vzorcom (napr. „Predstavte si, je piatok
       večer…"). Striedaj formu: otázka, konkrétny príklad, prekvapivý fakt, priama téza.
+    - Obmieňaj aj PRÍKLADY a odvetvia — nepíš stále o tom istom (faktúry, e-shop).
+      Každý článok nech má iné, konkrétne situácie z rôznych typov firiem
+      (remeslo, služby, ambulancia, kaviareň, neziskovka, autoservis…).
     - Kde to dáva zmysel, veď čitateľa k NÁŠMU riešeniu (AI automatizácia, moderný
       headless web, náš chatbot / rezervácie / tvorba obsahu) namiesto odkazov na cudzie
       platené nástroje. Rámcuj to ako PRÍNOS pre klienta (ušetrený čas a peniaze, viac
