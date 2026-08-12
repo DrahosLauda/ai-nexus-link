@@ -53,8 +53,16 @@ def wp_auth_header():
     return {"Authorization": f"Basic {token}"}
 
 
-def article_prompt(topic):
+def article_prompt(topic, existing_titles=None):
     """Zadanie pre model — rovnaké pre všetkých poskytovateľov."""
+    avoid_block = ""
+    if existing_titles:
+        listed = "\n".join(f"    - {t}" for t in existing_titles)
+        avoid_block = (
+            "\n    Na webe už MÁME tieto články — nepíš to isté ani veľmi podobné,\n"
+            "    zvoľ iný uhol, iné príklady a iné odvetvie než už spracované:\n"
+            + listed + "\n"
+        )
     return f"""
     Napíš profesionálny, 1000+ slovný SEO optimalizovaný článok na tému: "{topic}".
     Článok musí byť v slovenčine a naformátovaný v čistom HTML.
@@ -84,7 +92,7 @@ def article_prompt(topic):
       Ak nejde o všeobecne známy fakt, píš kvalitatívne („dokáže výrazne ušetriť čas“),
       nie vymyslené číslo prezentované ako fakt.
     - Štýl: pútavý, moderný, ľudský, bez žargónu a bez prázdnych fráz.
-
+    {avoid_block}
     Vygeneruj IBA titulok a HTML kód článku, nič iné.
     """
 
@@ -142,17 +150,42 @@ def _text_claude(model, system_prompt, prompt):
     return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
 
 
-def generate_article(topic, provider="zai", model=None, system_prompt=None):
+def fetch_recent_titles(limit=30):
+    """Názvy už publikovaných článkov na webe — aby Writer neopakoval témy.
+    Chyba pri sťahovaní nikdy nezhodí generovanie (vráti prázdny zoznam)."""
+    if not WP_URL:
+        return []
+    try:
+        r = requests.get(
+            f"{WP_URL}/wp-json/wp/v2/posts",
+            params={"per_page": limit, "_fields": "title", "status": "publish"},
+            timeout=30,
+        )
+        if r.status_code != 200:
+            return []
+        titles = []
+        for p in r.json():
+            t = (p.get("title") or {}).get("rendered", "").strip()
+            if t:
+                titles.append(t)
+        return titles
+    except Exception as e:
+        print(f"ℹ️  Názvy existujúcich článkov sa nepodarilo načítať: {e}")
+        return []
+
+
+def generate_article(topic, provider="zai", model=None, system_prompt=None, existing_titles=None):
     """Vygeneruje titulok a HTML článku podľa vybraného poskytovateľa.
 
     provider (zai/kimi/gemini/claude), model a system_prompt prichádzajú
     z Directus configu; ak model chýba, použije sa predvolený pre daného
-    poskytovateľa.
+    poskytovateľa. `existing_titles` = názvy už napísaných článkov (aby sa
+    témy neopakovali).
     """
     model = model or DEFAULT_TEXT_MODELS.get(provider, "glm-4.5-flash")
     print(f"🐉 Generujem článok na tému: {topic} (poskytovateľ: {provider}, model: {model})")
 
-    prompt = article_prompt(topic)
+    prompt = article_prompt(topic, existing_titles=existing_titles)
     if provider == "gemini":
         text = _text_gemini(model, system_prompt, prompt)
     elif provider == "claude":
@@ -400,10 +433,14 @@ def generate_and_post_article(topic=None):
             topic = DEFAULT_TOPIC
             print(f"ℹ️  Config nemá témy, použijem predvolenú: {topic}")
 
-    # 1. Článok
+    # 1. Článok. Najprv názvy už napísaných článkov, nech Writer neopakuje témy.
+    existing_titles = fetch_recent_titles()
+    if existing_titles:
+        print(f"🧠 Pamäť: {len(existing_titles)} existujúcich článkov (vyhnem sa opakovaniu).")
     try:
         title, article_html = generate_article(
-            topic, provider=text_provider, model=model, system_prompt=system_prompt
+            topic, provider=text_provider, model=model, system_prompt=system_prompt,
+            existing_titles=existing_titles,
         )
     except Exception as e:
         print(f"❌ {e}")
