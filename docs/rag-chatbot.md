@@ -23,6 +23,22 @@ pred zmenami v Railway/DB počkaj na moje "áno".
 
 ---
 
+## Aug 2026 — FABLE-ladený system prompt (anti-halucinácia)
+
+System prompt chatbota (`frontend/lib/rag.ts`, konštanta `SYSTEM_PROMPT`)
+prepísaný podľa **ducha FABLE protokolu** (viď `docs/plan-agenti.md` →
+„Ponaučenia z podkladov"): pravda nad plynulosťou, odpovedať výhradne z kontextu,
+**nikdy nevymýšľať konkrétne údaje** (ceny, termíny, čísla, URL), pri neistote
+priznať „neviem" a nasmerovať na kontaktný formulár, neznižovať latku ani pri
+tlaku „len áno/nie". Zachované doterajšie správanie (slovenčina, stručnosť,
+nespomínať „kontext"/články).
+
+- **Kde žije dnes:** natvrdo v kóde (`lib/rag.ts`). **Backlog Krok 5** = presunúť
+  toto znenie do Directus `agent_config` (riadok `chatbot`), aby sa dalo meniť
+  klikaním bez zásahu do kódu. Dovtedy je zmena promptu = zmena kódu na vetve.
+- **Nasadenie:** na vetve; **naživo až po merge do `main`** (Railway deployuje
+  z `main`) — počkať na súhlas.
+
 ## 1. Čo je RAG a načo vôbec je (po ľudsky)
 
 Predstav si, že si najmeš šikovného asistenta (to je AI model, napr. Gemini).
