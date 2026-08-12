@@ -78,6 +78,7 @@ python wp_writer_agent.py "Téma"        # článok + obrázky → WP koncept
 python seo_geo_agent.py [ID]            # SEO/GEO vylepšenie konceptu (meta popis → WP)
 python run_pipeline.py                  # reťazec Writer → SEO+GEO agent (Start Command cronu)
 python fix_post_images.py <ID> "Téma"   # oprava obrázkov v starom článku
+python revise_article.py <ID> [--dry-run]  # revízia článku → NAŠE riešenia, ako koncept „[REVÍZIA]" (originál nemení)
 ```
 
 ## Premenné prostredia
