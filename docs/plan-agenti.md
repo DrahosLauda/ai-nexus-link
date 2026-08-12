@@ -213,6 +213,46 @@ ako návod.
 > najprv **revízia → merge do `main`** (po súhlase majiteľa), inak zostáva
 > najlepšia referencia neviditeľná.
 
+---
+
+# Ponaučenia z podkladov (brainstormy z Google Docs, aug 2026)
+
+> Majiteľ dodal 6 skorších dokumentov (vetva `podklady`, `docs/podklady/`):
+> *Master Architecture Blueprint*, *FABLE PROTOCOL V2*, *Knižnica IT expertov*,
+> *Architektura agentického systému čo stavia sám seba*, *AI Pamäť (OKF / LLM
+> Wiki / Memanto)*, *Wayland AI Agents*. **Boli to brainstormy** (prevažne s
+> Gemini „programovacím partnerom") — nadšené a inšpiratívne, ale miestami idú do
+> rozsahu, ktorý sme si vedome orezali. Preto z nich **berieme len to, čo sedí do
+> vízie a minimalizmu**; zvyšok vedome nie. Veľká časť je aj tak už postavená
+> (tri vrstvy, lego agenti, výkladná skriňa, ROI kalkulačka, agency-agents).
+
+## ✅ Berieme (zapadá, lacné)
+
+| Čo | Prečo / kam | Náklad |
+|---|---|---|
+| **FABLE charta pre produkčných agentov** | Anti-halucinačná disciplína (VERIFIED/DERIVED/ESTIMATE, „neviem" je OK, najmenšie riešenie). → základ `system_prompt` v `agent_config` pre **RAG chatbota** a budúci konverzačný agent. *(Directus klik-časť po súhlase.)* | ~0 |
+| **OKF pre znalostnú bázu** | `.md` + YAML hlavička (`type:`), čitateľné pre ľudí aj agentov, bez závislosti. → postupne dať dokom v `docs/` OKF hlavičky (lepšie pre RAG aj štart sedení). | nízky |
+| **Playground simulátory na webe** | „Skús, ako agent spracuje dopyt autoservisu/reality" — predajný „ukáž, nepovedz" prvok. → kandidát **po go-live**, sedí k demo agentom. | stredný |
+| **Potvrdenie KOKPITU** | Ich „Pracovňa/Dashboard" (celoobrazovkový chat + naživo sa vykresľuje systém) **nezávisle potvrdzuje**, že chýbajúca ovládacia vrstva = kokpit je správny ďalší veľký kus (viď mapa `nexus-mapa.html`). | — |
+
+**Menšie na neskôr (až pri Fáze CRM/Woo):** CRM pipeline kolekcie
+(`crm_campaigns`, `crm_interactions`), abandoned-cart / e-commerce marketing
+agent, mobilné schvaľovanie human-in-the-loop (push/Telegram).
+
+## 🔴 Vedome NEberieme (a prečo)
+
+- **Auto-generovanie + auto-deploy celého React webu z chatu** — je to presne
+  **naivná cesta „jeden prompt → web", ktorú sme zamietli** v prospech
+  kurátorských šablón + ľudskej brány kvality. Držíme naše rozhodnutie.
+- **Wayland (getwayland) ako produkčný runtime** — je to **lokálny desktopový
+  agent** (beží na PC), nesedí na hostovaný 24/7 multi-tenant SaaS. *(Možno
+  neskôr ako nástroj na lokálne agentúrne služby / build-time, nie ako chrbtica.
+  Pozn.: „Wayland" máme aj ako krycí názov článkového agenta — nepomýliť.)*
+- **Vertex AI / GCP + per-klient Vercel** — zbytočná ťarcha; držíme **Gemini API
+  + Z.ai na Railway**.
+- **Programatické SEO (tisíce landing pages)** — riziko spamu a penalizácie
+  Googlom; radšej **málo kvalitných** stránok (naša `seo-geo-frontend` skill).
+
 ## Pracovný režim (šetrenie tokenov)
 - **Plánovacie sedenie:** prečítať `dennik.md` + `vizia.md` + tento súbor →
   dohodnúť rozhodnutia → napísať podrobný plán po krokoch sem **+ hotový
