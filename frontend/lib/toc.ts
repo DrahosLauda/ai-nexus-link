@@ -60,15 +60,18 @@ export function buildToc(html: string): { html: string; toc: TocItem[] } {
     (match, level: string, attrs: string | undefined, inner: string) => {
       const text = stripTags(inner);
       if (!text) return match;
+      // Vodiace číslovanie z nadpisu („1. ", „2) ") do TOC labelu nedávame —
+      // hierarchiu ukazuje odsadenie, nie čísla (konzistentne pre H2 aj H3).
+      const label = text.replace(/^\d+[.)]\s+/, "");
 
       const existing = attrs ? /\sid=["']([^"']+)["']/i.exec(attrs) : null;
-      const baseId = existing ? existing[1] : slugify(text);
+      const baseId = existing ? existing[1] : slugify(label);
       let id = baseId;
       let n = 2;
       while (used.has(id)) id = `${baseId}-${n++}`;
       used.add(id);
 
-      toc.push({ id, text, level: level === "3" ? 3 : 2 });
+      toc.push({ id, text: label, level: level === "3" ? 3 : 2 });
       const cleanedAttrs = (attrs || "").replace(/\sid=["'][^"']*["']/i, "");
       return `<h${level}${cleanedAttrs} id="${id}">${inner}</h${level}>`;
     },
