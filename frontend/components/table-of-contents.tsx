@@ -44,18 +44,27 @@ export function TableOfContents({ items }: { items: TocItem[] }) {
 
       <div className="max-h-[19rem] overflow-y-auto border-t border-line px-3 py-3">
         <ol className="flex flex-col gap-0.5">
-          {items.map((item) => (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                className={`block rounded-lg py-1.5 text-[14.5px] leading-snug text-mist-500 transition-colors hover:bg-white hover:text-indigo-600 ${
-                  item.level === 3 ? "pl-9 pr-3 text-[14px] text-mist-400" : "px-4 font-medium"
-                }`}
-              >
-                {item.text}
-              </a>
-            </li>
-          ))}
+          {items.map((item) =>
+            item.level === 3 ? (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  className="relative block rounded-lg py-1.5 pl-8 pr-4 text-[14px] leading-snug text-mist-500 transition-colors before:absolute before:left-4 before:top-1/2 before:h-px before:w-2.5 before:-translate-y-1/2 before:bg-mist-400 hover:bg-white hover:text-indigo-600 hover:before:bg-indigo-500"
+                >
+                  {item.text}
+                </a>
+              </li>
+            ) : (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  className="block rounded-lg px-4 py-1.5 text-[14.5px] font-medium leading-snug text-mist-700 transition-colors hover:bg-white hover:text-indigo-600"
+                >
+                  {item.text}
+                </a>
+              </li>
+            ),
+          )}
         </ol>
       </div>
     </details>
