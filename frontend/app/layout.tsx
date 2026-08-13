@@ -51,7 +51,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sk" className={`${geist.variable} h-full antialiased`}>
+    <html
+      lang="sk"
+      data-scroll-behavior="smooth"
+      className={`${geist.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
         {children}
         <ChatWidget />
