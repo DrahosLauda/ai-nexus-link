@@ -1,32 +1,63 @@
 import type { TocItem } from "@/lib/toc";
 
 /**
- * „Obsah článku" — klikateľná navigácia na sekcie (kotvové odkazy).
- * Serverový, prezentačný komponent. Zobrazí sa len pri dostatku nadpisov.
+ * „Obsah článku" — rozbaliteľná (natívne `<details>`, bez klientského JS),
+ * scrollovateľná navigácia na sekcie (kotvové odkazy). Zobrazí sa len pri
+ * dostatku nadpisov. Prístupné, ladí s dizajnom webu.
  */
 export function TableOfContents({ items }: { items: TocItem[] }) {
   if (items.length < 3) return null;
 
   return (
-    <nav
-      aria-label="Obsah článku"
-      className="rounded-2xl border border-line bg-cloud px-6 py-5"
+    <details
+      open
+      className="group overflow-hidden rounded-2xl border border-line bg-cloud shadow-sm"
     >
-      <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-mist-400">
-        Obsah článku
-      </p>
-      <ol className="flex flex-col gap-1.5">
-        {items.map((item) => (
-          <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
-            <a
-              href={`#${item.id}`}
-              className="text-[15px] leading-snug text-mist-500 underline-offset-2 transition-colors hover:text-indigo-600 hover:underline"
-            >
-              {item.text}
-            </a>
-          </li>
-        ))}
-      </ol>
-    </nav>
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-6 py-4 transition-colors hover:bg-white/60 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center gap-2.5 text-[12px] font-semibold uppercase tracking-[0.16em] text-mist-400">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            className="h-[15px] w-[15px] text-indigo-500"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          >
+            <path d="M4 5.5h12M4 10h12M4 14.5h7" />
+          </svg>
+          Obsah článku
+        </span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 20 20"
+          className="h-4 w-4 shrink-0 text-mist-400 transition-transform duration-300 group-open:rotate-180"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M5 8l5 5 5-5" />
+        </svg>
+      </summary>
+
+      <div className="max-h-[19rem] overflow-y-auto border-t border-line px-3 py-3">
+        <ol className="flex flex-col gap-0.5">
+          {items.map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className={`block rounded-lg py-1.5 text-[14.5px] leading-snug text-mist-500 transition-colors hover:bg-white hover:text-indigo-600 ${
+                  item.level === 3 ? "pl-9 pr-3 text-[14px] text-mist-400" : "px-4 font-medium"
+                }`}
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </details>
   );
 }
