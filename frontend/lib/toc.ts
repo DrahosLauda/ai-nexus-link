@@ -28,10 +28,21 @@ function slugify(text: string): string {
   return base || "sekcia";
 }
 
+const NAMED_ENTITIES: Record<string, string> = {
+  "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": '"',
+  "&apos;": "'", "&#39;": "'", "&nbsp;": " ", "&hellip;": "…",
+};
+
+/** Dekóduje HTML entity (napr. &#8222; → „, &amp; → &), aby TOC nezobrazoval kód. */
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&[a-zA-Z]+;/g, (m) => NAMED_ENTITIES[m] ?? m);
+}
+
 function stripTags(html: string): string {
-  return html
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
+  return decodeEntities(html.replace(/<[^>]+>/g, ""))
     .replace(/\s+/g, " ")
     .trim();
 }
