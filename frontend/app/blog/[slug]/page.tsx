@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
 import { JsonLd } from "@/components/json-ld";
 import { Navbar } from "@/components/navbar";
+import { TableOfContents } from "@/components/table-of-contents";
 import { absoluteUrl, articleSchema, breadcrumbSchema } from "@/lib/seo";
+import { buildToc } from "@/lib/toc";
 import { fetchPostBySlug, type WPPostFull } from "@/lib/wp";
 
 export const revalidate = 300;
@@ -54,6 +56,9 @@ export default async function BlogPost({ params }: Props) {
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) notFound();
+
+  // Doplní id do nadpisov článku a vytiahne z nich „Obsah článku".
+  const { html: contentHtml, toc } = buildToc(post.contentHtml);
 
   const crumbs = [
     { name: "Domov", path: "/" },
@@ -110,10 +115,12 @@ export default async function BlogPost({ params }: Props) {
 
         {/* Telo článku + CTA */}
         <div className="mx-auto flex max-w-[880px] flex-col gap-8 px-5 pb-16 pt-10 sm:px-10 lg:pb-24">
-          {/* Obsah článku prichádza ako HTML z nášho WordPressu (headless CMS). */}
+          {/* Obsah článku príde ako HTML z WordPressu; doplníme id do nadpisov
+              a z nich vygenerujeme klikateľný „Obsah článku" (SEO + UX). */}
+          <TableOfContents items={toc} />
           <article
             className="wp-article"
-            dangerouslySetInnerHTML={{ __html: post.contentHtml }}
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
 
           <div className="mt-4 flex flex-col items-start gap-4 rounded-3xl border border-line bg-cloud p-8">
