@@ -129,6 +129,47 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — Vylepšenia agentov (Writer/chatbot/revízny) + Obsah článku (TOC) ✅ (zlúčené #44/#45/#46)
+
+Sedenie, ktoré začalo ako **strategická porada** a prešlo do realizácie (ponaučenie
+nižšie). Všetko **zlúčené do `main` a nasadené.** Návody a príkazy k agentom: `navody.md`.
+
+**Agenti (orchestrátor):**
+- **Writer** (`wp_writer_agent.py`, `article_prompt`): vedie k NAŠIM riešeniam ako
+  prínosu (nie k cudzím nástrojom), CTA na konzultáciu; obmieňa úvod aj príklady/odvetvia;
+  **pamäť na už napísané články** (`fetch_recent_titles` → do promptu „tieto neopakuj");
+  FABLE (žiadne vymyslené čísla/ceny). Persona (`system_prompt`) + `topics` sú v Directuse
+  (majiteľ doplnil).
+- **RAG chatbot**: `SYSTEM_PROMPT` v `lib/rag.ts` prepísaný podľa **FABLE** (pravda nad
+  plynulosťou, len z kontextu, nevymýšľať, pri neistote → kontakt). Index (`rag_index.py`)
+  rozšírený o **„výkladnú skriňu"** — nový zdroj z `content.ts` (heroBullets + steps) →
+  chatbot vie odpovedať aj o našich službách. **Aktivuje sa až po behu `python rag_index.py`.**
+- **Revízny agent** (nový `revise_article.py`): prečíta publikovaný článok, prepíše na naše
+  riešenia (zachová obrázky/tému, FABLE), uloží ako **koncept „[REVÍZIA]"**. Originál nemení.
+  `--dry-run` na náhľad.
+
+**Frontend:**
+- Blog **„Obsah článku" (TOC)** — `lib/toc.ts` (serverovo doplní `id` do H2/H3, dekóduje
+  entity, odstráni vodiace číslovanie) + `components/table-of-contents.tsx` (natívne
+  `<details>` = rozbaliteľné bez JS, scrollovateľné, H2/H3 hierarchia s pomlčkovým markerom).
+  Kotvové odkazy = signál pre Google „jump to" sitelinks. `data-scroll-behavior="smooth"`
+  na `<html>` (Next 16), `scroll-margin-top`, reduced-motion.
+
+**Docs:** výstup strategickej porady + „Ponaučenia z podkladov" (berieme: FABLE, OKF,
+Playground, kokpit; zamietnuté: auto-generovanie webov, Wayland ako runtime, Vertex/Vercel,
+programatické SEO) v `plan-agenti.md`.
+
+**Otvorené (akcie/rozhodnutia — nie merge):**
+- [ ] **Spustiť `python rag_index.py`** — aby chatbot reálne poznal služby (zatiaľ nebeží).
+- Vetva `podklady` = 6 brainstorm dokumentov (referencia).
+- Strategické (samostatné budúce sedenia): go-live do Googla (cookie/GDPR), kokpit, prvý platiaci klient.
+
+**PONAUČENIE (dôležité):** toto sedenie **zmiešalo poradu, plánovanie, kódovanie, dizajn aj
+git pomoc** a extrémne sa natiahlo — presne to, čomu má `ako-viest-sedenia.md` brániť. Odteraz:
+**1 typ na sedenie** (porada/plán · kód · dizajn · agenti — zvlášť), **1 úloha → dokončiť →
+zavrieť**, Claude **upozorní** na rozbiehanie, vždy presné príkazy do terminálu, žiadny zhon.
+Zapísané do `ako-viest-sedenia.md` („Tvrdé pravidlá").
+
 ## Aug 2026 — Frontend agent M2b: Boma Flora — reálne fotky, QA opravy, polish (Emil skilly), doladenia ✅ (vetva, NEzlúčené)
 
 **Vetva `claude/m1-frontend-agent-templates-94ksdt` (stále NEzlúčené do `main`).**
