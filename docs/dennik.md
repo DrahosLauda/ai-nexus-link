@@ -46,6 +46,16 @@
   vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
 - [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
   (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
+- [ ] **Chatbot nevie o tom, že staviame weby / máme šablóny** (napr. kvetinárstvo
+  ako príklad). Príčina: nie je to v žiadnom indexovanom zdroji (články + FAQ +
+  výkladná skriňa `heroBullets`/`steps`). **Nie je to „re-index", chýba samotný
+  obsah.** Dve cesty (rozhodnúť v samostatnej úlohe): (1) pridať opis „staviame
+  moderné weby, príklad: šablóna kvetinárstvo" do indexovaného obsahu (výkladná
+  skriňa / service karty v `content.ts`, príp. krátky článok) → re-index; alebo
+  (2) rozšíriť `rag_index.py` o ďalšie zdroje (service karty, `/headless-wordpress`)
+  — `/ukazky` je noindex demo, opatrne. **Predpoklad:** šablóna kvetinárstvo je
+  ešte na nezlúčenej vetve + `noindex` → „chváliť sa" ňou má zmysel až po jej
+  zlúčení do `main` a plánovanej predajnej karte „Prémiové weby na kľúč".
 - [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
   (detaily `docs/rag-chatbot.md` §9).
 - [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
