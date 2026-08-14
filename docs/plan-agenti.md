@@ -104,28 +104,31 @@ stavaj nové.**
 
 ## 1. Priorita naprieč projektom (odporúčané poradie)
 
-**① Go-live do Googla — Pred-Google checklist (cookie lišta + GDPR).** NAJPRV.
-Najlacnejší krok s najväčším odomknutím. Kým je web skrytý: neexistuje verejná
-referencia, na ktorú ukázať klientovi, a **nesmieme legálne zbierať osobné
-údaje** (leady/rezervácie/chatbot zbierajú meno/e-mail/telefón). Go-live je
-**predpoklad všetkého klientskeho**. Náklad malý: cookie lišta + stránka zásad
-OÚ + zapnúť `SITE_INDEXABLE` + Search Console. *(hodnota vysoká · náklad nízky ·
-blízkosť k príjmu: odomyká ju)*
+> **⚠️ OPRAVA (majiteľ, aug 2026):** Skoršie poradie s go-live ako #1 NEPLATÍ.
+> **Go-live (zverejnenie do Googla) ani predaj NIE sú aktuálna priorita.**
+> Go-live môže prísť **až keď majiteľ dá VÝSLOVNÝ pokyn** — a jeho predpokladom je
+> **vlastná firma/subjekt, všetky dokumenty a plný súlad s legislatívou** (GDPR,
+> obchodné podmienky…). **Claude NIKDY nenavrhuje go-live ako ďalší krok sám** —
+> čaká na jasný pokyn. To isté platí pre „prvého platiaceho klienta" (viazané na
+> existenciu firmy/subjektu). Nesmerovať k tomu, kým to majiteľ nepovie.
 
-**② Konsolidácia + prvý platiaci klient.** Po revízii **zlúčiť hotovú šablónu
-Boma Flora do `main`** (aby bola vidno) a spraviť z hotového (šablóna + booking +
-chatbot) **konkrétnu predajnú ponuku**; osloviť **1 reálnu firmu**. Najkratšia
-cesta k prvému €. Nepíše sa nový produkt — speňažuje sa hotový. *(hodnota
-najvyššia · náklad stredný · blízkosť k príjmu: priama)*
+**Aktuálna priorita = DOKONČIŤ PRODUKT** (staviame, nepredávame — kým nie je firma
+a dokumenty). **Čo presne robíme, sa dohodne v plánovacom sedení.** Kandidáti
+(hrubé poradie, finálne slovo v pláne):
 
-**③ Dotiahnuť produktových agentov (Fáza 3 worker) / 2. šablóna — až ťahané
-dopytom.** Cron worker, kaderníctvo, konfigurátor kytice, chatbot R2 majú
-hodnotu, ale **nepribližujú k príjmu ani viditeľnosti**. Robiť **reaktívne** —
-keď to vyžiada reálny klient, alebo keď ① + ② bežia — nie špekulatívne dopredu.
-*(hodnota stredná · náklad rôzny · blízkosť k príjmu: nepriama)*
+**① Kokpit — jedno miesto na ovládanie agentov (ťažisko).** Chýbajúci kus systému:
+rozbehnúť „walking skeleton" (tenký rez nad Directusom — zapni/spusti agenta +
+vidíš logy). Prvé plánovacie sedenie ho rozkreslí.
 
-> **Princíp:** projekt má dosť dema; potrebuje **zákazníka a verejnú
-> referenciu**. Preto najprv ① (zviditeľni) a ② (speňaž), nové stavanie až potom.
+**② Dotiahnuť produktových agentov (Fáza 3).** Orchestrátor ako trvalý worker
+(cron), presun chatbot configu do Directusu, spustiť `rag_index.py`, chatbot R2.
+
+**③ Rozšíriť/prehĺbiť šablóny.** 2. odvetvie (kaderníctvo) alebo Woo/konfigurátor
+do kvetinárstva — overenie replikovateľnosti.
+
+> **Princíp:** staviame produkt do „hotového" stavu. **Go-live a predaj sú zamknuté
+> za firmou + dokumentmi + pokynom majiteľa** — dovtedy sa k nim nesmeruje. Poradie
+> build úloh sa vyberá v plánovacom sedení, jedna po druhej.
 
 ## 2. Mapovanie MODUL ↔ ODVETVIE
 
