@@ -218,6 +218,116 @@ ako návod.
 
 ---
 
+# Task č.1 — SessionStart hook (plán realizačného sedenia, aug 2026)
+
+> **Výstup plánovacieho sedenia (aug 2026).** Majiteľ zvolil úlohu č.1 z kandidátov
+> na dokončenie produktu. Toto je **plán + hotový štartový prompt** pre samostatné
+> realizačné sedenie. Nič sa v tomto sedení nekódovalo.
+
+## Cieľ a rozhodnutia
+
+**Cieľ:** SessionStart hook, ktorý pri štarte **každého** sedenia (a) **tvrdo
+naservíruje pamäť projektu** (Backlog z dennika + silná inštrukcia prečítať
+`dennik.md`/`vizia.md`), aby to nebolo len „mäkký" pokyn v `CLAUDE.md`, a
+(b) **predinštaluje frontend závislosti**, aby lint/build/testy bežali hneď.
+
+**Zistenie (dôležité):** skill `session-start-hook` je primárne na **inštaláciu
+závislostí**, nie na načítanie kontextu. Načítanie kontextu robíme cez
+**injektovanie kontextu** — hook vypíše na stdout JSON
+`hookSpecificOutput.additionalContext`, ktorý sa vloží do sedenia na štarte.
+
+| # | Rozhodnutie | Voľba | Prečo |
+|---|---|---|---|
+| 1 | **Rozsah hooku** | **Oboje** — kontext + závislosti | Obe sú lacné pridať; kontext = pôvodný zámer, závislosti = zdokumentovaná bolesť M1 („node_modules v cloude nie je predinštalované"). |
+| 2 | **Miera „tvrdosti" kontextu** | **Backlog + silná inštrukcia** | `dennik.md` má ~36k tokenov a rastie → plné vloženie každé sedenie je drahé. Backlog (živý stav, začiatok súboru) + pokyn dočítať zvyšok podľa potreby je stred medzi cenou a istotou. |
+| 3 | **Sync vs async** | **Synchronne (prvá iterácia)** | Kontext musí byť prítomný **pred** štartom (async by ho nestihol vložiť). `npm install` (nie `npm ci`) využije cache kontajnera → po prvom behu rýchly. Ak bude štart pomalý, závislosti presunieme na async neskôr. |
+| 4 | **Kde sa registruje** | `.claude/settings.json` (verzované) | Aby platil pre **všetky** budúce sedenia. Dnes súbor neexistuje → vytvoriť. |
+
+## Čo hook presne robí (dva účely v jednom skripte)
+
+Súbor `.claude/hooks/session-start.sh` (spustiteľný, `chmod +x`), idempotentný,
+neinteraktívny, žiadne tajomstvá:
+
+1. **Kontext (vždy — aj lokálne aj web):**
+   - Prečíta `docs/dennik.md`, **vyreže sekciu „## Backlog …"** (od nadpisu Backlog
+     po nasledujúci `## ` nadpis) — je to živý stav, číta sa **za behu**, takže
+     nikdy nie je zastaraný.
+   - Cez `python3` (bezpečné JSON escapovanie diakritiky/emoji/úvodzoviek) poskladá
+     `hookSpecificOutput.additionalContext` obsahujúci:
+     - **(a) silnú inštrukciu:** *„Komunikuj po slovensky. Skôr než začneš, prečítaj
+       `docs/dennik.md` (aspoň Backlog nižšie + najnovšie záznamy) a `docs/vizia.md`.
+       Rešpektuj „Pravidlá spolupráce" z `CLAUDE.md` — go-live a predaj sú ZAMKNUTÉ
+       (len na výslovný pokyn), 1 typ na sedenie, 1 úloha → dokončiť → overiť, žiadny
+       zhon, presné príkazy."*
+     - **(b) živý Backlog** vyrezaný z dennika.
+   - **Pozor na stdout:** parsované JSON musí byť **jediný** čistý výstup na stdout;
+     výstup `npm install` presmerovať na **stderr** (`1>&2`), nech nerozbije JSON.
+
+2. **Závislosti (len web — `[ "$CLAUDE_CODE_REMOTE" = "true" ]`):**
+   - `cd "$CLAUDE_PROJECT_DIR/frontend" && npm install 1>&2` — idempotentné, využije
+     cache kontajnera (`npm install`, **nie** `npm ci` — pozn. skillu).
+   - *(Voliteľne, na zváženie v realizácii:* orchestrátor `pip install -r
+     requirements.txt` do venv — väčšina web sedení je však frontend; nechať zvážiť.)*
+   - Lokálny Mac to preskočí (`CLAUDE_CODE_REMOTE` != true) → tam už `node_modules` má.
+
+3. **Registrácia** v `.claude/settings.json`:
+   ```json
+   { "hooks": { "SessionStart": [ { "hooks": [
+     { "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh" }
+   ] } ] } }
+   ```
+
+## Overenie (v realizačnom sedení)
+
+- Spustiť hook ručne: `CLAUDE_CODE_REMOTE=true ./.claude/hooks/session-start.sh`
+  → over, že **stdout je platné JSON** s `additionalContext` (obsahuje inštrukciu +
+  Backlog) a že sa poskladá bez chyby (`python3 -c 'import json,sys;json.load(sys.stdin)'`).
+- Over, že vznikol `frontend/node_modules` a `npm run lint` prejde na jednom súbore.
+- Idempotencia: druhý beh nespadne, `npm install` hlási „up to date".
+
+## Poznámky (minimalizmus, bezpečnosť, aktivácia)
+
+- **Rebrík minimalizmu:** hook je natívna funkcia platformy (bod 4 rebríka) —
+  presne prípad, keď sa oplatí. Žiadna nová závislosť, len bash + `python3` (už máme).
+- **Bezpečnosť:** skript iba **číta** `docs/` a inštaluje verejné npm balíky; žiadne
+  tajomstvá, žiadny sieťový zápis, žiadny interaktívny vstup.
+- **⚠️ Aktivácia:** hook začne platiť pre **všetky** budúce sedenia **až po merge do
+  `main`** (kým je na vetve `claude/…`, neplatí). Merge až po výslovnom súhlase majiteľa.
+
+## Hotový štartový prompt (copy-paste do nového realizačného sedenia)
+
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia „Task č.1 — SessionStart hook").
+
+Realizačné sedenie (TYP: konfigurácia/infra — nemiešaj s iným): postav
+SessionStart hook podľa plánu v plan-agenti.md. Použi skill session-start-hook
+na mechaniku, ale prispôsob ho nášmu zámeru (nielen závislosti, aj kontext).
+
+Konkrétne:
+1) Vytvor .claude/hooks/session-start.sh (spustiteľný, idempotentný,
+   neinteraktívny, synchronne — bez async v prvej iterácii). Robí DVE veci:
+   a) KONTEXT (vždy): prečíta docs/dennik.md, vyreže sekciu „## Backlog …"
+      (po nasledujúci ## nadpis) a cez python3 poskladá na stdout JSON
+      hookSpecificOutput.additionalContext = silná inštrukcia (slovenčina;
+      prečítaj dennik.md + vizia.md skôr než začneš; rešpektuj „Pravidlá
+      spolupráce" z CLAUDE.md — go-live/predaj zamknuté, 1 typ/sedenie, 1 úloha,
+      žiadny zhon) + vyrezaný živý Backlog. stdout musí byť ČISTÉ JSON.
+   b) ZÁVISLOSTI (len web, [ "$CLAUDE_CODE_REMOTE" = "true" ]): cd frontend &&
+      npm install, výstup presmeruj na stderr (1>&2), nech nerozbije JSON.
+      (Orchestrátor pip zváž, netreba nasilu.)
+2) Zaregistruj hook v .claude/settings.json (vytvor súbor; ak existuje, zluč
+   konfiguráciu SessionStart).
+3) Over: CLAUDE_CODE_REMOTE=true ./.claude/hooks/session-start.sh → stdout je
+   platné JSON (python3 -c 'import json,sys;json.load(sys.stdin)') s inštrukciou
+   aj Backlogom; vznikol frontend/node_modules; npm run lint prejde na jednom
+   súbore; druhý beh je idempotentný.
+Nič nedeployuj. Vetva claude/... , commit + push. Upozorni ma, že hook začne
+platiť pre všetky sedenia až po merge do main — merge až po mojom súhlase.
+```
+
+---
+
 # Ponaučenia z podkladov (brainstormy z Google Docs, aug 2026)
 
 > Majiteľ dodal 6 skorších dokumentov (vetva `podklady`, `docs/podklady/`):

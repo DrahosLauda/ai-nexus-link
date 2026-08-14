@@ -24,13 +24,22 @@ RAG_DATABASE_URL=postgresql://postgres:…@…railway.app:PORT/railway
 
 Ostatné potrebné premenné (`GEMINI_API_KEY`, `WP_URL`) tam už máš z Writer agenta.
 
-## C — dostať kód na Mac (prepnúť na vetvu)
+## C — dostať kód na Mac (aktuálny `main`)
 
-`rag_index.py` je zatiaľ na vetve (nie v `main`), tak sa naň prepni:
+> ⚠️ **Opravené (aug 2026):** pôvodný krok odkazoval na starú vetvu
+> `claude/rag-chatbot-first-demo-9bwo1w` — tá má **starú verziu bez „výkladnej
+> skrine"**. Verzia s výkladnou skriňou (`fetch_site_content_source`) je zlúčená
+> v `main`, tak použi `main`:
 
 ```bash
-git checkout claude/rag-chatbot-first-demo-9bwo1w
-git pull
+git checkout main
+git pull origin main
+```
+
+Over, že máš verziu s výkladnou skriňou (musí vypísať číslo ≥ 1):
+
+```bash
+grep -c "fetch_site_content_source" orchestrator/rag_index.py
 ```
 
 ## D — doinštalovať závislosť
