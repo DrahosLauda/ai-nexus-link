@@ -46,6 +46,16 @@
   vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
 - [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
   (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
+- [ ] **Chatbot nevie o tom, že staviame weby / máme šablóny** (napr. kvetinárstvo
+  ako príklad). Príčina: nie je to v žiadnom indexovanom zdroji (články + FAQ +
+  výkladná skriňa `heroBullets`/`steps`). **Nie je to „re-index", chýba samotný
+  obsah.** Dve cesty (rozhodnúť v samostatnej úlohe): (1) pridať opis „staviame
+  moderné weby, príklad: šablóna kvetinárstvo" do indexovaného obsahu (výkladná
+  skriňa / service karty v `content.ts`, príp. krátky článok) → re-index; alebo
+  (2) rozšíriť `rag_index.py` o ďalšie zdroje (service karty, `/headless-wordpress`)
+  — `/ukazky` je noindex demo, opatrne. **Predpoklad:** šablóna kvetinárstvo je
+  ešte na nezlúčenej vetve + `noindex` → „chváliť sa" ňou má zmysel až po jej
+  zlúčení do `main` a plánovanej predajnej karte „Prémiové weby na kľúč".
 - [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
   (detaily `docs/rag-chatbot.md` §9).
 - [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
@@ -129,6 +139,32 @@
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
 
+## Aug 2026 — RAG chatbot: naindexovaná výkladná skriňa + plán úlohy č.1 (SessionStart hook)
+
+**Plánovacie/operatívne sedenie (vetva `claude/planning-product-tasks-bmc3qm`).**
+Majiteľ zvolil poradie úloh na dokončenie produktu: **č.1 = SessionStart hook**, ostatné
+(Kokpit, Fáza 3 agenti, šablóny) postupne. Pred plánovaním sme spravili jeden operatívny krok.
+
+**RAG chatbot — naindexovaná „výkladná skriňa" ✅ (naostro, majiteľ spustil na Macu):**
+- `python rag_index.py` (na Macu, verejná `RAG_DATABASE_URL`) — pribudli 2 nové zdroje /
+  8 kúskov: **FAQ (4)** + **„Naše služby a ako to funguje" (4)** = výkladná skriňa
+  (`heroBullets` + `steps` z `content.ts`). 21 článkov „bez zmeny", 0 chýb, `agent_logs` success.
+- **Embedding model: `gemini-embedding-001`** — zhoda s `/api/chat` (netreba meniť Railway).
+- Chatbot odteraz vie odpovedať aj o **našich službách**, nielen zo všeobecných článkov
+  (naostro do ~5 min kvôli cache). Tým je odškrtnutý otvorený bod z minulého sedenia.
+- **Ponaučenie:** návod `docs/rag-krok2-spustenie.md` krok C bol zastaraný (odkazoval na
+  starú vetvu `rag-chatbot-first-demo` bez výkladnej skrine) → opravený na `main` + overenie
+  cez `grep -c fetch_site_content_source`. Indexer sa z **cloud sedenia nedá spustiť**
+  (žiadny `.env`/tajomstvá, sieť na DB/WP blokovaná) → beží **lokálne na Macu**.
+
+**Plán úlohy č.1 — SessionStart hook (zapísané do `plan-agenti.md`):** hook pri štarte
+každého sedenia (a) tvrdo naservíruje **Backlog z dennika + silnú inštrukciu** prečítať
+`dennik.md`/`vizia.md` a rešpektovať pravidlá z `CLAUDE.md`, a (b) na webe **predinštaluje
+`frontend` npm závislosti** (bolesť M1). Rozhodnutia: oboje · Backlog+inštrukcia (nie plný
+dennik — ~36k tokenov) · synchronne · registrácia v `.claude/settings.json`. Hotový štartový
+prompt je v `plan-agenti.md` (sekcia „Task č.1 — SessionStart hook"). **Realizácia = samostatné
+sedenie; hook platí až po merge do `main`.**
+
 ## Aug 2026 — Vylepšenia agentov (Writer/chatbot/revízny) + Obsah článku (TOC) ✅ (zlúčené #44/#45/#46)
 
 Sedenie, ktoré začalo ako **strategická porada** a prešlo do realizácie (ponaučenie
@@ -160,7 +196,8 @@ Playground, kokpit; zamietnuté: auto-generovanie webov, Wayland ako runtime, Ve
 programatické SEO) v `plan-agenti.md`.
 
 **Otvorené (akcie/rozhodnutia — nie merge):**
-- [ ] **Spustiť `python rag_index.py`** — aby chatbot reálne poznal služby (zatiaľ nebeží).
+- [x] **Spustiť `python rag_index.py`** — ✅ hotové (aug 2026); chatbot teraz pozná
+  výkladnú skriňu (služby + „ako to funguje"). Viď záznam nižšie.
 - Vetva `podklady` = 6 brainstorm dokumentov (referencia).
 - Strategické (samostatné budúce sedenia): go-live do Googla (cookie/GDPR), kokpit, prvý platiaci klient.
 
