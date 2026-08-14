@@ -38,6 +38,24 @@ Pre **veľké alebo nejasné** veci sa oplatí oddeliť plánovanie od vykonáva
 
 Pre drobnosti to netreba — rob inline.
 
+## Tvrdé pravidlá (dohodnuté aug 2026)
+
+Po jednom veľmi dlhom **zmiešanom** sedení (porada + kód + dizajn + git pomoc)
+sme si stanovili mantinely, ktoré Claude aj majiteľ dodržiavajú:
+
+1. **Jeden TYP na sedenie:** porada/plán · kódovanie · dizajn · agenti —
+   **každé zvlášť, nemiešať.** Porada, ktorá sa preklopí do kódovania, je varovný
+   signál → rozdeliť do samostatných sedení.
+2. **Jedna úloha → dokončiť → overiť → zavrieť.** Žiadne „a ešte toto" v tom
+   istom sedení; nový cieľ = nové sedenie.
+3. **Claude upozorní**, keď sa sedenie rozbieha mimo cieľ alebo naťahuje, a
+   navrhne stop / rozdelenie do ďalšieho sedenia.
+4. **Vždy povedať, čo robíme, + presné príkazy do terminálu** (krok po kroku,
+   žiadne placeholdery ako `<ID>` bez vysvetlenia, čím ich nahradiť).
+5. **Žiadny zhon/tlačenie** — tempo určuje majiteľ; overujeme a potvrdzujeme.
+6. **Na konci sedenia:** zápis do `dennik.md` (čo sa spravilo, čo je naživo, čo
+   čaká) — sedenie sa nezavrie bez neho.
+
 ## „Podsedenie k funkcii" = často subagent, nie nové sedenie
 
 Keď treba izolovanú, špecializovanú prácu **v rámci** sedenia (napr. `qa-a11y`

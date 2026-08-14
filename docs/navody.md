@@ -3,6 +3,26 @@
 > Recepty na bežné úkony. Príkazy sa púšťajú vo VS Code termináli
 > v priečinku `ai-nexus-link` (alebo ich povedzte Claudovi ľudskou rečou).
 
+## Agenti — prehľad (čo robí ktorý + príkaz)
+
+> Orchestrátor príkazy sa púšťajú z priečinka `orchestrator/` s aktívnym venv:
+> `cd orchestrator && source venv/bin/activate`. Chatbot beží vo frontende (nie CLI).
+> Detailné recepty pre jednotlivé agenty sú v sekciách nižšie.
+
+| Agent | Čo robí | Príkaz |
+|---|---|---|
+| **Writer** (`wp_writer_agent.py`) | Napíše SEO článok o našich riešeniach + 2 obrázky → WP **koncept**. Obmieňa úvod/príklady, pamäť na napísané články, FABLE (nevymýšľa čísla). | `python wp_writer_agent.py "Téma"` · bez témy = náhodná z `topics` v Directuse |
+| **SEO/GEO** (`seo_geo_agent.py`) | Doplní meta popis, kľúčové slovo, interné odkazy, GEO tip ku konceptu. | `python seo_geo_agent.py [ID]` |
+| **Pipeline** (`run_pipeline.py`) | Reťazec Writer → SEO/GEO (Start Command cronu). | `python run_pipeline.py` |
+| **Revízny** (`revise_article.py`) | Prepíše starý článok na naše riešenia → koncept „[REVÍZIA]". Originál nemení. | `python revise_article.py <ID> --dry-run`, potom bez `--dry-run` |
+| **Oprava obrázkov** (`fix_post_images.py`) | Doplní/opraví obrázky v starom článku. | `python fix_post_images.py <ID> "Téma"` |
+| **RAG index** (`rag_index.py`) | Naindexuje obsah (články + FAQ + služby) pre chatbota. Spustiť po zmene obsahu. | `python rag_index.py --dry-run`, potom bez `--dry-run` |
+| **RAG chatbot** | Odpovedá návštevníkom z nášho obsahu (FABLE). Beží vo frontende `/api/chat`. | (nie CLI; prompt v `lib/rag.ts`, config → Directus) |
+| **Test spojenia** (`main.py`) | Overí spojenie s Directusom. | `python main.py` |
+
+**Bezpečnosť:** `--dry-run` a `main.py` len čítajú. Ostatné píšu do živých systémov (WP
+koncepty, RAG DB) a míňajú API kredity — sú to však koncepty/logy (vratné). Vždy najprv `--dry-run`.
+
 ## Nový článok na blog (cez Waylanda)
 
 ```bash
@@ -134,6 +154,32 @@ git push -u origin nazov-upravy
 
 Na GitHube: **Pull request → Merge**. Railway automaticky nasadí `main`
 (~3 min). Zásada: do `main` nikdy necommitovať priamo — vždy cez vetvu.
+
+## Revízia starého článku na naše riešenia (revízny agent)
+
+```bash
+cd orchestrator && source venv/bin/activate
+python revise_article.py <ID> --dry-run    # najprv NÁHĽAD (nič nezapíše)
+python revise_article.py <ID>              # vytvorí koncept „[REVÍZIA] …"
+```
+
+- Prečíta publikovaný článok a prepíše ho tak, aby odporúčal **naše riešenia**
+  namiesto cudzích nástrojov (zachová obrázky a tému, žiadne vymyslené čísla).
+- Uloží ako **nový koncept** „[REVÍZIA] …" — **pôvodný článok nemení.**
+- Vo wp-admin koncept skontroluj a originál nahraď **ručne a postupne** (pozor na
+  SEO — nie hromadne naraz). ID článku nájdeš vo wp-admin v URL (`…post=NNN…`).
+
+## Preindexovanie chatbota (RAG index)
+
+```bash
+cd orchestrator && source venv/bin/activate
+python rag_index.py --dry-run    # vypíše zdroje (články + FAQ + služby), nič nezapíše
+python rag_index.py              # zapíše embeddingy do RAG databázy
+```
+
+- Spusti **po zmene obsahu** (nové/upravené články, FAQ, alebo služby v `content.ts`),
+  aby chatbot odpovedal z aktuálneho obsahu.
+- Míňa Gemini kredity na embeddingy; `--dry-run` je zadarmo.
 
 ## Leady z formulárov
 
