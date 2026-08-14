@@ -170,6 +170,22 @@ git pomoc** a extrémne sa natiahlo — presne to, čomu má `ako-viest-sedenia.
 zavrieť**, Claude **upozorní** na rozbiehanie, vždy presné príkazy do terminálu, žiadny zhon.
 Zapísané do `ako-viest-sedenia.md` („Tvrdé pravidlá").
 
+**Čo nás konkrétne zdržalo (vyhnúť sa nabudúce):**
+- **Naháňanie lokálneho náhľadu blogu**, ktorý ťahá obsah z WordPressu — lokálne
+  nebol WP prístup (`.env.local`) → 404, plus stará Turbopack cache. Míňali sme
+  čas na local, hoci build bol zelený a web je aj tak skrytý pred Googlom.
+  → **Poučenie:** na vizuálnu kontrolu blogu (ťahá WP) nejsť cez local bez WP env;
+  keď je build zelený, rovno merge a pozri na živom webe.
+- **Prehnané hedgeovanie a zdvojené otázky** (opakované „počkaj ~2 min", pýtanie
+  sa na to isté). → **Poučenie:** byť rozhodný, nepýtať sa dvakrát.
+- **Placeholder `<ID>` v príkaze** spôsobil bash chybu; `git` z podpriečinka dal
+  `orchestrator/orchestrator`. → **Poučenie:** presné príkazy, `git -C <cesta>`,
+  placeholdery vždy vysvetliť, čím ich nahradiť.
+- **Neupozornil som na rozbiehanie sedenia** včas (porada sa preklopila do kódu).
+  → **Poučenie:** Claude aktívne stráži rozsah (pravidlo 3 v `ako-viest-sedenia`).
+- **Dizajn agent (Fable) spadol na chýbajúce kredity** — fallback na Opus.
+  → **Poučenie:** pri dizajn agentovi vopred rátať s kreditmi/modelom.
+
 ## Aug 2026 — Frontend agent M2b: Boma Flora — reálne fotky, QA opravy, polish (Emil skilly), doladenia ✅ (vetva, NEzlúčené)
 
 **Vetva `claude/m1-frontend-agent-templates-94ksdt` (stále NEzlúčené do `main`).**
