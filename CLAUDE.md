@@ -6,6 +6,22 @@ Kontext pre Claude Code sedenia v tomto repozitári. Jazyk komunikácie aj obsah
 > — kvôli aktuálnemu stavu, rozhodnutiam a ponaučeniam. A **každý „štartový prompt"
 > pre nové sedenie musí túto inštrukciu obsahovať** (najprv prečítať dennik + vizia).
 
+## Pravidlá spolupráce (trvalé pokyny pre Claude)
+
+Platia vždy — netreba ich opakovať v každom sedení.
+
+- **Go-live a predaj sú ZAMKNUTÉ.** Zverejnenie do Googla ani predaj nenavrhuj a
+  nesmeruj k nim — idú iba na môj VÝSLOVNÝ pokyn a predpokladajú vlastnú
+  firmu/subjekt + dokumenty + súlad s legislatívou.
+- **Jedno sedenie = jeden typ** (porada/plán · kód · dizajn · agenti). Nemiešaj;
+  keď sa to rozbieha, upozorni ma a navrhni rozdelenie.
+- **Jedna úloha → dokončiť → overiť → zavrieť.** Žiadne „a ešte toto".
+- **Vždy presné príkazy do terminálu**, krok po kroku; žiadne placeholdery ako
+  `<ID>` bez vysvetlenia, čím ich nahradiť.
+- **Žiadny zhon.** Tempo určujem ja; nepýtaj sa dvakrát na to isté; buď rozhodný.
+- **Na konci sedenia** zapíš do `docs/dennik.md` (čo hotové, čo naživo, čo čaká).
+- Detail konvencie: `docs/ako-viest-sedenia.md`.
+
 ## Čo je AI Nexus Link
 
 Modulárna platforma na „headless" modernizáciu WordPress webov + AI automatizáciu.
