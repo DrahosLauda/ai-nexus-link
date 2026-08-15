@@ -3,6 +3,38 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Plánovacie sedenie — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (M7) — aug 2026
+
+**Typ:** plánovacie (nič sa nekódovalo). **Výstup:** plný plán + štartové prompty
+K0–K4 v `docs/plan-agenti.md` (sekcia „Konfigurátor kytíc — Kvetinársky ateliér
+s Klárou (M7)"). Nahradil pôvodnú backlogovú poznámku „flower bar".
+
+**Vízia (majiteľ):** nie e-shopová klikačka, ale pocit reálneho kvetinárstva —
+obsluhuje **fotorealistická AI floristka „Klára"**: pýta sa na príležitosť/komu/
+farby/rozpočet, odporučí sezónne kvety a kyticu **skladá pred očami**.
+
+**Kľúčové rozhodnutia:** (1) Klára = fotorealistická AI osoba; (2) **video slučky
+súčasťou v1**; (3) mozog = náš chatbot vzor (Gemini + `agent_config`); (4) vizuál
+kytice **deterministický** (zoznam+súčet → PNG výrezy+motion), žiadne per-klik AI;
+(5) dáta statické v `content.ts` s **numerickou cenou/ks** (pripravené na Directus/
+Woo); (6) nová stránka `/ukazky/kvetinarstvo/konfigurator`, prelink z `/obchod`;
+(7) objednávka cez existujúci `?typ=kytica`; (8) míľnik **M7**, demo `noindex`.
+
+**Princíp realizovateľnosti:** postavu Kláru vygenerovať RAZ (character-sheet +
+`image_to_video` z jedného master portrétu = konzistentná tvár), za behu len
+prehrávať; jediné AI za behu = voliteľný finálny „glamour shot". Real-time avatar
+s lip-syncom zámerne mimo v1.
+
+**Kroky (každý = samostatné sedenie, iný typ):** K0 dátový model + funkčné jadro
+(kód) · K1 vizuál skladanej kytice (kód/dizajn) · K2 postava Klára = assety
+(kreatíva, Kling/Higgsfield) · K3 mozog Kláry (agent) · K4 glamour shot (bonus).
+
+**Opravené pri príležitosti:** overené `git`om, že šablóna **Boma Flora je už
+zlúčená v `main`** (nie na nezlúčenej vetve, ako tvrdili staršie záznamy) —
+opravné poznámky doplnené v `plan-agenti.md`.
+
+**Čaká:** rozhodnutie majiteľa, ktorým krokom (K0…) sa spustí realizácia.
+
 ## Backlog — nevyriešené úlohy, zadania a doplnky (živý zoznam)
 
 > **Jediné miesto pravdy pre otvorené drobnosti a doplnky.** Dopĺňať/škrtať
