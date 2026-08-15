@@ -139,14 +139,21 @@ export function KyticaVizual({ pocty }: { pocty: Record<string, number> }) {
                 }
               >
                 <span className="kv-stonka-in" style={{ animationDelay: `${s.delay}ms` }}>
-                  <span className="kv-stalka" />
-                  <span className="kv-hlava">
-                    {vyrez ? (
-                      <Image src={vyrez} alt="" fill sizes="64px" className="object-contain" />
-                    ) : (
-                      <KvetHlava tvar={s.kvet.tvar} hex={farba.hex} svetla={farba.svetla} />
-                    )}
-                  </span>
+                  {vyrez ? (
+                    // Fotorežim: PNG výrez je CELÁ stonka (kvet hore, stonka po
+                    // spodný okraj = väzbu), otočená vo vejári. Bez CSS stalky/siluety.
+                    <span className="kv-foto">
+                      <Image src={vyrez} alt="" fill sizes="160px" className="object-contain object-bottom" />
+                    </span>
+                  ) : (
+                    // Fallback: vektorová stalka + silueta hlavy (kým nie je fotka).
+                    <>
+                      <span className="kv-stalka" />
+                      <span className="kv-hlava">
+                        <KvetHlava tvar={s.kvet.tvar} hex={farba.hex} svetla={farba.svetla} />
+                      </span>
+                    </>
+                  )}
                 </span>
               </span>
             );

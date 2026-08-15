@@ -1363,6 +1363,35 @@ nie až „niekedy".
 - **Kredity:** postava + videá + glamour shot sú jediné platené generácie —
   postava a videá **raz vopred** (K2), glamour shot na explicitné kliknutie.
 
+## Spresnenie po štarte K1 (aug 2026) — K1 vizuál vs K4 fotokytica (potvrdené majiteľom)
+
+Počas realizácie K1 sa vyjasnil vzťah dvoch úrovní vizuálu (majiteľ chce reálne
+kvety, žiadne kreslené):
+
+- **K1 = živý náhľad, čo reaguje na KAŽDÝ klik.** Skladá sa **deterministicky z
+  výrezov jednotlivých stoniek** (priehľadné PNG, bočný pohľad, dlhá stonka po
+  spodok = väzbu; fotorežim v `kytica-vizual.tsx` vykreslí výrez ako celú otočenú
+  stonku, silueta je len tichý fallback). Bez AI, bez čakania, bez kreditov.
+- **K4 = hotová fotorealistická kytica s „wow" efektom** (v štýle hero Boma Flory)
+  = **JEDNA Kling generácia na výslovné kliknutie** „Ukážte mi ju naozaj" z
+  aktuálneho výberu (na počkanie, ~pár sekúnd, 1 kredit). Nie pri každom kliku.
+- **Zamietnuté: predgenerovať kytice „v rôznych možnostiach".** 14 kvetov ×
+  ľubovoľné počty = prakticky nekonečno kombinácií → nedá sa nafotiť dopredu.
+  Fotokytica ide len (a) K4 na požiadanie, alebo (b) pár hotových „preset" kytíc
+  na výber (iný zážitok — výber z hotových, nie konfigurácia).
+- **Cena sa NIKDY nepečie do obrázka** (nedá sa meniť, nie je prístupná/
+  prekladateľná, porušuje data-driven) — ostáva ako text na karte. Prípadný
+  „vázový/výkladný" štýl je nanajvýš kozmetika kariet mriežky, nie jadro (na
+  skladanie kytice treba čisté výrezy stoniek).
+
+**Assety K1 (výrezy) — pracovný postup pri egress bloku:** toto cloud prostredie
+blokuje sťahovanie z Kling CDN (403), takže vygenerované výrezy sa doň nedostanú
+priamo. Cesta: majiteľ nafotí 14 kvetov cez Kling (biele pozadie, dlhá stonka),
+commitne **surové** fotky na vetvu do `public/kvetinarstvo/kvety/`; sedenie orezne
+pozadie **lokálne** (Pillow) → priehľadné PNG a zapojí cesty v
+`konfiguratorVyrezy`. Odporúčaný pomer strán výrezu **9:16 (na výšku), 2K**,
+jednotný pre všetkých 14.
+
 ## Štartové prompty pre realizačné sedenia (copy-paste; jeden krok = jedno sedenie)
 
 **K0 — dátový model + funkčné jadro (KÓD):**

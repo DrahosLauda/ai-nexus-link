@@ -206,6 +206,18 @@
   filter: drop-shadow(0 2px 3px rgb(30 53 40 / 0.16));
 }
 
+/* Fotorežim: PNG výrez ako celá stonka — spodok = väzba, kvet hore. Pomer strán
+   výrezu drží `--foto-ar` (default 9:16, na výšku); zmena = jeden riadok. */
+.kv-foto {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 100%;
+  aspect-ratio: var(--foto-ar, 9 / 16);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 3px 5px rgb(30 53 40 / 0.18));
+}
+
 /* Papierová väzba dole — prekryje zbiehajúce sa stalky (nad všetkými stonkami) */
 .kv-vazba {
   position: absolute;
