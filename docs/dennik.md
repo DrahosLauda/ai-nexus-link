@@ -3,6 +3,42 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
+
+**Typ:** kód (bez Kláry, bez videa — tie sú K2/K1/K3). **Vetva:**
+`claude/konfigurator-kytic-k0-stiqsm`. **Stav:** hotové na vetve, čaká merge do
+`main` (po súhlase majiteľa). Demo ostáva pod `/ukazky`, `noindex`.
+
+**Čo hotové:**
+- **Dátový model kvetov** v `frontend/templates/kvetinarstvo/content.ts`: nový
+  export `konfiguratorKvety` (14 kvetov) s **numerickou cenou/ks** (`cenaZaKs:
+  number`) + `farba`, `sezona`, `prilezitosti[]`. Typy `Sezona`, `Prilezitost`,
+  interface `Kvet`; mapy `konfiguratorFarby` (odtieň náhľadu), `sezonaLabel`,
+  `prilezitostLabel`. Staré `cena: string` (predajné karty) needitované.
+  Rozhranie pripravené na neskoršiu výmenu zdroja (Directus/Woo).
+- **Nová stránka `/konfigurator`**: `pages/konfigurator.tsx` (sub-hero + jadro) +
+  klientský komponent `sections/konfigurator.tsx` (`"use client"`): filter podľa
+  príležitosti (chips, `aria-pressed`), mriežka kvetov s **+/−** krokovačmi
+  (dotykový cieľ 44 px, `aria-label`), **živý súčet** ceny (klientský stav,
+  `Intl` `sk-SK`/EUR, `aria-live` súhrn), „Vyčistiť výber".
+- **„Hotová kytica" → objednávka**: CTA vyskladá odkaz na existujúci
+  kontakt-formulár `?typ=kytica&zhrnutie=<text kytice>`. Typ „kytica" už v
+  `contactTypyObjednavky` bol (netreba pridávať). `kontakt-form.tsx` rozšírený:
+  `useEffect` číta aj `?zhrnutie=` a predvyplní pole „Vaša predstava" (rovnaký
+  vzor ako predvyplnenie `?typ=`, bez `useSearchParams`).
+- **Registrácia stránky** v `templates/kvetinarstvo/index.tsx` (nie v `base.ts` —
+  page-registráciu drží `index.tsx`/`registry.ts`; `base.ts` je len `href()`
+  helper, ktorý query/hash korektne prenáša). Catch-all route
+  `app/ukazky/[odvetvie]/[[...page]]` nezmenený. `meta.konfigurator` doplnené.
+- **Prelinky** z `/obchod` a `/atelier` (zdieľaný obsah `konfiguratorPrelink`).
+
+**Overené:** `npm run lint` (0 problémov) + `npm run build` OK; stránka
+`/ukazky/kvetinarstvo/konfigurator` sa prerendruje (SSR = prázdny stav +
+mriežka kvetov), interakcia po hydratácii.
+
+**Čaká (ďalšie kroky M7):** K1 vizuál skladanej kytice (PNG výrezy + motion),
+K2 postava Klára (assety), K3 mozog Kláry (agent), K4 glamour shot.
+
 ## Plánovacie sedenie — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (M7) — aug 2026
 
 **Typ:** plánovacie (nič sa nekódovalo). **Výstup:** plný plán + štartové prompty

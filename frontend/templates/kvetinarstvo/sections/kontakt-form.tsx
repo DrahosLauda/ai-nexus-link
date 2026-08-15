@@ -11,18 +11,26 @@ import { contactTypyObjednavky } from "../content";
  * Predvyplnenie typu z `?typ=` (odkazy z menín a CTA) rieši malý `useEffect`,
  * ktorý po načítaní prečíta `window.location.search` a nastaví neriadený
  * `<select>`; `defaultValue` ostáva prvá hodnota, takže bez JS je pole platné.
+ * Konfigurátor kytice navyše posiela `?zhrnutie=` (textové zhrnutie kytice) →
+ * predvyplní pole „Vaša predstava".
  * V M2a sa formulár neodosiela (demo) — napojenie na lead/booking je M3.
  */
 export function KontaktForm() {
   const zoznam = contactTypyObjednavky;
   const [odoslane, setOdoslane] = useState(false);
   const selectRef = useRef<HTMLSelectElement>(null);
+  const spravaRef = useRef<HTMLTextAreaElement>(null);
   const uid = useId();
 
   useEffect(() => {
-    const typ = new URLSearchParams(window.location.search).get("typ");
+    const params = new URLSearchParams(window.location.search);
+    const typ = params.get("typ");
     if (typ && selectRef.current && zoznam.some((t) => t.hodnota === typ)) {
       selectRef.current.value = typ;
+    }
+    const zhrnutie = params.get("zhrnutie");
+    if (zhrnutie && spravaRef.current) {
+      spravaRef.current.value = zhrnutie;
     }
   }, [zoznam]);
 
@@ -81,6 +89,7 @@ export function KontaktForm() {
           Vaša predstava
         </label>
         <textarea
+          ref={spravaRef}
           id={`${uid}-sprava`}
           name="sprava"
           rows={4}

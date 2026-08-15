@@ -44,6 +44,29 @@ export interface Kytica {
   alt: string;
 }
 
+/** Sezóna kvetu — kedy vrcholí (pre filter aj neskoršie odporúčanie Kláry). */
+export type Sezona = "jar" | "leto" | "jesen" | "zima" | "celorocne";
+
+/** Príležitosť, ku ktorej sa kvet hodí (pre filter aj odporúčanie). */
+export type Prilezitost = "narodeniny" | "vyrocie" | "svadba" | "smutok" | "gratulacia" | "potesenie";
+
+/**
+ * Jeden kvet v konfigurátore kytice. Cena je ČÍSLO za 1 stonku (na živý súčet),
+ * na rozdiel od `cena: string` v predajných kartách. `farba`/`sezona`/`prilezitosti`
+ * poháňajú filter aj budúce odporúčanie (K3). `farba` je kľúč do `konfiguratorFarby`
+ * (odtieň náhľadu); vizuálne skladanie kytice z PNG výrezov dorieši K1.
+ */
+export interface Kvet {
+  id: string;
+  nazov: string;
+  /** Cena za 1 stonku v eurách (číslo — súčet beží naživo). */
+  cenaZaKs: number;
+  /** Kľúč farby do `konfiguratorFarby` (ľudský názov aj odtieň náhľadu). */
+  farba: string;
+  sezona: Sezona;
+  prilezitosti: Prilezitost[];
+}
+
 /** Karta kategórie na `/ponuka`. */
 export interface Kategoria {
   nazov: string;
@@ -193,7 +216,7 @@ export const footerNav: NavPolozka[] = [
 // ---------------------------------------------------------------------------
 
 export const meta: Record<
-  "domov" | "ponuka" | "svadby" | "obchod" | "blog" | "atelier" | "kontakt",
+  "domov" | "ponuka" | "svadby" | "obchod" | "konfigurator" | "blog" | "atelier" | "kontakt",
   Meta
 > = {
   domov: {
@@ -227,6 +250,14 @@ export const meta: Record<
     ogTitle: "Obchod — Boma Flora",
     ogDescription:
       "Kytice, predplatné kvetov a darčekové poukazy z ateliéru Boma Flora. Zatiaľ objednávka telefonicky alebo formulárom.",
+  },
+  konfigurator: {
+    title: "Poskladajte si kyticu — Boma Flora Trenčín",
+    description:
+      "Vyberte kvety podľa príležitosti a farby, pridajte počty a hneď vidíte cenu. Vašu kyticu pošlete ateliéru na dohodnutie.",
+    ogTitle: "Poskladajte si vlastnú kyticu — Boma Flora",
+    ogDescription:
+      "Interaktívny konfigurátor kytice: vyberte sezónne kvety, počty a orientačnú cenu vidíte naživo. Kvetinový ateliér Boma Flora v Trenčíne.",
   },
   blog: {
     title: "Blog — Boma Flora Trenčín",
@@ -611,6 +642,107 @@ export const shopKrokyBuduceho: Krok[] = [
 export const shopCta = {
   text: "Chcete objednať už teraz?",
   cta: { label: "Napísať alebo zavolať", href: "/kontakt" } as Odkaz,
+};
+
+// ---------------------------------------------------------------------------
+// Konfigurátor kytice `/konfigurator` — funkčné jadro (K0)
+//
+// Statická sada kvetov s NUMERICKOU cenou/ks poháňa mriežku, filter podľa
+// príležitosti aj živý súčet. Rozhranie je pripravené na neskoršiu výmenu
+// zdroja (Directus/Woo) bez prepisu UI. Vizuál skladanej kytice (PNG výrezy +
+// motion) a floristka „Klára" prídu v ďalších krokoch (K1–K3).
+// ---------------------------------------------------------------------------
+
+/** Odtiene náhľadu kvetov — kľúč `farba` z `Kvet`. `svetla` = potreba orámovania. */
+export const konfiguratorFarby: Record<string, { label: string; hex: string; svetla?: boolean }> = {
+  biela: { label: "biela", hex: "#f6f1e9", svetla: true },
+  ruzova: { label: "ružová", hex: "#e2a0b3" },
+  cervena: { label: "červená", hex: "#b23b30" },
+  bordova: { label: "bordová", hex: "#7b2d3a" },
+  zlta: { label: "žltá", hex: "#e3b23c" },
+  oranzova: { label: "oranžová (terakota)", hex: "#c07856" },
+  fialova: { label: "fialová", hex: "#8a7aa6" },
+  modra: { label: "modrá", hex: "#7c9bb5" },
+  zelena: { label: "zelená (zeleň)", hex: "#6e8b6a" },
+};
+
+export const sezonaLabel: Record<Sezona, string> = {
+  jar: "Jar",
+  leto: "Leto",
+  jesen: "Jeseň",
+  zima: "Zima",
+  celorocne: "Celoročne",
+};
+
+export const prilezitostLabel: Record<Prilezitost, string> = {
+  narodeniny: "Narodeniny",
+  vyrocie: "Výročie a láska",
+  svadba: "Svadba",
+  smutok: "Smútočná",
+  gratulacia: "Blahoželanie",
+  potesenie: "Pre radosť",
+};
+
+/** Poradie príležitostí vo filtri (chip „Všetky" pridá komponent). */
+export const konfiguratorPrilezitosti: Prilezitost[] = [
+  "narodeniny",
+  "vyrocie",
+  "svadba",
+  "smutok",
+  "gratulacia",
+  "potesenie",
+];
+
+export const konfiguratorKvety: Kvet[] = [
+  { id: "zahradna-ruza", nazov: "Záhradná ruža", cenaZaKs: 3.5, farba: "ruzova", sezona: "leto", prilezitosti: ["narodeniny", "vyrocie", "svadba", "potesenie"] },
+  { id: "biela-ruza", nazov: "Biela ruža", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "vyrocie"] },
+  { id: "pivonka", nazov: "Pivonka", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"] },
+  { id: "tulipan", nazov: "Tulipán", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"] },
+  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie", "gratulacia"] },
+  { id: "dalia", nazov: "Dália", cenaZaKs: 3.8, farba: "oranzova", sezona: "jesen", prilezitosti: ["narodeniny", "potesenie"] },
+  { id: "chryzantema", nazov: "Chryzantéma", cenaZaKs: 2.4, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"] },
+  { id: "hortenzia", nazov: "Hortenzia", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"] },
+  { id: "amarylis", nazov: "Amarylis", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"] },
+  { id: "astra", nazov: "Astra", cenaZaKs: 2.1, farba: "fialova", sezona: "jesen", prilezitosti: ["narodeniny", "smutok"] },
+  { id: "levandula", nazov: "Levanduľa", cenaZaKs: 2.3, farba: "fialova", sezona: "leto", prilezitosti: ["potesenie", "svadba"] },
+  { id: "narcis", nazov: "Narcis", cenaZaKs: 1.5, farba: "zlta", sezona: "jar", prilezitosti: ["potesenie", "gratulacia"] },
+  { id: "eukalyptus", nazov: "Eukalyptus", cenaZaKs: 1.9, farba: "zelena", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "potesenie", "narodeniny"] },
+  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.6, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"] },
+];
+
+/** Texty a mikrotexty konfigurátora (jediné miesto pravdy — nie v JSX). */
+export const konfiguratorObsah = {
+  subhero: {
+    h1: "Poskladajte si vlastnú kyticu",
+    text: "Vyberte kvety podľa príležitosti a farby, pridajte počty a cenu vidíte hneď. Keď je kytica hotová, pošlete nám ju na dohodnutie termínu a doručenia.",
+  },
+  filterEyebrow: "Pre akú príležitosť",
+  filterVsetky: "Všetky",
+  filterPomoc: "Filter zúži kvety podľa príležitosti. Počty a súčet ostanú zachované.",
+  mriezkaEyebrow: "Vyberte kvety",
+  cenaZaKs: "/ ks",
+  pridaj: "Pridať",
+  uber: "Ubrať",
+  prazdnyFilter: "Pre túto príležitosť teraz nemáme tip — skúste inú alebo „Všetky“.",
+  suhrn: {
+    nadpis: "Vaša kytica",
+    prazdne: "Zatiaľ ste nevybrali žiadne kvety. Pridajte prvý pomocou „+“.",
+    stonky: "stoniek spolu",
+    spolu: "Spolu orientačne",
+    poznamka: "Cena je orientačná (za stonky). Presnú sumu vrátane väzby a doručenia potvrdíme pri objednávke.",
+    cta: "Objednať túto kyticu",
+    vycistit: "Vyčistiť výber",
+  },
+  // Predvyplnenie kontakt-formulára: typ + textové zhrnutie kytice.
+  objednavkaTyp: "kytica",
+};
+
+/** Prelink na konfigurátor z iných stránok (Obchod, Ateliér). */
+export const konfiguratorPrelink = {
+  eyebrow: "Nové",
+  nadpis: "Poskladajte si vlastnú kyticu",
+  popis: "Vyberte kvety podľa príležitosti, pridajte počty a orientačnú cenu vidíte naživo. Hotovú kyticu nám pošlete jedným klikom.",
+  cta: { label: "Otvoriť konfigurátor", href: "/konfigurator" } as Odkaz,
 };
 
 // ---------------------------------------------------------------------------
