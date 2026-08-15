@@ -3,13 +3,21 @@
  * nie sú nákupné: nesú textový štítok „Online nákup pripravujeme" (nie iba
  * farba) a CTA na objednávku formulárom. Layout znesie neskôr reálne produkty.
  */
-import { shopCta, shopKrokyBuduceho, shopSekcie, shopSortiment, shopStitok, shopSubhero } from "../content";
+import {
+  konfiguratorPrelink,
+  shopCta,
+  shopKrokyBuduceho,
+  shopSekcie,
+  shopSortiment,
+  shopStitok,
+  shopSubhero,
+} from "../content";
 import { CtaPas, Kroky } from "../sections/bloky";
 import { SubHero } from "../sections/hero";
 import { Foto } from "../images/foto";
 import { shopSortimentFotky } from "../images/media";
 import { type Odtien } from "../images/placeholder";
-import { Cta, Sekcia, ZahlavieSekcie } from "../sections/ui";
+import { Cta, Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
 const ODTIENE: Odtien[] = ["clay", "sage", "blush", "sand"];
 
@@ -58,6 +66,20 @@ export function ObchodPage() {
         <ZahlavieSekcie {...shopSekcie.ako} />
         <div className="mt-10">
           <Kroky kroky={shopKrokyBuduceho} />
+        </div>
+      </Sekcia>
+
+      {/* Prelink na konfigurátor kytice */}
+      <Sekcia podklad="paper">
+        <div className="flex flex-col items-start gap-6 rounded-flora-lg border border-flora-line bg-flora-porcelain p-8 shadow-flora-card md:flex-row md:items-center md:justify-between md:gap-10 sm:p-10">
+          <div className="flex max-w-[52ch] flex-col gap-3">
+            <Eyebrow>{konfiguratorPrelink.eyebrow}</Eyebrow>
+            <h2 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{konfiguratorPrelink.nadpis}</h2>
+            <p className="text-flora-body text-flora-moss">{konfiguratorPrelink.popis}</p>
+          </div>
+          <Cta k={konfiguratorPrelink.cta.href} variant="primar">
+            {konfiguratorPrelink.cta.label}
+          </Cta>
         </div>
       </Sekcia>
 

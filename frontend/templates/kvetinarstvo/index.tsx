@@ -10,6 +10,7 @@ import { AtelierPage } from "./pages/atelier";
 import { BlogPage } from "./pages/blog";
 import { BlogDetailPage } from "./pages/blog-detail";
 import { DomovPage } from "./pages/domov";
+import { KonfiguratorPage } from "./pages/konfigurator";
 import { KontaktPage } from "./pages/kontakt";
 import { ObchodPage } from "./pages/obchod";
 import { PonukaPage } from "./pages/ponuka";
@@ -20,6 +21,7 @@ const staticke: TemplatePage[] = [
   { path: "ponuka", meta: meta.ponuka, render: () => <PonukaPage /> },
   { path: "svadby", meta: meta.svadby, render: () => <SvadbyPage /> },
   { path: "obchod", meta: meta.obchod, render: () => <ObchodPage /> },
+  { path: "konfigurator", meta: meta.konfigurator, render: () => <KonfiguratorPage /> },
   { path: "blog", meta: meta.blog, render: () => <BlogPage /> },
   { path: "atelier", meta: meta.atelier, render: () => <AtelierPage /> },
   { path: "kontakt", meta: meta.kontakt, render: () => <KontaktPage /> },

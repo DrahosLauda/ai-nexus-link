@@ -3,6 +3,7 @@
  * (konkrétne fakty), priestor, CTA.
  */
 import {
+  konfiguratorPrelink,
   studioAkoPracujeme,
   studioCta,
   studioPribeh,
@@ -14,7 +15,7 @@ import {
 import { CtaPas } from "../sections/bloky";
 import { Foto } from "../images/foto";
 import { studioBarboraFoto, studioPriestorFotky, studioTimFotky } from "../images/media";
-import { Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
+import { Cta, Eyebrow, Sekcia, ZahlavieSekcie } from "../sections/ui";
 
 export function AtelierPage() {
   return (
@@ -107,6 +108,20 @@ export function AtelierPage() {
             </li>
           ))}
         </ul>
+      </Sekcia>
+
+      {/* Prelink na konfigurátor kytice */}
+      <Sekcia podklad="sand">
+        <div className="flex flex-col items-start gap-6 rounded-flora-lg border border-flora-line bg-flora-porcelain p-8 shadow-flora-card md:flex-row md:items-center md:justify-between md:gap-10 sm:p-10">
+          <div className="flex max-w-[52ch] flex-col gap-3">
+            <Eyebrow>{konfiguratorPrelink.eyebrow}</Eyebrow>
+            <h2 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{konfiguratorPrelink.nadpis}</h2>
+            <p className="text-flora-body text-flora-moss">{konfiguratorPrelink.popis}</p>
+          </div>
+          <Cta k={konfiguratorPrelink.cta.href} variant="primar">
+            {konfiguratorPrelink.cta.label}
+          </Cta>
+        </div>
       </Sekcia>
 
       <CtaPas text={studioCta.text} primar={studioCta.cta} podklad="night" />
