@@ -90,7 +90,7 @@ least privilege).
 | **Writer + SEO/GEO agent** | ✅ naživo (WP koncepty) | reťazec Writer→SEO beží; Fáza 3 worker ešte nie |
 | **RAG chatbot** | ✅ prvé demo naživo | odpovedá z nášho obsahu + cituje zdroje (hrubá verzia) |
 | **Rezervačný agent** | ✅ R1 naživo (widget `/rezervacia`) | R2 (chatbot rezervuje), R3 (pripomienky), R4 (replikácia) ešte nie |
-| **Frontend knižnica šablón** | ✅ M1 infra + M2 Boma Flora (7 str., reálne fotky, QA) | ⚠️ **NEzlúčené do `main`, na vetve `m1-frontend-agent-templates` → neviditeľné** |
+| **Frontend knižnica šablón** | ✅ M1 infra + M2 Boma Flora (7 str., reálne fotky, QA) | ✅ **AKTUALIZÁCIA aug 2026: už ZLÚČENÉ v `main`** (`frontend/templates/kvetinarstvo/` + mount `/ukazky`); pôvodná zmienka o vetve `m1-frontend-agent-templates` je neaktuálna |
 | **Fáza 3** (orchestrátor ako trvalý cron worker) | ❌ len plán | agenti bežia manuálne/v pipeline, nie ako 24/7 worker |
 | **Produktizácia / SaaS (Fáza 5)** | ❌ len na papieri | multi-tenant, centrálny admin |
 | **Platiaci klient** | ❌ **žiadny** | všetko referencia/demo |
@@ -934,8 +934,8 @@ a skill načítateľné. Žiadny fiktívny obsah zatiaľ.
 
 ### M2 — Vlajková šablóna: **kvetinárstvo** (špičková úroveň + motion)
 
-> **M2a ✅ HOTOVÉ** (aug 2026, vetva `claude/m1-frontend-agent-templates-94ksdt`,
-> NEzlúčené): demo značka **Boma Flora** (Trenčín), 7 stránok + detail blogu,
+> **M2a ✅ HOTOVÉ** (aug 2026; pôvodne vetva `claude/m1-frontend-agent-templates-94ksdt`,
+> **AKTUALIZÁCIA aug 2026: už ZLÚČENÉ v `main`**): demo značka **Boma Flora** (Trenčín), 7 stránok + detail blogu,
 > meniny prvok, smútočné kytice, blog, obchod; postavené reťazcom sub-agentov
 > (dizajnér→copy→dev→QA) + revízia majiteľa. Lint/build čisté, screenshoty
 > hotové, retrospektíva v `docs/sablony-kvalita.md`. **Otvorené:** reálne fotky
@@ -1236,36 +1236,204 @@ agenti → čítajú config z Directusu → publikujú do WP → frontend zobraz
 napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
 **architektúra je naň postavená** (lego princíp, `frontend-dev` moduly len zapája).
 
-## Nápad / backlog — interaktívny konfigurátor kytice („flower bar")
+# PLÁN — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (M7, VÝSTUP plánovacieho sedenia, aug 2026)
 
-> Nápad majiteľa (aug 2026). **Zatiaľ pre Boma Flora, ako súčasť šablóny
-> kvetinárstva.** Nerealizovať v sedení o šablóne — **patrí do vlastného
-> plánovacieho sedenia** (viď `docs/ako-viest-sedenia.md`).
+> **Výstup plánovacieho sedenia (aug 2026).** Nahrádza pôvodnú backlogovú
+> poznámku „flower bar". Nič sa v tomto sedení nekódovalo — je to **plán +
+> štartové prompty** pre samostatné realizačné sedenia (K0–K4).
+>
+> **⚠️ OPRAVENÝ PREDPOKLAD:** skoršie záznamy tvrdia, že Boma Flora je na
+> nezlúčenej vetve `m1-frontend-agent-templates` a „neviditeľná". **To už
+> NEPLATÍ** — overené `git`om: šablóna **je zlúčená v `main`**
+> (`frontend/templates/kvetinarstvo/`, 28 súborov; mount `app/ukazky/…` tiež
+> v `main`). Konfigurátor sa preto stavia **rovno nad `main`**, stále pod
+> `/ukazky` s `noindex`. (Zastarané zmienky vyššie v tomto dokumente — riadky
+> pri „Frontend knižnica šablón" a „M2a" — sú označené opravnou poznámkou.)
 
-**Koncept:** zákazník vidí „stenu" kvetov vo vázach / dizajnových kýbloch (ako
-reálny výklad kvetinárstva). Pri každom kvete je **názov a cena za 1 ks**.
-Zákazník si naklikáva jednotlivé kvety (počty), aplikácia mu **skladá kyticu** a
-priebežne ukazuje **celkovú cenu**. Nakoniec vie kyticu objednať.
+## Vízia zážitku (rozhodnutie majiteľa)
 
-**Prečo to sedí do stacku:**
-- Frontend (Next.js): mriežka kýblov/váz = klikacie položky s `+/−` počtom.
-- Dáta o kvetoch (názov, cena/ks, obrázok, farba, sklad) v **Directuse** →
-  klient si ich sám edituje; neskôr možné napojiť na WooCommerce (Fáza 4).
-- Výber + živý súčet = klientský stav.
-- Hotová „kytica + cena" → predvyplnenie objednávkového formulára (teraz),
-  reálny checkout (neskôr).
+Nie „e-shopová klikačka", ale **pocit, akoby zákazník stál v kvetinárstve a
+obsluhoval ho špičkový florista**. Postava: **fotorealistická AI floristka
+„Klára"**, ktorá sa pýta na príležitosť, komu, farby a rozpočet, **sama
+odporučí sezónne kvety** a kyticu **skladá pred očami**. Zákazník doladí počty,
+cena beží naživo, na konci objedná.
 
-**Kľúčové otvorené rozhodnutie = ako zobraziť výslednú kyticu** (blokátor MVP):
-1. **Zoznam + súčet** (triviálne, deterministické).
-2. **Skladaný obrázok z výrezov** — každý kvet PNG s priehľadným pozadím,
-   navrstvené do tvaru kytice. Pekné a predvídateľné. *(Odporúčaný cieľ MVP.)*
-3. **AI-generovaný obrázok** z výberu — efektné, ale pomalé, kreditovo drahé a
-   nedeterministické; skôr bonus než jadro.
+## Princíp, ktorý rozhoduje o realizovateľnosti (dôležité)
 
-**Čo vyrieši plánovacie sedenie:** rozsah MVP, dátový zdroj (Directus vs Woo),
-úroveň vizualizácie (1/2/3), kde funkcia žije (stránka v šablóne), napojenie na
-objednávku/platbu, zaradenie do míľnikov (kandidát na **M7** alebo rozšírenie
-šablóny kvetinárstva). Hodnota: zvyšuje atraktivitu produktizovanej šablóny (Fáza 5).
+**Ilúziu živej obsluhy vytvárame STRIHOM predpripravených assetov riadeným
+konverzáciou — nie real-time generovaním postavy.** Preto:
+
+- **Postavu Kláru vygenerujeme RAZ** ako konzistentnú fotorealistickú osobu
+  (jeden master portrét → z neho sada póz/výrazov a krátke video slučky). Za
+  behu ju len **prehrávame** podľa fázy rozhovoru → okamžitá odozva, vždy tá
+  istá tvár, žiadne kredity za návštevníka.
+- **Čokoľvek reaguje na každý klik, je DETERMINISTICKÉ** (skladanie kytice =
+  vrstvené PNG + motion; súčet ceny = klientský stav). Žiadne per-klik AI.
+- **AI za behu = len jeden voliteľný „glamour shot"** na konci (na počkanie,
+  nie pri každom kliknutí). Real-time hovoriaci avatar s lip-syncom (HeyGen
+  štýl) je drahý a krehký → **zámerne mimo v1** (prípadne filmová úroveň neskôr).
+
+## Rozhodnutia tohto sedenia
+
+| # | Rozhodnutie | Voľba | Prečo |
+|---|---|---|---|
+| 1 | **Postava** | **Klára — fotorealistická AI floristka** (nie štylizovaný maskot) | Majiteľ chce reálny „som v kvetinárstve" pocit. Konzistencia sa rieši character-sheetom + `image_to_video` z jedného master portrétu (nie opakované generovanie tváre). |
+| 2 | **Video slučky** | **Áno, súčasť v1** (krátke: privítanie / počúva / viaže / hotovo) | Majiteľ ich výslovne chce ako súčasť zážitku. Vygenerované raz, uložené v `templates/…/images/`, prehrávané ako `hero-video.tsx` (vzor už v šablóne). |
+| 3 | **Mozog (poradca)** | **Náš chatbot vzor** (Gemini + osobnosť z `agent_config`) | Textová konverzácia = rýchla, lacná, deterministický zážitok; „ukáž nepovedz" demo nášho agenta (vízia §8). Sadá do `/api/chat`. |
+| 4 | **Vizuál kytice** | **Deterministické skladanie** (v1a zoznam+súčet → v1b PNG výrezy + motion) | Reaguje na klik okamžite, vždy predvídateľné. AI per-klik zamietnuté (latencia, kredity, nedeterminizmus). |
+| 5 | **Dáta o kvetoch** | **Statické v `content.ts`** (nový export, **numerická cena/ks** + `farba`, `sezona`, `prilezitost`, výrez), rozhranie pripravené na výmenu zdroja | Dnešné ceny sú stringy („od 32 €") → nepoužiteľné na súčet. Directus/Woo je len neskoršia výmena zdroja (Fáza 4), nie prepis. Demo netreba zaťažovať kolekciou. |
+| 6 | **Umiestnenie** | **Nová stránka `/ukazky/kvetinarstvo/konfigurator`** (page komponent + `base.ts`/registry), prelinkovaná z `/obchod` a `/atelier` | Lego vzor šablóny; žiadny zásah do routera (`[[...page]]` catch-all). `noindex` demo ostáva. |
+| 7 | **Objednávka** | **Predvyplniť existujúci formulár** (`kontakt-form.tsx`, `?typ=kytica` + zhrnutie kytice) | `?typ=` predvyplnenie už existuje (riadky 23–25). Žiadna duplicita objednávkovej logiky. V deme sa neodosiela. |
+| 8 | **Míľnik** | **M7 — rozšírenie vlajkovej šablóny kvetinárstva** | Prehlbuje vlajkovú referenciu; zvyšuje hodnotu produktizovanej šablóny (Fáza 5). Stále demo pod `/ukazky`. |
+
+## Tok zážitku (cieľový obraz)
+
+1. **Privítanie** — video slučka Kláry v ateliéri; predstaví sa a spýta:
+   *„Pre koho bude kytica a pri akej príležitosti?"*
+2. **Rozhovor** (3–4 otázky: príležitosť · komu · farby · rozpočet). Pri každej
+   fáze Klára zmení pózu/klip (počúva → premýšľa → usmeje sa) → pôsobí živo.
+3. **Odporučí sezónne, konkrétne** — z dátovej sady kvetov (`sezona`,
+   `prilezitost`, `farba`, `cena/ks`) navrhne východiskovú kyticu v rozpočte.
+4. **Skladá pred očami** — pridané kvety sa animovane zasunú do kytice
+   (deterministicky, okamžite), cena beží naživo.
+5. **Finálny glamour shot** (voliteľný vrchol) — tlačidlo „Ukážte mi ju naozaj"
+   → **jedna** AI generácia fotorealistickej kytice z výberu (na počkanie).
+6. **Objednávka** — „kytica + cena + zhrnutie" predvyplní existujúci formulár.
+
+## Úrovne investície
+
+| Úroveň | Klára | Vizuál kytice | Náklad / krehkosť |
+|---|---|---|---|
+| **MVP funkčný** (K0) | zatiaľ bez | zoznam + živý súčet + objednávka | nízky, robustné |
+| **Prémiový cieľ** (K1–K3) | statické pózy z character-sheetu **+ video slučky** + konverzačný mozog | PNG výrezy + motion + finálny glamour shot | stredný, stále robustné |
+| **Filmový** (neskôr) | real-time hovoriaci avatar / lip-sync / hlas | to isté | vysoký, krehké — **v1 NIE** |
+
+**Postup:** stavať po vrstvách kvôli čistote sedení (1 sedenie = 1 typ), ale
+cieľ = **Prémiový** (Klára + video + mozog). Majiteľ chce video slučky v ňom,
+nie až „niekedy".
+
+## Realizačné kroky (každý = samostatné sedenie, iný TYP práce)
+
+> Delenie rešpektuje „1 sedenie = 1 typ" z `CLAUDE.md`. K2 je **kreatíva/asset**
+> (generovanie AI postavy), K0/K1/K4 je **kód/dizajn**, K3 je **agent**.
+
+- **K0 — Dátový model kvetov + funkčné jadro (KÓD).** Nový export v
+  `content.ts` (kvety: `nazov`, `cena` číslo/ks, `farba`, `sezona`,
+  `prilezitost`, výrez/obrázok). Nová stránka `konfigurator` (page + `base.ts`
+  registrácia), mriežka kvetov s `+/−`, **živý súčet**, „hotová kytica" →
+  predvyplnenie `kontakt-form` (`?typ=kytica`). Bez Kláry, bez videa —
+  otestovateľné jadro. Prelink z `/obchod`.
+- **K1 — Vizuál skladanej kytice (KÓD/DIZAJN).** PNG výrezy kvetov (priehľadné
+  pozadie), vrstvenie do tvaru kytice + „stem-in" motion (`animate`/`emil`
+  skilly, motion mantinely z `docs/sablony-kvalita.md`). Reduced-motion fallback.
+- **K2 — Postava Klára: assety (KREATÍVA — Kling/Higgsfield, samostatné sedenie).**
+  Character-sheet fotorealistickej floristky (jeden master portrét → konzistentné
+  pózy/výrazy) + **3–4 krátke video slučky** (privítanie, počúva/premýšľa, viaže,
+  hotovo) cez `image_to_video` z master portrétu (zaručí tú istú tvár). Uložiť do
+  `templates/kvetinarstvo/images/`, atribúcia do `LICENSES.md`. Transparentne =
+  AI asistentka (neklamať, že je reálna osoba).
+- **K3 — Konverzačný mozog Kláry (AGENT).** Osobnosť floristky v `agent_config`;
+  `/api/chat` vetva/nástroj, čo vedie tok (príležitosť/komu/farby/rozpočet →
+  odporúčanie sezónnych kvetov z dátovej sady → prenos výberu do konfigurátora)
+  a riadi prehrávanie póz/videí Kláry. Bezpečnosť: iba číta sadu kvetov a skladá
+  návrh, nič nezapisuje mimo klientského stavu.
+- **K4 — Finálny glamour shot (BONUS/KÓD).** Tlačidlo → jedna AI generácia
+  fotorealistickej kytice z aktuálneho výberu (na počkanie, nie per-klik).
+  Ošetriť latenciu/chybu/kredity; voliteľné, dá sa vynechať bez dopadu na jadro.
+
+## Napojenie na existujúci kód (overené v tomto sedení)
+
+- Ceny dnes **stringy** (`content.ts`: „od 32 €") → K0 zavádza **numerickú
+  cenu/ks** v novom exporte (staré `cena: string` needitovať, len doplniť).
+- `kontakt-form.tsx` **už má `?typ=` predvyplnenie** (useEffect) → K0 pridá do
+  zoznamu typov `kytica` a odovzdá zhrnutie.
+- `hero-video.tsx` **už rieši video prvok** → K2/K1 z neho vychádzajú (netreba
+  nový prehrávač).
+- Nová stránka = **page komponent + `base.ts` registrácia** (catch-all
+  `app/ukazky/[odvetvie]/[[...page]]/page.tsx` — bez zásahu do routera).
+- Stránka `atelier` už v šablóne existuje → prirodzené miesto na prelink.
+
+## Mantinely (platia pre celý M7)
+
+- **Demo pod `/ukazky`, `noindex`** — go-live/predaj sa nedotýkame (zamknuté).
+- **Žiadne per-klik AI** — jediné AI za behu je voliteľný K4 glamour shot.
+- **Minimalizmus (rebrík CLAUDE.md):** mozog = existujúci chatbot vzor; vizuál =
+  naše motion skilly; jedna dátová sada kvetov poháňa filter aj odporúčanie aj
+  vizuál; žiadna nová ťažká závislosť.
+- **Kredity:** postava + videá + glamour shot sú jediné platené generácie —
+  postava a videá **raz vopred** (K2), glamour shot na explicitné kliknutie.
+
+## Štartové prompty pre realizačné sedenia (copy-paste; jeden krok = jedno sedenie)
+
+**K0 — dátový model + funkčné jadro (KÓD):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia „Konfigurátor kytíc — Kvetinársky ateliér s Klárou", kroky K0–K4).
+Realizačné sedenie (TYP: kód — nemiešaj s generovaním AI postavy): sprav KROK K0.
+1) V frontend/templates/kvetinarstvo/content.ts pridaj NOVÝ export sady kvetov
+   (nazov, cena ČÍSLO za 1 ks, farba, sezona, prilezitost, výrez/obrázok). Staré
+   cena:string needituj. 2) Nová stránka „konfigurator": page komponent +
+   registrácia v base.ts (catch-all route nechaj tak). Mriežka kvetov s +/−
+   počtami, ŽIVÝ SÚČET ceny (klientský stav), „hotová kytica" → predvyplní
+   kontakt-form cez ?typ=kytica (pridaj typ „kytica" do zoznamu) + zhrnutie.
+   3) Prelink z /obchod (a /atelier). Zatiaľ BEZ Kláry a BEZ videa — funkčné
+   jadro. noindex demo ostáva. Pred písaním Next.js kódu čítaj
+   node_modules/next/dist/docs/ (frontend/AGENTS.md). Over lint + build.
+   Vetva claude/... , commit + push; merge do main až po mojom súhlase.
+```
+
+**K1 — vizuál skladanej kytice (KÓD/DIZAJN, predpoklad K0 hotové):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia konfigurátora). Realizačné sedenie (TYP: kód/dizajn): sprav KROK K1 —
+vizuál skladanej kytice. Z PNG výrezov kvetov (priehľadné pozadie) skladaj
+kyticu vrstvením do tvaru + jemný „stem-in" motion (skilly animate/emil,
+motion mantinely z docs/sablony-kvalita.md, reduced-motion fallback). Reaguje na
+výber z K0 okamžite a deterministicky (žiadne AI per-klik). Pred písaním Next.js
+kódu čítaj node_modules/next/dist/docs/. Over lint + build. Vetva claude/... ,
+commit + push; merge do main až po mojom súhlase.
+```
+
+**K2 — postava Klára: assety (KREATÍVA, samostatné sedenie):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia konfigurátora, rozhodnutia #1 a #2). Realizačné sedenie (TYP:
+kreatíva/generovanie assetov — NEMIEŠAJ s kódom): vygeneruj postavu Kláry.
+1) Fotorealistická floristka — JEDEN master portrét (konzistentná tvár), z neho
+   character-sheet sada póz/výrazov (počúva, premýšľa, usmieva sa). 2) 3–4 KRÁTKE
+   video slučky (privítanie, počúva/premýšľa, viaže kyticu, hotovo) cez
+   image_to_video z master portrétu, nech je tvár rovnaká. Realistické, teplé
+   svetlo ateliéru, bez uncanny efektu. 3) Ulož do
+   frontend/templates/kvetinarstvo/images/ (rozumné rozmery/formáty pre web),
+   atribúcia do images/LICENSES.md; transparentne = AI asistentka. Žiadny app
+   kód. Vetva claude/... , commit + push; merge do main až po mojom súhlase.
+   Nástroje (Kling/Higgsfield) sú platené — pred generovaním mi zhrň plán záberov.
+```
+
+**K3 — konverzačný mozog Kláry (AGENT, predpoklad K0 + K2 hotové):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia konfigurátora + docs/rag-chatbot.md). Realizačné sedenie (TYP: agent):
+sprav KROK K3 — mozog Kláry. Osobnosť floristky do agent_config; rozšír /api/chat
+(alebo nástroj) o tok: príležitosť/komu/farby/rozpočet → odporuč sezónne kvety
+z dátovej sady K0 → prenes výber do konfigurátora; riaď prehrávanie póz/videí
+Kláry z K2. Bezpečnosť: iba čítať sadu kvetov a skladať návrh, nič nezapisovať
+mimo klientského stavu. Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/.
+Over lint + build. Vetva claude/... , commit + push; merge do main a zmeny v
+Directus (agent_config) až po mojom súhlase. Klik-časti mi vypíš ako návod.
+```
+
+**K4 — finálny glamour shot (BONUS/KÓD, predpoklad K0–K1 hotové):**
+```
+Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
+(sekcia konfigurátora, rozhodnutie #5 tok bod). Realizačné sedenie (TYP: kód):
+sprav KROK K4 — voliteľný finálny glamour shot. Tlačidlo „Ukážte mi ju naozaj"
+→ JEDNA AI generácia fotorealistickej kytice z aktuálneho výberu (na počkanie,
+NIE per-klik). Ošetri latenciu, chybu aj náklady (kredity); funkcia je voliteľná,
+jadro K0–K1 musí fungovať aj bez nej. Pred písaním Next.js kódu čítaj
+node_modules/next/dist/docs/. Over lint + build. Vetva claude/... , commit +
+push; merge do main a zmeny v Railway (API kľúč) až po mojom súhlase.
+```
 
 ## Vylepšenie frontend agentov — externé skilly (vkus + motion)
 
