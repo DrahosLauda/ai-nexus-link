@@ -3,6 +3,57 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Realizačné sedenie — Konfigurátor kytíc KROK K1 (vizuál skladanej kytice, M7) — aug 2026
+
+**Typ:** kód/dizajn. **Vetva:** `claude/krok-k1-kytica-vizual-z2pg19` (nad K0).
+**Stav:** jadro K1 hotové na vetve, čaká merge do `main` (po súhlase majiteľa).
+Demo ostáva pod `/ukazky`, `noindex`.
+
+**Čo hotové (deterministické skladanie kytice + „stem-in“ motion):**
+- **`sections/kytica-vizual.tsx` — `KyticaVizual`**: z počtov kvetov (stav z K0)
+  skladá kyticu **deterministicky** — ploché stonky → dve vrstvy vejára okolo
+  papierovej väzby (zeleň/plnivo `zelen`/`drobne` v pozadí širším vejárom, focal
+  kvety v strede). Rovnaké kvety rozprestrie po vejári a rôzne druhy premieša
+  (stabilné „semienko“ z `id`) → pekné rozloženie, vždy rovnaký výsledok pre ten
+  istý výber. Strop 30 vykreslených stoniek (cena/súčet ostávajú presné), „+N“
+  štítok pri viac. Reaguje na klik okamžite, **žiadne per-klik AI**.
+- **Hlava kvetu = PNG výrez, keď existuje** (`konfiguratorVyrezy` v `images/media.ts`),
+  inak **vektorová silueta** podľa `tvar` (ruža/guľatá/lúčna/zvon/klas/zeleň/drobné) —
+  fallback, aby jadro fungovalo aj bez generovaných assetov.
+- **Motion:** `theme.css` geometria vejára (`.kv-*`) + `flora-stonka-in` keyframe
+  (len `transform`/`opacity`, GPU); presun vejára pri zmene výberu = jemná
+  `transform` transícia. `prefers-reduced-motion` rieši **globálne** pravidlo v
+  `theme.css` (durations → 0) → statický plnohodnotný layout (overené screenshotom).
+  **Žiadna nová závislosť** (Framer Motion sa neinštaloval — minimalizmus).
+- **Dáta:** `content.ts` — nový `tvar` (`KvetTvar`) pri každom kvete (silueta stonky);
+  mikrotexty náhľadu v `konfiguratorObsah.nahlad`. `images/media.ts` —
+  `konfiguratorVyrezy` (mapa `id`→cesta k PNG, zatiaľ `undefined`).
+- **Zapojenie:** vizuál v pravom stĺpci konfigurátora nad súhrnom (sticky).
+- **Prístupnosť:** vizuál dekoratívny (`role="img"` + popis z výberu), záväzný
+  obsah nesie textový súhrn (`aria-live`).
+
+**Overené:** `npm run lint` (0) + `npm run build` OK; screenshoty desktop/mobil/
+reduced-motion (Playwright + predinštalovaný Chromium) — kytica sa skladá správne,
+bez horizontálneho scrollu, reduced-motion je plný statický layout.
+
+**⚠️ PNG výrezy cez Kling — zablokované egress politikou (nie chyba kódu):**
+Kling generovanie **funguje** (skúšobná ruža vygenerovaná, 10 kreditov, model
+Nano Banana 2), ALE **stiahnuť vygenerovaný obrázok z `klingai.com` CDN do repa
+sa nedá** — org egress proxy vracia **403 na CONNECT** (`s15-kling.klingai.com`).
+Podľa `/root/.ccr/README.md` sa policy denial **nesmie obchádzať** — reportujem.
+Preto sa výrez nedá ani zobraziť, ani orezať (Higgsfield remove_background), ani
+commitnúť. To isté by platilo pre výstup Higgsfieldu. **Nemíňal som ďalšie kredity**
+na assety, ktoré sa do repa nedostanú. Presne na to plán pripravil **siluetový
+fallback** — jadro K1 je plne funkčné bez PNG.
+**Ako doplniť PNG neskôr (bez prepisu kódu):** vygenerované výrezy (bočný pohľad
+na stonku, čisté pozadie → priehľadný PNG) uložiť do `public/kvetinarstvo/kvety/`
+ako `kvet-<id>.png` a vyplniť cesty v `konfiguratorVyrezy` — vizuál ich prekryje
+cez siluetu automaticky. Vhodné pre **K2** (kreatívne sedenie) alebo prostredie,
+kde je CDN povolený, príp. majiteľ nahrá súbory z Macu.
+
+**Čaká (ďalšie kroky M7):** PNG výrezy (assety — viď blocker vyššie), K2 postava
+Klára, K3 mozog Kláry, K4 glamour shot.
+
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
 
 **Typ:** kód (bez Kláry, bez videa — tie sú K2/K1/K3). **Vetva:**
