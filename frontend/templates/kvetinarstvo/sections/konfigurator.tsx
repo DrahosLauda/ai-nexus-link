@@ -22,6 +22,7 @@ import {
   prilezitostLabel,
   sezonaLabel,
 } from "../content";
+import { KyticaVizual } from "./kytica-vizual";
 import { Eyebrow } from "./ui";
 
 const eur = new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR" });
@@ -140,8 +141,16 @@ export function Konfigurator() {
           )}
         </div>
 
-        {/* Pravý stĺpec — živý súhrn kytice */}
-        <aside className="lg:sticky lg:top-24">
+        {/* Pravý stĺpec — živý vizuál kytice + súhrn */}
+        <aside className="flex flex-col gap-6 lg:sticky lg:top-24">
+          {/* Vizuál skladanej kytice — reaguje na výber okamžite a deterministicky */}
+          <div className="rounded-flora-lg border border-flora-line bg-flora-sand p-4 shadow-flora-card sm:p-5">
+            <Eyebrow>{t.nahlad.eyebrow}</Eyebrow>
+            <div className="mt-3">
+              <KyticaVizual pocty={pocty} />
+            </div>
+          </div>
+
           <div className="rounded-flora-lg border border-flora-line bg-flora-porcelain p-6 shadow-flora-card sm:p-7">
             <h2 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{t.suhrn.nadpis}</h2>
 

@@ -145,6 +145,131 @@
   overflow: hidden;
 }
 
+/* ── Vizuál skladanej kytice (konfigurátor, K1) ──────────────────────────────
+   Vejár stoniek okolo väzby dole. Len transform/opacity (GPU); presun vejára pri
+   zmene výberu je jemná transform-transícia, „stem-in“ je mount animácia. Pri
+   reduced-motion sa durations kapú nižšie → stonky sa len objavia na mieste. */
+.kv-nahlad {
+  position: relative;
+  margin: 0;
+}
+
+.kv-scena {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.kv-stonka {
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  width: 0;
+  height: var(--dlzka);
+  transform: translateX(-50%) rotate(var(--uhol));
+  transform-origin: 50% 100%;
+  transition: transform 0.55s var(--ease-flora);
+}
+
+.kv-stonka-in {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 100%;
+  transform-origin: 50% 100%;
+  animation: flora-stonka-in 0.62s var(--ease-flora) both;
+}
+
+.kv-stalka {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(to top, var(--color-flora-600), var(--color-flora-400));
+  border-radius: 2px;
+}
+
+.kv-hlava {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: calc(clamp(34px, 8.5vw, 54px) * var(--vel, 1));
+  height: calc(clamp(34px, 8.5vw, 54px) * var(--vel, 1));
+  transform: translate(-50%, -46%);
+}
+
+.kv-hlava svg {
+  filter: drop-shadow(0 2px 3px rgb(30 53 40 / 0.16));
+}
+
+/* Papierová väzba dole — prekryje zbiehajúce sa stalky (nad všetkými stonkami) */
+.kv-vazba {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  z-index: 60;
+  width: 38%;
+  height: 30%;
+  transform: translateX(-50%);
+  background: linear-gradient(158deg, #f4ecdb 0%, #e5d4b8 100%);
+  clip-path: polygon(4% 0, 96% 0, 63% 100%, 37% 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+.kv-vazba::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: 108%;
+  height: 15%;
+  transform: translateX(-50%);
+  background: var(--color-flora-clay-500);
+  border-radius: 999px;
+  box-shadow: 0 1px 2px rgb(30 53 40 / 0.2);
+}
+
+.kv-prazdne {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  text-align: center;
+  color: var(--color-flora-moss);
+  font-size: var(--text-flora-small);
+  line-height: 1.6;
+}
+
+.kv-skryte {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 2px 10px;
+  border-radius: var(--radius-flora-pill);
+  background: var(--color-flora-porcelain);
+  border: 1px solid var(--color-flora-line);
+  color: var(--color-flora-moss);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes flora-stonka-in {
+  from {
+    opacity: 0;
+    transform: translateY(26%) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Rešpektuj vypnuté animácie — statický layout je plnohodnotný (M2a je fallback) */
 @media (prefers-reduced-motion: reduce) {
   .flora-root *,

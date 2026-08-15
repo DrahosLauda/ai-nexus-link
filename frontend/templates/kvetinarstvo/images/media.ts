@@ -85,3 +85,30 @@ export const shopSortimentFotky: (string | undefined)[] = [
 
 /** Statická mapa polohy (16:9). Demo screenshot z Google Máp — klient nahradí svojou. */
 export const kontaktMapaFoto: string | undefined = "/kvetinarstvo/img/kontakt-mapa.webp";
+
+/* ── Konfigurátor `/konfigurator` — PNG výrezy kvetov (K1) ───────────── */
+
+/**
+ * Priehľadné PNG výrezy jednotlivých kvetov pre vizuál skladanej kytice.
+ * Kľúč = `id` z `konfiguratorKvety`. `undefined` = zatiaľ vektorová silueta
+ * (fallback v `sections/kytica-vizual.tsx`); reťazec = orezaný PNG (bočný pohľad
+ * na stonku s kvetom, priehľadné pozadie). Generuje sa RAZ vopred (Kling +
+ * odstránenie pozadia), nie per-klik. Súbory: `public/kvetinarstvo/kvety/`.
+ * Po dodaní súboru sem pribudne cesta a do `images/LICENSES.md` riadok.
+ */
+export const konfiguratorVyrezy: Record<string, string | undefined> = {
+  "zahradna-ruza": undefined,
+  "biela-ruza": undefined,
+  pivonka: undefined,
+  tulipan: undefined,
+  slnecnica: undefined,
+  dalia: undefined,
+  chryzantema: undefined,
+  hortenzia: undefined,
+  amarylis: undefined,
+  astra: undefined,
+  levandula: undefined,
+  narcis: undefined,
+  eukalyptus: undefined,
+  gypsomilka: undefined,
+};

@@ -51,10 +51,18 @@ export type Sezona = "jar" | "leto" | "jesen" | "zima" | "celorocne";
 export type Prilezitost = "narodeniny" | "vyrocie" | "svadba" | "smutok" | "gratulacia" | "potesenie";
 
 /**
+ * Tvarový archetyp kvetu — riadi siluetu jednej stonky vo vizuáli skladanej
+ * kytice (K1), aby aj bez PNG výrezov pôsobila kytica rôznorodo a uveriteľne.
+ * `zelen`/`drobne` = zeleň a plnivo (idú do pozadia fanu).
+ */
+export type KvetTvar = "ruza" | "gulata" | "lucna" | "zvon" | "klas" | "zelen" | "drobne";
+
+/**
  * Jeden kvet v konfigurátore kytice. Cena je ČÍSLO za 1 stonku (na živý súčet),
  * na rozdiel od `cena: string` v predajných kartách. `farba`/`sezona`/`prilezitosti`
  * poháňajú filter aj budúce odporúčanie (K3). `farba` je kľúč do `konfiguratorFarby`
- * (odtieň náhľadu); vizuálne skladanie kytice z PNG výrezov dorieši K1.
+ * (odtieň náhľadu); `tvar` riadi siluetu stonky pri vizuálnom skladaní kytice (K1),
+ * PNG výrez (keď je) prekryje siluetu — cesty v `images/media.ts`.
  */
 export interface Kvet {
   id: string;
@@ -65,6 +73,8 @@ export interface Kvet {
   farba: string;
   sezona: Sezona;
   prilezitosti: Prilezitost[];
+  /** Tvar siluety stonky vo vizuáli kytice (K1). */
+  tvar: KvetTvar;
 }
 
 /** Karta kategórie na `/ponuka`. */
@@ -694,20 +704,20 @@ export const konfiguratorPrilezitosti: Prilezitost[] = [
 ];
 
 export const konfiguratorKvety: Kvet[] = [
-  { id: "zahradna-ruza", nazov: "Záhradná ruža", cenaZaKs: 3.5, farba: "ruzova", sezona: "leto", prilezitosti: ["narodeniny", "vyrocie", "svadba", "potesenie"] },
-  { id: "biela-ruza", nazov: "Biela ruža", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "vyrocie"] },
-  { id: "pivonka", nazov: "Pivonka", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"] },
-  { id: "tulipan", nazov: "Tulipán", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"] },
-  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie", "gratulacia"] },
-  { id: "dalia", nazov: "Dália", cenaZaKs: 3.8, farba: "oranzova", sezona: "jesen", prilezitosti: ["narodeniny", "potesenie"] },
-  { id: "chryzantema", nazov: "Chryzantéma", cenaZaKs: 2.4, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"] },
-  { id: "hortenzia", nazov: "Hortenzia", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"] },
-  { id: "amarylis", nazov: "Amarylis", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"] },
-  { id: "astra", nazov: "Astra", cenaZaKs: 2.1, farba: "fialova", sezona: "jesen", prilezitosti: ["narodeniny", "smutok"] },
-  { id: "levandula", nazov: "Levanduľa", cenaZaKs: 2.3, farba: "fialova", sezona: "leto", prilezitosti: ["potesenie", "svadba"] },
-  { id: "narcis", nazov: "Narcis", cenaZaKs: 1.5, farba: "zlta", sezona: "jar", prilezitosti: ["potesenie", "gratulacia"] },
-  { id: "eukalyptus", nazov: "Eukalyptus", cenaZaKs: 1.9, farba: "zelena", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "potesenie", "narodeniny"] },
-  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.6, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"] },
+  { id: "zahradna-ruza", nazov: "Záhradná ruža", cenaZaKs: 3.5, farba: "ruzova", sezona: "leto", prilezitosti: ["narodeniny", "vyrocie", "svadba", "potesenie"], tvar: "ruza" },
+  { id: "biela-ruza", nazov: "Biela ruža", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "vyrocie"], tvar: "ruza" },
+  { id: "pivonka", nazov: "Pivonka", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"], tvar: "gulata" },
+  { id: "tulipan", nazov: "Tulipán", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"], tvar: "zvon" },
+  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie", "gratulacia"], tvar: "lucna" },
+  { id: "dalia", nazov: "Dália", cenaZaKs: 3.8, farba: "oranzova", sezona: "jesen", prilezitosti: ["narodeniny", "potesenie"], tvar: "gulata" },
+  { id: "chryzantema", nazov: "Chryzantéma", cenaZaKs: 2.4, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"], tvar: "gulata" },
+  { id: "hortenzia", nazov: "Hortenzia", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"], tvar: "gulata" },
+  { id: "amarylis", nazov: "Amarylis", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"], tvar: "zvon" },
+  { id: "astra", nazov: "Astra", cenaZaKs: 2.1, farba: "fialova", sezona: "jesen", prilezitosti: ["narodeniny", "smutok"], tvar: "lucna" },
+  { id: "levandula", nazov: "Levanduľa", cenaZaKs: 2.3, farba: "fialova", sezona: "leto", prilezitosti: ["potesenie", "svadba"], tvar: "klas" },
+  { id: "narcis", nazov: "Narcis", cenaZaKs: 1.5, farba: "zlta", sezona: "jar", prilezitosti: ["potesenie", "gratulacia"], tvar: "zvon" },
+  { id: "eukalyptus", nazov: "Eukalyptus", cenaZaKs: 1.9, farba: "zelena", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "potesenie", "narodeniny"], tvar: "zelen" },
+  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.6, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"], tvar: "drobne" },
 ];
 
 /** Texty a mikrotexty konfigurátora (jediné miesto pravdy — nie v JSX). */
@@ -724,6 +734,14 @@ export const konfiguratorObsah = {
   pridaj: "Pridať",
   uber: "Ubrať",
   prazdnyFilter: "Pre túto príležitosť teraz nemáme tip — skúste inú alebo „Všetky“.",
+  nahlad: {
+    eyebrow: "Vaša kytica rastie",
+    prazdne: "Pridajte kvety a uvidíte, ako sa kytica skladá.",
+    // Prístupný popis vizuálu (skladá sa z výberu); vizuál sám je dekoratívny.
+    popisPrazdny: "Náhľad skladanej kytice, zatiaľ prázdny.",
+    popisZaklad: "Náhľad skladanej kytice:",
+    viac: "a ďalšie",
+  },
   suhrn: {
     nadpis: "Vaša kytica",
     prazdne: "Zatiaľ ste nevybrali žiadne kvety. Pridajte prvý pomocou „+“.",
