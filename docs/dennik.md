@@ -129,15 +129,52 @@
 - [ ] Maskot značky (fialový robot) + jemné efekty na článkových obrázkoch (viď
   „Nápady na neskôr" nižšie, Cesta A/C).
 - [ ] SEO+GEO agent v2 — automatické prelinkovanie + HowTo schéma (viď roadmapa nižšie).
-- [ ] **Zvážiť SessionStart hook** — aby nové sedenie **automaticky (tvrdo)** načítalo
-  `docs/dennik.md` + `docs/vizia.md`, nie len cez „mäkký" pokyn v `CLAUDE.md`.
-  (Claude Code skill `session-start-hook`; nastavuje sa v `.claude/settings.json`.)
+- [x] **SessionStart hook** — nové sedenie **automaticky (tvrdo)** dostane inštrukciu
+  prečítať `docs/dennik.md` + `docs/vizia.md` + živý Backlog (nie len „mäkký" pokyn
+  v `CLAUDE.md`), a na webe sa predinštalujú `frontend` závislosti. ✅ hotové a
+  zlúčené do `main` (PR #52) — viď záznam nižšie. Aktívne od teraz.
 
 **✅ Nedávno vyriešené (pre kontext):**
 
 - [x] **Obrázky článkov po migrácii `www→wp`** — zobrazujú sa v tele článku aj
   v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
 - [x] Náhľady preberajú `alt` z WP (fallback názov článku).
+
+## Aug 2026 — Task č.1: SessionStart hook HOTOVÝ ✅ (zlúčené PR #52)
+
+**Realizačné sedenie (TYP: konfigurácia/infra).** Postavený a zlúčený SessionStart
+hook podľa plánu v `plan-agenti.md` („Task č.1"). **Aktívny od teraz** — platí pre
+každé nové sedenie (aj toto sedenie ho už dostalo naservírované na štarte).
+
+**Čo pribudlo (2 súbory):**
+- **`.claude/hooks/session-start.sh`** (spustiteľný, idempotentný, neinteraktívny,
+  synchronne — bez async v prvej iterácii). Robí dve veci:
+  - **KONTEXT (vždy, aj lokálne aj web):** cez `python3` vyreže sekciu „## Backlog …"
+    z `docs/dennik.md` (od nadpisu po nasledujúci `## `) — číta sa **za behu**, takže
+    nikdy nie je zastaraný — a poskladá na stdout **čisté JSON**
+    `hookSpecificOutput.additionalContext` = silná inštrukcia (slovenčina; prečítať
+    `dennik.md`+`vizia.md`; Pravidlá spolupráce z `CLAUDE.md` — go-live/predaj ZAMKNUTÉ,
+    1 typ/sedenie, 1 úloha, žiadny zhon) + živý Backlog.
+  - **ZÁVISLOSTI (len web, `CLAUDE_CODE_REMOTE=true`):** `cd frontend && npm install`,
+    výstup na **stderr** (`1>&2`), nech nerozbije JSON. Zlyhanie `npm` hook neukončí —
+    kontext sa naservíruje tak či tak. (Orchestrátor `pip` vedome vynechaný — väčšina
+    web sedení je frontend.)
+- **`.claude/settings.json`** (nový) — registruje hook v `SessionStart`.
+
+**Overené v sedení:** `CLAUDE_CODE_REMOTE=true ./.claude/hooks/session-start.sh` →
+exit 0, stdout **platné JSON** s inštrukciou aj Backlogom; vzniklo `frontend/node_modules`;
+`npx eslint lib/booking.ts` OK; **druhý beh idempotentný** (`npm` „up to date", stdout
+identický); lokálny beh (bez `CLAUDE_CODE_REMOTE`) správne preskočí `npm install`.
+`node_modules` gitignorované → commit len 2 súbory.
+
+**Režim:** synchronný (garantuje kontext + závislosti pred štartom sedenia; cena =
+sedenie sa spustí až po dobehnutí hooku). Ak by bol štart pomalý, závislosti vieme
+neskôr presunúť na async.
+
+**Ponaučenie:** `python3 - "$arg" <<'PY'` (program zo stdin cez heredoc + argument
+cez `sys.argv[1]`) je čistý spôsob, ako bezpečne poskladať JSON s diakritikou/emoji
+(`ensure_ascii=False`) bez únikových problémov v bashi. Backlog sa vyrezáva **za behu**
+zo súboru → v injektovanom kontexte nikdy nezastará.
 
 ## Aug 2026 — RAG chatbot: naindexovaná výkladná skriňa + plán úlohy č.1 (SessionStart hook)
 
