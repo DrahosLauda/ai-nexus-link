@@ -1389,10 +1389,27 @@ Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
 vizuál skladanej kytice. Z PNG výrezov kvetov (priehľadné pozadie) skladaj
 kyticu vrstvením do tvaru + jemný „stem-in" motion (skilly animate/emil,
 motion mantinely z docs/sablony-kvalita.md, reduced-motion fallback). Reaguje na
-výber z K0 okamžite a deterministicky (žiadne AI per-klik). Pred písaním Next.js
-kódu čítaj node_modules/next/dist/docs/. Over lint + build. Vetva claude/... ,
-commit + push; merge do main až po mojom súhlase.
+výber z K0 okamžite a deterministicky (žiadne AI per-klik).
+
+PNG výrezy kvetov vygeneruj cez Kling (mcp Kling: text_to_image) — jeden výrez
+na každý kvet zo sady konfiguratorKvety (content.ts), jednotný bočný pohľad na
+stonku s kvetom, čisté jednofarebné/nekontrastné pozadie kvôli ľahkému
+vyrezaniu → orež na priehľadné PNG a ulož do templates/kvetinarstvo/images/
+(atribúcia/pôvod do images/LICENSES.md). Kling generuje obrázok s pozadím, takže
+priehľadný PNG vznikne až orezom (odstránením pozadia — ak treba, použi Higgsfield
+remove_background). Pár kreditových generácií RAZ vopred, nie per-klik. Ak by Kling
+nebol dostupný, dočasne použi vektorový silueta fallback z placeholder.tsx, nech
+je jadro funkčné.
+
+Pred písaním Next.js kódu čítaj node_modules/next/dist/docs/. Over lint + build.
+Vetva claude/... , commit + push; merge do main až po mojom súhlase.
 ```
+
+> **Pozn. (K1 assety vs. typ sedenia):** generovanie výrezov je kreatíva, kód
+> je kód (CLAUDE.md „1 sedenie = 1 typ"). Vyššie je verzia **(a)** — K1 si výrezy
+> vygeneruje sám cez Kling. Čistejšia alternatíva **(b)**: K1 beží na siluetovom
+> fallbacku (placeholder.tsx) a PNG výrezy sa spravia až v kreatívnom kroku
+> (K2 s postavou Klára). Rozhodne majiteľ pri štarte K1.
 
 **K2 — postava Klára: assety (KREATÍVA, samostatné sedenie):**
 ```
