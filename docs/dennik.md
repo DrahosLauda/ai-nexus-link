@@ -77,8 +77,23 @@ sme **odstránili úplne**; stonky sa zbiehajú do jedného bodu dole ako zviaza
 kytica → vo vizuáli nezostalo nič kreslené, len reálne výrezy. Reálnu väzbu/vázu
 (tiež z Klingu, výrez) možno pridať neskôr, nie je nutná.
 
-**Čaká (ďalšie kroky M7):** dofotiť zvyšných 11 výrezov, K2 postava Klára, K3 mozog
-Kláry, K4 glamour shot.
+**Rozhodnutie na konci sedenia — PREPLÁNOVAŤ konfigurátor (ďalšie sedenie = PLÁN).**
+Majiteľ chce pred pokračovaním v kóde **prehodnotiť koncept** konfigurátora vo
+svetle: (1) potvrdený smer **výhradne fotorealizmus** (žiadne kreslené prvky —
+siluetový fallback aj kreslená väzba boli len dočasné); (2) **dizajnové referencie
+reálnych kvetinárstiev** (napr. `kvetinarstvoelizabeth.sk` produktová stránka
+kytice, `brand360.sk` prípadová štúdia „kvetinárstvo Elizabeth") — v tomto sedení
+sa **nedali otvoriť** (egress politika prostredia blokuje celý externý web); (3)
+overený **K1 (deterministické skladanie z výrezov) vs K4 (jedna generovaná
+fotokytica na požiadanie)**. Otvorené otázky na preplánovanie: koľko sa opierať o
+deterministické skladanie vs generované/preset kytice, ako priblížiť vzhľad úrovni
+reálnych kvetinárstiev, reálna väzba/váza ako výrez.
+**Pre ďalšie sedenie:** zapnúť **otvorenejšiu sieťovú politiku prostredia**
+(claude.ai/code → environment → network access), nech sa dajú otvoriť referencie;
+sedenie je **plánovacie** (nie kód). Štartový prompt pripravený (mimo denníka).
+
+**Čaká (ďalšie kroky M7):** preplánovať konfigurátor (plán) → dofotiť zvyšných 11
+výrezov, K2 postava Klára, K3 mozog Kláry, K4 glamour shot.
 
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
 
