@@ -3,6 +3,72 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## 16.8.2026 — Nástrojové sedenie — vlastné cloud skilly `design-shotgun` + `visual-qa` (inšpirované gstackom)
+
+**Typ:** nástroje/workflow (žiadny kód projektu, žiadny plán — len `.claude/skills/`).
+**Vetva:** `claude/claude-code-skills-design-qa-7kweyt` (pushnutá, **NEzlúčená** —
+merge do `main` až na výslovný súhlas majiteľa). Použitý skill `skill-creator`.
+
+**Prečo:** backlogová položka „Vylepšiť náš Claude Code workflow — inšpirácia
+z gstack", cesta B (neinštalovať gstack naostro — je lokálny-first, vyžaduje Bun/
+daemony —, ale prevziať jeho najlepšie **vzory** ako vlastné odľahčené,
+**cloud-kompatibilné** skilly). Zrealizované prvé dve položky shortlistu.
+
+**Čo pribudlo (2 skilly, 498 riadkov, žiadna nová závislosť):**
+- **`.claude/skills/design-shotgun/`** — pre zadanú sekciu/stránku vygeneruje
+  **4-6 zámerne odlišných dizajnových smerov** (layout **aj** tonalita, nie farebné
+  swatche) ako **samostatné statické HTML náhľady** v rámci `theme.css` tokenov
+  šablóny, a vyrenderuje ich na screenshoty **desktop + mobil**
+  (`scripts/shoot.cjs`). Prieskum smeru **pred** finálnou implementáciou (víťaza
+  potom stavia reťazec `ui-ux-designer` → `frontend-dev`). Náhľady = jednorazové
+  artefakty do `frontend/.design-shotgun/` (pridané do `.gitignore`), nie kód šablóny.
+  Fonty v náhľade zámerne systémové (offline, sebestačné — ide o layout, nie glyf).
+- **`.claude/skills/visual-qa/`** — spustí frontend (`next build` + `next start`),
+  preklikaj kľúčové **`/ukazky/*`** v desktop/tablet/mobil, odfotí a **automaticky
+  odmeria** horizontálny scroll/pretečenie, počet `<h1>` (=1), chyby v konzole,
+  zlyhané requesty, rozbité obrázky a viditeľný fokus → nálezy proti
+  `docs/sablony-kvalita.md` (`scripts/visual-qa.cjs`). **Interaktívny doplnok**
+  statického `qa-a11y` (ten číta kód, tento vidí reálny render). Rozsah v cloude =
+  `/ukazky/*` (hlavný web/blog ťahá WP → env chýba, robiť na deployi).
+
+**Cloud-kompatibilita (jadro zadania) — overená naostro, nie „od oka":**
+- Oba skripty používajú **globálny Playwright** (`require('playwright')` cez
+  `NODE_PATH="$(npm root -g)"`, v cloude `playwright@1.56.1`) + **predinštalovaný
+  Chromium** (`PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers`). **Žiadny `npm install`,
+  žiadny `playwright install`, žiadny Bun, žiadny lokálny daemon.**
+- **design-shotgun** overený: vygenerovaný testovací variant → `shoot.cjs` →
+  `.desktop.png` + `.mobile.png` OK.
+- **visual-qa** overený end-to-end: `npm run build` (zelený, `/ukazky/kvetinarstvo/*`
+  SSG) → `next start` na porte 4123 → skript preklikal 4 routy × 3 viewporty =
+  **0 nálezov, 0 blokerov** (1×h1 všade, obrázky spočítané, žiadny horizontálny
+  scroll); screenshot Boma Flora mobil = reálny render s fotkami. Server po QA zabitý.
+
+**Atribúcia:** `.claude/skills/VENDORED.md` — sekcia „Inšpirované gstackom" (Garry
+Tan, MIT). Poctivo rozlíšené: **nepreberáme kód** (náš vlastný, SK), len uznanie
+inšpirácie vzorom → **nie vendoring pod cudzou licenciou**.
+
+**Ponaučenie:** `skill-creator` navrhuje ťažký eval-harness (subagenti + baseline +
+benchmark), no pre **procesné skilly so subjektívnym výstupom** (dizajnové varianty,
+QA report) to sám označuje za zbytočné — a majiteľ ho nežiadal (CLAUDE.md
+minimalizmus). Skutočné „overiť" tu = **dokázať, že mechanizmus beží v cloude bez
+Bun** (spravené), nie umelé skóre. Držané „1 sedenie = 1 typ" (nemiešané s E1/kódom).
+
+**Živé demo `design-shotgun` (na požiadanie majiteľa):** spustený na sekcii
+**Služby** kvetinárstva (Boma Flora) — 5 zámerne odlišných smerov (V1 editorial
+zoznam · V2 mriežka kariet · V3 tmavý pás · V4 asymetrický feature · V5 vzdušné
+dlaždice), reálne texty z `content.ts`, flora tokeny, screenshoty desktop+mobil.
+**Majiteľ si vybral V4 — „asymetrický feature"** (Svadby ako veľký zelený blok +
+2×2 kompaktné karty; vedie oko na najhodnotnejšiu službu). **➡️ Poznačené pre
+budúce DIZAJNOVÉ sedenie:** premietnuť smer V4 do sekcie Služby na Domove
+(`sections/karty.tsx` je dnes iný vzor — editorial riadky; V4 = nová voľba) cez
+reťazec `ui-ux-designer` → `frontend-dev` → `visual-qa`/`qa-a11y`, data-driven,
+NIE skopírovaním demo HTML. Demo náhľady vyčistené (boli len `.design-shotgun/`,
+negitované).
+
+**Čaká:** rozhodnutie majiteľa o merge do `main`. Zvyšné položky gstack shortlistu
+(3. „plan-review pred kódom", 4. „retro/reflect") — samostatné nástrojové sedenia,
+keď bude priestor (nižšia priorita než E1).
+
 ## 16.8.2026 — Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7)
 
 **Typ:** porada/plán (nič sa nekódovalo — len prieskum + prepracovaný plán).
@@ -282,12 +348,14 @@ opravné poznámky doplnené v `plan-agenti.md`.
   jeho najlepšie vzory ako **vlastné odľahčené, cloud-kompatibilné skilly** do
   `.claude/skills/`. **Shortlist na prevzatie** (samostatné nástrojové sedenie,
   ideálne cez `skill-creator`):
-  1. **„design-shotgun"** — vygeneruj 4–6 dizajnových variantov sekcie/stránky
-     naraz → rýchly výber (ideál pre stavbu šablón). Najvyššia hodnota, žiadna
-     duplicita s tým, čo máme.
-  2. **„vizuálne QA v prehliadači"** — využiť náš predinštalovaný Chromium +
-     Playwright: spusti app, preklikaj, sprav screenshoty desktop/mobil, over proti
-     `docs/sablony-kvalita.md`. (Rozširuje `qa-a11y` o interaktívne overenie.)
+  1. [x] **„design-shotgun"** — vygeneruj 4–6 dizajnových variantov sekcie/stránky
+     naraz → rýchly výber (ideál pre stavbu šablón). *(hotové 16.8.2026 —
+     `.claude/skills/design-shotgun/`, vetva `claude/claude-code-skills-design-qa-7kweyt`,
+     NEzlúčené; viď záznam navrchu)*
+  2. [x] **„vizuálne QA v prehliadači"** — predinštalovaný Chromium + Playwright:
+     spusti app, preklikaj, screenshoty desktop/mobil, over proti
+     `docs/sablony-kvalita.md`. *(hotové 16.8.2026 — `.claude/skills/visual-qa/`,
+     tá istá vetva, NEzlúčené)*
   3. **„plan-review pred kódom"** — štruktúrovaný review plánu (architektúra +
      dizajn) pred realizačným sedením. (Nadväzuje na náš `Plan` subagent.)
   4. **„retro/reflect"** — formalizovať zápis ponaučení na konci sedenia (dnes ručne
