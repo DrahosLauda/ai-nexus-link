@@ -53,6 +53,18 @@ QA report) to sám označuje za zbytočné — a majiteľ ho nežiadal (CLAUDE.m
 minimalizmus). Skutočné „overiť" tu = **dokázať, že mechanizmus beží v cloude bez
 Bun** (spravené), nie umelé skóre. Držané „1 sedenie = 1 typ" (nemiešané s E1/kódom).
 
+**Živé demo `design-shotgun` (na požiadanie majiteľa):** spustený na sekcii
+**Služby** kvetinárstva (Boma Flora) — 5 zámerne odlišných smerov (V1 editorial
+zoznam · V2 mriežka kariet · V3 tmavý pás · V4 asymetrický feature · V5 vzdušné
+dlaždice), reálne texty z `content.ts`, flora tokeny, screenshoty desktop+mobil.
+**Majiteľ si vybral V4 — „asymetrický feature"** (Svadby ako veľký zelený blok +
+2×2 kompaktné karty; vedie oko na najhodnotnejšiu službu). **➡️ Poznačené pre
+budúce DIZAJNOVÉ sedenie:** premietnuť smer V4 do sekcie Služby na Domove
+(`sections/karty.tsx` je dnes iný vzor — editorial riadky; V4 = nová voľba) cez
+reťazec `ui-ux-designer` → `frontend-dev` → `visual-qa`/`qa-a11y`, data-driven,
+NIE skopírovaním demo HTML. Demo náhľady vyčistené (boli len `.design-shotgun/`,
+negitované).
+
 **Čaká:** rozhodnutie majiteľa o merge do `main`. Zvyšné položky gstack shortlistu
 (3. „plan-review pred kódom", 4. „retro/reflect") — samostatné nástrojové sedenia,
 keď bude priestor (nižšia priorita než E1).
