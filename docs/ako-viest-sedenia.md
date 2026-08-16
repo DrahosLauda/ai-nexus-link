@@ -71,6 +71,12 @@ k problému" bez studeného štartu. (Podľa `plan-agenti.md` máme sub-agentov
 sa chytí bez opakovaného vysvetľovania. Tok ostáva:
 **sedenie pushuje do GitHubu → používateľ pull-uje** (aj do Obsidianu).
 
+**Formát nadpisu záznamu:** každý nový záznam v `dennik.md` začína nadpisom
+s **dátumom vpredu** vo formáte `D.M.RRRR`, napr.
+`## 16.8.2026 — Plánovacie sedenie — <stručný cieľ>`. Vďaka tomu je v Obsidiane
+(panel **Prehľad**) hneď vidno **časovú os** sedení. Staršie záznamy bez presného
+dátumu netreba spätne dopĺňať.
+
 ## Zhrnutie (ťahák)
 
 1. **1 sedenie = 1 súvislý cieľ / míľnik** (nie 1 bug).
