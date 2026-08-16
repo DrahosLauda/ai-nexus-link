@@ -23,6 +23,9 @@ __pycache__/
 dist/
 build/
 
+# design-shotgun — jednorazové prieskumné náhľady (nie kód šablóny)
+frontend/.design-shotgun/
+
 # AI tool local data
 .wayland/
 .wayland-core/
