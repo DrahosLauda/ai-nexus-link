@@ -1420,9 +1420,32 @@ Floru** — tá je len demo značka šablóny; ďalší kvetinár = zmena obsahu
 | Krok | Typ | Čo | Zdroj kytíc | Predaj |
 |---|---|---|---|---|
 | **E1 — Katalóg hotových kytíc** (TERAZ, M7) | KÓD | Katalóg hotových kytíc `/kytice` (mriežka kariet + filtre) + detail `/kytice/[slug]` (galéria, cena, varianty, „O kytici", CTA) + objednávka na mieru cez existujúci `?typ=kytica`. Nahradí skladaciu `/konfigurator`. | **Staticky v `content.ts`** (rozhranie pripravené na výmenu na Woo) | **Zamknutý** — len formulár, žiadny checkout |
-| **E1-assety — Fotky hotových kytíc** (podľa potreby) | KREATÍVA / dodá majiteľ | Kvalitné fotky hotových kytíc (ideálne 2 uhly/kytica). Buď dodá majiteľ (ako pri K1 výrezoch), alebo samostatné kreatívne sedenie (Higgsfield/Kling). **Nemieša sa do E1** (1 sedenie = 1 typ). | — | — |
+| **E1-assety — Fotky hotových kytíc** (podľa potreby) | KREATÍVA (samostatné sedenie) | **Demo = AI generované** fotorealistické kytice (jednotný štýl, 2 uhly); **klient = reálne fotky**. Detaily → sekcia „Stratégia produktových fotiek". **Nemieša sa do E1** (1 sedenie = 1 typ). | — | — |
 | **E2 — WooCommerce zdroj** (NESKÔR, reálny klient) | KÓD | Prepnúť zdroj katalógu na **Woo Store API**; klient spravuje v WP admine. Frontend sa nemení, len dátový zdroj. | WooCommerce (WP) | Woo + Stripe (len na výslovný pokyn) |
 | **E3 — Produkt agent** (NESKÔR) | AGENT | „Produkt agent" (vzor Writer): z príležitosti/sezóny/odrôd vygeneruje názov + popis „O kytici" + atribúty + cenu (+ obrázok cez Gemini) → **Woo koncept** na schválenie. Konkretizácia plánovaného „WooCommerce/produkt agenta" (vízia §3). | → Woo koncepty | — |
+
+## Stratégia produktových fotiek (E1-assety, samostatné kreatívne sedenie)
+
+Fotky sú **kreatíva = samostatné sedenie**, nie E1 (kód). E1 postaví katalóg
+s placeholdermi / existujúcimi fotkami; fotky sa „nasypú" bez zásahu do kódu
+(cesty v `content.ts`). Stratégia sa líši podľa toho, či je to demo alebo klient:
+
+- **Demo (Boma Flora) = AI generované, fotorealistické.** Fiktívna značka pod
+  `/ukazky` + `noindex` → **žiadny etický problém** (nikoho neklameme). Výhody:
+  jednotný štýl (čisté pozadie, 1–2 uhly ako latka), nulové náklady, rýchlosť, a
+  je to zároveň ukážka „vieme vyrobiť produktové vizuály". Cieľ: **nerozoznateľné
+  od skutočných živých kytíc.**
+  - ⚠️ **Kling CDN je blokovaný egressom** (overené v K1 — sťahovanie assetov
+    z `klingai.com` vracia 403). Preto generovať cez **Higgsfield** alebo
+    **Gemini** (funguje — používa ho Writer na obrázky článkov), prípadne
+    vygenerovať a **nahrať súbory z Macu**. Ulož do `public/kvetinarstvo/…`,
+    atribúcia do `images/LICENSES.md`.
+- **Reálny klient (E2+) = jeho SKUTOČNÉ fotky.** Reálny kvetinár predáva reálnu
+  kyticu (latka má „foto pred doručením"). AI fotka kytice, ktorú zákazník
+  nedostane, by bola **klamlivá** → u klienta výhradne reálne fotky jeho kytíc.
+
+**Poradie:** E1 (kód, placeholder) → potom kreatívne sedenie na demo fotky. Alebo
+naopak, ak chceš mať E1 rovno s fotkami — vždy sú to však dve sedenia.
 
 ## Čo z K0/K1 prevziať (a čo zahodiť)
 
@@ -1438,6 +1461,12 @@ Floru** — tá je len demo značka šablóny; ďalší kvetinár = zmena obsahu
 
 ## Dizajnová latka — dorovnať a prekonať latku (pre E1)
 
+- **Ladí s Boma Flora (dôležité, zatiaľ):** katalóg je **súčasť existujúcej
+  šablóny**, nie cudzí prvok — používa dizajnový jazyk šablóny
+  (`templates/kvetinarstvo/theme.css`: paleta, typografia, rádiusy, tiene, rytmus
+  medzier) a existujúce UI komponenty (`sections/ui.tsx`, karty, tlačidlá).
+  Návštevník nesmie mať pocit, že prišiel na iný web. Vlastná identita = Boma
+  Flora, **nie prevzatý layout latky**.
 - **Produktová karta (mriežka `/kytice`):** veľká kvalitná fotka, názov, cena
   „od X €", voliteľná **nálepka** (Bestseller / Sezónne / Novinka), jemný hover.
 - **Detail `/kytice/[slug]`:** galéria (1–2 fotky), cena, **varianty veľkosti**
@@ -1519,15 +1548,20 @@ merateľne rýchlejší/prístupnejší. Nesmie byť vidno, že sme čokoľvek r
    (alebo presmeruj) katalógom; prelinky z /obchod, /ponuka a /atelier uprav na
    /kytice. Skladací vizuál (kytica-vizual.tsx) do main NEmerguj.
 
-5) FOTKY: E1 je KÓD — fotky hotových kytíc dodá majiteľ alebo samostatné
-   kreatívne sedenie (E1-assety). Ak fotky ešte nie sú, použij existujúce fotky
-   z public/kvetinarstvo/ (hero/galéria) alebo čistý CSS placeholder, nech je
-   katalóg funkčný; NEGENERUJ fotky v tomto sedení (iný typ).
+5) FOTKY: E1 je KÓD — fotky sú iný typ (kreatíva). V E1 NEGENERUJ fotky. Použij
+   existujúce fotky z public/kvetinarstvo/ (hero/galéria) alebo čistý CSS
+   placeholder, nech je katalóg funkčný; kód priprav tak, aby sa fotky doplnili
+   len zmenou ciest v content.ts (bez zásahu do komponentov). Fotky demo kytíc sa
+   spravia v samostatnom kreatívnom sedení: demo = AI generované fotorealistické
+   (Higgsfield/Gemini — Kling CDN je blokovaný egressom), klient = reálne fotky.
 
-Dizajnová latka: cieľ je PREKONAŤ latku (nie len dobehnúť) — vlastná identita +
-merateľne špičkový výkon/prístupnosť. Odporúčaný pipeline: ui-ux-designer (rozvrh
-karty/detailu/filtrov) → frontend-dev (implementácia) → sk-copywriter (texty kytíc)
-→ qa-a11y (brána kvality podľa docs/sablony-kvalita.md).
+Dizajn: katalóg musí LADIŤ s existujúcou šablónou Boma Flora — použi jej dizajnový
+jazyk (templates/kvetinarstvo/theme.css: paleta, typografia, rádiusy, tiene, rytmus)
+a existujúce UI komponenty (sections/ui.tsx, karty, tlačidlá). Návštevník nesmie
+mať pocit, že prišiel na iný web. Cieľ je PREKONAŤ latku (nie dobehnúť) — vlastná
+identita + merateľne špičkový výkon/prístupnosť. Odporúčaný pipeline: ui-ux-designer
+(rozvrh karty/detailu/filtrov v štýle Boma Flora) → frontend-dev (implementácia) →
+sk-copywriter (texty kytíc) → qa-a11y (brána kvality podľa docs/sablony-kvalita.md).
 
 Mantinely: slovenčina; demo pod /ukazky, noindex; predaj ZAMKNUTÝ (žiadny
 checkout/platba, len objednávkový formulár); minimalizmus (rebrík CLAUDE.md);
