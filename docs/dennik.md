@@ -77,20 +77,26 @@ sme **odstránili úplne**; stonky sa zbiehajú do jedného bodu dole ako zviaza
 kytica → vo vizuáli nezostalo nič kreslené, len reálne výrezy. Reálnu väzbu/vázu
 (tiež z Klingu, výrez) možno pridať neskôr, nie je nutná.
 
-**Rozhodnutie na konci sedenia — PREPLÁNOVAŤ konfigurátor (ďalšie sedenie = PLÁN).**
-Majiteľ chce pred pokračovaním v kóde **prehodnotiť koncept** konfigurátora vo
-svetle: (1) potvrdený smer **výhradne fotorealizmus** (žiadne kreslené prvky —
-siluetový fallback aj kreslená väzba boli len dočasné); (2) **dizajnové referencie
-reálnych kvetinárstiev** (napr. `kvetinarstvoelizabeth.sk` produktová stránka
-kytice, `brand360.sk` prípadová štúdia „kvetinárstvo Elizabeth") — v tomto sedení
-sa **nedali otvoriť** (egress politika prostredia blokuje celý externý web); (3)
-overený **K1 (deterministické skladanie z výrezov) vs K4 (jedna generovaná
-fotokytica na požiadanie)**. Otvorené otázky na preplánovanie: koľko sa opierať o
-deterministické skladanie vs generované/preset kytice, ako priblížiť vzhľad úrovni
-reálnych kvetinárstiev, reálna väzba/váza ako výrez.
+**Rozhodnutie na konci sedenia — KOMPLET PREPLÁNOVAŤ (ďalšie sedenie = PLÁN).**
+Majiteľ chce **od základu prehodnotiť nielen konfigurátor, ale celý spôsob, AKO sa
+budú kytice predávať.** Dôvod: **pôvodná vízia** (fotorealistická AI floristka
+„Klára", ktorá skladá kyticu pred očami; konfigurátor „ako v kvetinárstve") sa mu
+po tomto sedení **zdá nerealizovateľná** — presne to, na čo sa pýtal už na začiatku
+(„dá sa to vôbec spraviť?"). Nové sedenie preto **nesmie** brať existujúci plán
+(K0–K4) ako dané; má **úprimne posúdiť realizovateľnosť** a navrhnúť **realistické
+alternatívy predaja kytíc** (napr. e-shop s hotovými kyticami / preset ponuka,
+jednoduchší konfigurátor, WooCommerce, objednávka na mieru bez skladačky…).
+Vstupy do prehodnotenia: (1) potvrdený smer **výhradne fotorealizmus** (kreslené
+prvky boli len dočasné); (2) **dizajnové referencie reálnych kvetinárstiev**
+(`kvetinarstvoelizabeth.sk` produktová stránka kytice, `brand360.sk` prípadová
+štúdia „kvetinárstvo Elizabeth") — v tomto sedení sa **nedali otvoriť** (egress
+blok); (3) čo z K1 už existuje a je použiteľné (deterministické skladanie z výrezov,
+21 odrôd, orez pozadia) vs. čo zahodiť. Kľúčová otázka: **je „skladanie kytice pred
+očami" vôbec ten správny predajný model, alebo predávať inak?**
 **Pre ďalšie sedenie:** zapnúť **otvorenejšiu sieťovú politiku prostredia**
 (claude.ai/code → environment → network access), nech sa dajú otvoriť referencie;
-sedenie je **plánovacie** (nie kód). Štartový prompt pripravený (mimo denníka).
+sedenie je **plánovacie** (nie kód), s dôrazom na úprimnú realizovateľnosť. Štartový
+prompt pripravený (mimo denníka).
 
 **Čaká (ďalšie kroky M7):** preplánovať konfigurátor (plán) → dofotiť zvyšných 11
 výrezov, K2 postava Klára, K3 mozog Kláry, K4 glamour shot.
