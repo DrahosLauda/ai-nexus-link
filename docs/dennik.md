@@ -74,9 +74,15 @@ Vrátane časovej osi životného cyklu šablóny a poznámky, že vstavané ski
 (`skill-creator`, `pdf`/`docx`/`xlsx`/`pptx`) nie sú v repe (teda ani v Obsidiane).
 Doplnené do rozcestníka v `CLAUDE.md`.
 
-**Čaká:**
-- **Ďalšie sedenie (DIZAJN):** premietnuť vybraný smer **V4** do sekcie Služby na
-  Domove (štartový prompt máme; viď nižšie/plán). 1 sedenie = 1 typ (dizajn zvlášť).
+**Čaká (v poradí priority):**
+- **➡️ ĎALŠIE VEĽKÉ SEDENIE = E1 (KÓD)** — katalóg hotových kytíc „Kvetinový e-shop
+  na kľúč" (M7). Poradie bolo **„skilly pred E1"** → skilly hotové, ideme E1.
+  Hotový štartový prompt: `docs/plan-agenti.md` sekcia „Kvetinový e-shop na kľúč
+  (M7)". Odporúčaný model Opus. (E1 nahrádza skladací `/konfigurator`.)
+- **Menšia dizajnová položka (bokom, nižšia priorita než E1):** premietnuť smer
+  **V4** do sekcie Služby na Domove (`SluzbyZoznam` v `sections/bloky.tsx`,
+  data `homeSluzby`). Samostatné DIZAJNOVÉ sedenie; pokojne **až po E1** (E1
+  prestavuje katalóg/obchod → menej churn-u). NIE je to blocker.
 - Zvyšné položky gstack shortlistu (3. „plan-review pred kódom", 4. „retro/reflect")
   — samostatné nástrojové sedenia, keď bude priestor (nižšia priorita než E1/M7).
 
