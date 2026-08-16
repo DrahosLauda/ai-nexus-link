@@ -15,6 +15,22 @@
 
 ---
 
+## Keď terminál „zamrzne" / nereaguje (odblokovanie)
+
+Terminál väčšinou nezamrzol — **čaká na teba**. Podľa toho, čo vidíš:
+
+- **Na začiatku riadka svieti `>`** → nedokončený príkaz (často neuzavretá
+  úvodzovka `"` pri kopírovaní). Stlač **`Ctrl + C`** — zruší riadok a vráti
+  čistý prompt.
+- **Obrazovka plná textu, dole `:` alebo `(END)`** → otvoril sa „pager"
+  (prehliadač textu, napr. po `git log` / `git diff`). Stlač **`q`** (quit).
+- **Beží dlhý príkaz a chceš ho zastaviť** → **`Ctrl + C`** (preruší).
+
+Ako spoznáš, že je zas OK: vidíš svoj normálny prompt končiaci `$`
+(u teba `...ai-nexus-link drahoslauda$`).
+
+---
+
 ## GIT — sledovanie zmien v kóde
 
 Tri kópie kódu: **tvoj PC** (lokálne) ↔ **GitHub** (origin) ↔ **Railway** (nasadenie).
@@ -26,7 +42,12 @@ git status                    # čo je zmenené / na akej som vetve
 git branch --show-current     # názov aktuálnej vetvy
 git log --oneline -5          # posledných 5 commitov, stručne (q = ukončiť)
 git branch -a                 # zoznam všetkých vetiev
+git rev-parse --show-toplevel # vypíš KOREŇ repa (funguje z ľubovoľného podpriečinka)
 ```
+
+> Tvoj klon je na **`/Users/drahoslauda/www/ai-nexus-link`**. Ak si stratený
+> v podpriečinku (napr. `orchestrator/`), skoč do koreňa: `cd ..` (o úroveň
+> vyššie) alebo rovno `cd /Users/drahoslauda/www/ai-nexus-link`.
 
 ### Bežný pracovný cyklus (zapamätaj si ho)
 ```bash
@@ -87,6 +108,15 @@ git pull                      # stiahni najnovší stav aktuálnej vetvy z GitHu
 git pull origin <vetva>       # stiahni konkrétnu vetvu explicitne
                               # napr. git pull origin claude/m1-frontend-agent-templates-94ksdt
 ```
+
+Konkrétne — stiahnuť plánovaciu vetvu k sebe (a do Obsidianu), odkiaľkoľvek:
+```bash
+cd /Users/drahoslauda/www/ai-nexus-link      # skoč do koreňa repa
+git fetch origin                             # zisti novinky z GitHubu
+git checkout claude/florist-sales-model-replan-h56mov   # prepni sa na vetvu
+git pull origin claude/florist-sales-model-replan-h56mov # stiahni jej obsah
+```
+> Ak zmeny už sú v `main` (po zlúčení PR), stačí: `git checkout main && git pull`.
 
 **Náš tok (zapamätaj si):** *sedenie pushuje → ty pull‑uješ.* Repo máš naklonované
 na Macu; keď chceš zmeny vidieť v **Obsidiane**, spravíš **`git pull`** (alebo to
