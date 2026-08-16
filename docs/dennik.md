@@ -3,6 +3,75 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7) — aug 2026
+
+**Typ:** porada/plán (nič sa nekódovalo — len prieskum + prepracovaný plán).
+**Vetva:** `claude/florist-sales-model-replan-h56mov`. **Výstup:** prepracovaná
+sekcia v `docs/plan-agenti.md` („Kvetinový e-shop na kľúč") + tento zápis.
+
+**Prečo sedenie vzniklo:** po realizácii K1 (skladací vizuál kytice) majiteľ
+usúdil, že **pôvodná vízia — fotorealistická AI floristka „Klára", ktorá skladá
+kyticu pred očami — je nerealizovateľná** na profesionálnej úrovni. Zadanie:
+úprimne posúdiť realizovateľnosť a navrhnúť **realistický predajný model**, nie
+potvrdzovať doterajší plán.
+
+**Prieskum (sieťová politika bola zapnutá):** otvorené referencie reálnych
+kvetinárstiev — `kvetinarstvoelizabeth.sk` (produktová stránka) + `brand360.sk`
+prípadová štúdia. **Kľúčové zistenia:**
+- Špičkové kvetinárstvo predáva **hotové, naaranžované, odfotené kytice ako
+  produkty** (karta: fotky, cena, varianty veľkosti, „O kytici", filtre podľa
+  príležitosti/farby/typu) — **NIE skladačku kvet-po-kvete**. Druhý pilier:
+  objednávka na mieru podľa rozpočtu.
+- **Elizabeth NEbeží na WordPresse** — je to **Next.js 16 + Supabase + Stripe +
+  vlastný admin** (takmer náš stack). Vlastný admin si postavili, lebo WP nemajú.
+
+**Rozhodnutie (majiteľ):** ideme model **„Kvetinový e-shop na kľúč", headless** — hotové
+kytice ako **produkty**, zdroj **WooCommerce v klientovom WP admine** (nie
+Directus — kytice sú obsah!), náš **Next.js frontend ako katalóg**, **AI poradca**
+v katalógu, neskôr **„produkt agent"** generuje kytice s popismi ako **Woo
+koncepty**. Fázy **E1** (teraz, kód, demo staticky) · **E2** (Woo zdroj, reálny
+klient) · **E3** (produkt agent). Detail + štartový prompt E1 + odporúčaný model
+(Opus na E1) v `plan-agenti.md`.
+
+**Latka a naša úroveň (na výslovnú žiadosť majiteľa):** referencia
+(kvetinarstvoelizabeth.sk) je **len interné meradlo — nesmie byť vidno, že sme
+čokoľvek replikovali**. Preto **vlastný názov („Kvetinový e-shop na kľúč")**, vlastný
+dizajnový jazyk, vlastné texty. **Cieľ nie je dobehnúť, ale prekonať latku** —
+tromi vrstvami, ktoré referencia nemá: (1) **AI poradca** v katalógu (odporučí
+hotové kytice), (2) **produkt/Writer agent** (web sa sám plní a žije), (3) **SEO +
+GEO** (nájditeľnosť v Google aj v AI vyhľadávačoch) — plus merateľne špičkový
+výkon/prístupnosť (Lighthouse ≥95, WCAG AA) a jemný vkusný motion. Všetky prevahy
+stoja na moduloch, ktoré už v projekte máme → **zrealizovateľné**. Detail v
+`plan-agenti.md` sekcia „Naša úroveň — v čom prekonávame latku".
+
+**Čo z K0/K1:** K0 jadro (dátový model, objednávka `?typ=kytica`) a `Kytica`/
+`seasonalKytice` sa **prevezmú**; 21 odrôd + foto-výrezy + orez-postup z K1 sa
+prevezmú selektívne; **skladací `kytica-vizual.tsx` sa zahodí** a **K1 vetva sa
+do `main` nemerguje** (ostáva ako referencia).
+
+**⭐ PONAUČENIE (aby sme také chyby v plánovaní nerobili a stavali len funkčné
+systémy):** pôvodný plán K0–K4 povýšil **efektnú mechaniku** („skladá pred očami",
+AI postava) nad **overený predajný model**. Správne poradie je opačné — **najprv
+over, ako to robí špička v odbore (reálna referencia), až potom navrhuj
+mechaniku.** Keby sme Elizabeth otvorili na začiatku, K1 sme nemuseli stavať.
+**Odteraz: každý plán, ktorý má niečo predať, začína prieskumom reálnej
+referencie, nie nápadom na efekt.** (Zapísané aj do `plan-agenti.md`.)
+
+**Prevádzka/náklady/replikácia (dodatok — otázky majiteľa):** prečo Woo, nie
+custom stack referencie (Supabase/Stripe). Cena nie je rozhodujúca (obe rádovo
+podobné); rozhoduje **vlastníctvo + známy admin** (Woo v klientovom WP, zadarmo,
+klient ho pozná). **Woo vyhráva na SK trhu:** platobné brány (GoPay/Besteron/
+TrustPay/… vs. Stripe len karty) aj doprava (natívne zóny + SK kuriér pluginy).
+Replikácia = **„1 klient = 1 WP+Woo" + náš frontend šablóna** (nie viazané na Boma
+Floru). **Infraštruktúra:** E1 (demo) NEtreba nič; **WP+Woo až v E2** — samostatná
+inštancia, NEmiešať s `wp.digitalnapomoc.sk`; Woo je zadarmo, hosting máme. Detail
+v `plan-agenti.md` sekcia „Prevádzka, náklady a replikácia".
+
+**Názov modelu:** finalizovaný na **„Kvetinový e-shop na kľúč"** (rozhodnutie
+majiteľa; z pracovného „Kvetináreň naživo").
+
+**Čaká:** súhlas majiteľa spustiť realizačné sedenie E1 (kód). Nič sa nemergovalo.
+
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
 
 **Typ:** kód (bez Kláry, bez videa — tie sú K2/K1/K3). **Vetva:**
