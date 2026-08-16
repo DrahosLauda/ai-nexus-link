@@ -159,7 +159,6 @@ export function KyticaVizual({ pocty }: { pocty: Record<string, number> }) {
             );
           })
         )}
-        {!prazdne ? <span className="kv-vazba" aria-hidden="true" /> : null}
       </div>
       {skryte > 0 ? (
         <figcaption className="kv-skryte">+{skryte}</figcaption>

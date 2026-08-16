@@ -71,6 +71,12 @@ vnútri ostanú, len pozadie spojené s okrajom sa odstráni) → priehľadné *
 - Orezový skript (Pillow/scipy flood-fill) je v scratchpade sedenia; postup zapísaný
   v `LICENSES.md` a v `plan-agenti.md`.
 
+**Odstránená kreslená väzba:** pôvodný CSS papierový kornútok dole bol kreslený a
+pri fotkách pôsobil ploško — majiteľ chce **výhradne fotorealistické** prvky. Väzbu
+sme **odstránili úplne**; stonky sa zbiehajú do jedného bodu dole ako zviazaná
+kytica → vo vizuáli nezostalo nič kreslené, len reálne výrezy. Reálnu väzbu/vázu
+(tiež z Klingu, výrez) možno pridať neskôr, nie je nutná.
+
 **Čaká (ďalšie kroky M7):** dofotiť zvyšných 11 výrezov, K2 postava Klára, K3 mozog
 Kláry, K4 glamour shot.
 
