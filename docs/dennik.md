@@ -5,9 +5,10 @@
 
 ## 16.8.2026 — Nástrojové sedenie — vlastné cloud skilly `design-shotgun` + `visual-qa` (inšpirované gstackom)
 
-**Typ:** nástroje/workflow (žiadny kód projektu, žiadny plán — len `.claude/skills/`).
-**Vetva:** `claude/claude-code-skills-design-qa-7kweyt` (pushnutá, **NEzlúčená** —
-merge do `main` až na výslovný súhlas majiteľa). Použitý skill `skill-creator`.
+**Typ:** nástroje/workflow (žiadny kód projektu, žiadny plán — len `.claude/skills/`
++ dokumentácia). **Vetva:** `claude/claude-code-skills-design-qa-7kweyt`. Použitý
+skill `skill-creator`. **Stav: ✅ ZLÚČENÉ do `main`** — PR #64 (2 skilly + denník),
+PR #65 (dokumentácia `docs/skilly.md`).
 
 **Prečo:** backlogová položka „Vylepšiť náš Claude Code workflow — inšpirácia
 z gstack", cesta B (neinštalovať gstack naostro — je lokálny-first, vyžaduje Bun/
@@ -65,9 +66,19 @@ reťazec `ui-ux-designer` → `frontend-dev` → `visual-qa`/`qa-a11y`, data-dri
 NIE skopírovaním demo HTML. Demo náhľady vyčistené (boli len `.design-shotgun/`,
 negitované).
 
-**Čaká:** rozhodnutie majiteľa o merge do `main`. Zvyšné položky gstack shortlistu
-(3. „plan-review pred kódom", 4. „retro/reflect") — samostatné nástrojové sedenia,
-keď bude priestor (nižšia priorita než E1).
+**Dokumentácia (PR #65, na požiadanie majiteľa — v Obsidiane chýbal prehľad):**
+nový **`docs/skilly.md`** — kompletný prehľad všetkých skillov a sub-agentov, **na
+čo slúžia, KEDY je najlepšie ich použiť** (načasovanie v pracovnom toku) a **ako ich
+vyvolať** (3 spôsoby: automaticky podľa popisu · `/<nazov>` · sub-agent cez `Agent`).
+Vrátane časovej osi životného cyklu šablóny a poznámky, že vstavané skilly
+(`skill-creator`, `pdf`/`docx`/`xlsx`/`pptx`) nie sú v repe (teda ani v Obsidiane).
+Doplnené do rozcestníka v `CLAUDE.md`.
+
+**Čaká:**
+- **Ďalšie sedenie (DIZAJN):** premietnuť vybraný smer **V4** do sekcie Služby na
+  Domove (štartový prompt máme; viď nižšie/plán). 1 sedenie = 1 typ (dizajn zvlášť).
+- Zvyšné položky gstack shortlistu (3. „plan-review pred kódom", 4. „retro/reflect")
+  — samostatné nástrojové sedenia, keď bude priestor (nižšia priorita než E1/M7).
 
 ## 16.8.2026 — Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7)
 
