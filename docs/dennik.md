@@ -51,8 +51,28 @@ ako `kvet-<id>.png` a vyplniť cesty v `konfiguratorVyrezy` — vizuál ich prek
 cez siluetu automaticky. Vhodné pre **K2** (kreatívne sedenie) alebo prostredie,
 kde je CDN povolený, príp. majiteľ nahrá súbory z Macu.
 
-**Čaká (ďalšie kroky M7):** PNG výrezy (assety — viď blocker vyššie), K2 postava
-Klára, K3 mozog Kláry, K4 glamour shot.
+**✅ AKTUALIZÁCIA — fotorealistické výrezy zapojené (blocker obídený):** majiteľ
+sa rozhodol pre **reálne foto výrezy** (žiadne kreslené). Kling CDN blok sme obišli
+tak, že majiteľ **nafotil kvety cez Kling** (biele pozadie, 9:16, dlhá stonka) a
+**surové fotky commitol na vetvu**; sedenie **orezalo pozadie lokálne** — flood-fill
+z okrajov (Pillow/scipy), ktorý zvláda aj **biele kvety na bielom** (biele lupene
+vnútri ostanú, len pozadie spojené s okrajom sa odstráni) → priehľadné **WebP**
+(výška 1000 px, ~78 kB/kus) v `public/kvetinarstvo/kvety/kvet-<id>.webp`.
+- **Zapojených 10/21 kvetov** (ruže Red Naomi/Mondial, eustoma ružová, hortenzia
+  modrá/ružová, chryzantéma plnokvetá/margarétková biela, pivonka ružová, eukalyptus,
+  gypsomilka). Fotorežim vo vizuáli ich vykreslí ako celé otočené stonky → kytica je
+  **fotorealistická** (overené screenshotom).
+- **Dátová sada prepísaná na 21 reálne predávaných odrôd** (`konfiguratorKvety`) —
+  vrátane farebných variantov (eustoma biela, hortenzia ružová/biela, chryzantéma
+  plnokvetá + margarétková biela/žltá…). `id` sedí 1:1 s názvom súboru výrezu.
+- **Zvyšných 11 kvetov** zatiaľ padá na vektorovú siluetu (fallback) — po dodaní
+  fotky (rovnaký postup: commit surovej fotky → lokálny orez → cesta v
+  `konfiguratorVyrezy`) budú tiež fotorealistické. Zoznam v `images/LICENSES.md`.
+- Orezový skript (Pillow/scipy flood-fill) je v scratchpade sedenia; postup zapísaný
+  v `LICENSES.md` a v `plan-agenti.md`.
+
+**Čaká (ďalšie kroky M7):** dofotiť zvyšných 11 výrezov, K2 postava Klára, K3 mozog
+Kláry, K4 glamour shot.
 
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
 

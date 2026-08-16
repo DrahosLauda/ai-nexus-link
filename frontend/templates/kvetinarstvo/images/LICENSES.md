@@ -45,6 +45,35 @@ Súbory v `frontend/public/kvetinarstvo/img/`:
 | `obchod-predplatne.webp` | Pivonky vo váze | Obchod — Predplatné kvetov | Kling (Nano Banana 2) | Kling, komerčné |
 | `obchod-poukaz.webp` | Kytica + darčekový štítok | Obchod — Darčekový poukaz | Kling (Nano Banana 2) | Kling, komerčné |
 
+### Konfigurátor kytice — PNG/WebP výrezy kvetov (K1)
+
+Priehľadné výrezy jednotlivých kvetov pre vizuál skladanej kytice
+(`/ukazky/kvetinarstvo/konfigurator`). Zdroj: **Kling (kling.ai)**, generované na
+účte majiteľa (Standard/VIP → **komerčná licencia**), model **OBRAZ 3.0 / Nano
+Banana 2**; bočný pohľad na stonku, biele pozadie, 9:16. Pozadie **orezané lokálne**
+(flood-fill z okrajov, Pillow/scipy) → priehľadné WebP, výška 1000 px. Súbory v
+`frontend/public/kvetinarstvo/kvety/` ako `kvet-<id>.webp` (id = kľúč v
+`content.ts` `konfiguratorKvety`):
+
+| id | kvet | Model | Licencia |
+|---|---|---|---|
+| `ruza-red-naomi` | Ruža Red Naomi (červená) | Kling (OBRAZ 3.0 / Nano Banana 2) | Kling, komerčné |
+| `ruza-mondial` | Ruža Mondial (krémovo-biela) | Kling | Kling, komerčné |
+| `eustoma-ruzova` | Eustoma ružová | Kling | Kling, komerčné |
+| `hortenzia-modra` | Hortenzia modrá | Kling | Kling, komerčné |
+| `hortenzia-ruzova` | Hortenzia ružová | Kling | Kling, komerčné |
+| `chryzantema-plnokveta-bordova` | Chryzantéma plnokvetá (bordová) | Kling | Kling, komerčné |
+| `chryzantema-margaretkova-biela` | Chryzantéma margarétková (biela) | Kling | Kling, komerčné |
+| `pivonka-ruzova` | Pivonka ružová | Kling | Kling, komerčné |
+| `eukalyptus` | Eukalyptus (zeleň) | Kling | Kling, komerčné |
+| `gypsomilka` | Gypsomilka (biela) | Kling | Kling, komerčné |
+
+**Zatiaľ bez výrezu (fallback = vektorová silueta):** `ruza-avalanche`,
+`ruza-sweet-avalanche`, `eustoma-biela`, `hortenzia-biela`,
+`chryzantema-margaretkova-zlta`, `tulipan-cerveny`, `slnecnica`, `amarylis-cerveny`,
+`frezia-zlta`, `green-bell`, `matricaria`. Po dodaní fotky (rovnaký postup)
+pribudne riadok sem a cesta do `konfiguratorVyrezy` (`images/media.ts`).
+
 ### Kontakt — mapa
 
 `kontakt-mapa.webp` — demo **screenshot z Google Máp** (Mierové námestie, Trenčín),

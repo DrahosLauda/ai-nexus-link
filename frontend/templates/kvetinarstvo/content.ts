@@ -703,21 +703,31 @@ export const konfiguratorPrilezitosti: Prilezitost[] = [
   "potesenie",
 ];
 
+// Reálne predávané rezané odrody (rozšírené o farebné varianty). `id` sedí 1:1
+// s názvom výrezu `kvet-<id>.webp` v `konfiguratorVyrezy` (images/media.ts).
+// Ceny/príležitosti sú demo hodnoty — meniteľné bez zásahu do UI.
 export const konfiguratorKvety: Kvet[] = [
-  { id: "zahradna-ruza", nazov: "Záhradná ruža", cenaZaKs: 3.5, farba: "ruzova", sezona: "leto", prilezitosti: ["narodeniny", "vyrocie", "svadba", "potesenie"], tvar: "ruza" },
-  { id: "biela-ruza", nazov: "Biela ruža", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "vyrocie"], tvar: "ruza" },
-  { id: "pivonka", nazov: "Pivonka", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"], tvar: "gulata" },
-  { id: "tulipan", nazov: "Tulipán", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"], tvar: "zvon" },
-  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie", "gratulacia"], tvar: "lucna" },
-  { id: "dalia", nazov: "Dália", cenaZaKs: 3.8, farba: "oranzova", sezona: "jesen", prilezitosti: ["narodeniny", "potesenie"], tvar: "gulata" },
-  { id: "chryzantema", nazov: "Chryzantéma", cenaZaKs: 2.4, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"], tvar: "gulata" },
-  { id: "hortenzia", nazov: "Hortenzia", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"], tvar: "gulata" },
-  { id: "amarylis", nazov: "Amarylis", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"], tvar: "zvon" },
-  { id: "astra", nazov: "Astra", cenaZaKs: 2.1, farba: "fialova", sezona: "jesen", prilezitosti: ["narodeniny", "smutok"], tvar: "lucna" },
-  { id: "levandula", nazov: "Levanduľa", cenaZaKs: 2.3, farba: "fialova", sezona: "leto", prilezitosti: ["potesenie", "svadba"], tvar: "klas" },
-  { id: "narcis", nazov: "Narcis", cenaZaKs: 1.5, farba: "zlta", sezona: "jar", prilezitosti: ["potesenie", "gratulacia"], tvar: "zvon" },
+  { id: "ruza-red-naomi", nazov: "Ruža Red Naomi", cenaZaKs: 3.5, farba: "cervena", sezona: "celorocne", prilezitosti: ["vyrocie", "narodeniny"], tvar: "ruza" },
+  { id: "ruza-mondial", nazov: "Ruža Mondial", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "vyrocie", "smutok"], tvar: "ruza" },
+  { id: "ruza-avalanche", nazov: "Ruža Avalanche", cenaZaKs: 3.3, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "vyrocie", "smutok"], tvar: "ruza" },
+  { id: "ruza-sweet-avalanche", nazov: "Ruža Sweet Avalanche", cenaZaKs: 3.3, farba: "ruzova", sezona: "celorocne", prilezitosti: ["narodeniny", "vyrocie", "potesenie"], tvar: "ruza" },
+  { id: "eustoma-ruzova", nazov: "Eustoma ružová", cenaZaKs: 2.6, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "potesenie", "vyrocie"], tvar: "ruza" },
+  { id: "eustoma-biela", nazov: "Eustoma biela", cenaZaKs: 2.6, farba: "biela", sezona: "leto", prilezitosti: ["svadba", "smutok", "potesenie"], tvar: "ruza" },
+  { id: "hortenzia-modra", nazov: "Hortenzia modrá", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"], tvar: "gulata" },
+  { id: "hortenzia-ruzova", nazov: "Hortenzia ružová", cenaZaKs: 4.9, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "narodeniny"], tvar: "gulata" },
+  { id: "hortenzia-biela", nazov: "Hortenzia biela", cenaZaKs: 4.9, farba: "biela", sezona: "leto", prilezitosti: ["svadba", "smutok"], tvar: "gulata" },
+  { id: "chryzantema-plnokveta-bordova", nazov: "Chryzantéma plnokvetá", cenaZaKs: 2.6, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"], tvar: "gulata" },
+  { id: "chryzantema-margaretkova-biela", nazov: "Chryzantéma margarétková biela", cenaZaKs: 2.2, farba: "biela", sezona: "jesen", prilezitosti: ["smutok", "potesenie"], tvar: "lucna" },
+  { id: "chryzantema-margaretkova-zlta", nazov: "Chryzantéma margarétková žltá", cenaZaKs: 2.2, farba: "zlta", sezona: "jesen", prilezitosti: ["potesenie", "gratulacia"], tvar: "lucna" },
+  { id: "pivonka-ruzova", nazov: "Pivonka ružová", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"], tvar: "gulata" },
+  { id: "tulipan-cerveny", nazov: "Tulipán červený", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"], tvar: "zvon" },
+  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie"], tvar: "lucna" },
+  { id: "amarylis-cerveny", nazov: "Amarylis červený", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"], tvar: "zvon" },
+  { id: "frezia-zlta", nazov: "Frézia žltá", cenaZaKs: 2.2, farba: "zlta", sezona: "celorocne", prilezitosti: ["potesenie", "gratulacia"], tvar: "klas" },
   { id: "eukalyptus", nazov: "Eukalyptus", cenaZaKs: 1.9, farba: "zelena", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "potesenie", "narodeniny"], tvar: "zelen" },
-  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.6, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"], tvar: "drobne" },
+  { id: "green-bell", nazov: "Green Bell (Molucella)", cenaZaKs: 2.5, farba: "zelena", sezona: "leto", prilezitosti: ["svadba", "potesenie"], tvar: "klas" },
+  { id: "matricaria", nazov: "Matricaria", cenaZaKs: 2.0, farba: "biela", sezona: "celorocne", prilezitosti: ["potesenie", "svadba"], tvar: "lucna" },
+  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.7, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"], tvar: "drobne" },
 ];
 
 /** Texty a mikrotexty konfigurátora (jediné miesto pravdy — nie v JSX). */
