@@ -3,12 +3,11 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
-## Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetináreň naživo" (M7) — aug 2026
+## Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7) — aug 2026
 
 **Typ:** porada/plán (nič sa nekódovalo — len prieskum + prepracovaný plán).
 **Vetva:** `claude/florist-sales-model-replan-h56mov`. **Výstup:** prepracovaná
-sekcia v `docs/plan-agenti.md` („Kvetináreň naživo — kvetinový e-shop na kľúč") +
-tento zápis.
+sekcia v `docs/plan-agenti.md` („Kvetinový e-shop na kľúč") + tento zápis.
 
 **Prečo sedenie vzniklo:** po realizácii K1 (skladací vizuál kytice) majiteľ
 usúdil, že **pôvodná vízia — fotorealistická AI floristka „Klára", ktorá skladá
@@ -26,7 +25,7 @@ prípadová štúdia. **Kľúčové zistenia:**
 - **Elizabeth NEbeží na WordPresse** — je to **Next.js 16 + Supabase + Stripe +
   vlastný admin** (takmer náš stack). Vlastný admin si postavili, lebo WP nemajú.
 
-**Rozhodnutie (majiteľ):** ideme model **„Kvetináreň naživo", headless** — hotové
+**Rozhodnutie (majiteľ):** ideme model **„Kvetinový e-shop na kľúč", headless** — hotové
 kytice ako **produkty**, zdroj **WooCommerce v klientovom WP admine** (nie
 Directus — kytice sú obsah!), náš **Next.js frontend ako katalóg**, **AI poradca**
 v katalógu, neskôr **„produkt agent"** generuje kytice s popismi ako **Woo
@@ -36,7 +35,7 @@ klient) · **E3** (produkt agent). Detail + štartový prompt E1 + odporúčaný
 
 **Latka a naša úroveň (na výslovnú žiadosť majiteľa):** referencia
 (kvetinarstvoelizabeth.sk) je **len interné meradlo — nesmie byť vidno, že sme
-čokoľvek replikovali**. Preto **vlastný názov („Kvetináreň naživo")**, vlastný
+čokoľvek replikovali**. Preto **vlastný názov („Kvetinový e-shop na kľúč")**, vlastný
 dizajnový jazyk, vlastné texty. **Cieľ nie je dobehnúť, ale prekonať latku** —
 tromi vrstvami, ktoré referencia nemá: (1) **AI poradca** v katalógu (odporučí
 hotové kytice), (2) **produkt/Writer agent** (web sa sám plní a žije), (3) **SEO +

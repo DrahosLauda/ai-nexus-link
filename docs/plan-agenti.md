@@ -1236,12 +1236,11 @@ agenti → čítajú config z Directusu → publikujú do WP → frontend zobraz
 napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
 **architektúra je naň postavená** (lego princíp, `frontend-dev` moduly len zapája).
 
-# PLÁN — „Kvetináreň naživo" — kvetinový e-shop na kľúč (M7, PREPRACOVANÉ — aug 2026)
+# PLÁN — Kvetinový e-shop na kľúč (M7, PREPRACOVANÉ — aug 2026)
 
-> **Názov modelu:** *„Kvetináreň naživo"* (pracovný — ľahko premenovateľný;
-> alternatívy: „Kvetinový e-shop na kľúč", „Živá kvetináreň", kódovo modul
-> „Flóra"). Názov je zámerne **vlastný** — nemá odkazovať na žiadnu cudziu
-> referenciu. Web „žije" (AI poradca + produkt agent) — odtiaľ „naživo".
+> **Názov modelu:** *„Kvetinový e-shop na kľúč"* (rozhodnutie majiteľa). Názov je
+> zámerne **vlastný a predajný** — nemá odkazovať na žiadnu cudziu referenciu;
+> hovorí presne to, čo klient dostane: hotový kvetinový e-shop na kľúč.
 >
 > **⚠️ Referencia vs. identita (dôležité):** stránku `kvetinarstvoelizabeth.sk`
 > používame **výhradne interne ako meraciu latku** („toto je súčasná špička, my
@@ -1312,7 +1311,7 @@ reálne spravovať").
 
 ## Cieľový model (rozhodnutie majiteľa, aug 2026)
 
-**„Kvetináreň naživo", postavená headless:** hotové kytice ako **produkty** (nie
+**„Kvetinový e-shop na kľúč", postavený headless:** hotové kytice ako **produkty** (nie
 skladačka), zdroj produktov **WooCommerce v klientovom WP admine**, náš **Next.js
 frontend ako katalóg** (mriežka + detail + filtre), **AI poradca** priamo
 v katalógu a neskôr **„produkt agent"**, ktorý kytice s popismi generuje ako
@@ -1383,7 +1382,7 @@ SEO agent, seo-geo skill, kvalita-brána).
 
 ## Čo z K0/K1 prevziať (a čo zahodiť)
 
-| Prvok | Verdikt v novom modeli („Kvetináreň naživo") |
+| Prvok | Verdikt v novom modeli („Kvetinový e-shop na kľúč") |
 |---|---|
 | `konfiguratorKvety` — **16 odrôd v `main`, 21 na K1 vetve** (farba/sezóna/príležitosť/cena) | **Prevziať** — podklad pre popisy „O kytici" a filtre; z čoho je ktorá kytica. |
 | **10 orezaných foto-výrezov (webp)** na K1 vetve + **orez-postup** (Pillow/scipy flood-fill) | **Prevziať ako bonus/techniku** — drobné detaily „z čoho je kytica"; orez-postup sa hodí na akékoľvek foto-assety. |
@@ -1434,12 +1433,12 @@ SEO agent, seo-geo skill, kvalita-brána).
 
 ```
 Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md a
-docs/plan-agenti.md (sekcia „Kvetináreň naživo — kvetinový e-shop na kľúč (M7)",
-najmä „Naša úroveň — v čom prekonávame latku"). Rešpektuj CLAUDE.md pravidlá
+docs/plan-agenti.md (sekcia „Kvetinový e-shop na kľúč (M7)", najmä
+„Naša úroveň — v čom prekonávame latku"). Rešpektuj CLAUDE.md pravidlá
 spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ).
 
 Toto je REALIZAČNÉ sedenie (TYP: kód — nemiešaj s generovaním fotiek/assetov).
-Postav KROK E1 — katalóg hotových kytíc „Kvetináreň naživo" pre šablónu
+Postav KROK E1 — katalóg hotových kytíc „Kvetinový e-shop na kľúč" pre šablónu
 kvetinárstvo. Model je HOTOVÁ KYTICA AKO PRODUKT (žiadna skladačka kvet-po-kvete —
 tá je zavrhnutá; skladací /konfigurator a K1 kytica-vizual sa NAHRÁDZAJÚ).
 
@@ -1498,8 +1497,8 @@ main až po mojom výslovnom súhlase.
 
 # PLÁN — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (⛔ NAHRADENÝ vyššie — história/ponaučenie, M7, aug 2026)
 
-> **⛔ TENTO PLÁN (K0–K4) JE NAHRADENÝ** sekciou „Kvetináreň naživo — kvetinový
-> e-shop na kľúč" vyššie. Ponechaný zámerne pre históriu a ponaučenie (viď „PONAUČENIE"
+> **⛔ TENTO PLÁN (K0–K4) JE NAHRADENÝ** sekciou „Kvetinový e-shop na kľúč"
+> vyššie. Ponechaný zámerne pre históriu a ponaučenie (viď „PONAUČENIE"
 > vyššie). K0 (funkčné jadro) je v `main`; K1 (skladací vizuál) ostáva na vetve
 > a do `main` sa nemerguje. K2–K4 sa nerealizujú v pôvodnej podobe.
 
