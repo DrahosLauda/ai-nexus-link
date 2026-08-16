@@ -256,6 +256,28 @@ opravné poznámky doplnené v `plan-agenti.md`.
   hotová na `/headless-wordpress` (bez cenníka, CSS grafika).
 - [x] ⚠️ **Dizajnové referencie** — apertia screenshoty dodal používateľ; vlastná
   landing je v repe (`docs/index.html`).
+- [ ] **Vylepšiť náš Claude Code workflow — inšpirácia z `gstack`** (Garry Tan, MIT;
+  balík ~23 skillov pre Claude Code: plán → dizajn → review → QA → ship → reflect).
+  **Posúdenie (16.8.2026):** koncepčne presne to, čo dnes robíme ručne cez naše
+  konvencie, ALE gstack je **lokálny-first** (vyžaduje **Bun**, team mode = symlinky
+  na lokálnu inštaláciu, lokálne daemony) → **priamo do našich cloud web sedení
+  nesadne.** Rozhodnutie: **cesta B** — neinštalovať gstack naostro, ale prevziať
+  jeho najlepšie vzory ako **vlastné odľahčené, cloud-kompatibilné skilly** do
+  `.claude/skills/`. **Shortlist na prevzatie** (samostatné nástrojové sedenie,
+  ideálne cez `skill-creator`):
+  1. **„design-shotgun"** — vygeneruj 4–6 dizajnových variantov sekcie/stránky
+     naraz → rýchly výber (ideál pre stavbu šablón). Najvyššia hodnota, žiadna
+     duplicita s tým, čo máme.
+  2. **„vizuálne QA v prehliadači"** — využiť náš predinštalovaný Chromium +
+     Playwright: spusti app, preklikaj, sprav screenshoty desktop/mobil, over proti
+     `docs/sablony-kvalita.md`. (Rozširuje `qa-a11y` o interaktívne overenie.)
+  3. **„plan-review pred kódom"** — štruktúrovaný review plánu (architektúra +
+     dizajn) pred realizačným sedením. (Nadväzuje na náš `Plan` subagent.)
+  4. **„retro/reflect"** — formalizovať zápis ponaučení na konci sedenia (dnes ručne
+     do denníka). Nízke úsilie, drží učenie.
+  Alternatíva (cesta A): gstack naostro — len ak raz prejdeme na **lokálny Claude
+  Code CLI** (Bun + gstack). Zatiaľ NIE. **Nezaraďovať teraz** (uprostred M7/E1;
+  1 sedenie = 1 typ).
 
 **🟢 Doplnky / neskôr (nie sú blokery):**
 
