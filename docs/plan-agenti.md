@@ -1371,6 +1371,50 @@ SEO agent, seo-geo skill, kvalita-brána).
   porušuje hranicu „produkty do WP" a klient by mal dva adminy. Woo je čistejšie
   a konzistentné s víziou Fáza 6 + párovaním agent↔Woo §8.)*
 
+## Prevádzka, náklady a replikácia (prečo Woo, a čo treba inštalovať)
+
+> Prečo je náš WP/Woo model lepšia voľba než custom stack referencie (Next.js +
+> Supabase + Stripe), a čo to prakticky znamená pre infraštruktúru. **Predaj je
+> ZAMKNUTÝ** — platobné brány/dopravu tu riešime len koncepčne, nekonfigurujeme.
+
+**Náklady (Woo vs. Supabase/Stripe):** nie je to hlavný rozhodovací faktor —
+Supabase/Vercel majú free tier, potom rádovo ~$20–25/mes každá. **Rozhodujúce nie
+je, čo je lacnejšie, ale kde je zdroj pravdy a kto to spravuje:** referencia má
+produkty v Supabase + **admin, ktorý im musela agentúra postaviť a udržiavať**;
+my máme produkty vo **WooCommerce v klientovom WP** — admin je **natívny, zadarmo
+a klient ho už pozná**. WooCommerce je open-source (0 € za plugin).
+
+**Platobné brány — výhoda Woo pre SK trh:**
+- **Stripe** (referencia) zvláda karty + Apple/Google Pay, ale **slovenské lokálne
+  metódy** (bankové prevody TatraPay/VÚB ePlatby a pod.) **natívne nepodporuje** —
+  klient je viazaný na jednu bránu.
+- **Woo** má hotový plugin prakticky pre **každú SK bránu** (GoPay, Besteron,
+  TrustPay, Barion, GP webpay, 24-pay, aj Stripe/PayPal) → klient si vyberie.
+
+**Doprava/donáška — výhoda Woo:** natívne *shipping zones* (sadzby podľa regiónu,
+prahy zdarma) + pluginy pre SK kuriérov (Packeta/Zásielkovňa, GLS, DPD, Slovenská
+pošta, osobný odber). Pre kvetinárstvo je donáška kľúčová — Woo to má **hotové**,
+referencia to má naprogramované custom (drahšie na údržbu).
+
+**Replikácia na ďalšie kvetinárstva (vízia Fáza 5):** vzor **„1 klient = 1
+WordPress + WooCommerce"** (jeho admin, jeho produkty, jeho brána, jeho doprava) +
+náš **frontend šablóna `templates/kvetinarstvo/`**, ktorá sa naň napojí cez Store
+API a customizuje (skill `site-customizer`, M4/M5). Model **nie je viazaný na Boma
+Floru** — tá je len demo značka šablóny; ďalší kvetinár = zmena obsahu, nie kódu.
+
+**Čo treba inštalovať (praktické, podľa fázy):**
+
+| Fáza | WP + Woo? | Poznámka |
+|---|---|---|
+| **E1 (teraz, demo)** | **NIE** | Katalóg statický v `content.ts` — žiadna nová infraštruktúra. |
+| **E2 (reálny Woo zdroj)** | **ÁNO** | Kytice žijú vo Woo. Buď **klientov WP** (produkčne), alebo **samostatná demo WP+Woo inštancia** na test napojenia. |
+
+- **Nemiešať s `wp.digitalnapomoc.sk`** — ten je pre náš obsah (články), nie pre
+  kvetinárske produkty. Pre kvetinársky e-shop = **samostatné WP+Woo** (nová
+  subdoména/inštancia).
+- „Nová inštalácia" = založiť ďalší WordPress + doň nainštalovať Woo (zadarmo) →
+  **nie nová drahá služba**; hosting už máme.
+
 ## Fázy (nahrádzajú K0–K4)
 
 | Krok | Typ | Čo | Zdroj kytíc | Predaj |

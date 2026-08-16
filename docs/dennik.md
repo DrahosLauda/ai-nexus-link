@@ -57,6 +57,19 @@ mechaniku.** Keby sme Elizabeth otvorili na začiatku, K1 sme nemuseli stavať.
 **Odteraz: každý plán, ktorý má niečo predať, začína prieskumom reálnej
 referencie, nie nápadom na efekt.** (Zapísané aj do `plan-agenti.md`.)
 
+**Prevádzka/náklady/replikácia (dodatok — otázky majiteľa):** prečo Woo, nie
+custom stack referencie (Supabase/Stripe). Cena nie je rozhodujúca (obe rádovo
+podobné); rozhoduje **vlastníctvo + známy admin** (Woo v klientovom WP, zadarmo,
+klient ho pozná). **Woo vyhráva na SK trhu:** platobné brány (GoPay/Besteron/
+TrustPay/… vs. Stripe len karty) aj doprava (natívne zóny + SK kuriér pluginy).
+Replikácia = **„1 klient = 1 WP+Woo" + náš frontend šablóna** (nie viazané na Boma
+Floru). **Infraštruktúra:** E1 (demo) NEtreba nič; **WP+Woo až v E2** — samostatná
+inštancia, NEmiešať s `wp.digitalnapomoc.sk`; Woo je zadarmo, hosting máme. Detail
+v `plan-agenti.md` sekcia „Prevádzka, náklady a replikácia".
+
+**Názov modelu:** finalizovaný na **„Kvetinový e-shop na kľúč"** (rozhodnutie
+majiteľa; z pracovného „Kvetináreň naživo").
+
 **Čaká:** súhlas majiteľa spustiť realizačné sedenie E1 (kód). Nič sa nemergovalo.
 
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
