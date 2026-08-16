@@ -70,7 +70,24 @@ v `plan-agenti.md` sekcia „Prevádzka, náklady a replikácia".
 **Názov modelu:** finalizovaný na **„Kvetinový e-shop na kľúč"** (rozhodnutie
 majiteľa; z pracovného „Kvetináreň naživo").
 
-**Čaká:** súhlas majiteľa spustiť realizačné sedenie E1 (kód). Nič sa nemergovalo.
+**Popri pláne (dokumentácia/workflow, všetko zlúčené do `main`, PR #57–#62):**
+doplnený ťahák `prikazy.md` (odblokovanie terminálu Ctrl+C/q, cesta do repa,
+pull vetvy do Obsidianu, obsah/orientácia), konvencia **dátumu `D.M.RRRR`**
+v nadpisoch denníka, podrobný **návod na Obsidian Git** (`obsidian-claude.md`
+§3.1 — auto commit/pull/push, výhody), a spresnenie plánu E1 (stratégia fotiek:
+demo = AI generované cez Higgsfield/Gemini, klient = reálne; dizajn ladí s Boma
+Flora). Backlog: **posúdenie `gstack`** (cesta B — vlastné cloud-skilly).
+
+**Pripravené na spustenie (samostatné sedenia — 1 sedenie = 1 typ):**
+- **E1 — katalóg kytíc** (KÓD, model Opus; štartový prompt v `plan-agenti.md`,
+  sekcia „Kvetinový e-shop na kľúč"). Sieťovú politiku netreba.
+- **Workflow-skilly á la gstack** (NÁSTROJE cez `skill-creator`; shortlist +
+  prompt v Backlogu). **Odporúčané poradie: skilly pred E1** (E1 z design-shotgun
+  a vizuálneho QA profituje).
+
+**Ponaučenie sedenia (navyše):** disciplína „1 sedenie = 1 typ" sa osvedčila —
+nové nápady (E1, gstack skilly) sme nezačali kódiť tu, ale zafixovali ako
+samostatné sedenia so štartovými promptmi.
 
 ## Realizačné sedenie — Konfigurátor kytíc KROK K0 (funkčné jadro, M7) — aug 2026
 
