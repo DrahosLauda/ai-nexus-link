@@ -28,36 +28,49 @@
 
 ## Naše vlastné skilly
 
-| Skill | Na čo | Ako vyvolať |
-|---|---|---|
-| **`design-shotgun`** | Pre sekciu/stránku vygeneruje **4–6 odlišných dizajnových smerov** (layout + tonalita) ako statické HTML náhľady v rámci `theme.css` a vyrenderuje screenshoty desktop/mobil → rýchly výber smeru **pred** finálnym kódom. | „ukáž mi varianty/verzie sekcie", „neviem ktorým smerom" · `/design-shotgun` |
-| **`visual-qa`** | Spustí frontend, preklikaj `/ukazky/*` v desktop/tablet/mobil, odfotí a **automaticky odmeria** horizontálny scroll, 1×`h1`, chyby v konzole, rozbité obrázky, fokus — proti `docs/sablony-kvalita.md`. Interaktívny doplnok `qa-a11y`. | „preklikaj web / sprav screenshoty mobil", „over responzivitu" · `/visual-qa` |
-| **`seo-geo-frontend`** | Postaví SEO + GEO základ na headless Next.js (metadata, OG, canonical, `sitemap.xml`, `robots.txt`, `llms.txt`, JSON-LD) pre Google aj AI vyhľadávače. | „optimalizuj web pre Google/AI", „priprav na indexovanie" · `/seo-geo-frontend` |
-| **`site-customizer`** | Prispôsobí hotovú šablónu reálnemu klientovi (texty, farby, údaje, modul) — zmenou obsahu, nie kódu. *Zatiaľ runbook (kostra), plný beh je M4.* | „sprav z tejto šablóny web pre klienta X" · `/site-customizer` |
+| Skill | Na čo | Kedy je najlepšie ho použiť | Ako vyvolať |
+|---|---|---|---|
+| **`design-shotgun`** | Pre sekciu/stránku vygeneruje **4–6 odlišných dizajnových smerov** (layout + tonalita) ako statické HTML náhľady v rámci `theme.css` a vyrenderuje screenshoty desktop/mobil → rýchly výber smeru. | **Na ZAČIATKU** novej sekcie/stránky, keď smer nie je jasný — **pred** písaním finálneho kódu (ušetrí prerábku). Nie na drobné doladenie už hotového. | „ukáž mi varianty/verzie sekcie", „neviem ktorým smerom" · `/design-shotgun` |
+| **`visual-qa`** | Spustí frontend, preklikaj `/ukazky/*` v desktop/tablet/mobil, odfotí a **automaticky odmeria** horizontálny scroll, 1×`h1`, chyby v konzole, rozbité obrázky, fokus — proti `docs/sablony-kvalita.md`. | Keď je šablóna/stránka **hotová**, tesne **pred ľudskou revíziou a pred merge**; po väčších vizuálnych zmenách. V cloude len `/ukazky/*` (hlavný web/blog ťahá WP). | „preklikaj web / sprav screenshoty mobil", „over responzivitu" · `/visual-qa` |
+| **`seo-geo-frontend`** | Postaví SEO + GEO základ na headless Next.js (metadata, OG, canonical, `sitemap.xml`, `robots.txt`, `llms.txt`, JSON-LD) pre Google aj AI vyhľadávače. | Keď je **obsah a štruktúra stránky hotová** a chystá sa indexovanie / go-live, alebo pri **replikácii** na nového klienta. Nie na rozrobenom webe. | „optimalizuj web pre Google/AI", „priprav na indexovanie" · `/seo-geo-frontend` |
+| **`site-customizer`** | Prispôsobí hotovú šablónu reálnemu klientovi (texty, farby, údaje, modul) — zmenou obsahu, nie kódu. | Keď máš **overenú šablónu a reálneho klienta** (jeho texty/farby/údaje/logo) a robíš z nej klientský web. *Zatiaľ runbook (kostra), plný beh je M4.* | „sprav z tejto šablóny web pre klienta X" · `/site-customizer` |
 
 ## Prevzaté (vendored) skilly — vkus a motion (Emil Kowalski, MIT)
 
 Podrobná atribúcia a zdroje: `.claude/skills/VENDORED.md`.
 
-| Skill | Na čo | Ako vyvolať |
-|---|---|---|
-| **`emil-design-eng`** | Filozofia UI polish, komponentov a neviditeľných detailov, ktoré robia softvér „drahým". | Pri dolaďovaní vzhľadu/detailov (automaticky pri frontend práci) |
-| **`animate`** | Ako stavať motion **správne** (poradie rozhodnutí: či animovať → účel → nástroj → vlastnosti → krivka/trvanie → prerušenie → exit). | „pridaj animáciu / oživ komponent" · `/animate` |
-| **`review-animations`** | Kritika motion podľa vysokej remeselnej latky (`STANDARDS.md`). **Len ľudsky** — sám sa nespúšťa. | Iba `/review-animations` |
+| Skill | Na čo | Kedy je najlepšie ho použiť | Ako vyvolať |
+|---|---|---|---|
+| **`emil-design-eng`** | Filozofia UI polish, komponentov a neviditeľných detailov, ktoré robia softvér „drahým". | Pri **finálnom dolaďovaní** detailov/polish už hotového komponentu (nie na hrubú stavbu). | Automaticky pri frontend práci · „doťiahni detaily/polish" |
+| **`animate`** | Ako stavať motion **správne** (poradie rozhodnutí: či animovať → účel → nástroj → vlastnosti → krivka/trvanie → prerušenie → exit). | Keď pridávaš **konkrétny pohyb/prechod** — rozhoduj **pred** písaním animácie, nie dodatočne „nech sa to hýbe". | „pridaj animáciu / oživ komponent" · `/animate` |
+| **`review-animations`** | Kritika motion podľa vysokej remeselnej latky (`STANDARDS.md`). **Len ľudsky** — sám sa nespúšťa. | **Po** napísaní motion, na kritiku **pred schválením** netriviálnej animácie. | Iba `/review-animations` |
 
 ## Sub-agenti — build tím na šablóny (`.claude/agents/`)
 
 Spúšťajú sa **sekvenčne** na tom istom balíku (nie paralelne — krížili by si súbory);
 každý na štarte číta `docs/sablony-kvalita.md`. Modely: `docs/sablony-kvalita.md` → „Modely sub-agentov".
 
-| Agent | Rola | Model | Kedy |
+| Agent | Rola | Model | Kedy je najlepšie ho použiť |
 |---|---|---|---|
-| **`ui-ux-designer`** | Dizajn systém (`theme.css`), rozvrh sekcií/stránok, motion koncept. | Fable | Na začiatku novej šablóny, **pred** kódom |
-| **`sk-copywriter`** | SK texty do `content.ts` (proti zoznamu zakázaných AI fráz). | Sonnet | Obsah šablóny / kontrola textov |
-| **`frontend-dev`** | Implementácia sekcií — čistý Next.js 16 / Tailwind v4, výkon, a11y. | Opus | Po dizajne + textoch |
-| **`qa-a11y`** | Brána kvality pred ľudskou revíziou (checklist, statická kontrola). | Sonnet | Tesne pred odovzdaním majiteľovi |
+| **`ui-ux-designer`** | Dizajn systém (`theme.css`), rozvrh sekcií/stránok, motion koncept. | Fable | **Úplný začiatok** novej šablóny, **pred** kódom (ideálne po `design-shotgun` výbere smeru). |
+| **`sk-copywriter`** | SK texty do `content.ts` (proti zoznamu zakázaných AI fráz). | Sonnet | Keď treba **napísať/prekontrolovať SK texty** šablóny — súbežne s `frontend-dev`, na tých istých, ale **iných** súboroch. |
+| **`frontend-dev`** | Implementácia sekcií — čistý Next.js 16 / Tailwind v4, výkon, a11y. | Opus | **Po** hotovom dizajne + textoch — samotná stavba/kódovanie sekcií. |
+| **`qa-a11y`** | Brána kvality pred ľudskou revíziou (checklist, statická kontrola). | Sonnet | **Tesne pred** odovzdaním majiteľovi — statická brána; ideálne v páre s `visual-qa` (ten pridá interaktívne overenie). |
 
-**Typický reťazec stavby šablóny:** `ui-ux-designer` → (`sk-copywriter` + `frontend-dev`) → `qa-a11y` / `visual-qa` → ľudská revízia.
+## Správne načasovanie — kedy ktorý (životný cyklus šablóny)
+
+1. **Smer** — `design-shotgun` (4–6 variantov) → majiteľ vyberie.
+2. **Dizajn systém** — `ui-ux-designer` (`theme.css`, rozvrh, motion koncept).
+3. **Obsah + stavba** — `sk-copywriter` (texty) **+** `frontend-dev` (kód), súbežne;
+   pri motion `animate`, pri detailoch `emil-design-eng`.
+4. **Kontrola** — `qa-a11y` (statická brána) **+** `visual-qa` (prehliadač, screenshoty);
+   netriviálny motion `/review-animations` (ľudsky).
+5. **Nájditeľnosť** — `seo-geo-frontend` (pred indexovaním / go-live).
+6. **Ku klientovi** — `site-customizer` (z overenej šablóny klientský web).
+
+> **Pravidlo palca:** `design-shotgun` = **pred** kódom (hľadáš smer),
+> `visual-qa` + `qa-a11y` = **po** kóde (overuješ hotové), `seo-geo-frontend` =
+> **na záver** pred spustením. Drž „1 sedenie = 1 typ" — dizajn zvlášť, kód zvlášť.
 
 ## Vstavané (globálne) skilly — nie sú v repe
 
