@@ -53,16 +53,75 @@ Obsidian (napíšeš úlohu do docs/Ulohy.md)
 ⚠️ **Web sedenie číta z GitHubu, nie z tvojho Macu.** Kým poznámku nepushneš,
 sedenie ju neuvidí.
 
-**Automatická synchronizácia — plugin „Obsidian Git":**
-1. Obsidian → *Settings → Community plugins → Browse* → nájdi **„Obsidian Git"** →
-   Install → Enable.
-2. V nastaveniach pluginu zapni napr.:
-   - **Auto pull on startup / interval** (napr. každých 10 min) — ťahá zmeny sám.
-   - **Auto commit‑and‑push** (voliteľné) — tvoje poznámky sám odosiela na GitHub.
-3. Odteraz sa vault sám synchronizuje s GitHubom (nemusíš písať `git pull/push`).
+**Automatická synchronizácia — plugin „Obsidian Git":** podrobný návod aj s
+výhodami je nižšie v **§3.1**.
 
 **+ výhody:** funguje hneď, žiadna inštalácia MCP, všetko má históriu v Gite.
 **− nevýhody:** nie je to „živé" — treba push/pull a spustiť sedenie.
+
+---
+
+## 3.1 Obsidian Git — podrobný návod + výhody pre nás
+
+Plugin, ktorý **za teba automaticky commituje a synchronizuje** vault
+(= `docs/`) s GitHubom. Píšeš v Obsidiane ako obvykle; git beží na pozadí.
+
+### Prečo to chceme — výhody pre náš workflow
+
+1. **Claude (web sedenie) vždy vidí najnovšie poznámky.** Web sedenie číta
+   z GitHubu, nie z Macu. S auto‑pushom nemusíš pred sedením nič manuálne
+   posielať — keď spustíš sedenie, Claude má aktuálny `dennik.md`, `Ulohy.md`,
+   plány. **Menej trenia = menej „zabudol som pushnúť".**
+2. **Inbox úloh naozaj funguje bez gitu.** Napíšeš úlohu do `docs/Ulohy.md` →
+   plugin ju sám pošle na GitHub → spustíš sedenie *„sprav úlohy z Ulohy.md"* →
+   Claude ich spraví a zapíše výsledok → plugin ti to sám stiahne späť do
+   Obsidianu. Celý okruh bez písania `git push/pull`.
+3. **Druhá záloha mimo Macu.** Každá zmena poznámky = commit na GitHub. Keby sa
+   Macu niečo stalo, `docs/` sú bezpečné a s históriou (vieš sa vrátiť späť).
+4. **Dôslednejší „mozog projektu".** Keďže sync je automatický, `docs/` ostáva
+   živý zdroj pravdy — presne to, na čom stojí náš spôsob práce (denník = most
+   medzi sedeniami).
+5. **Je to zároveň ukážka toho, čo predávame** — „druhý mozog firmy" (dokumenty
+   + AI, ktorá s nimi pracuje). Najprv overené na sebe.
+
+### Inštalácia (raz)
+
+1. Obsidian → **Nastavenia** (`Cmd + ,`) → **Pluginy tretích strán** → ak treba,
+   vypni *Obmedzený režim* (Restricted mode) → **Prehľadávať** (Browse).
+2. Vyhľadaj **„Obsidian Git"** → **Inštalovať** → **Povoliť** (Enable).
+3. Podmienka: vault musí byť **git repo** (u nás áno — `~/www/ai-nexus-link`) a
+   `git` musí byť na Macu funkčný (over v termináli: `git --version`).
+
+### Odporúčané nastavenia (Nastavenia → Obsidian Git)
+
+- **Vault backup interval (minutes): `10`** — každých 10 min sám *commitne +
+  pushne* zmeny na GitHub. (0 = vypnuté.)
+- **Auto pull interval (minutes): `10`** — každých 10 min *stiahne* zmeny
+  z GitHubu (napr. čo pushol Claude).
+- **Pull updates on startup: ✅** — po otvorení Obsidianu hneď stiahne najnovší stav.
+- **Push on backup: ✅** — po commite rovno pošle na GitHub.
+- **Commit message: `vault: {{date}}`** — automatický popis commitu s dátumom.
+- *(Voliteľné)* **Disable notifications** — nech ťa sync nevyrušuje hláškami.
+
+### Ako si overíš, že to funguje
+
+1. Napíš niečo do ľubovoľnej poznámky v `docs/` a počkaj ~10 min (alebo spusti
+   ručne: `Cmd + P` → **„Obsidian Git: Commit‑and‑sync"**).
+2. Pozri commit na GitHube (repo → `docs/`) — mala by tam byť tvoja zmena.
+3. Opačne: keď Claude niečo pushne, do ~10 min (alebo po reštarte Obsidianu) to
+   uvidíš v Obsidiane bez `git pull`.
+
+### Na čo si dať pozor
+
+- **Vetva.** Plugin commituje na **aktuálnu vetvu**. Keď píšeš poznámky, buď na
+  `main` (`git checkout main` v termináli) — nech ide obsah do `main`. Kým beží
+  kódovacie sedenie na inej `claude/…` vetve, auto‑commit vypni alebo needituj
+  vault, nech sa vetvy nemiešajú.
+- **Konflikty.** Ak Claude pushne a ty medzitým píšeš to isté miesto, môže
+  vzniknúť konflikt. Plugin najprv *pull*, potom *push* — pri poznámkach vzácne;
+  ak nastane, vyrieši sa ako bežný git konflikt (poradíme v sedení).
+- **Žiadne tajomstvá do vaultu** (heslá, tokeny) — patria do env premenných
+  (zásada projektu). Vault ide na GitHub, tak nech tam nie je nič citlivé.
 
 ---
 
