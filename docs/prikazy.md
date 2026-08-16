@@ -3,6 +3,23 @@
 > Príkazy, ktoré sme používali pri stavbe AI Nexus Link, po slovensky
 > vysvetlené. Slúži na učenie — `<takto>` označuje miesto, kam dopĺňaš vlastnú hodnotu.
 
+## Obsah (čo kde nájdeš)
+
+1. Ako čítať príkazy
+2. Keď terminál „zamrzne" / nereaguje (odblokovanie)
+3. GIT — sledovanie zmien v kóde
+4. NPM a Next.js — frontend
+5. Lokálny náhľad — spustiť web
+6. Python — orchestrátor / agenti
+7. Curl — testovanie API
+8. Práca so súbormi (základ) — vrátane **cesty do tvojho repa**
+9. Bezpečné návyky
+10. Kľúčové skratky vo VS Code
+
+> **Tip na orientáciu (lepší než čísla riadkov):** v **Obsidiane** otvor panel
+> **Outline / Osnova** (osnova nadpisov) — klikom skočíš rovno na sekciu. Vo
+> **VS Code** máš čísla riadkov automaticky vľavo (do textu sa nepíšu).
+
 ## Ako čítať príkazy
 
 - **Terminál** = textové rozhranie, kde píšeš príkazy počítaču.
@@ -45,9 +62,19 @@ git branch -a                 # zoznam všetkých vetiev
 git rev-parse --show-toplevel # vypíš KOREŇ repa (funguje z ľubovoľného podpriečinka)
 ```
 
-> Tvoj klon je na **`/Users/drahoslauda/www/ai-nexus-link`**. Ak si stratený
-> v podpriečinku (napr. `orchestrator/`), skoč do koreňa: `cd ..` (o úroveň
-> vyššie) alebo rovno `cd /Users/drahoslauda/www/ai-nexus-link`.
+> **Cesta do tvojho repa — presne ako ju napíšeš:**
+> ```bash
+> cd /Users/drahoslauda/www/ai-nexus-link
+> ```
+> Rozbor cesty po častiach (číta sa zľava, `/` oddeľuje priečinky):
+> - `/Users/drahoslauda` = tvoj domovský priečinok (skratka `~`),
+> - `/www` = priečinok, kam si projekt naklonoval,
+> - `/ai-nexus-link` = samotný priečinok repa (jeho koreň).
+>
+> `cd` = *change directory* (zmeň priečinok). Tento príkaz funguje **odkiaľkoľvek**
+> (je to „absolútna" cesta — začína `/`). Ak si už v repe len v podpriečinku
+> (napr. `orchestrator/`), stačí `cd ..` (o úroveň vyššie do koreňa). Overenie,
+> kde si: `pwd`. Overenie koreňa repa: `git rev-parse --show-toplevel`.
 
 ### Bežný pracovný cyklus (zapamätaj si ho)
 ```bash
