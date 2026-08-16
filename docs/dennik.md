@@ -3,7 +3,7 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
-## Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7) — aug 2026
+## 16.8.2026 — Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetinový e-shop na kľúč" (M7)
 
 **Typ:** porada/plán (nič sa nekódovalo — len prieskum + prepracovaný plán).
 **Vetva:** `claude/florist-sales-model-replan-h56mov`. **Výstup:** prepracovaná
