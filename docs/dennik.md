@@ -3,11 +3,12 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
-## Plánovacie sedenie — PIVOT predaja kytíc na „Elizabeth model" (M7) — aug 2026
+## Plánovacie sedenie — PIVOT predaja kytíc → model „Kvetináreň naživo" (M7) — aug 2026
 
 **Typ:** porada/plán (nič sa nekódovalo — len prieskum + prepracovaný plán).
 **Vetva:** `claude/florist-sales-model-replan-h56mov`. **Výstup:** prepracovaná
-sekcia v `docs/plan-agenti.md` („Katalóg kytíc — Elizabeth model") + tento zápis.
+sekcia v `docs/plan-agenti.md` („Kvetináreň naživo — kvetinový e-shop na kľúč") +
+tento zápis.
 
 **Prečo sedenie vzniklo:** po realizácii K1 (skladací vizuál kytice) majiteľ
 usúdil, že **pôvodná vízia — fotorealistická AI floristka „Klára", ktorá skladá
@@ -25,12 +26,24 @@ prípadová štúdia. **Kľúčové zistenia:**
 - **Elizabeth NEbeží na WordPresse** — je to **Next.js 16 + Supabase + Stripe +
   vlastný admin** (takmer náš stack). Vlastný admin si postavili, lebo WP nemajú.
 
-**Rozhodnutie (majiteľ):** ideme **Elizabeth model, headless** — hotové kytice
-ako **produkty**, zdroj **WooCommerce v klientovom WP admine** (nie Directus —
-kytice sú obsah!), náš **Next.js frontend ako katalóg**, neskôr **„produkt agent"**
-generuje kytice s popismi ako **Woo koncepty**. Fázy **E1** (teraz, kód, demo
-staticky) · **E2** (Woo zdroj, reálny klient) · **E3** (produkt agent). Detail +
-štartový prompt E1 + odporúčaný model (Opus na E1) v `plan-agenti.md`.
+**Rozhodnutie (majiteľ):** ideme model **„Kvetináreň naživo", headless** — hotové
+kytice ako **produkty**, zdroj **WooCommerce v klientovom WP admine** (nie
+Directus — kytice sú obsah!), náš **Next.js frontend ako katalóg**, **AI poradca**
+v katalógu, neskôr **„produkt agent"** generuje kytice s popismi ako **Woo
+koncepty**. Fázy **E1** (teraz, kód, demo staticky) · **E2** (Woo zdroj, reálny
+klient) · **E3** (produkt agent). Detail + štartový prompt E1 + odporúčaný model
+(Opus na E1) v `plan-agenti.md`.
+
+**Latka a naša úroveň (na výslovnú žiadosť majiteľa):** referencia
+(kvetinarstvoelizabeth.sk) je **len interné meradlo — nesmie byť vidno, že sme
+čokoľvek replikovali**. Preto **vlastný názov („Kvetináreň naživo")**, vlastný
+dizajnový jazyk, vlastné texty. **Cieľ nie je dobehnúť, ale prekonať latku** —
+tromi vrstvami, ktoré referencia nemá: (1) **AI poradca** v katalógu (odporučí
+hotové kytice), (2) **produkt/Writer agent** (web sa sám plní a žije), (3) **SEO +
+GEO** (nájditeľnosť v Google aj v AI vyhľadávačoch) — plus merateľne špičkový
+výkon/prístupnosť (Lighthouse ≥95, WCAG AA) a jemný vkusný motion. Všetky prevahy
+stoja na moduloch, ktoré už v projekte máme → **zrealizovateľné**. Detail v
+`plan-agenti.md` sekcia „Naša úroveň — v čom prekonávame latku".
 
 **Čo z K0/K1:** K0 jadro (dátový model, objednávka `?typ=kytica`) a `Kytica`/
 `seasonalKytice` sa **prevezmú**; 21 odrôd + foto-výrezy + orez-postup z K1 sa

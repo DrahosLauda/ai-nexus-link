@@ -1236,8 +1236,20 @@ agenti → čítajú config z Directusu → publikujú do WP → frontend zobraz
 napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
 **architektúra je naň postavená** (lego princíp, `frontend-dev` moduly len zapája).
 
-# PLÁN — Katalóg kytíc „Elizabeth model" (M7, PREPRACOVANÉ — aug 2026)
+# PLÁN — „Kvetináreň naživo" — kvetinový e-shop na kľúč (M7, PREPRACOVANÉ — aug 2026)
 
+> **Názov modelu:** *„Kvetináreň naživo"* (pracovný — ľahko premenovateľný;
+> alternatívy: „Kvetinový e-shop na kľúč", „Živá kvetináreň", kódovo modul
+> „Flóra"). Názov je zámerne **vlastný** — nemá odkazovať na žiadnu cudziu
+> referenciu. Web „žije" (AI poradca + produkt agent) — odtiaľ „naživo".
+>
+> **⚠️ Referencia vs. identita (dôležité):** stránku `kvetinarstvoelizabeth.sk`
+> používame **výhradne interne ako meraciu latku** („toto je súčasná špička, my
+> musíme byť lepší"). **Navonok nesmie byť vidno, že sme čokoľvek replikovali** —
+> vlastný názov, vlastný dizajnový jazyk (paleta/typografia/rytmus z `theme.css`
+> šablóny, nie prevzatý layout), vlastné texty. **Cieľ nie je dobehnúť latku, ale
+> ju prekonať** — konkrétne prevahy definuje sekcia „Naša úroveň" nižšie.
+>
 > ⛔ **NAHRÁDZA pôvodný plán „Konfigurátor kytíc — Kvetinársky ateliér s Klárou"
 > (K0–K4), ktorý je zachovaný nižšie len pre históriu a ponaučenie.** Pôvodný
 > plán staval na **skladačke kytice kvet-po-kvete** + **fotorealistickej AI
@@ -1275,7 +1287,7 @@ napojenie je definovaný míľnik (M3/M4, Fáza 3/4), nie „prepínač" — ale
    rozpočtu"** — žiadna skladačka. Ich biznis dôvod: kontrola kvality/ceny/
    brandingu (100 % marža vs. 30 % cez sprostredkovateľa).
 3. **Čo z K1 ostáva:** viď tabuľku „Čo z K0/K1 prevziať" nižšie.
-4. **Ako priblížiť Elizabeth úrovni:** viď „Dizajnová latka" nižšie.
+4. **Ako dorovnať a prekonať latku:** viď „Naša úroveň" a „Dizajnová latka".
 5. **Klára:** ako predajca skladačky odpadá. Prípadná neskoršia rola = **textový
    poradca** (chatbot odporúča HOTOVÉ kytice z katalógu) — náš existujúci RAG/
    chatbot vzor; fotorealistická postava + video slučky **vypustené z v1**.
@@ -1300,10 +1312,52 @@ reálne spravovať").
 
 ## Cieľový model (rozhodnutie majiteľa, aug 2026)
 
-**Elizabeth model, postavený headless:** hotové kytice ako **produkty** (nie
+**„Kvetináreň naživo", postavená headless:** hotové kytice ako **produkty** (nie
 skladačka), zdroj produktov **WooCommerce v klientovom WP admine**, náš **Next.js
-frontend ako katalóg** (mriežka + detail + filtre), a neskôr **„produkt agent"**,
-ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
+frontend ako katalóg** (mriežka + detail + filtre), **AI poradca** priamo
+v katalógu a neskôr **„produkt agent"**, ktorý kytice s popismi generuje ako
+**Woo koncepty** na schválenie. Tieto AI vrstvy sú to, čím **prekonávame latku**
+(referencia ich nemá) — viď „Naša úroveň" nižšie.
+
+## Naša úroveň — v čom prekonávame latku (nie replika, ale lepšie)
+
+> Latka (referencia) je dnes maximum: hotové kytice, karta s variantmi, filtre,
+> Stripe, vlastný admin, mobile-first. **My tú latku dorovnáme v základe a
+> prekonáme v troch vrstvách, ktoré referencia nemá.** Každá prevaha je označená,
+> **kedy je zrealizovateľná** (E1 hneď · E2/E3 neskôr) — aby bolo jasné, na akej
+> úrovni budeme a kedy.
+
+**A. Základ, kde musíme byť minimálne rovní (E1):** produktová karta, detail
+s variantmi veľkosti, filtre (príležitosť/farba/typ), sekcia „O kytici", prvky
+dôvery, mobile-first, čistý svetlý dizajn. *Toto je vstupné — nie prevaha.*
+
+**B. Tri vrstvy, ktorými sme LEPŠÍ (referencia ich nemá):**
+
+| # | Prevaha | Prečo je to lepšie ako latka | Kedy |
+|---|---|---|---|
+| 1 | **AI poradca priamo v katalógu** | Referencia necháva zákazníka hľadať samého. My dáme bublinu „Poradím s výberom" — spýta sa na príležitosť/rozpočet/komu a **odporučí konkrétne HOTOVÉ kytice z katalógu** (cituje, odkáže na produkt). Náš RAG/chatbot vzor už existuje → „ukáž nepovedz" (vízia §8/§11). Zážitok obsluhy bez fotorealistickej postavy a bez skladačky. | E1 základ katalógu · poradca ako nadstavba (samostatný krok po E1, RAG vzor) |
+| 2 | **Web, ktorý sa sám plní a žije (produkt agent + Writer)** | Referenciu plní človek ručne. Náš **produkt agent** generuje sezónne kytice + popisy „O kytici" ako Woo koncepty; **Writer/SEO agent** píše okolo nich články („Aké kvety k výročiu"). Katalóg je vždy aktuálny a obsahovo bohatší = viac návštev z Googla. | E3 (agent), priebežne |
+| 3 | **Nájditeľnosť v Google AJ v AI vyhľadávačoch (SEO + GEO)** | Referencia cieli na Google. My cez skill `seo-geo-frontend` pridáme **Product JSON-LD** (cena, dostupnosť, hodnotenia), sitemap, `llms.txt` → kytice sa objavia v **ChatGPT / Perplexity / Google AI Overviews**, nielen v klasickom vyhľadávaní. Tam nás konkurencia ešte nemá. | E1 (statické produkty už s JSON-LD) → plné pri go-live |
+
+**C. Remeselná úroveň, kde chceme byť viditeľne kvalitnejší (E1):**
+
+- **Výkon a prístupnosť merateľne na špičke** — brána `docs/sablony-kvalita.md`:
+  Lighthouse ≥ 95, **WCAG AA**, žiadny horizontálny scroll, reduced-motion. Nie
+  „tiež dobré", ale **merateľne lepšie** (číslo, ktoré vieme ukázať klientovi).
+- **Vkus a jemný motion** — skilly `emil-design-eng` + `animate`: mikrointerakcie
+  (hover kariet, prechod do detailu, plynulá zmena variantu), nikdy gýč. Detaily,
+  ktoré referencia nerieši.
+- **Transparentnosť nad rámec** — pri každej kytici „**z čoho je**" (reálne odrody
+  z `konfiguratorKvety`), sezónnosť, trvácnosť, pôvod. Buduje dôveru silnejšie než
+  len „7–10 dní".
+- **Vlastný dizajnový jazyk** — paleta/typografia/rytmus zo `theme.css` šablóny,
+  **nie prevzatý layout referencie**. Navonok = úplne naša identita.
+
+**Zhrnutie úrovne:** *v základe (E1) na úrovni špičky a merateľne rýchlejší/
+prístupnejší; v zážitku a obsahu (poradca + agent + GEO) o vrstvu vyššie, kde
+referencia zatiaľ nie je.* To je „dokonalý cieľ" — a je zrealizovateľný, lebo
+všetky tri prevahy stoja na moduloch, ktoré už v projekte máme (RAG vzor, Writer/
+SEO agent, seo-geo skill, kvalita-brána).
 
 ## Architektúra — kde žijú kytice (dôležité, drží hranice CLAUDE.md)
 
@@ -1322,14 +1376,14 @@ ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
 
 | Krok | Typ | Čo | Zdroj kytíc | Predaj |
 |---|---|---|---|---|
-| **E1 — Katalóg hotových kytíc** (TERAZ, M7) | KÓD | Elizabeth-style katalóg `/kytice` (mriežka kariet + filtre) + detail `/kytice/[slug]` (galéria, cena, varianty, „O kytici", CTA) + objednávka na mieru cez existujúci `?typ=kytica`. Nahradí skladaciu `/konfigurator`. | **Staticky v `content.ts`** (rozhranie pripravené na výmenu na Woo) | **Zamknutý** — len formulár, žiadny checkout |
+| **E1 — Katalóg hotových kytíc** (TERAZ, M7) | KÓD | Katalóg hotových kytíc `/kytice` (mriežka kariet + filtre) + detail `/kytice/[slug]` (galéria, cena, varianty, „O kytici", CTA) + objednávka na mieru cez existujúci `?typ=kytica`. Nahradí skladaciu `/konfigurator`. | **Staticky v `content.ts`** (rozhranie pripravené na výmenu na Woo) | **Zamknutý** — len formulár, žiadny checkout |
 | **E1-assety — Fotky hotových kytíc** (podľa potreby) | KREATÍVA / dodá majiteľ | Kvalitné fotky hotových kytíc (ideálne 2 uhly/kytica). Buď dodá majiteľ (ako pri K1 výrezoch), alebo samostatné kreatívne sedenie (Higgsfield/Kling). **Nemieša sa do E1** (1 sedenie = 1 typ). | — | — |
 | **E2 — WooCommerce zdroj** (NESKÔR, reálny klient) | KÓD | Prepnúť zdroj katalógu na **Woo Store API**; klient spravuje v WP admine. Frontend sa nemení, len dátový zdroj. | WooCommerce (WP) | Woo + Stripe (len na výslovný pokyn) |
 | **E3 — Produkt agent** (NESKÔR) | AGENT | „Produkt agent" (vzor Writer): z príležitosti/sezóny/odrôd vygeneruje názov + popis „O kytici" + atribúty + cenu (+ obrázok cez Gemini) → **Woo koncept** na schválenie. Konkretizácia plánovaného „WooCommerce/produkt agenta" (vízia §3). | → Woo koncepty | — |
 
 ## Čo z K0/K1 prevziať (a čo zahodiť)
 
-| Prvok | Verdikt v Elizabeth modeli |
+| Prvok | Verdikt v novom modeli („Kvetináreň naživo") |
 |---|---|
 | `konfiguratorKvety` — **16 odrôd v `main`, 21 na K1 vetve** (farba/sezóna/príležitosť/cena) | **Prevziať** — podklad pre popisy „O kytici" a filtre; z čoho je ktorá kytica. |
 | **10 orezaných foto-výrezov (webp)** na K1 vetve + **orez-postup** (Pillow/scipy flood-fill) | **Prevziať ako bonus/techniku** — drobné detaily „z čoho je kytica"; orez-postup sa hodí na akékoľvek foto-assety. |
@@ -1339,7 +1393,7 @@ ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
 | Objednávka cez `?typ=kytica` (kontakt-form) | **Prevziať** — pilier „objednávka na mieru", bez zmeny. |
 | **K1 vetva `claude/krok-k1-kytica-vizual-z2pg19`** | **Nemergovať** do `main`. Ostáva ležať ako referencia; užitočné súbory (21 odrôd, výrezy, orez-postup) prevezme E1 selektívne (cherry-pick / kópia súborov). |
 
-## Dizajnová latka — priblížiť Elizabeth úrovni (pre E1)
+## Dizajnová latka — dorovnať a prekonať latku (pre E1)
 
 - **Produktová karta (mriežka `/kytice`):** veľká kvalitná fotka, názov, cena
   „od X €", voliteľná **nálepka** (Bestseller / Sezónne / Novinka), jemný hover.
@@ -1354,7 +1408,7 @@ ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
 - **Odporúčaný pipeline sedenia:** subagenti šablón — `ui-ux-designer` (rozvrh
   karty/detailu/filtrov, ak treba nové sekcie) → `frontend-dev` (implementácia) →
   `sk-copywriter` (texty kytíc do `content.ts`) → `qa-a11y` (brána kvality pred
-  odovzdaním). Nie je povinné, ale sedí na cieľ „Elizabeth úroveň".
+  odovzdaním). Nie je povinné, ale sedí na cieľ „nad úroveň latky".
 
 ## Mantinely (platia pre celé M7)
 
@@ -1368,7 +1422,7 @@ ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
 ## Odporúčaný model Claude na realizačné (kódové) sedenie E1
 
 - **Opus** (Opus 5, príp. Opus 4.8) — **odporúčané pre E1.** Cieľ je *dizajnovo*
-  priblížiť Elizabeth úroveň (nie len „nech to funguje"); Opus dáva najvyššiu
+  prekonať latku (nie len „nech to funguje"); Opus dáva najvyššiu
   kvalitu dizajnu aj architektúry a menej prehľadne kôl.
 - **Sonnet 5** — alternatíva, ak chceš rýchlejšie/lacnejšie; plán je dosť
   detailný, aby ho Sonnet zvládol implementovať. Dizajnovú latku strážia
@@ -1380,17 +1434,20 @@ ktorý kytice s popismi generuje ako **Woo koncepty** na schválenie.
 
 ```
 Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md a
-docs/plan-agenti.md (sekcia „Katalóg kytíc — Elizabeth model (M7)"). Rešpektuj
-CLAUDE.md pravidlá spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ).
+docs/plan-agenti.md (sekcia „Kvetináreň naživo — kvetinový e-shop na kľúč (M7)",
+najmä „Naša úroveň — v čom prekonávame latku"). Rešpektuj CLAUDE.md pravidlá
+spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ).
 
 Toto je REALIZAČNÉ sedenie (TYP: kód — nemiešaj s generovaním fotiek/assetov).
-Postav KROK E1 — Elizabeth-style katalóg hotových kytíc pre šablónu kvetinárstvo.
-Model je HOTOVÁ KYTICA AKO PRODUKT (žiadna skladačka kvet-po-kvete — tá je
-zavrhnutá; skladací /konfigurator a K1 kytica-vizual sa NAHRÁDZAJÚ).
+Postav KROK E1 — katalóg hotových kytíc „Kvetináreň naživo" pre šablónu
+kvetinárstvo. Model je HOTOVÁ KYTICA AKO PRODUKT (žiadna skladačka kvet-po-kvete —
+tá je zavrhnutá; skladací /konfigurator a K1 kytica-vizual sa NAHRÁDZAJÚ).
 
-Referencia úrovne: kvetinarstvoelizabeth.sk (produktová stránka kytice) — hotové
-kytice, karta s fotkou/cenou/variantmi/„O kytici", filtre podľa príležitosti/
-farby/typu, mobile-first, prvky dôvery (foto pred doručením, donáška).
+Interná latka kvality (NEreplikovať navonok, len meradlo): kvetinarstvoelizabeth.sk
+ukazuje súčasnú špičku hotových kytíc (karta fotka/cena/varianty/„O kytici", filtre
+príležitosť/farba/typ, mobile-first, prvky dôvery). MY MUSÍME BYŤ LEPŠÍ — vlastný
+dizajnový jazyk (theme.css šablóny, nie prevzatý layout), vlastný názov, a v základe
+merateľne rýchlejší/prístupnejší. Nesmie byť vidno, že sme čokoľvek replikovali.
 
 1) DÁTOVÝ MODEL (frontend/templates/kvetinarstvo/content.ts): rozšír/nahraď typ
    „Kytica" na produkt katalógu: id, slug, nazov, fotky[] (alt + cesta),
@@ -1424,9 +1481,10 @@ farby/typu, mobile-first, prvky dôvery (foto pred doručením, donáška).
    z public/kvetinarstvo/ (hero/galéria) alebo čistý CSS placeholder, nech je
    katalóg funkčný; NEGENERUJ fotky v tomto sedení (iný typ).
 
-Dizajnová latka: cieľ je priblížiť Elizabeth úrovni. Odporúčaný pipeline:
-ui-ux-designer (rozvrh karty/detailu/filtrov) → frontend-dev (implementácia) →
-sk-copywriter (texty kytíc) → qa-a11y (brána kvality podľa docs/sablony-kvalita.md).
+Dizajnová latka: cieľ je PREKONAŤ latku (nie len dobehnúť) — vlastná identita +
+merateľne špičkový výkon/prístupnosť. Odporúčaný pipeline: ui-ux-designer (rozvrh
+karty/detailu/filtrov) → frontend-dev (implementácia) → sk-copywriter (texty kytíc)
+→ qa-a11y (brána kvality podľa docs/sablony-kvalita.md).
 
 Mantinely: slovenčina; demo pod /ukazky, noindex; predaj ZAMKNUTÝ (žiadny
 checkout/platba, len objednávkový formulár); minimalizmus (rebrík CLAUDE.md);
@@ -1440,8 +1498,8 @@ main až po mojom výslovnom súhlase.
 
 # PLÁN — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (⛔ NAHRADENÝ vyššie — história/ponaučenie, M7, aug 2026)
 
-> **⛔ TENTO PLÁN (K0–K4) JE NAHRADENÝ** sekciou „Katalóg kytíc — Elizabeth
-> model" vyššie. Ponechaný zámerne pre históriu a ponaučenie (viď „PONAUČENIE"
+> **⛔ TENTO PLÁN (K0–K4) JE NAHRADENÝ** sekciou „Kvetináreň naživo — kvetinový
+> e-shop na kľúč" vyššie. Ponechaný zámerne pre históriu a ponaučenie (viď „PONAUČENIE"
 > vyššie). K0 (funkčné jadro) je v `main`; K1 (skladací vizuál) ostáva na vetve
 > a do `main` sa nemerguje. K2–K4 sa nerealizujú v pôvodnej podobe.
 
