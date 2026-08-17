@@ -1,42 +1,15 @@
 /**
- * Vizuálne blokové sekcie postavené na obrazovom placeholderi (arch karty,
- * editorial galéria, tmavý teaser ateliéru). Data-driven z `content.ts`.
+ * Vizuálne blokové sekcie postavené na obrazovom placeholderi (editorial
+ * galéria, tmavý teaser ateliéru). Data-driven z `content.ts`.
+ * Produktové karty kytíc majú vlastný súbor — `sections/kytice.tsx`.
  */
 import Link from "next/link";
 import { href } from "../base";
-import type { Kytica } from "../content";
 import { homeAtelierTeaser } from "../content";
 import { Foto } from "../images/foto";
 import { type Odtien } from "../images/placeholder";
 import { atelierTeaserFoto } from "../images/media";
 import { Eyebrow } from "./ui";
-
-const KARTA_ODTIENE: Odtien[] = ["clay", "sage", "blush", "sand"];
-
-/** Mriežka kytíc ako arch karty (4:5). Používa sezónny výber aj náhľad Obchodu. */
-export function KyticeKarty({ kytice, fotky }: { kytice: Kytica[]; fotky?: (string | undefined)[] }) {
-  return (
-    <ul className="grid gap-8 sm:grid-cols-3">
-      {kytice.map((k, i) => (
-        <li key={k.nazov} className="flex flex-col">
-          <Foto
-            src={fotky?.[i]}
-            alt={k.alt}
-            pomer="4/5"
-            arch
-            odtien={KARTA_ODTIENE[i % KARTA_ODTIENE.length]}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
-          <div className="mt-5 flex items-baseline justify-between gap-4">
-            <h3 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{k.nazov}</h3>
-            <span className="whitespace-nowrap text-[15px] font-semibold text-flora-clay-600">{k.cena}</span>
-          </div>
-          <p className="mt-1.5 text-flora-small text-flora-moss">{k.kvety}</p>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 /** Asymetrická editorial mozaika (mix pomerov + jedna 21:9 na celú šírku). */
 export function Galeria({ obrazky, fotky }: { obrazky: { alt: string }[]; fotky?: (string | undefined)[] }) {

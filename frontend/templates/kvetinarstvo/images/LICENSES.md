@@ -45,6 +45,40 @@ Súbory v `frontend/public/kvetinarstvo/img/`:
 | `obchod-predplatne.webp` | Pivonky vo váze | Obchod — Predplatné kvetov | Kling (Nano Banana 2) | Kling, komerčné |
 | `obchod-poukaz.webp` | Kytica + darčekový štítok | Obchod — Darčekový poukaz | Kling (Nano Banana 2) | Kling, komerčné |
 
+### Katalóg kytíc (E1) — použitie existujúcich fotiek
+
+Katalóg `/kytice` **nemá vlastné nové fotky** — deväť z dvanástich kytíc používa
+už licencované súbory z tabuľky vyššie (cesty sú pri kytici v `content.ts`, pole
+`fotky`): `sezona-1..3`, `galeria-2..5`, `obchod-kytica-dna`, `obchod-na-mieru`,
+`obchod-predplatne`, `obchod-poukaz`. Kytice **Red Naomi**, **Tichá rozlúčka** a
+**Slnečné ráno** majú zatiaľ palete verný placeholder (`FloraFigure`) — doplnia sa
+v samostatnom kreatívnom sedení iba pridaním cesty do `content.ts`, bez zásahu do kódu.
+
+### Odrody — foto-výrezy k „Z čoho ju viažeme"
+
+Priehľadné výrezy jednotlivých odrôd (bočný pohľad na stonku, biele pozadie
+orezané lokálne flood-fillom cez Pillow/scipy → priehľadné WebP, výška 1000 px).
+Zdroj: **Kling (kling.ai)**, účet majiteľa (Standard/VIP → **komerčná licencia**),
+modely **OBRAZ 3.0 / Nano Banana 2**. Súbory v `frontend/public/kvetinarstvo/kvety/`
+ako `kvet-<id>.webp`, kde `id` je kľúč v `odrody` (`content.ts`); prevzaté z vetvy
+`claude/krok-k1-kytica-vizual-z2pg19` (skladací vizuál kytice sa nepreberá).
+
+| id odrody | kvet | Model | Licencia |
+|---|---|---|---|
+| `ruza-red-naomi` | Ruža Red Naomi (červená) | Kling (OBRAZ 3.0 / Nano Banana 2) | Kling, komerčné |
+| `ruza-mondial` | Ruža Mondial (krémovo-biela) | Kling | Kling, komerčné |
+| `eustoma-ruzova` | Eustoma ružová | Kling | Kling, komerčné |
+| `hortenzia-modra` | Hortenzia modrá | Kling | Kling, komerčné |
+| `hortenzia-ruzova` | Hortenzia ružová | Kling | Kling, komerčné |
+| `chryzantema-plnokveta-bordova` | Chryzantéma plnokvetá (bordová) | Kling | Kling, komerčné |
+| `chryzantema-margaretkova-biela` | Chryzantéma margarétková (biela) | Kling | Kling, komerčné |
+| `pivonka-ruzova` | Pivonka ružová | Kling | Kling, komerčné |
+| `eukalyptus` | Eukalyptus (zeleň) | Kling | Kling, komerčné |
+| `gypsomilka` | Gypsomilka (biela) | Kling | Kling, komerčné |
+
+Odrody bez výrezu sa vykreslia ako **farebný bod** podľa `farbyKvetov` — po dodaní
+súboru stačí pridať cestu do `odrodaVyrezy` (`images/media.ts`) a riadok sem.
+
 ### Kontakt — mapa
 
 `kontakt-mapa.webp` — demo **screenshot z Google Máp** (Mierové námestie, Trenčín),
