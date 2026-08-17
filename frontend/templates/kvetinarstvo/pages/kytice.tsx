@@ -16,7 +16,10 @@ export function KyticePage() {
       <SubHero h1={katalogObsah.subhero.h1} text={katalogObsah.subhero.text} />
 
       <Sekcia podklad="paper">
-        <KatalogFiltre />
+        <ZahlavieSekcie nadpis={katalogObsah.mriezkaNadpis} />
+        <div className="mt-8">
+          <KatalogFiltre />
+        </div>
       </Sekcia>
 
       <Sekcia podklad="sand" zhustena>

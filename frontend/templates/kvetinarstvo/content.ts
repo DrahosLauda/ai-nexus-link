@@ -1132,8 +1132,9 @@ export const katalogObsah = {
     h1: "Hotové kytice",
     text: "Kytice, ktoré viažeme celý rok. Pri každej vidíte, z čoho je, aký má priemer a koľko stojí v troch veľkostiach.",
   },
+  /** Nadpis (h2) sekcie s filtrom a mriežkou — drží hierarchiu h1 → h2 → h3. */
+  mriezkaNadpis: "Vyberte si kyticu",
   filter: {
-    nadpis: "Vyberte si podľa",
     prilezitost: "Príležitosť",
     farba: "Farba",
     typ: "Typ väzby",

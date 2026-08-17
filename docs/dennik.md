@@ -51,6 +51,17 @@ Dve veci, ktoré strojová kontrola nechytila a našiel som ich na screenshotoch
 opravené: osamotená druhá fotka v galérii detailu (teraz na celú šírku stĺpca) a
 biela vzorka odrody bez výrezu (teraz orámovaný krúžok, nie „chýbajúci obrázok").
 
+**Brána kvality `qa-a11y`** (číta kód + reálny build výstup) vrátila **2 nálezy, oba
+opravené** ešte pred odovzdaním:
+1. **Preskočená úroveň nadpisu na `/kytice`** — h1 → h3 (karty) → h2, lebo sekcia
+   s filtrom a mriežkou mala len vizuálny „eyebrow", nie nadpis. Pridaný **h2
+   „Vyberte si kyticu"**, redundantný eyebrow odstránený a „Zrušiť filtre" presunuté
+   k počtu výsledkov. Overené v statickom HTML: h1 → h2 → h3.
+2. **Dotykový cieľ filtračných chipov 40 px** namiesto 44 px, ktoré šablóna používa
+   všade inde. Zjednotené na 44 px.
+   Zvyšok checklistu prešiel bez nálezov (kontrast overený na reálnych dvojiciach,
+   mriežka v HTML aj bez JS, natívne rádiá, licencie, žiadne AI frázy, žiadny mŕtvy kód).
+
 **Rozhodnutia, ktoré stoja za zapamätanie:**
 - **Karty kytíc majú vlastný súbor** (`sections/kytice.tsx`) oddelene od
   `sections/karty.tsx` — používa ich server (Domov, detail) aj klientský filter,
