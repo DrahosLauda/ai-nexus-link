@@ -76,6 +76,55 @@ git rev-parse --show-toplevel # vypíš KOREŇ repa (funguje z ľubovoľného po
 > (napr. `orchestrator/`), stačí `cd ..` (o úroveň vyššie do koreňa). Overenie,
 > kde si: `pwd`. Overenie koreňa repa: `git rev-parse --show-toplevel`.
 
+### Rutina po každom sedení (toto opakuj, kým to nepôjde samo)
+
+Keď sedenie zlúči prácu do `main`, chceš ju dostať k sebe. **Vždy tie isté štyri
+kroky, vždy v tomto poradí** — a po každom sa pozri na výpis, nešpekuluj:
+
+```bash
+pwd                           # 1. KDE STOJÍM? musí končiť na /www/ai-nexus-link
+git status                    # 2. som na main? je niečo rozrobené?
+git pull origin main          # 3. stiahni
+git log --oneline -3          # 4. over, že prišlo to, čo malo (q = ukončiť)
+```
+
+**Prečo `pwd` ako prvé:** terminál v prompte ukazuje **len meno posledného
+priečinka**, nie celú cestu. `orchestrator` aj `ai-nexus-link` vyzerajú v prompte
+rovnako dôveryhodne, ale `git` funguje len v repe. `pwd` je najlacnejšia pravda —
+nič nemení, len povie, kde si. Keď si mimo repa, vráť sa absolútnou cestou
+(funguje odkiaľkoľvek):
+
+```bash
+cd /Users/drahoslauda/www/ai-nexus-link
+```
+
+### Keď `git pull` odmietne: „local changes would be overwritten"
+
+Znamená to, že **ty (alebo Obsidian) máš lokálne upravený ten istý súbor**, ktorý
+sa zmenil aj na GitHube. Git sa radšej zastaví, než by ti niečo prepísal — to je
+správne správanie, nie chyba. **Nikdy to nerieš naslepo**, postupuj takto:
+
+```bash
+git status                    # 1. KTORÝ súbor to blokuje?
+git diff docs/skilly.md       # 2. ČO v ňom vlastne mám? (q = ukončiť)
+```
+
+Podľa toho, čo uvidíš:
+
+```bash
+# A) Nie je to moja práca (Obsidian preformátoval tabuľku, biele znaky…):
+cp docs/skilly.md ~/Desktop/skilly-zaloha.md   # záloha, nech sa nedá nič stratiť
+git checkout -- docs/skilly.md                 # zahoď lokálnu verziu
+git pull origin main
+
+# B) Je to text, ktorý som sám písal a chcem ho:
+#    nerob nič, pošli výpis `git diff` do sedenia a vyriešime to spolu
+```
+
+> **Toto sa bude opakovať.** Obsidian súbory v `docs/` prepisuje pri
+> synchronizácii — nie je to porucha. Zapamätaj si dvojicu **záloha → `checkout --`**,
+> a `git pull` ťa už nikdy nezaskočí.
+
 ### Bežný pracovný cyklus (zapamätaj si ho)
 ```bash
 git checkout main             # postav sa na hlavnú vetvu
