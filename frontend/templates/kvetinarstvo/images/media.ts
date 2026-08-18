@@ -7,12 +7,11 @@
  * Súbory: `frontend/public/kvetinarstvo/img/`.
  */
 
-/** Sezónny výber na domove — index zodpovedá `seasonalKytice`. */
-export const seasonalFotky: (string | undefined)[] = [
-  "/kvetinarstvo/img/sezona-1.webp",
-  "/kvetinarstvo/img/sezona-2.webp",
-  "/kvetinarstvo/img/sezona-3.webp",
-];
+/*
+ * Výnimka — katalóg kytíc: fotky produktov žijú priamo pri kytici v `content.ts`
+ * (pole `fotky`), lebo v E2 ich dodá WooCommerce spolu s produktom. Sem patria
+ * len obrázky viazané na sekcie šablóny.
+ */
 
 /** Tmavý teaser ateliéru na domove (arch, 4:5). */
 export const atelierTeaserFoto: string | undefined = "/kvetinarstvo/img/atelier.webp";
@@ -85,3 +84,23 @@ export const shopSortimentFotky: (string | undefined)[] = [
 
 /** Statická mapa polohy (16:9). Demo screenshot z Google Máp — klient nahradí svojou. */
 export const kontaktMapaFoto: string | undefined = "/kvetinarstvo/img/kontakt-mapa.webp";
+
+/* ── Odrody — foto-výrezy do sekcie „Z čoho ju viažeme" ─────────────── */
+
+/**
+ * Priehľadné výrezy jednotlivých odrôd (bočný pohľad na stonku). Kľúč = `id`
+ * z `odrody` v `content.ts`. Chýbajúci záznam = farebný bod podľa `farbyKvetov`
+ * (fallback bez zásahu do kódu). Súbory: `public/kvetinarstvo/kvety/`.
+ */
+export const odrodaVyrezy: Record<string, string | undefined> = {
+  "ruza-red-naomi": "/kvetinarstvo/kvety/kvet-ruza-red-naomi.webp",
+  "ruza-mondial": "/kvetinarstvo/kvety/kvet-ruza-mondial.webp",
+  "eustoma-ruzova": "/kvetinarstvo/kvety/kvet-eustoma-ruzova.webp",
+  "hortenzia-modra": "/kvetinarstvo/kvety/kvet-hortenzia-modra.webp",
+  "hortenzia-ruzova": "/kvetinarstvo/kvety/kvet-hortenzia-ruzova.webp",
+  "chryzantema-plnokveta-bordova": "/kvetinarstvo/kvety/kvet-chryzantema-plnokveta-bordova.webp",
+  "chryzantema-margaretkova-biela": "/kvetinarstvo/kvety/kvet-chryzantema-margaretkova-biela.webp",
+  "pivonka-ruzova": "/kvetinarstvo/kvety/kvet-pivonka-ruzova.webp",
+  eukalyptus: "/kvetinarstvo/kvety/kvet-eukalyptus.webp",
+  gypsomilka: "/kvetinarstvo/kvety/kvet-gypsomilka.webp",
+};

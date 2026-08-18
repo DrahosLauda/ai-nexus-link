@@ -12,10 +12,11 @@ import {
   homeSekcie,
   homeSluzby,
   seasonalEyebrow,
-  seasonalKytice,
 } from "../content";
-import { AtelierTeaser, Galeria, KyticeKarty } from "../sections/karty";
-import { galeriaFotky, seasonalFotky } from "../images/media";
+import { sezonnyVyber } from "../katalog";
+import { AtelierTeaser, Galeria } from "../sections/karty";
+import { KyticeKarty } from "../sections/kytice";
+import { galeriaFotky } from "../images/media";
 import { CtaPas, Kroky, Referencie, SluzbyZoznam } from "../sections/bloky";
 import { HomeHero } from "../sections/hero-video";
 import { MeninyPas } from "../sections/meniny";
@@ -51,13 +52,13 @@ export function DomovPage() {
           <Eyebrow>{seasonalEyebrow}</Eyebrow>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-flora-h2 font-flora-display font-medium text-flora-ink">{homeSekcie.sezonnyNadpis}</h2>
-            <Cta k="/ponuka" variant="text">
+            <Cta k="/kytice" variant="text">
               {homeSekcie.sezonnyOdkaz}
             </Cta>
           </div>
         </div>
         <div className="mt-10">
-          <KyticeKarty kytice={seasonalKytice} fotky={seasonalFotky} />
+          <KyticeKarty kytice={sezonnyVyber()} />
         </div>
       </Sekcia>
 

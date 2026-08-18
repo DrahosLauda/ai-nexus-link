@@ -4,7 +4,7 @@
  * farba) a CTA na objednávku formulárom. Layout znesie neskôr reálne produkty.
  */
 import {
-  konfiguratorPrelink,
+  katalogPrelink,
   shopCta,
   shopKrokyBuduceho,
   shopSekcie,
@@ -69,16 +69,16 @@ export function ObchodPage() {
         </div>
       </Sekcia>
 
-      {/* Prelink na konfigurátor kytice */}
+      {/* Prelink na katalóg kytíc */}
       <Sekcia podklad="paper">
         <div className="flex flex-col items-start gap-6 rounded-flora-lg border border-flora-line bg-flora-porcelain p-8 shadow-flora-card md:flex-row md:items-center md:justify-between md:gap-10 sm:p-10">
           <div className="flex max-w-[52ch] flex-col gap-3">
-            <Eyebrow>{konfiguratorPrelink.eyebrow}</Eyebrow>
-            <h2 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{konfiguratorPrelink.nadpis}</h2>
-            <p className="text-flora-body text-flora-moss">{konfiguratorPrelink.popis}</p>
+            <Eyebrow>{katalogPrelink.eyebrow}</Eyebrow>
+            <h2 className="text-flora-h3 font-flora-display font-medium text-flora-ink">{katalogPrelink.nadpis}</h2>
+            <p className="text-flora-body text-flora-moss">{katalogPrelink.popis}</p>
           </div>
-          <Cta k={konfiguratorPrelink.cta.href} variant="primar">
-            {konfiguratorPrelink.cta.label}
+          <Cta k={katalogPrelink.cta.href} variant="primar">
+            {katalogPrelink.cta.label}
           </Cta>
         </div>
       </Sekcia>

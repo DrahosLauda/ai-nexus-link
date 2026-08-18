@@ -36,35 +36,84 @@ export interface Sluzba {
   href: string;
 }
 
-/** Kytica v sezónnom výbere / náhľade sortimentu. */
-export interface Kytica {
+/** Sezóna odrody — kedy vrcholí (uvádzame ju pri zložení kytice). */
+export type Sezona = "jar" | "leto" | "jesen" | "zima" | "celorocne";
+
+/** Príležitosť, ku ktorej sa kytica hodí (filter v katalógu). */
+export type Prilezitost =
+  | "narodeniny"
+  | "vyrocie"
+  | "svadba"
+  | "premamu"
+  | "smutok"
+  | "gratulacia"
+  | "potesenie";
+
+/**
+ * Jedna rezaná odroda, z ktorej viažeme. Poháňa sekciu „Z čoho je" na detaile
+ * kytice — `id` odkazuje aj na foto-výrez v `images/media.ts` (`odrodaVyrezy`).
+ * `farba` je kľúč do `farbyKvetov`.
+ */
+export interface Odroda {
+  id: string;
   nazov: string;
-  kvety: string;
-  cena: string;
+  farba: string;
+  sezona: Sezona;
+}
+
+/** Veľkostný variant kytice — počet stoniek, priemer a cena. */
+export interface KyticaVariant {
+  kod: "S" | "M" | "L";
+  nazov: string;
+  /** Počet stoniek v tejto veľkosti. */
+  stonky: number;
+  /** Priemer hotovej väzby v centimetroch. */
+  priemerCm: number;
+  /** Cena v eurách — ČÍSLO (formátuje ho `Intl` v sk-SK/EUR). */
+  cena: number;
+}
+
+/** Fotka produktu. `src` prázdne = palete verný placeholder (`FloraFigure`). */
+export interface KyticaFotka {
+  src?: string;
   alt: string;
 }
 
-/** Sezóna kvetu — kedy vrcholí (pre filter aj neskoršie odporúčanie Kláry). */
-export type Sezona = "jar" | "leto" | "jesen" | "zima" | "celorocne";
+/** Forma väzby — filter „typ" v katalógu. */
+export type KyticaTyp = "kytica" | "aranzman" | "box" | "smutocna";
 
-/** Príležitosť, ku ktorej sa kvet hodí (pre filter aj odporúčanie). */
-export type Prilezitost = "narodeniny" | "vyrocie" | "svadba" | "smutok" | "gratulacia" | "potesenie";
+/** Nálepka na karte (najviac jedna — inak stratí význam). */
+export type Nalepka = "bestseller" | "sezonne" | "novinka";
 
 /**
- * Jeden kvet v konfigurátore kytice. Cena je ČÍSLO za 1 stonku (na živý súčet),
- * na rozdiel od `cena: string` v predajných kartách. `farba`/`sezona`/`prilezitosti`
- * poháňajú filter aj budúce odporúčanie (K3). `farba` je kľúč do `konfiguratorFarby`
- * (odtieň náhľadu); vizuálne skladanie kytice z PNG výrezov dorieši K1.
+ * Hotová kytica ako produkt katalógu `/kytice` — model „Kvetinový e-shop na kľúč".
+ *
+ * Tvar zodpovedá tomu, ako produkt vyzerá vo WooCommerce (názov, fotky, varianty,
+ * atribúty), aby sa v E2 vymenil len zdroj dát (`katalog.ts` → Woo Store API) a
+ * komponenty ostali nezmenené. Cena „od" sa neukladá — počíta sa z variantov
+ * (`cenaOd()` v `katalog.ts`), nech neexistujú dve pravdy o cene.
  */
-export interface Kvet {
+export interface Kytica {
   id: string;
+  slug: string;
   nazov: string;
-  /** Cena za 1 stonku v eurách (číslo — súčet beží naživo). */
-  cenaZaKs: number;
-  /** Kľúč farby do `konfiguratorFarby` (ľudský názov aj odtieň náhľadu). */
-  farba: string;
-  sezona: Sezona;
+  /** Jedna veta na kartu a do meta popisu detailu. */
+  perex: string;
+  /** Odsek do sekcie „O kytici". */
+  popis: string;
+  fotky: KyticaFotka[];
+  /** Z čoho ju viažeme — `id` do `odrody`. */
+  zlozenie: string[];
+  varianty: KyticaVariant[];
+  /** Ako dlho vydrží vo váze (konkrétne, podľa odrôd). */
+  trvacnost: string;
+  /** Čo presne zákazník dostane v cene. */
+  vCene: string[];
   prilezitosti: Prilezitost[];
+  /** Prevládajúci odtieň — kľúč do `farbyKvetov` (filter „farba"). */
+  farba: string;
+  typ: KyticaTyp;
+  nalepka?: Nalepka;
 }
 
 /** Karta kategórie na `/ponuka`. */
@@ -73,6 +122,8 @@ export interface Kategoria {
   popis: string;
   cena: string;
   href: string;
+  /** Text tlačidla karty (líši sa — „Objednať" vs. „Pozrieť kytice"). */
+  cta: string;
 }
 
 export interface Referencia {
@@ -186,8 +237,9 @@ export const brand = {
   },
 };
 
-/** Hlavička — 5 odkazov + CTA pilulka (Kontakt nie je v menu, viď DESIGN.md). */
+/** Hlavička — 6 odkazov + CTA pilulka (Kontakt nie je v menu, viď DESIGN.md). */
 export const headerNav: NavPolozka[] = [
+  { href: "/kytice", label: "Kytice" },
   { href: "/ponuka", label: "Ponuka" },
   { href: "/svadby", label: "Svadby a eventy" },
   { href: "/obchod", label: "Obchod" },
@@ -203,6 +255,7 @@ export const footerText =
 
 export const footerNav: NavPolozka[] = [
   { href: "/", label: "Domov", popis: "Úvodná stránka a aktuálna ponuka" },
+  { href: "/kytice", label: "Kytice", popis: "Hotové kytice, ktoré viažeme — s cenou a veľkosťami" },
   { href: "/ponuka", label: "Ponuka", popis: "Kytice, sezónny kalendár a predplatné" },
   { href: "/svadby", label: "Svadby a eventy", popis: "Kvetinová výzdoba na váš veľký deň" },
   { href: "/obchod", label: "Obchod", popis: "Sortiment a budúci online nákup" },
@@ -216,7 +269,7 @@ export const footerNav: NavPolozka[] = [
 // ---------------------------------------------------------------------------
 
 export const meta: Record<
-  "domov" | "ponuka" | "svadby" | "obchod" | "konfigurator" | "blog" | "atelier" | "kontakt",
+  "domov" | "kytice" | "ponuka" | "svadby" | "obchod" | "blog" | "atelier" | "kontakt",
   Meta
 > = {
   domov: {
@@ -251,13 +304,13 @@ export const meta: Record<
     ogDescription:
       "Kytice, predplatné kvetov a darčekové poukazy z ateliéru Boma Flora. Zatiaľ objednávka telefonicky alebo formulárom.",
   },
-  konfigurator: {
-    title: "Poskladajte si kyticu — Boma Flora Trenčín",
+  kytice: {
+    title: "Hotové kytice — Boma Flora Trenčín",
     description:
-      "Vyberte kvety podľa príležitosti a farby, pridajte počty a hneď vidíte cenu. Vašu kyticu pošlete ateliéru na dohodnutie.",
-    ogTitle: "Poskladajte si vlastnú kyticu — Boma Flora",
+      "Kytice, ktoré viažeme celý rok — s cenou, veľkosťou aj zoznamom odrôd. Filtrujte podľa príležitosti, farby a typu väzby.",
+    ogTitle: "Hotové kytice — Boma Flora",
     ogDescription:
-      "Interaktívny konfigurátor kytice: vyberte sezónne kvety, počty a orientačnú cenu vidíte naživo. Kvetinový ateliér Boma Flora v Trenčíne.",
+      "Katalóg hotových kytíc kvetinového ateliéru Boma Flora v Trenčíne: tri veľkosti, konkrétne odrody, doručenie po meste.",
   },
   blog: {
     title: "Blog — Boma Flora Trenčín",
@@ -332,26 +385,8 @@ export const homeManifest = {
 
 export const seasonalEyebrow = "Augustový výber";
 
-export const seasonalKytice: Kytica[] = [
-  {
-    nazov: "Letné popoludnie",
-    kvety: "dálie, záhradné ruže, eukalyptus",
-    cena: "od 32 €",
-    alt: "Kytica letných dálií a záhradných ruží doplnená eukalyptom",
-  },
-  {
-    nazov: "Trenčianska záhrada",
-    kvety: "hortenzie, astry, gypsofila",
-    cena: "od 28 €",
-    alt: "Kytica hortenzií a astrov v teplých letných tónoch",
-  },
-  {
-    nazov: "Terakota",
-    kvety: "dálie, chryzantémy, ozdobná tráva",
-    cena: "od 35 €",
-    alt: "Kytica dálií a chryzantém v terakotových odtieňoch s ozdobnou trávou",
-  },
-];
+/** Sezónny výber na Domove — slugy kytíc z katalógu (poradie = poradie kariet). */
+export const seasonalSlugy = ["letne-popoludnie", "trencianska-zahrada", "terakota"];
 
 export const homeSluzby: Sluzba[] = [
   {
@@ -410,7 +445,7 @@ export const homeAtelierTeaser = {
 /** Hlavičky sekcií a drobné UI texty Domova (data-driven, nie v JSX). */
 export const homeSekcie = {
   sezonnyNadpis: "Čo práve viažeme",
-  sezonnyOdkaz: "Celá ponuka →",
+  sezonnyOdkaz: "Všetky kytice →",
   sluzby: { eyebrow: "Čo pre vás robíme", nadpis: "Od kytice dňa po svadobný deň" } as Zahlavie,
   kroky: { eyebrow: "Ako to prebieha", nadpis: "Tri kroky k vašej kytici" } as Zahlavie,
   referencie: { eyebrow: "Referencie", nadpis: "Čo hovoria zákazníci" } as Zahlavie,
@@ -470,16 +505,18 @@ export const offerSubhero = {
 
 export const offerKategorie: Kategoria[] = [
   {
-    nazov: "Kytice dňa",
-    popis: "Kytica, ktorú práve viažeme z toho, čo dnes prišlo z veľkoobchodu. Bez objednávky vopred.",
-    cena: "od 22 €",
-    href: "/kontakt?typ=kytica",
+    nazov: "Hotové kytice",
+    popis: "Dvanásť kytíc, ktoré viažeme pravidelne — s cenou, priemerom aj zoznamom odrôd.",
+    cena: "od 18 €",
+    href: "/kytice",
+    cta: "Pozrieť kytice",
   },
   {
     nazov: "Kytice na mieru",
     popis: "Poviete farby, príležitosť a rozpočet, my poskladáme kyticu presne na mieru.",
     cena: "od 28 €",
     href: "/kontakt?typ=kytica",
+    cta: "Objednať",
   },
   {
     nazov: "Smútočné kytice a vence",
@@ -487,12 +524,14 @@ export const offerKategorie: Kategoria[] = [
       "Vence, ikebany aj kytice na rozlúčku. Objednávka aj v deň obradu, doručenie do domu smútku alebo na cintorín v Trenčíne.",
     cena: "od 35 €",
     href: "/kontakt?typ=smutocna",
+    cta: "Objednať",
   },
   {
     nazov: "Kvety do interiéru a vázy",
     popis: "Rezané kvety do vázy na dva týždne, doplnené o zeleň — pre domácnosť aj recepciu firmy.",
     cena: "od 18 €",
     href: "/kontakt?typ=ine",
+    cta: "Objednať",
   },
 ];
 
@@ -645,25 +684,28 @@ export const shopCta = {
 };
 
 // ---------------------------------------------------------------------------
-// Konfigurátor kytice `/konfigurator` — funkčné jadro (K0)
+// Katalóg hotových kytíc `/kytice` + `/kytice/[slug]` (E1)
 //
-// Statická sada kvetov s NUMERICKOU cenou/ks poháňa mriežku, filter podľa
-// príležitosti aj živý súčet. Rozhranie je pripravené na neskoršiu výmenu
-// zdroja (Directus/Woo) bez prepisu UI. Vizuál skladanej kytice (PNG výrezy +
-// motion) a floristka „Klára" prídu v ďalších krokoch (K1–K3).
+// Hotová kytica = produkt. Statická sada tu je JEDINÝ zdroj pravdy o katalógu;
+// prístup k nej vedie cez `katalog.ts`, takže v E2 sa vymení len ten za
+// WooCommerce Store API (produkty sú obsah → patria do WP, nie do Directusu).
+// Odrody poháňajú sekciu „Z čoho ju viažeme" — jedna dátová sada, žiadna
+// duplicita zoznamov kvetov naprieč stránkami.
 // ---------------------------------------------------------------------------
 
-/** Odtiene náhľadu kvetov — kľúč `farba` z `Kvet`. `svetla` = potreba orámovania. */
-export const konfiguratorFarby: Record<string, { label: string; hex: string; svetla?: boolean }> = {
+/** Odtiene kvetov a kytíc — kľúč `farba`. `svetla` = potrebuje orámovanie. */
+export const farbyKvetov: Record<string, { label: string; hex: string; svetla?: boolean }> = {
   biela: { label: "biela", hex: "#f6f1e9", svetla: true },
   ruzova: { label: "ružová", hex: "#e2a0b3" },
   cervena: { label: "červená", hex: "#b23b30" },
   bordova: { label: "bordová", hex: "#7b2d3a" },
   zlta: { label: "žltá", hex: "#e3b23c" },
-  oranzova: { label: "oranžová (terakota)", hex: "#c07856" },
+  oranzova: { label: "terakotová", hex: "#c07856" },
   fialova: { label: "fialová", hex: "#8a7aa6" },
   modra: { label: "modrá", hex: "#7c9bb5" },
-  zelena: { label: "zelená (zeleň)", hex: "#6e8b6a" },
+  zelena: { label: "zelená", hex: "#6e8b6a" },
+  /** Len pre kytice — miešaná paleta (v UI sa kreslí ako viacfarebný bod). */
+  pestra: { label: "pestrá", hex: "#c07856" },
 };
 
 export const sezonaLabel: Record<Sezona, string> = {
@@ -678,71 +720,496 @@ export const prilezitostLabel: Record<Prilezitost, string> = {
   narodeniny: "Narodeniny",
   vyrocie: "Výročie a láska",
   svadba: "Svadba",
+  premamu: "Pre mamu",
   smutok: "Smútočná",
   gratulacia: "Blahoželanie",
   potesenie: "Pre radosť",
 };
 
+export const typLabel: Record<KyticaTyp, string> = {
+  kytica: "Viazaná kytica",
+  aranzman: "Aranžmán v nádobe",
+  box: "Kvetinový box",
+  smutocna: "Smútočná väzba",
+};
+
+export const nalepkaLabel: Record<Nalepka, string> = {
+  bestseller: "Najpredávanejšia",
+  sezonne: "Sezónne",
+  novinka: "Novinka",
+};
+
 /** Poradie príležitostí vo filtri (chip „Všetky" pridá komponent). */
-export const konfiguratorPrilezitosti: Prilezitost[] = [
+export const katalogPrilezitosti: Prilezitost[] = [
   "narodeniny",
   "vyrocie",
   "svadba",
+  "premamu",
   "smutok",
   "gratulacia",
   "potesenie",
 ];
 
-export const konfiguratorKvety: Kvet[] = [
-  { id: "zahradna-ruza", nazov: "Záhradná ruža", cenaZaKs: 3.5, farba: "ruzova", sezona: "leto", prilezitosti: ["narodeniny", "vyrocie", "svadba", "potesenie"] },
-  { id: "biela-ruza", nazov: "Biela ruža", cenaZaKs: 3.2, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "vyrocie"] },
-  { id: "pivonka", nazov: "Pivonka", cenaZaKs: 5.5, farba: "ruzova", sezona: "leto", prilezitosti: ["svadba", "vyrocie", "narodeniny"] },
-  { id: "tulipan", nazov: "Tulipán", cenaZaKs: 1.8, farba: "cervena", sezona: "jar", prilezitosti: ["narodeniny", "potesenie"] },
-  { id: "slnecnica", nazov: "Slnečnica", cenaZaKs: 2.9, farba: "zlta", sezona: "leto", prilezitosti: ["narodeniny", "potesenie", "gratulacia"] },
-  { id: "dalia", nazov: "Dália", cenaZaKs: 3.8, farba: "oranzova", sezona: "jesen", prilezitosti: ["narodeniny", "potesenie"] },
-  { id: "chryzantema", nazov: "Chryzantéma", cenaZaKs: 2.4, farba: "bordova", sezona: "jesen", prilezitosti: ["smutok", "gratulacia"] },
-  { id: "hortenzia", nazov: "Hortenzia", cenaZaKs: 4.9, farba: "modra", sezona: "leto", prilezitosti: ["svadba", "vyrocie"] },
-  { id: "amarylis", nazov: "Amarylis", cenaZaKs: 4.2, farba: "cervena", sezona: "zima", prilezitosti: ["gratulacia", "vyrocie"] },
-  { id: "astra", nazov: "Astra", cenaZaKs: 2.1, farba: "fialova", sezona: "jesen", prilezitosti: ["narodeniny", "smutok"] },
-  { id: "levandula", nazov: "Levanduľa", cenaZaKs: 2.3, farba: "fialova", sezona: "leto", prilezitosti: ["potesenie", "svadba"] },
-  { id: "narcis", nazov: "Narcis", cenaZaKs: 1.5, farba: "zlta", sezona: "jar", prilezitosti: ["potesenie", "gratulacia"] },
-  { id: "eukalyptus", nazov: "Eukalyptus", cenaZaKs: 1.9, farba: "zelena", sezona: "celorocne", prilezitosti: ["svadba", "smutok", "potesenie", "narodeniny"] },
-  { id: "gypsomilka", nazov: "Gypsomilka", cenaZaKs: 1.6, farba: "biela", sezona: "celorocne", prilezitosti: ["svadba", "potesenie"] },
+/**
+ * Odrody, z ktorých viažeme. `id` sa používa v `Kytica.zlozenie` aj ako kľúč
+ * foto-výrezu v `images/media.ts` (`odrodaVyrezy`).
+ */
+export const odrody: Odroda[] = [
+  { id: "ruza-red-naomi", nazov: "Ruža Red Naomi", farba: "cervena", sezona: "celorocne" },
+  { id: "ruza-mondial", nazov: "Ruža Mondial", farba: "biela", sezona: "celorocne" },
+  { id: "ruza-avalanche", nazov: "Ruža Avalanche", farba: "biela", sezona: "celorocne" },
+  { id: "ruza-sweet-avalanche", nazov: "Ruža Sweet Avalanche", farba: "ruzova", sezona: "celorocne" },
+  { id: "eustoma-ruzova", nazov: "Eustoma ružová", farba: "ruzova", sezona: "leto" },
+  { id: "eustoma-biela", nazov: "Eustoma biela", farba: "biela", sezona: "leto" },
+  { id: "ranunculus-biely", nazov: "Ranunculus biely", farba: "biela", sezona: "jar" },
+  { id: "hortenzia-biela", nazov: "Hortenzia biela", farba: "biela", sezona: "leto" },
+  { id: "hortenzia-modra", nazov: "Hortenzia modrá", farba: "modra", sezona: "leto" },
+  { id: "hortenzia-ruzova", nazov: "Hortenzia ružová", farba: "ruzova", sezona: "leto" },
+  { id: "pivonka-ruzova", nazov: "Pivonka ružová", farba: "ruzova", sezona: "leto" },
+  { id: "dalia-koralova", nazov: "Dália koralová", farba: "oranzova", sezona: "leto" },
+  { id: "dalia-bordova", nazov: "Dália bordová", farba: "bordova", sezona: "leto" },
+  { id: "astra-fialova", nazov: "Astra fialová", farba: "fialova", sezona: "jesen" },
+  { id: "chryzantema-plnokveta-oranzova", nazov: "Chryzantéma plnokvetá oranžová", farba: "oranzova", sezona: "jesen" },
+  { id: "chryzantema-plnokveta-bordova", nazov: "Chryzantéma plnokvetá bordová", farba: "bordova", sezona: "jesen" },
+  { id: "chryzantema-margaretkova-biela", nazov: "Chryzantéma margarétková biela", farba: "biela", sezona: "jesen" },
+  { id: "gerbera-cervena", nazov: "Gerbera červená", farba: "cervena", sezona: "celorocne" },
+  { id: "slnecnica", nazov: "Slnečnica", farba: "zlta", sezona: "leto" },
+  { id: "frezia-zlta", nazov: "Frézia žltá", farba: "zlta", sezona: "celorocne" },
+  { id: "orgovan-fialovy", nazov: "Orgován fialový", farba: "fialova", sezona: "jar" },
+  { id: "ozdobna-trava", nazov: "Ozdobná tráva", farba: "zelena", sezona: "jesen" },
+  { id: "eukalyptus", nazov: "Eukalyptus", farba: "zelena", sezona: "celorocne" },
+  { id: "green-bell", nazov: "Green Bell (molucella)", farba: "zelena", sezona: "leto" },
+  { id: "matricaria", nazov: "Matricaria", farba: "biela", sezona: "celorocne" },
+  { id: "gypsomilka", nazov: "Gypsomilka", farba: "biela", sezona: "celorocne" },
 ];
 
-/** Texty a mikrotexty konfigurátora (jediné miesto pravdy — nie v JSX). */
-export const konfiguratorObsah = {
+/** Čo je v cene pri bežnej viazanej kytici (produkt si to môže prepísať). */
+const V_CENE_ZAKLAD = [
+  "ručná špirálová väzba bez floristickej peny",
+  "balenie do prírodného papiera",
+  "vrecúško výživy pre rezané kvety",
+  "ručne písaný lístok so vzkazom",
+];
+
+/**
+ * Katalóg hotových kytíc. Čítať ho cez `katalog.ts` (nie priamo v komponentoch)
+ * — v E2 sa pod tou istou funkciou vymení zdroj za WooCommerce Store API.
+ * Fotky: `src` prázdne = zatiaľ placeholder, dopĺňa sa sem (bez zásahu do kódu).
+ */
+export const katalogKytice: Kytica[] = [
+  {
+    id: "kyt-01",
+    slug: "letne-popoludnie",
+    nazov: "Letné popoludnie",
+    perex: "Dálie od pestovateľky spod Vršatca, ružové ruže a eukalyptus.",
+    popis:
+      "Viažeme ju od polovice júla do prvých mrazov, kým máme dálie od pestovateľky spod Vršatca. Koralová a bordová sa v nej striedajú so starou ružovou, modrastý eukalyptus celok upokojí. Dálie znášajú prevoz zle, preto ich kupujeme výhradne lokálne — v tejto kytici nikdy nie sú z dovozu.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/sezona-1.webp",
+        alt: "Kytica koralových a bordových dálií s ružovými ružami a eukalyptom na svetlom stole",
+      },
+    ],
+    zlozenie: ["dalia-koralova", "dalia-bordova", "ruza-sweet-avalanche", "eukalyptus"],
+    varianty: [
+      { kod: "S", nazov: "Malá", stonky: 15, priemerCm: 28, cena: 32 },
+      { kod: "M", nazov: "Stredná", stonky: 21, priemerCm: 34, cena: 44 },
+      { kod: "L", nazov: "Veľká", stonky: 29, priemerCm: 42, cena: 58 },
+    ],
+    trvacnost: "7 – 10 dní vo váze",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["narodeniny", "potesenie", "gratulacia", "premamu"],
+    farba: "oranzova",
+    typ: "kytica",
+    nalepka: "sezonne",
+  },
+  {
+    id: "kyt-02",
+    slug: "trencianska-zahrada",
+    nazov: "Trenčianska záhrada",
+    perex: "Hortenzie, astry a gypsomilka — jemná väzba bez jedinej ostrej farby.",
+    popis:
+      "Kytica pre ľudí, ktorí majú radšej tvar než farbu. Základ tvoria hortenzie, biela a modrastá; medzi ne dávame astry a gypsomilku, aby väzba mala vzduch a nepôsobila ako kompaktná guľa. Hortenzia pije veľa vody — ak ju necháte v plnej váze a každý druhý deň skrátite stonky, vydrží najdlhšie zo všetkého, čo v nej je.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/sezona-2.webp",
+        alt: "Kytica bielych a zelenkastých hortenzií s drobnými ružovými kvetmi na plátennom pozadí",
+      },
+    ],
+    zlozenie: ["hortenzia-biela", "hortenzia-modra", "astra-fialova", "gypsomilka"],
+    varianty: [
+      { kod: "S", nazov: "Malá", stonky: 13, priemerCm: 26, cena: 28 },
+      { kod: "M", nazov: "Stredná", stonky: 19, priemerCm: 33, cena: 39 },
+      { kod: "L", nazov: "Veľká", stonky: 25, priemerCm: 40, cena: 52 },
+    ],
+    trvacnost: "6 – 8 dní vo váze (hortenzia potrebuje veľa vody)",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["narodeniny", "gratulacia", "potesenie", "premamu"],
+    farba: "biela",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-03",
+    slug: "terakota",
+    nazov: "Terakota",
+    perex: "Chryzantémy, orgován a ozdobná tráva v pálenej hlinenej nádobe.",
+    popis:
+      "Aranžmán staviame priamo do terakotovej nádoby, na mriežku z vlastných stoniek — bez floristickej peny. Nádoba ostáva vám a keď kvety doslúžia, naplníme ju znova za cenu kvetov. Orgován máme v máji a júni; po sezóne ho v tej istej palete nahrádza astra.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/sezona-3.webp",
+        alt: "Aranžmán oranžových a krémových chryzantém s orgovánom a ozdobnou trávou v terakotovej nádobe",
+      },
+    ],
+    zlozenie: [
+      "chryzantema-plnokveta-oranzova",
+      "chryzantema-plnokveta-bordova",
+      "orgovan-fialovy",
+      "ozdobna-trava",
+    ],
+    varianty: [
+      { kod: "M", nazov: "Stredný", stonky: 18, priemerCm: 30, cena: 35 },
+      { kod: "L", nazov: "Veľký", stonky: 26, priemerCm: 38, cena: 49 },
+    ],
+    trvacnost: "10 – 14 dní (chryzantémy vydržia zo všetkého najdlhšie)",
+    vCene: [
+      "aranžovanie do terakotovej nádoby — nádoba ostáva vám",
+      "mriežka z vlastných stoniek namiesto floristickej peny",
+      "vrecúško výživy pre rezané kvety",
+      "ručne písaný lístok so vzkazom",
+    ],
+    prilezitosti: ["potesenie", "gratulacia", "narodeniny"],
+    farba: "pestra",
+    typ: "aranzman",
+  },
+  {
+    id: "kyt-04",
+    slug: "mondial",
+    nazov: "Mondial",
+    perex: "Krémovo-biele ruže Mondial s eustomou a eukalyptom.",
+    popis:
+      "Mondial je ruža s veľkým kalichom, ktorá otvára pomaly a drží tvar aj po týždni. Viažeme ju s bielou eustomou do kompaktnejšej gule, eukalyptus dopĺňame len po obvode, aby biela ostala hlavná. Chodí k nám na výročia, promócie a poďakovania — teda vždy, keď má kytica pôsobiť slávnostne, nie sladko.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/galeria-4.webp",
+        alt: "Kytica bielych ruží Mondial s eukalyptom, previazaná stuhou, na drevenom stole",
+      },
+      {
+        src: "/kvetinarstvo/img/galeria-3.webp",
+        alt: "Detail rúk, ktoré dokladajú zeleň do bielej kvetinovej väzby",
+      },
+    ],
+    zlozenie: ["ruza-mondial", "eustoma-biela", "eukalyptus"],
+    varianty: [
+      { kod: "S", nazov: "Malá", stonky: 15, priemerCm: 28, cena: 42 },
+      { kod: "M", nazov: "Stredná", stonky: 21, priemerCm: 35, cena: 56 },
+      { kod: "L", nazov: "Veľká", stonky: 29, priemerCm: 42, cena: 74 },
+    ],
+    trvacnost: "8 – 12 dní vo váze",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["vyrocie", "gratulacia", "potesenie"],
+    farba: "biela",
+    typ: "kytica",
+    nalepka: "bestseller",
+  },
+  {
+    id: "kyt-05",
+    slug: "kytica-nevesty",
+    nazov: "Kytica nevesty",
+    perex: "Ruže Avalanche, eustoma a eukalyptus — viažeme ju ráno v deň obradu.",
+    popis:
+      "Svadobnú kyticu viažeme ráno v deň obradu, nie deň vopred — na fotkách z večera to vidieť. Stonky obtáčame stuhou v odtieni, ktorý si vyberiete, spodok necháme voľný, aby sa kytica dala medzi obradom a hostinou postaviť do vody. Z tých istých kvetov pripravíme pierko pre ženícha.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/galeria-2.webp",
+        alt: "Nevesta drží svadobnú kyticu z bielych ruží, eustomy a eukalyptu",
+      },
+      {
+        src: "/kvetinarstvo/img/galeria-5.webp",
+        alt: "Floristka dokončuje väzbu svadobnej kytice z bielych a ružových ruží",
+      },
+    ],
+    zlozenie: ["ruza-avalanche", "eustoma-biela", "matricaria", "eukalyptus"],
+    varianty: [
+      { kod: "S", nazov: "Menšia", stonky: 17, priemerCm: 26, cena: 68 },
+      { kod: "M", nazov: "Väčšia", stonky: 23, priemerCm: 30, cena: 86 },
+    ],
+    trvacnost: "vydrží celý svadobný deň, vo váze ďalších 5 – 7 dní",
+    vCene: [
+      "väzba ráno v deň obradu",
+      "stuha na stonkách v odtieni podľa vášho výberu",
+      "pierko pre ženícha z tých istých kvetov",
+      "prinesenie na miesto obradu v Trenčíne",
+    ],
+    prilezitosti: ["svadba"],
+    farba: "biela",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-06",
+    slug: "kytica-dna",
+    nazov: "Kytica dňa",
+    perex: "Z toho, čo v ten deň prišlo z veľkoobchodu — bez objednávky vopred.",
+    popis:
+      "Kytica dňa nemá pevné zloženie. Viažeme ju z toho, čo v utorok alebo v piatok ráno prišlo — v auguste je to najčastejšie eustoma, chryzantéma a eukalyptus. Poviete rozpočet a farbu, ktorej sa chcete vyhnúť, ostatné nechajte na nás. Pripravíme ju na počkanie, zvyčajne do desiatich minút.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/obchod-kytica-dna.webp",
+        alt: "Kytica terakotových a bielych eustom s eukalyptom, zabalená v prírodnom papieri",
+      },
+    ],
+    zlozenie: ["eustoma-ruzova", "eustoma-biela", "chryzantema-margaretkova-biela", "eukalyptus"],
+    varianty: [
+      { kod: "S", nazov: "Malá", stonky: 11, priemerCm: 24, cena: 22 },
+      { kod: "M", nazov: "Stredná", stonky: 17, priemerCm: 30, cena: 32 },
+      { kod: "L", nazov: "Veľká", stonky: 23, priemerCm: 36, cena: 44 },
+    ],
+    trvacnost: "7 – 10 dní vo váze",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["potesenie", "narodeniny", "gratulacia"],
+    farba: "pestra",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-07",
+    slug: "pudrova",
+    nazov: "Púdrová",
+    perex: "Ruže Sweet Avalanche, biele ranunculusy a hortenzia v pastelovej palete.",
+    popis:
+      "Najtichšia kytica, akú viažeme — tri odtiene ružovej, ktoré sa navzájom neprebíjajú, a biele ranunculusy, ktoré sa doma ešte otvoria. Ranunculus máme od februára do mája; mimo sezóny ho nahrádza záhradná ruža v tom istom tóne, cena sa nemení.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/obchod-na-mieru.webp",
+        alt: "Pastelová kytica ružových ruží, bielych ranunculusov a eukalyptu pri okne",
+      },
+    ],
+    zlozenie: ["ruza-sweet-avalanche", "ranunculus-biely", "hortenzia-ruzova", "eukalyptus"],
+    varianty: [
+      { kod: "S", nazov: "Malá", stonky: 15, priemerCm: 28, cena: 36 },
+      { kod: "M", nazov: "Stredná", stonky: 21, priemerCm: 34, cena: 48 },
+      { kod: "L", nazov: "Veľká", stonky: 29, priemerCm: 41, cena: 62 },
+    ],
+    trvacnost: "7 – 10 dní vo váze",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["narodeniny", "vyrocie", "potesenie", "premamu"],
+    farba: "ruzova",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-08",
+    slug: "pivonky-vo-vaze",
+    nazov: "Pivonky vo váze",
+    perex: "Deväť pivoniek v sklenenej váze — máj a jún, kým ich máme.",
+    popis:
+      "Pivonky kupujeme v pukoch, aby sa rozvili až u vás doma: prvý deň vyzerajú zatvorené, na druhý sa otvoria naplno a vydržia tak necelý týždeň. Aranžujeme ich do jednoduchej sklenenej vázy, ktorá ostáva vám. Mimo sezóny tú istú väzbu robíme zo záhradných ruží.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/obchod-predplatne.webp",
+        alt: "Biele a ružové pivonky v sklenenej váze na drevenej komode",
+      },
+    ],
+    zlozenie: ["pivonka-ruzova", "eukalyptus"],
+    varianty: [
+      { kod: "M", nazov: "9 pivoniek", stonky: 9, priemerCm: 30, cena: 45 },
+      { kod: "L", nazov: "15 pivoniek", stonky: 15, priemerCm: 38, cena: 68 },
+    ],
+    trvacnost: "5 – 7 dní (pivonka kvitne krátko a naplno)",
+    vCene: [
+      "aranžovanie do sklenenej vázy — váza ostáva vám",
+      "pivonky v pukoch, aby sa rozvili až doma",
+      "vrecúško výživy pre rezané kvety",
+      "ručne písaný lístok so vzkazom",
+    ],
+    prilezitosti: ["vyrocie", "narodeniny", "potesenie", "premamu"],
+    farba: "ruzova",
+    typ: "aranzman",
+  },
+  {
+    id: "kyt-09",
+    slug: "mala-pozornost",
+    nazov: "Malá pozornosť",
+    perex: "Sedem červených gerber v prírodnom papieri so štítkom na vzkaz.",
+    popis:
+      "Najmenšia kytica, akú viažeme — pre situácie, keď stačí gesto. Gerbery majú duté stonky, preto ich rezáme nakrátko a do vázy patrí len pár centimetrov vody; vydržia potom o niekoľko dní dlhšie. Na štítok napíšeme, čo poviete, pokojne aj bez podpisu.",
+    fotky: [
+      {
+        src: "/kvetinarstvo/img/obchod-poukaz.webp",
+        alt: "Malá kytica červených gerber v prírodnom papieri s prázdnym darčekovým štítkom",
+      },
+    ],
+    zlozenie: ["gerbera-cervena", "gypsomilka"],
+    varianty: [
+      { kod: "S", nazov: "7 gerber", stonky: 7, priemerCm: 20, cena: 18 },
+      { kod: "M", nazov: "11 gerber", stonky: 11, priemerCm: 25, cena: 26 },
+    ],
+    trvacnost: "7 – 9 dní (gerbere stačí pár centimetrov vody)",
+    vCene: [
+      "ručná väzba a balenie do prírodného papiera",
+      "darčekový štítok s ručne písaným vzkazom",
+      "vrecúško výživy pre rezané kvety",
+    ],
+    prilezitosti: ["potesenie", "gratulacia", "premamu"],
+    farba: "cervena",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-10",
+    slug: "red-naomi",
+    nazov: "Red Naomi",
+    perex: "Deväť, pätnásť alebo dvadsaťpäť tmavočervených ruží so zeleňou Green Bell.",
+    popis:
+      "Red Naomi má takmer čierny stred, silnú vôňu a otvára pomaly — je to ruža, ktorá vydrží dlhšie ako väčšina červených odrôd. Viažeme ju samostatne, aby nič neodvádzalo pozornosť; po obvode dávame len úzky pás zelených Green Bell. Počet ruží si zvolíte podľa toho, čo chcete povedať.",
+    fotky: [
+      {
+        alt: "Kytica tmavočervených ruží Red Naomi lemovaná zelenými stonkami Green Bell",
+      },
+    ],
+    zlozenie: ["ruza-red-naomi", "green-bell"],
+    varianty: [
+      { kod: "S", nazov: "9 ruží", stonky: 9, priemerCm: 24, cena: 34 },
+      { kod: "M", nazov: "15 ruží", stonky: 15, priemerCm: 30, cena: 54 },
+      { kod: "L", nazov: "25 ruží", stonky: 25, priemerCm: 38, cena: 86 },
+    ],
+    trvacnost: "8 – 12 dní vo váze",
+    vCene: V_CENE_ZAKLAD,
+    prilezitosti: ["vyrocie", "narodeniny"],
+    farba: "cervena",
+    typ: "kytica",
+  },
+  {
+    id: "kyt-11",
+    slug: "ticha-rozlucka",
+    nazov: "Tichá rozlúčka",
+    perex: "Biele chryzantémy a eustoma s eukalyptom — uviažeme aj v deň obradu.",
+    popis:
+      "Smútočnú väzbu viažeme prednostne: ak zavoláte do obeda, býva hotová do troch hodín. Podávame ju previazanú prírodným motúzom, bez fólie, aby sa dala položiť aj oprieť o stenu. Doručíme ju do domu smútku alebo na cintorín v Trenčíne, po dohode aj mimo mesta.",
+    fotky: [
+      {
+        alt: "Smútočná kytica bielych chryzantém a eustomy s eukalyptom, previazaná motúzom",
+      },
+    ],
+    zlozenie: ["chryzantema-margaretkova-biela", "eustoma-biela", "eukalyptus"],
+    varianty: [
+      { kod: "M", nazov: "Stredná", stonky: 21, priemerCm: 36, cena: 38 },
+      { kod: "L", nazov: "Veľká", stonky: 31, priemerCm: 46, cena: 56 },
+    ],
+    trvacnost: "10 – 14 dní (chryzantéma vydrží aj v chlade)",
+    vCene: [
+      "väzba v deň objednávky, prednostne",
+      "previazanie prírodným motúzom, bez fólie",
+      "stužka s nápisom podľa vášho zadania",
+      "doručenie do domu smútku alebo na cintorín v Trenčíne",
+    ],
+    prilezitosti: ["smutok"],
+    farba: "biela",
+    typ: "smutocna",
+  },
+  {
+    id: "kyt-12",
+    slug: "slnecne-rano",
+    nazov: "Slnečné ráno",
+    perex: "Slnečnice a frézie v okrúhlom boxe — kvety stoja vo vlastnej vode.",
+    popis:
+      "Box vykladáme fóliou a plníme mriežkou zo stoniek, nie penou, takže kvety stoja vo vode a vydržia rovnako dlho ako vo váze. Hodí sa, keď posielate kvety niekomu do práce alebo do nemocnice, kde vázu nemá kde vziať — box sa postaví na stôl a je hotovo.",
+    fotky: [
+      {
+        alt: "Okrúhly kvetinový box so slnečnicami, žltými fréziami a bielou matricariou",
+      },
+    ],
+    zlozenie: ["slnecnica", "frezia-zlta", "matricaria"],
+    varianty: [
+      { kod: "S", nazov: "Malý box", stonky: 11, priemerCm: 18, cena: 34 },
+      { kod: "M", nazov: "Väčší box", stonky: 17, priemerCm: 24, cena: 46 },
+    ],
+    trvacnost: "7 – 10 dní (vodu v boxe doplňte každý druhý deň)",
+    vCene: [
+      "okrúhly box vyložený fóliou, kvety stoja vo vode",
+      "mriežka zo stoniek namiesto floristickej peny",
+      "vrecúško výživy pre rezané kvety",
+      "ručne písaný lístok so vzkazom",
+    ],
+    prilezitosti: ["gratulacia", "potesenie", "narodeniny"],
+    farba: "zlta",
+    typ: "box",
+    nalepka: "novinka",
+  },
+];
+
+/** Texty katalógu a detailu (jediné miesto pravdy — nie v JSX). */
+export const katalogObsah = {
   subhero: {
-    h1: "Poskladajte si vlastnú kyticu",
-    text: "Vyberte kvety podľa príležitosti a farby, pridajte počty a cenu vidíte hneď. Keď je kytica hotová, pošlete nám ju na dohodnutie termínu a doručenia.",
+    h1: "Hotové kytice",
+    text: "Kytice, ktoré viažeme celý rok. Pri každej vidíte, z čoho je, aký má priemer a koľko stojí v troch veľkostiach.",
   },
-  filterEyebrow: "Pre akú príležitosť",
-  filterVsetky: "Všetky",
-  filterPomoc: "Filter zúži kvety podľa príležitosti. Počty a súčet ostanú zachované.",
-  mriezkaEyebrow: "Vyberte kvety",
-  cenaZaKs: "/ ks",
-  pridaj: "Pridať",
-  uber: "Ubrať",
-  prazdnyFilter: "Pre túto príležitosť teraz nemáme tip — skúste inú alebo „Všetky“.",
-  suhrn: {
-    nadpis: "Vaša kytica",
-    prazdne: "Zatiaľ ste nevybrali žiadne kvety. Pridajte prvý pomocou „+“.",
-    stonky: "stoniek spolu",
-    spolu: "Spolu orientačne",
-    poznamka: "Cena je orientačná (za stonky). Presnú sumu vrátane väzby a doručenia potvrdíme pri objednávke.",
+  /** Nadpis (h2) sekcie s filtrom a mriežkou — drží hierarchiu h1 → h2 → h3. */
+  mriezkaNadpis: "Vyberte si kyticu",
+  filter: {
+    prilezitost: "Príležitosť",
+    farba: "Farba",
+    typ: "Typ väzby",
+    vsetky: "Všetky",
+    zrusit: "Zrušiť filtre",
+    /** Prístupný popis krížika na štítku vybraného filtra. */
+    zrusitJeden: (co: string) => `Zrušiť filter ${co}`,
+    /** Text do `aria-live` — doplní sa počet nájdených kytíc. */
+    vysledok: (n: number) => `${n} ${n === 1 ? "kytica" : n < 5 ? "kytice" : "kytíc"} v tomto výbere`,
+    prazdne: "V tejto kombinácii teraz nič neviažeme. Skúste uvoľniť jeden filter alebo nám napíšte, čo hľadáte.",
+  },
+  karta: {
+    cenaOd: "od",
+  },
+  dovera: {
+    nadpis: "Ako to funguje",
+    body: [
+      {
+        nadpis: "Viažeme v deň doručenia",
+        text: "Kyticu pripravujeme ráno v deň, keď si ju vyzdvihnete alebo ju doručíme — nie deň vopred.",
+      },
+      {
+        nadpis: "Fotku pošleme pred doručením",
+        text: "Kým kytica odíde z ateliéru, pošleme vám ju odfotenú. Keď niečo nesedí, uviažeme ju znova.",
+      },
+      {
+        nadpis: "Doručenie po Trenčíne",
+        text: "V pracovné dni medzi 10:00 a 17:00, cena od 4 € podľa lokality. Objednávky na daný deň do 12:00.",
+      },
+    ],
+  },
+  cta: {
+    text: "Nenašli ste tú pravú? Uviažeme kyticu podľa vašej predstavy.",
+    primar: { label: "Napísať, čo hľadáte", href: "/kontakt?typ=kytica" } as Odkaz,
+    sekundar: { label: "Zavolať do ateliéru", href: "/kontakt" } as Odkaz,
+  },
+  detail: {
+    spat: "Všetky kytice",
+    velkostNadpis: "Veľkosť",
+    stonky: "stoniek",
+    priemer: "priemer",
+    cenaLabel: "Cena vybranej veľkosti",
     cta: "Objednať túto kyticu",
-    vycistit: "Vyčistiť výber",
+    ctaPoznamka: "Objednávku dohodneme e-mailom alebo telefonicky — platí sa až pri prevzatí.",
+    poradime: "Neviete si vybrať? Poradíme →",
+    poradimeHref: "/kontakt?typ=kytica",
+    oKytici: "O kytici",
+    zlozenieNadpis: "Z čoho ju viažeme",
+    zlozeniePoznamka:
+      "Odrody uvádzame konkrétne. Keď niektorá práve nie je v kvalite, ktorú chceme, nahradíme ju rovnocennou a dáme vám vedieť vopred.",
+    trvacnostNadpis: "Trvácnosť",
+    vCeneNadpis: "Čo je v cene",
+    starostlivostNadpis: "Ako jej predĺžite život",
+    dalsieNadpis: "Ďalšie kytice",
+    /** Predvyplnenie kontakt-formulára (`?typ=`) — hodnota z `contactTypyObjednavky`. */
+    objednavkaTyp: "kytica",
   },
-  // Predvyplnenie kontakt-formulára: typ + textové zhrnutie kytice.
-  objednavkaTyp: "kytica",
 };
 
-/** Prelink na konfigurátor z iných stránok (Obchod, Ateliér). */
-export const konfiguratorPrelink = {
-  eyebrow: "Nové",
-  nadpis: "Poskladajte si vlastnú kyticu",
-  popis: "Vyberte kvety podľa príležitosti, pridajte počty a orientačnú cenu vidíte naživo. Hotovú kyticu nám pošlete jedným klikom.",
-  cta: { label: "Otvoriť konfigurátor", href: "/konfigurator" } as Odkaz,
+/** Prelink na katalóg kytíc z iných stránok (Obchod, Ateliér). */
+export const katalogPrelink = {
+  eyebrow: "Katalóg",
+  nadpis: "Pozrite si hotové kytice",
+  popis:
+    "Dvanásť kytíc, ktoré viažeme pravidelne — s cenou, priemerom aj zoznamom odrôd. Vyberiete si a napíšete nám, kedy ju chcete mať.",
+  cta: { label: "Otvoriť katalóg kytíc", href: "/kytice" } as Odkaz,
 };
 
 // ---------------------------------------------------------------------------
@@ -979,7 +1446,7 @@ export const offerSekcie = {
 export const offerCta = {
   text: "Máte v hlave konkrétnu kyticu? Napíšte nám ju.",
   ctaPrimarna: { label: "Objednať kvety", href: "/kontakt" } as Odkaz,
-  ctaSekundarna: { label: "Kúpiť online", href: "/obchod" } as Odkaz,
+  ctaSekundarna: { label: "Pozrieť hotové kytice", href: "/kytice" } as Odkaz,
 };
 
 /** Svadby — hlavičky sekcií. */

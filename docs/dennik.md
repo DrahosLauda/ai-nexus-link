@@ -3,6 +3,98 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
+
+**Typ:** kód (bez generovania fotiek — tie sú kreatíva, samostatné sedenie).
+**Vetva:** `claude/kvetinarstvo-katalog-e1-pvnolc`. **Stav:** hotové na vetve,
+**čaká merge do `main` po súhlase majiteľa**. Demo ostáva pod `/ukazky`, `noindex`,
+**bez checkoutu** (predaj zamknutý).
+
+**Čo je hotové:**
+- **Dátový model produktu** (`templates/kvetinarstvo/content.ts`): `Kytica` je teraz
+  **produkt katalógu** — `id/slug/nazov/perex/popis`, `fotky[]` (cesta + alt),
+  `varianty[]` (S/M/L → počet stoniek, priemer v cm, **číselná cena**), `zlozenie[]`
+  (odkazy na odrody), `trvacnost`, `vCene[]`, atribúty (`prilezitosti[]`, `farba`,
+  `typ`) a voliteľná `nalepka`. Nový typ `Odroda` + **26 reálnych rezaných odrôd**
+  (základ prevzatý z K1 vetvy). **12 kytíc** naprieč príležitosťami/farbami/typmi.
+  Cena „od" sa **nikde neukladá** — počíta sa z variantov (jedna pravda o cene).
+- **`katalog.ts` (nový) — jediné miesto, ktoré siaha na dáta.** `vsetkyKytice`,
+  `kyticaPodlaSlug`, `zlozenieKytice`, `cenaOd/cenaDo`, `sezonnyVyber`,
+  `dalsieKytice`, `filtrujKytice`, `moznostiFiltra`, `formatujCenu` (Intl sk-SK/EUR).
+  **V E2 sa vymení len telo týchto funkcií za WooCommerce Store API** — stránky a
+  komponenty sa nemenia.
+- **Katalóg `/kytice`**: mriežka produktových kariet (arch orez fotky = podpisový
+  tvar šablóny, nálepka, hover zoom, cena „od X €") + **filtre podľa príležitosti /
+  farby / typu väzby** (chips s `aria-pressed`, farebné body, počet výsledkov cez
+  `aria-live`, „Zrušiť filtre"). Možnosti filtra sú **odvodené z dát**, nie napevno.
+- **Detail `/kytice/[slug]`**: galéria, **výber veľkosti** (natívne rádiá vo
+  `fieldset`/`legend` — klávesnica, živá cena), „O kytici" (popis, trvácnosť, čo je
+  v cene), **„Z čoho ju viažeme"** s konkrétnymi odrodami (foto-výrez alebo farebná
+  vzorka), prvky dôvery, ďalšie kytice, CTA → **existujúci** kontakt-formulár
+  (`?typ=kytica&zhrnutie=…`, predvyplnenie sa needuplikovalo) + **Product JSON-LD**
+  (AggregateOffer, cena od–do) — vrstva pre Google aj AI vyhľadávače (GEO).
+- **Nahradenie skladačky:** `/konfigurator` a `sections/konfigurator.tsx` **zmazané**,
+  v `next.config.ts` **redirect** starej cesty na `/kytice`. Prelinky z `/obchod`,
+  `/atelier` (`katalogPrelink`) a `/ponuka` (kategória „Hotové kytice" + CTA)
+  vedú na katalóg; Domov ťahá sezónny výber z katalógu (karty vedú na detail).
+  **Skladací `kytica-vizual.tsx` z K1 sa nemerguje** — z K1 sme prevzali len
+  **dáta odrôd a 10 webp výrezov** (`public/kvetinarstvo/kvety/`).
+- **Fotky:** žiadne nové sa negenerovali. **9 z 12 kytíc** používa existujúce
+  licencované fotky (priradené podľa toho, čo na nich reálne je), 3 majú palete
+  verný placeholder. Doplnenie = pridať cestu do `content.ts`, bez zásahu do kódu.
+  Licencie doplnené do `images/LICENSES.md`.
+
+**Overené:** `npm run lint` + `npm run build` zelené (24 stránok šablóny, všetko SSG);
+**`visual-qa` v prehliadači** (desktop/tablet/mobil, 9 ciest) — **0 nálezov**: 1×`h1`,
+žiadny horizontálny scroll, 0 chýb v konzole, žiadny rozbitý obrázok, viditeľný fokus.
+Dve veci, ktoré strojová kontrola nechytila a našiel som ich na screenshotoch, sú
+opravené: osamotená druhá fotka v galérii detailu (teraz na celú šírku stĺpca) a
+biela vzorka odrody bez výrezu (teraz orámovaný krúžok, nie „chýbajúci obrázok").
+
+**Brána kvality `qa-a11y`** (číta kód + reálny build výstup) vrátila **2 nálezy, oba
+opravené** ešte pred odovzdaním:
+1. **Preskočená úroveň nadpisu na `/kytice`** — h1 → h3 (karty) → h2, lebo sekcia
+   s filtrom a mriežkou mala len vizuálny „eyebrow", nie nadpis. Pridaný **h2
+   „Vyberte si kyticu"**, redundantný eyebrow odstránený a „Zrušiť filtre" presunuté
+   k počtu výsledkov. Overené v statickom HTML: h1 → h2 → h3.
+2. **Dotykový cieľ filtračných chipov 40 px** namiesto 44 px, ktoré šablóna používa
+   všade inde. Zjednotené na 44 px.
+   Zvyšok checklistu prešiel bez nálezov (kontrast overený na reálnych dvojiciach,
+   mriežka v HTML aj bez JS, natívne rádiá, licencie, žiadne AI frázy, žiadny mŕtvy kód).
+
+**Revízia majiteľa (v tom istom sedení) — filter prekopaný:**
+- Doplnená príležitosť **„Pre mamu"** (5 kytíc), lebo v katalógu chýbala.
+- Majiteľ vytkol, že tri riadky veľkých piluliek s farebnými bodkami sú **priveľmi
+  podobné latke** a chipy sú veľké. Cez skill **`design-shotgun`** sme vygenerovali
+  **5 zámerne odlišných smerov** filtra (tichý typografický index · bočný stĺpec ·
+  rozbaľovačky so štítkami · filtračná karta · editorial pás) a k víťazovi ešte
+  2 podvarianty umiestnenia štítkov.
+- **Vybraný smer: „tichý typografický index" + štítky pod filtrom.** Voľby sú
+  obyčajný text v troch riadkoch medzi vlasovými linkami, aktívna je podčiarknutá
+  hlinou; vybrané filtre sa pod blokom zopakujú ako šalviové štítky s krížikom
+  (jedno kliknutie = odobratie jedného filtra). Žiadne pilulky vo filtri → prestal
+  súťažiť s fotkami kytíc a nepodobá sa na latku. Dotykový cieľ 44 px drží
+  `min-h`, podčiarknutie nesie vnútorný `span`, `aria-pressed` ostáva.
+- Overené naživo v prehliadači: kliknutie „Pre mamu" + „ružová" → „2 kytice
+  v tomto výbere", štítky sa zobrazia, mriežka sa prefiltruje.
+
+**Rozhodnutia, ktoré stoja za zapamätanie:**
+- **Karty kytíc majú vlastný súbor** (`sections/kytice.tsx`) oddelene od
+  `sections/karty.tsx` — používa ich server (Domov, detail) aj klientský filter,
+  takže do klientského balíka nejde galéria ani teaser ateliéru.
+- **Filtre sú progresívne vylepšenie:** v statickom HTML je celá mriežka 12 kytíc aj
+  bez JS (ponaučenie z M2a — nič podstatné negatovať cez klientský stav).
+- **Jedna dátová sada odrôd** poháňa zloženie kytíc aj foto-výrezy; žiadny druhý
+  zoznam kvetov v šablóne.
+
+**Čaká:**
+- **Ľudská revízia majiteľa** (vizuál + texty) a potom **merge do `main`**.
+- **E1-assety (KREATÍVA, samostatné sedenie):** fotky pre Red Naomi, Tichú rozlúčku
+  a Slnečné ráno + prípadne druhé uhly k ostatným kyticiam.
+- **E2** (Woo Store API ako zdroj) a **E3** (produkt agent) podľa `plan-agenti.md`.
+- Menšia dizajnová položka z minulého sedenia (smer **V4** do sekcie Služby na
+  Domove) — stále otvorená, nie je blocker.
+
 ## 16.8.2026 — Nástrojové sedenie — vlastné cloud skilly `design-shotgun` + `visual-qa` (inšpirované gstackom)
 
 **Typ:** nástroje/workflow (žiadny kód projektu, žiadny plán — len `.claude/skills/`

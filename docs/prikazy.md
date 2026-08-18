@@ -7,7 +7,7 @@
 
 1. Ako čítať príkazy
 2. Keď terminál „zamrzne" / nereaguje (odblokovanie)
-3. GIT — sledovanie zmien v kóde
+3. GIT — sledovanie zmien v kóde (vrátane **„čo presne robí každý príkaz"**)
 4. NPM a Next.js — frontend
 5. Lokálny náhľad — spustiť web
 6. Python — orchestrátor / agenti
@@ -149,6 +149,60 @@ git pull origin claude/florist-sales-model-replan-h56mov # stiahni jej obsah
 na Macu; keď chceš zmeny vidieť v **Obsidiane**, spravíš **`git pull`** (alebo to
 robí automaticky plugin „Obsidian Git"). GitHub = hlavná záloha, Obsidian = ďalšia
 lokálna záloha tvojich poznámok (`docs/`).
+
+### Čo presne robí každý príkaz (keď si ideš pozrieť vetvu zo sedenia)
+
+Toto je celá postupnosť, ktorou si u seba naživo otvoríš prácu z Claude sedenia.
+Príkazy sú vysvetlené po jednom — nie sú to zaklínadlá.
+
+```bash
+cd /Users/drahoslauda/www/ai-nexus-link   # 1. skoč do koreňa repa
+git fetch origin                          # 2. zisti, čo je nové na GitHube
+git checkout <nazov-vetvy>                # 3. prepni súbory na tú vetvu
+git pull                                  # 4. dotiahni jej najnovší obsah
+cd frontend                               # 5. vstúp do priečinka frontendu
+npm run dev                               # 6. spusti web na svojom počítači
+```
+
+**1. `cd /Users/drahoslauda/www/ai-nexus-link`**
+Obyčajné „prejdi do priečinka" (nie je to gitový príkaz). Všetky ďalšie príkazy
+musia bežať vnútri repa, inak Git nevie, s čím pracuje. Späť o úroveň vyššie sa
+dostaneš cez `cd ..`.
+
+**2. `git fetch origin`**
+Stiahne z GitHubu informácie o všetkých vetvách a nových commitoch — **ale nič ti
+nezmení v súboroch**. Je to ako „stiahni si poštu, ale zatiaľ ju neotváraj". Bez
+tohto by tvoj Mac o novej vetve z čerstvého sedenia ani nevedel.
+
+**3. `git checkout <nazov-vetvy>`**
+Prepne tvoj pracovný priečinok na tú vetvu — súbory na disku sa reálne prepíšu na
+verziu z nej (objavia sa nové súbory, zmazané zmiznú). **`main` tým nepokazíš**,
+späť sa vrátiš cez `git checkout main`. Ak si na vetve už bol, Git len napíše
+„Already on…".
+
+**4. `git pull`**
+Dotiahne najnovšie commity **pre vetvu, na ktorej práve stojíš**, a zapíše ich do
+súborov. Rozdiel oproti bodu 2: `fetch` len oznámi „je tam nové", `pull` to naozaj
+natiahne. Preto je poradie fetch → checkout → pull: Git najprv o vetve zistí, potom
+sa na ňu prepneš, a nakoniec dotiahneš všetko, čo na nej odvtedy pribudlo.
+
+**5. `cd frontend`**
+Vojde do priečinka `frontend/` vnútri repa. Next.js aplikácia a jej `package.json`
+so skriptmi žijú tam, nie v koreni repa — preto sa spúšťa odtiaľ.
+
+**6. `npm run dev`**
+Spustí vývojový server Next.js (skript `dev` z `frontend/package.json`). Zostane
+bežať a **„drží" terminál** — kým ho nezastavíš cez `Ctrl+C`, nemôžeš doň písať
+ďalšie príkazy. Vypíše adresu `http://localhost:3000`, čo je web bežiaci **len na
+tvojom počítači** (nikto iný ho nevidí). Keď sa v kóde niečo zmení, sám sa prekreslí.
+
+> **Netreba `npm install`**, pokiaľ v sedení nepribudol nový balík. Ak by terminál
+> hlásil chýbajúci modul, spusti v `frontend/` príkaz `npm install` a potom znova
+> `npm run dev`.
+>
+> **Hlavná stránka `http://localhost:3000/` a blog** ťahajú obsah z WordPressu, takže
+> lokálne bez env premenných budú prázdne — to je v poriadku. Šablóny pod
+> `/ukazky/*` sú sebestačné a bežia celé.
 
 ---
 

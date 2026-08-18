@@ -112,7 +112,7 @@ export function KategorieKarty({
           <p className="mt-2 flex-1 text-flora-body text-flora-moss">{k.popis}</p>
           <div className="mt-5">
             <Cta k={k.href} variant="ghost">
-              Objednať
+              {k.cta}
             </Cta>
           </div>
         </li>
