@@ -129,6 +129,21 @@ preto, aby stav nežil v chate.
 **Ponaučenie:** keď ponúkam „mám to zapísať do docs?", pýtam sa na niečo, čo je
 súčasť práce. Zápis sa robí, neponúka.
 
+**Dve prevádzkové ponaučenia z toho istého dňa** (obe nás reálne zdržali):
+
+1. **Nepredpokladať cestu k repu.** Sedenie dalo príkaz `cd ~/ai-nexus-link` a
+   Mac odpovedal „No such file or directory" — repo je inde. Majiteľ pritom už
+   v priečinku stál. **Správne: `pwd`, alebo príkazy písať relatívne k miestu,
+   kde už je** (`cd orchestrator`, nie `cd ~/…/orchestrator`).
+2. **Obsidian prepisuje súbory v `docs/` a blokuje `git pull`.** `docs/skilly.md`
+   mal lokálne preformátovanú tabuľku (nie zmenu od majiteľa) a keďže ten istý
+   súbor medzitým prepísal PR #71, pull skončil na „Your local changes would be
+   overwritten". **Riešenie, ktoré nič nestratí:** najprv záloha
+   (`cp docs/skilly.md ~/Desktop/skilly-zaloha.md`), potom
+   `git checkout -- docs/skilly.md`, až potom `git pull`. Nikdy nezahadzovať
+   lokálne zmeny bez zálohy a bez toho, aby ich majiteľ videl (`git diff`).
+   Toto sa bude opakovať — Obsidian sa nezmení.
+
 ## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
 
 **Typ:** kód (bez generovania fotiek — tie sú kreatíva, samostatné sedenie).
