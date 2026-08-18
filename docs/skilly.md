@@ -14,6 +14,39 @@
   Claude spustí **v rámci** sedenia na izolovanú prácu (napr. QA audit). Žije v
   `.claude/agents/<nazov>.md`. Je to „podsedenie k problému" bez studeného štartu.
 
+### Na konkrétnom príklade (aby to bolo úplne jasné)
+
+Rozdiel najlepšie ukazuje dvojica, ktorú používame na kontrolu kvality:
+
+- **`visual-qa` = skill, a je nový.** Vznikol 16. 8. 2026 v nástrojovom sedení
+  spolu s `design-shotgun` (oba „inšpirované gstackom"). Skill je **zabalený
+  postup + skript, ktorý vykonáva Claude vo svojom kontexte** — spustí build,
+  naštartuje server, preklikne stránky v troch veľkostiach, odfotí ich a odmeria
+  horizontálny scroll, počet `h1`, chyby v konzole, rozbité obrázky a viditeľný fokus.
+- **`qa-a11y` = sub-agent, a je starší.** Existuje od budovania šablóny
+  kvetinárstva (M2), spolu s `ui-ux-designer`, `frontend-dev` a `sk-copywriter`.
+  Sub-agent **nie je postup** — je to **samostatný pracovník s vlastným modelom
+  a vlastným kontextom**, ktorého poveríš úlohou a on vráti nález. Preto vidí veci,
+  ktoré Claude v rozpracovanom sedení prehliadne: pozerá sa na kód **čerstvými
+  očami**, nie tými, čo ho písali.
+
+Skrátene: **skill = „takto sa to má robiť"** (návod, ktorý Claude nasleduje),
+**sub-agent = „nech sa na to pozrie niekto iný"** (druhá hlava s vlastným úsudkom).
+
+### Tri vrstvy kontroly — každá chytí iný druh chyby
+
+⭐ **Ponaučenie z realizačného sedenia E1** (katalóg kytíc, 17. 8. 2026): tieto
+vrstvy sa **nenahrádzajú**. „`visual-qa` prešiel" ešte neznamená hotovo — a naopak.
+
+| Vrstva | Čo našla v E1 | Čo nikdy nenájde |
+|---|---|---|
+| **`visual-qa`** (stroj) | nič — 0 nálezov, merateľné veci boli v poriadku | vkus, rytmus, „vyzerá to ako chyba" |
+| **Vlastné oči na screenshotoch** | osamotená druhá fotka v galérii; biela vzorka odrody pôsobiaca ako chýbajúci obrázok | to, čo nie je vidieť (sémantika, kontrast v číslach) |
+| **`qa-a11y`** (sub-agent, číta kód) | preskočená úroveň nadpisu h1 → h3 → h2; dotykový cieľ 40 px namiesto 44 px | ako to reálne vyzerá v prehliadači |
+
+Preto je poradie pred odovzdaním: **`visual-qa` → pozri screenshoty vlastnými
+očami → `qa-a11y` → až potom ľudská revízia majiteľa.**
+
 ## Ako ich vyvolať (tri spôsoby)
 
 1. **Skill automaticky** — len povedz zámer. Napr. *„ukáž mi pár smerov hero
