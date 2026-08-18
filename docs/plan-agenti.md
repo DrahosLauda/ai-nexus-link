@@ -1571,6 +1571,99 @@ Over `npm run lint` + `npm run build`. Vetva claude/... , commit + push; merge d
 main až po mojom výslovnom súhlase.
 ```
 
+> **E1 je hotové a zlúčené (PR #67, aug 2026).** Prompt vyššie ostáva ako záznam
+> zadania. Nasledujúce dve sedenia sú pripravené nižšie.
+
+## Štartové prompty pre ďalšie sedenia (pripravené po E1)
+
+> **Odporúčané poradie: najprv A (menšie, odblokované), potom B.** Obe točia
+> okolo chatbota, ale **nemiešaj ich do jedného sedenia** — A je obsah, B je
+> stavba nového modulu. Fotky kytíc sú tretia, nezávislá vec (kreatíva) a čakajú,
+> kým ich majiteľ dodá.
+
+### A — Chatbot má vedieť, že staviame weby a máme šablóny (OBSAH + RAG)
+
+```
+Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md
+a docs/rag-chatbot.md. Rešpektuj CLAUDE.md pravidlá spolupráce (go-live a predaj
+ZAMKNUTÉ; 1 sedenie = 1 typ).
+
+Toto je sedenie typu OBSAH + AGENT (RAG) — nestavia sa nový modul.
+
+Problém: náš chatbot na digitalnapomoc.sk nevie, že staviame moderné weby a máme
+knižnicu odvetvových šablón (prvá hotová: kvetinárstvo „Boma Flora", zlúčená do
+main v PR #67). Príčina NIE JE zastaraný index — chýba samotný obsah.
+`orchestrator/rag_index.py` indexuje presne tri zdroje: články z WordPressu,
+pole `faqs` a `heroBullets`/`steps` z `frontend/lib/content.ts`. Šablóna nie je
+v žiadnom z nich (žije pod /ukazky, ktoré je zámerne noindex demo).
+
+Úloha: doplniť obsah tak, aby chatbot vedel odpovedať na otázky typu „staviate
+aj weby?", „viete spraviť web pre kvetinárstvo?", „ako vyzerá vaša práca?" —
+konkrétne a pravdivo, s citáciou zdroja.
+
+1) ROZHODNI CESTU (a zdôvodni ju, nie obe naraz):
+   (a) doplniť FAQ + výkladnú skriňu v `frontend/lib/content.ts` — najlacnejšie,
+       hneď v indexe; alebo
+   (b) krátky článok cez Writer agenta — má aj SEO/GEO hodnotu, ale je to obsah
+       navyše na údržbu; alebo
+   (c) rozšíriť `rag_index.py` o ďalšie zdroje (service karty,
+       /headless-wordpress) — najväčší zásah, rob len ak (a) nestačí.
+2) NAPÍŠ OBSAH v našom tóne (žiadne generické AI frázy — zoznam v
+   docs/sablony-kvalita.md; žiadne vymyslené referencie, počty klientov ani
+   ocenenia). Hovor o tom, čo reálne vieme: moderný Next.js frontend nad
+   klientovým WordPressom, klient si spravuje obsah v známom admine, hotové
+   odvetvové šablóny, prvá je kvetinárstvo.
+3) ROZHODNUTIE MAJITEĽA (opýtaj sa v sedení, ak to nie je v zadaní): má chatbot
+   na ukážku aj ODKAZOVAŤ (/ukazky/kvetinarstvo)? Je to fiktívna značka Boma
+   Flora a noindex demo — technicky odkaz nič nekazí, ale je to obsahové
+   rozhodnutie, nie technické.
+4) RE-INDEX A OVERENIE: spusti `python rag_index.py` (v orchestrator/ s venv) a
+   preskúšaj chatbota reálnymi otázkami; over, že odpovedá z NOVÉHO zdroja a
+   cituje ho. Bez overenia sedenie nezatváraj.
+
+Mantinely: slovenčina; tajomstvá len v env; nič nesľubuj za majiteľa; go-live
+nenavrhuj. Vetva claude/... , commit + push; merge do main až po mojom súhlase.
+Na konci zapíš do docs/dennik.md a odškrtni položku v Backlogu.
+```
+
+### B — AI poradca v katalógu kytíc (AGENTI; prevaha č. 1 z „Naša úroveň")
+
+```
+Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md,
+docs/rag-chatbot.md a docs/plan-agenti.md (sekcia „Kvetinový e-shop na kľúč (M7)",
+najmä „Naša úroveň — v čom prekonávame latku"). Rešpektuj CLAUDE.md pravidlá
+spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ).
+
+Toto je sedenie typu AGENTI. Cieľ: AI poradca priamo v katalógu kytíc
+(/ukazky/kvetinarstvo/kytice) — prevaha č. 1 oproti latke, ktorú referencia nemá.
+
+Zážitok: bublina „Poradím s výberom" v katalógu. Poradca sa spýta na príležitosť,
+rozpočet a pre koho, a ODPORUČÍ KONKRÉTNE HOTOVÉ KYTICE Z KATALÓGU — s názvom,
+cenou od a odkazom na detail. Žiadna skladačka, žiadna fotorealistická postava.
+
+Mantinely, ktoré rozhodujú o kvalite:
+1) ZDROJ PRAVDY SÚ DÁTA KATALÓGU, nie model. Odporúčanie musí vzniknúť z
+   `templates/kvetinarstvo/katalog.ts` (vsetkyKytice/filtrujKytice/cenaOd) —
+   model smie vyberať a formulovať, NIE vymýšľať kytice, ceny či odrody.
+   Halucinovaná kytica = chyba, ktorá zabije dôveru v celý model.
+2) ŽIADNA DUPLICITA MODULU: prepoužij existujúci chat (`components/chat-widget.tsx`,
+   `/api/chat`) — šablóna dodá len konfiguráciu, obsah a vizuálny obal. Pozor na
+   ponaučenie z M2a: globálny widget z root layoutu sa na /ukazky/* vypína, takže
+   poradca musí byť vedomé, lokálne zapnutý prvok šablóny, nie presakujúci globál.
+3) PRIPRAVENÉ NA E2: po prepnutí katalógu na WooCommerce Store API sa poradca
+   nesmie prepisovať — čítaj cez tie isté funkcie v katalog.ts.
+4) VÝKON A PRÍSTUPNOSŤ: bublina nesmie zhodiť Lighthouse (lazy, žiadny ťažký
+   balík navyše), plná ovládateľnosť klávesnicou, viditeľný fokus, aria-live pre
+   prichádzajúce odpovede, reduced-motion. Brána: docs/sablony-kvalita.md.
+5) PREDAJ ZAMKNUTÝ: poradca odporúča a odkazuje na detail kytice, nikdy
+   neobjednáva ani nezbiera platbu; objednávka končí existujúcim formulárom
+   (?typ=kytica&zhrnutie=).
+
+Over `npm run lint` + `npm run build`, prejdi visual-qa a qa-a11y. Slovenčina;
+demo pod /ukazky, noindex. Vetva claude/... , commit + push; merge do main až po
+mojom výslovnom súhlase. Na konci zápis do docs/dennik.md.
+```
+
 ---
 
 # PLÁN — Konfigurátor kytíc „Kvetinársky ateliér s Klárou" (⛔ NAHRADENÝ vyššie — história/ponaučenie, M7, aug 2026)
