@@ -19,8 +19,14 @@ Platia vždy — netreba ich opakovať v každom sedení.
 - **Vždy presné príkazy do terminálu**, krok po kroku; žiadne placeholdery ako
   `<ID>` bez vysvetlenia, čím ich nahradiť.
 - **Žiadny zhon.** Tempo určujem ja; nepýtaj sa dvakrát na to isté; buď rozhodný.
-- **Na konci sedenia** zapíš do `docs/dennik.md` (čo hotové, čo naživo, čo čaká).
-- Detail konvencie: `docs/ako-viest-sedenia.md`.
+- **Ukončenie sedenia je povinné, nie voliteľné** — sedenie sa nezavrie bez
+  oboch bodov a majiteľ si o ne nemá pýtať:
+  1. zápis do `docs/dennik.md` (čo hotové, čo naživo, čo čaká, ponaučenia)
+     + odškrtnutie/prepísanie dotknutých položiek v Backlogu;
+  2. **štartovací prompt pre nadväzujúce sedenie do `docs/plan-agenti.md`**,
+     kým je kontext čerstvý. Prompt, ktorý ostane v chate, je stratený prompt.
+     Ak nič nenadväzuje, napíš to do denníka jednou vetou.
+- Detail konvencie: `docs/ako-viest-sedenia.md` (sekcia „Ukončenie sedenia").
 
 ## Čo je AI Nexus Link
 
