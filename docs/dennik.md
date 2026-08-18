@@ -134,7 +134,11 @@ súčasť práce. Zápis sa robí, neponúka.
 1. **Nepredpokladať cestu k repu.** Sedenie dalo príkaz `cd ~/ai-nexus-link` a
    Mac odpovedal „No such file or directory" — repo je inde. Majiteľ pritom už
    v priečinku stál. **Správne: `pwd`, alebo príkazy písať relatívne k miestu,
-   kde už je** (`cd orchestrator`, nie `cd ~/…/orchestrator`).
+   kde už je** (`cd orchestrator`, nie `cd ~/…/orchestrator`). **Trapné na tom je,
+   že správna cesta `/Users/drahoslauda/www/ai-nexus-link` je zapísaná
+   v `docs/prikazy.md`** — stačilo prečítať vlastnú dokumentáciu namiesto hádania.
+   Doplnená tam preto aj **„Rutina po každom sedení"** (`pwd` → `git status` →
+   `git pull` → `git log`).
 2. **Obsidian prepisuje súbory v `docs/` a blokuje `git pull`.** `docs/skilly.md`
    mal lokálne preformátovanú tabuľku (nie zmenu od majiteľa) a keďže ten istý
    súbor medzitým prepísal PR #71, pull skončil na „Your local changes would be
@@ -142,7 +146,8 @@ súčasť práce. Zápis sa robí, neponúka.
    (`cp docs/skilly.md ~/Desktop/skilly-zaloha.md`), potom
    `git checkout -- docs/skilly.md`, až potom `git pull`. Nikdy nezahadzovať
    lokálne zmeny bez zálohy a bez toho, aby ich majiteľ videl (`git diff`).
-   Toto sa bude opakovať — Obsidian sa nezmení.
+   Toto sa bude opakovať — Obsidian sa nezmení, preto je celý postup zapísaný
+   v `docs/prikazy.md` („Keď `git pull` odmietne").
 
 ## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
 
