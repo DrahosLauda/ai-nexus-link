@@ -349,27 +349,41 @@ opravné poznámky doplnené v `plan-agenti.md`.
 - [ ] 🔎 **Spustenie:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
   — až po odškrtnutí bodov vyššie.
 
-**🟢 Kvetinový e-shop na kľúč (M7) — čo ostáva po E1** *(katalóg je v `main`, PR #67)*:
+**🟢 PRIPRAVENÉ — nečaká na nič, dá sa spustiť hneď** *(vyber si, čo ide ďalej)*:
 
-- [ ] 📸 **Fotky pre 3 kytice bez obrázka** — Red Naomi, Tichá rozlúčka, Slnečné ráno
-  (+ prípadne druhé uhly k ostatným). **Čaká na majiteľa** — dodá vlastné alebo sa
-  vygenerujú v samostatnom KREATÍVNOM sedení (Higgsfield/Gemini; Kling CDN je
-  blokovaný egressom). Doplnenie = pridať cestu do `fotky[]` v `content.ts`,
-  **žiadny zásah do kódu**; potom doplniť riadok do `images/LICENSES.md`.
-- [ ] 🤖 **AI poradca v katalógu kytíc** — prevaha č. 1 z „Naša úroveň". Nečaká na
-  nič (dáta katalógu aj chat modul existujú). **Hotový štartový prompt B**
-  v `plan-agenti.md`.
-- [ ] 🛒 **E2 — WooCommerce ako zdroj katalógu.** **Blokované infraštruktúrou:**
-  treba samostatnú inštanciu WordPress + WooCommerce (**nemiešať** s
-  `wp.digitalnapomoc.sk`). Kód je pripravený — mení sa len telo funkcií v
-  `templates/kvetinarstvo/katalog.ts`, stránky ani komponenty nie.
-- [ ] 🧑‍🌾 **E3 — produkt agent** (generuje kytice s popismi ako Woo koncepty).
-  **Stojí na E2.**
+- [ ] 🤖 **AI poradca v katalógu kytíc** (M7, prevaha č. 1 z „Naša úroveň").
+  Bublina „Poradím s výberom" odporučí konkrétne HOTOVÉ kytice z katalógu.
+  Dáta (`katalog.ts`) aj chat modul (`/api/chat`, `chat-widget`) už existujú.
+  **Hotový štartový prompt B** v `plan-agenti.md`. Typ sedenia: agenti.
+- [ ] 💬 **Chatbot má vedieť, že staviame weby a máme šablóny** — ⚠️ **odblokované**
+  zlúčením kvetinárstva do `main` (PR #67). Nie je to re-index, chýba obsah
+  v indexovaných zdrojoch. **Hotový štartový prompt A** v `plan-agenti.md`.
+  Typ sedenia: obsah + RAG. *(Detail nižšie v sekcii „RAG chatbot".)*
 - [ ] 🎨 **Smer V4 do sekcie Služby na Domove** — majiteľ ho vybral v demo
   `design-shotgun` (asymetrický feature: Svadby ako veľký blok + 2×2 karty).
-  Samostatné DIZAJNOVÉ sedenie, `SluzbyZoznam` v `sections/bloky.tsx`, data-driven.
+  `SluzbyZoznam` v `sections/bloky.tsx`, data-driven. Typ sedenia: dizajn.
+
+> **Odporúčané poradie:** najprv 💬 (menšie, práve odblokované), potom 🤖.
+> **Nemiešať do jedného sedenia** — jedno je obsah, druhé stavba modulu.
+
+**🔵 ČAKÁ NA MAJITEĽA — sedenie s tým samo nepohne:**
+
+- [ ] 📸 **Fotky pre 3 kytice bez obrázka** — Red Naomi, Tichá rozlúčka, Slnečné
+  ráno (+ prípadne druhé uhly k ostatným). Majiteľ ich **dodá**, alebo sa
+  vygenerujú v samostatnom KREATÍVNOM sedení (Higgsfield/Gemini; Kling CDN je
+  blokovaný egressom). Doplnenie = pridať cestu do `fotky[]` v `content.ts`,
+  **žiadny zásah do kódu**; potom riadok do `images/LICENSES.md`.
+- [ ] 🛒 **E2 — WooCommerce ako zdroj katalógu.** Potrebuje **samostatnú inštanciu
+  WordPress + WooCommerce** (**nemiešať** s `wp.digitalnapomoc.sk`). Kód je
+  pripravený — mení sa len telo funkcií v `templates/kvetinarstvo/katalog.ts`,
+  stránky ani komponenty nie.
+- [ ] 🧑‍🌾 **E3 — produkt agent** (generuje kytice s popismi ako Woo koncepty).
+  **Stojí na E2.**
 - [ ] 📊 **Domerať Lighthouse** pre šablónu kvetinárstva — v cloud sedení chýba CLI,
-  meria sa na deployi (cieľ ≥ 95, a11y 100).
+  meria sa na deployi (cieľ ≥ 95, prístupnosť 100).
+- [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** — viď červená sekcia
+  vyššie. Kód vieme spraviť kedykoľvek, ale **kedy sa to rieši, rozhoduje majiteľ**
+  (súvisí so spustením, ktoré je zamknuté).
 
 **🟡 Agent / orchestrátor (kvalita obsahu):**
 
