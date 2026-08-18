@@ -40,7 +40,14 @@ export interface Sluzba {
 export type Sezona = "jar" | "leto" | "jesen" | "zima" | "celorocne";
 
 /** Príležitosť, ku ktorej sa kytica hodí (filter v katalógu). */
-export type Prilezitost = "narodeniny" | "vyrocie" | "svadba" | "smutok" | "gratulacia" | "potesenie";
+export type Prilezitost =
+  | "narodeniny"
+  | "vyrocie"
+  | "svadba"
+  | "premamu"
+  | "smutok"
+  | "gratulacia"
+  | "potesenie";
 
 /**
  * Jedna rezaná odroda, z ktorej viažeme. Poháňa sekciu „Z čoho je" na detaile
@@ -713,6 +720,7 @@ export const prilezitostLabel: Record<Prilezitost, string> = {
   narodeniny: "Narodeniny",
   vyrocie: "Výročie a láska",
   svadba: "Svadba",
+  premamu: "Pre mamu",
   smutok: "Smútočná",
   gratulacia: "Blahoželanie",
   potesenie: "Pre radosť",
@@ -736,6 +744,7 @@ export const katalogPrilezitosti: Prilezitost[] = [
   "narodeniny",
   "vyrocie",
   "svadba",
+  "premamu",
   "smutok",
   "gratulacia",
   "potesenie",
@@ -809,7 +818,7 @@ export const katalogKytice: Kytica[] = [
     ],
     trvacnost: "7 – 10 dní vo váze",
     vCene: V_CENE_ZAKLAD,
-    prilezitosti: ["narodeniny", "potesenie", "gratulacia"],
+    prilezitosti: ["narodeniny", "potesenie", "gratulacia", "premamu"],
     farba: "oranzova",
     typ: "kytica",
     nalepka: "sezonne",
@@ -835,7 +844,7 @@ export const katalogKytice: Kytica[] = [
     ],
     trvacnost: "6 – 8 dní vo váze (hortenzia potrebuje veľa vody)",
     vCene: V_CENE_ZAKLAD,
-    prilezitosti: ["narodeniny", "gratulacia", "potesenie"],
+    prilezitosti: ["narodeniny", "gratulacia", "potesenie", "premamu"],
     farba: "biela",
     typ: "kytica",
   },
@@ -982,7 +991,7 @@ export const katalogKytice: Kytica[] = [
     ],
     trvacnost: "7 – 10 dní vo váze",
     vCene: V_CENE_ZAKLAD,
-    prilezitosti: ["narodeniny", "vyrocie", "potesenie"],
+    prilezitosti: ["narodeniny", "vyrocie", "potesenie", "premamu"],
     farba: "ruzova",
     typ: "kytica",
   },
@@ -1011,7 +1020,7 @@ export const katalogKytice: Kytica[] = [
       "vrecúško výživy pre rezané kvety",
       "ručne písaný lístok so vzkazom",
     ],
-    prilezitosti: ["vyrocie", "narodeniny", "potesenie"],
+    prilezitosti: ["vyrocie", "narodeniny", "potesenie", "premamu"],
     farba: "ruzova",
     typ: "aranzman",
   },
@@ -1039,7 +1048,7 @@ export const katalogKytice: Kytica[] = [
       "darčekový štítok s ručne písaným vzkazom",
       "vrecúško výživy pre rezané kvety",
     ],
-    prilezitosti: ["potesenie", "gratulacia"],
+    prilezitosti: ["potesenie", "gratulacia", "premamu"],
     farba: "cervena",
     typ: "kytica",
   },
