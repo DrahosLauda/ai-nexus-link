@@ -70,6 +70,18 @@ export const faqs = [
     q: "Čo ak niečo prestane fungovať?",
     a: "Zostávame na blízku. Ku každému riešeniu ponúkame podporu — napíšete nám a vyriešime to, zvyčajne ešte v ten deň.",
   },
+  {
+    q: "Staviate aj weby, alebo len automatizácie?",
+    a: "Weby robíme rovnako ako automatizácie. Staviame ich ako headless WordPress: obsah si naďalej spravujete vo WordPresse, na ktorý ste zvyknutí, a návštevníkom sa zobrazuje nový, rýchly frontend, ktorý dodáme my. Tento web je postavený presne tak. Ako to funguje, rozpisujeme na stránke digitalnapomoc.sk/headless-wordpress.",
+  },
+  {
+    q: "Máte pripravený web pre moje odvetvie?",
+    a: "Budujeme knižnicu odvetvových šablón — hotových viacstránkových webov, ktoré vašej firme prispôsobíme textami, farbami a fotkami. Prvá dokončená je šablóna pre kvetinárstvo: katalóg kytíc s filtrovaním, objednávka, svadby a eventy aj blog. Ďalšie odvetvia pribúdajú. Ak to vaše zatiaľ v knižnici nie je, web postavíme od základu — napíšte nám, čo potrebujete.",
+  },
+  {
+    q: "Môžem si pozrieť, ako vaša práca vyzerá?",
+    a: "Áno, kvetinárstvo máme ako živú ukážku na digitalnapomoc.sk/ukazky/kvetinarstvo — dá sa preklikať ako bežný web. „Boma Flora“ je vymyslená značka a obsah je ukážkový; reálne na nej vidíte dizajn, rýchlosť a to, ako riešime objednávku. Druhou ukážkou je tento web — beží na rovnakej technológii.",
+  },
 ];
 
 /**

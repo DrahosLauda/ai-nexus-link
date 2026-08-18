@@ -3,6 +3,83 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## 18.8.2026 — Obsahové sedenie — chatbot vie o weboch a o šablóne kvetinárstva
+
+**Typ:** obsah + RAG (žiadny nový modul, žiadny zásah do indexera ani do widgetu).
+**Vetva:** `claude/chatbot-web-content-7csrk6`. **Stav: čaká na revíziu a merge.**
+
+**Problém:** chatbot na `digitalnapomoc.sk` nevedel, že staviame moderné weby a že
+máme knižnicu odvetvových šablón (prvá hotová: kvetinárstvo „Boma Flora", v `main`
+od PR #67). Overené v `orchestrator/rag_index.py` — indexujú sa presne **tri**
+zdroje: WP články, pole `faqs` a `heroBullets`/`steps` z `frontend/lib/content.ts`.
+Šablóna nebola v žiadnom z nich. **Nešlo o zastaraný index, chýbal samotný obsah.**
+
+**Rozhodnutá cesta: (1) doplniť `faqs`.** Prečo práve táto:
+- `faqs` je **jediný zdroj pravdy naraz pre tri veci** — verejná FAQ sekcia na webe,
+  `FAQPage` JSON-LD (`lib/seo.ts` → `faqSchema`) a RAG index. Jedna zmena, tri efekty.
+- Indexer robí z **každej dvojice otázka/odpoveď vlastný kúsok** — presne tá
+  granularita, akú vyhľadávanie potrebuje pre otázky typu „staviate aj weby?".
+- Cesta (2) článok cez Writera je obsah navyše na údržbu a nič nerieši rýchlejšie;
+  cesta (3) rozšírenie `rag_index.py` je najväčší zásah a nebola potrebná —
+  neminuli sme ani riadok kódu indexera. (YAGNI podľa „rebríka" v `CLAUDE.md`.)
+- `heroBullets`/`steps` som **zámerne nechal tak** — sú to hero tvrdenia a vizuálny
+  obsah domovskej stránky; ich zmena je dizajnovo-marketingové rozhodnutie, nie
+  oprava indexu.
+
+**Čo pribudlo (3 nové FAQ, `frontend/lib/content.ts` — verejne viditeľné):**
+1. *„Staviate aj weby, alebo len automatizácie?"* — headless WordPress vysvetlený
+   po ľudsky (obsah si klient spravuje v známom admine, frontend dodáme my),
+   s odkazom na `/headless-wordpress` a s faktom, že **tento web beží rovnako**.
+2. *„Máte pripravený web pre moje odvetvie?"* — knižnica odvetvových šablón,
+   prispôsobenie textami/farbami/fotkami, **prvá hotová je kvetinárstvo** (katalóg
+   kytíc s filtrovaním, objednávka, svadby a eventy, blog); keď odvetvie chýba,
+   staviame od základu.
+3. *„Môžem si pozrieť, ako vaša práca vyzerá?"* — **odkaz na živú ukážku**
+   `digitalnapomoc.sk/ukazky/kvetinarstvo`, s poctivým priznaním, že „Boma Flora"
+   je vymyslená značka a obsah je ukážkový.
+
+Žiadne vymyslené referencie, počty klientov, ocenenia ani ceny. Texty prešli
+kontrolou proti zoznamu zakázaných AI fráz (`docs/sablony-kvalita.md`).
+
+**Rozhodnutie majiteľa (dopyt v sedení): chatbot NA UKÁŽKU ODKAZUJE.** Podklad
+k rozhodnutiu: web na `/ukazky/kvetinarstvo` **už verejne odkazuje** — sekcia
+„Ukážky" na domovskej stránke (`components/showcase.tsx`) má veľkú kartu Boma Flora
+a položka „Ukážky" je v menu. `noindex` platí pre vyhľadávače, nie pre ľudí, takže
+odkaz z chatbota nie je nová expozícia, len konzistencia. Systémový prompt chatbota
+zakazuje **vymýšľať** URL — URL, ktorá je v kontexte (v texte FAQ), je v poriadku.
+
+**Overené:**
+- `npm run lint` čistý, `npm run build` zelený (41 stránok).
+- Nové FAQ sú v predrenderovanom HTML domovskej stránky **aj** vo `FAQPage` JSON-LD.
+- **Parser indexera preverený na reálnom súbore** — regex z `rag_index.py`
+  (`load_faqs`) vidí **7 dvojíc namiesto pôvodných 4**, teda nové FAQ sa naozaj
+  dostanú do indexu (slovenské úvodzovky „" nerozbijú regex, ASCII `"` v texte nie je).
+
+**Čo NIE JE overené (a prečo — nepredstieram):** re-index a odpovede chatbota.
+Cloud sedenie **nemá** `RAG_DATABASE_URL` ani `GEMINI_API_KEY` (`orchestrator/.env`
+v kontajneri neexistuje), takže `python rag_index.py` sa nedal spustiť.
+**Chatbot to zatiaľ NEVIE** — bude to vedieť až po nasadení a re-indexe.
+
+**Čo čaká na majiteľa (presné kroky, v tomto poradí):**
+1. Revízia vetvy + **merge do `main`** (Railway nasadzuje z `main`) — FAQ sekcia
+   sa objaví na webe hneď po deployi.
+2. **Re-index** — jedna z dvoch ciest:
+   - lokálne na Macu:
+     ```bash
+     cd ~/ai-nexus-link && git pull
+     cd orchestrator && source venv/bin/activate
+     python rag_index.py
+     ```
+   - alebo na Railway: služba **orchestrátora** → **Run now** (spustí pipeline
+     vrátane indexu).
+   - **bez zásahu:** naskočí to samo pri najbližšom behu pipeline **Po/St/Pi 06:00 UTC**.
+   *Pozn.: indexer číta `frontend/lib/content.ts` zo **súborového systému**, takže
+   lokálny beh potrebuje `git pull` — inak zaindexuje staré FAQ.*
+3. **Skúška chatbota** na webe — otázky: „staviate aj weby?", „viete spraviť web
+   pre kvetinárstvo?", „ako vyzerá vaša práca?". Očakávaná odpoveď: konkrétna,
+   so zdrojom **„Časté otázky (FAQ)"** (`…/#faq`) a pri tretej otázke s odkazom
+   na ukážku. Ak odpovie „to zatiaľ neviem" → re-index ešte neprebehol.
+
 ## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
 
 **Typ:** kód (bez generovania fotiek — tie sú kreatíva, samostatné sedenie).
@@ -411,17 +488,13 @@ opravné poznámky doplnené v `plan-agenti.md`.
   vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
 - [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
   (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
-- [ ] **Chatbot nevie o tom, že staviame weby / máme šablóny** (napr. kvetinárstvo
-  ako príklad). Príčina: nie je to v žiadnom indexovanom zdroji (články + FAQ +
-  výkladná skriňa `heroBullets`/`steps`). **Nie je to „re-index", chýba samotný
-  obsah.** Cesty (rozhodnúť v sedení): (1) doplniť FAQ/výkladnú skriňu
-  v `frontend/lib/content.ts` → re-index; (2) krátky článok cez Writer (má aj SEO
-  hodnotu); (3) rozšíriť `rag_index.py` o ďalšie zdroje (service karty,
-  `/headless-wordpress`) — `/ukazky` je noindex demo, opatrne.
-  **✅ ODBLOKOVANÉ (aug 2026):** predpoklad „chváliť sa šablónou až po jej zlúčení
-  do `main`" je splnený — kvetinárstvo je v `main` od PR #67. **Hotový štartový
-  prompt A** v `plan-agenti.md` → „Štartové prompty pre ďalšie sedenia (pripravené
-  po E1)". Otvorené rozhodnutie majiteľa: či má chatbot na demo aj **odkazovať**.
+- [x] **Chatbot nevie o tom, že staviame weby / máme šablóny** — *obsah doplnený
+  18.8.2026 (cesta 1: tri nové FAQ v `frontend/lib/content.ts`, vrátane odkazu na
+  `/ukazky/kvetinarstvo` — odsúhlasené majiteľom).* **Zvyšok je nasadenie:** naživo
+  až po merge do `main` + re-index (`python rag_index.py`, alebo najbližší beh
+  pipeline Po/St/Pi 06:00 UTC). Overenie odpovedí chatbota **ešte neprebehlo** —
+  cloud sedenie nemá `RAG_DATABASE_URL` ani `GEMINI_API_KEY`. Detaily v zázname
+  z 18.8.2026 nižšie.
 - [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
   (detaily `docs/rag-chatbot.md` §9).
 - [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
