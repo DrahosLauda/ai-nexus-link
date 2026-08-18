@@ -6,7 +6,8 @@
 ## 18.8.2026 — Obsahové sedenie — chatbot vie o weboch a o šablóne kvetinárstva
 
 **Typ:** obsah + RAG (žiadny nový modul, žiadny zásah do indexera ani do widgetu).
-**Vetva:** `claude/chatbot-web-content-7csrk6`. **Stav: čaká na revíziu a merge.**
+**Vetva:** `claude/chatbot-web-content-7csrk6`. **Stav: ✅ ZLÚČENÉ do `main`** —
+PR #72. Re-index prebehol, **chatbot overený naživo** (viď koniec záznamu).
 
 **Problém:** chatbot na `digitalnapomoc.sk` nevedel, že staviame moderné weby a že
 máme knižnicu odvetvových šablón (prvá hotová: kvetinárstvo „Boma Flora", v `main`
@@ -55,10 +56,29 @@ zakazuje **vymýšľať** URL — URL, ktorá je v kontexte (v texte FAQ), je v 
   (`load_faqs`) vidí **7 dvojíc namiesto pôvodných 4**, teda nové FAQ sa naozaj
   dostanú do indexu (slovenské úvodzovky „" nerozbijú regex, ASCII `"` v texte nie je).
 
-**Čo NIE JE overené (a prečo — nepredstieram):** re-index a odpovede chatbota.
-Cloud sedenie **nemá** `RAG_DATABASE_URL` ani `GEMINI_API_KEY` (`orchestrator/.env`
-v kontajneri neexistuje), takže `python rag_index.py` sa nedal spustiť.
-**Chatbot to zatiaľ NEVIE** — bude to vedieť až po nasadení a re-indexe.
+**Re-index a overenie (dobehnuté v tom istom sedení, na Macu majiteľa):**
+cloud sedenie nemá `RAG_DATABASE_URL` ani `GEMINI_API_KEY`, takže `rag_index.py`
+spustil majiteľ lokálne po merge. Výsledok: **2 zdroje / 11 nových kúskov**
+(7 FAQ + 4 výkladná skriňa), 21 článkových kúskov bez zmeny, **0 chýb**.
+
+**✅ Chatbot overený naživo na `www.digitalnapomoc.sk`** — všetky tri kontrolné
+otázky odpovedané správne, so zdrojom **„Časté otázky (FAQ)"**:
+- *„staviate aj weby?"* → headless WordPress po ľudsky + knižnica šablôn
+  s kvetinárstvom + odkaz na `/headless-wordpress`.
+- *„viete spraviť web pre kvetinárstvo?"* → hotová šablóna, vymenoval katalóg
+  kytíc s filtrovaním, objednávku, svadby a eventy, blog + **odkaz na živú ukážku**
+  a poctivé „Boma Flora je vymyslená značka".
+- *„ako vyzerá vaša práca?"* → dve ukážky (kvetinárstvo + tento web).
+
+**Ponaučenie do budúcna:** na to, aby chatbot vedel novú vec, **nestačí merge** —
+chatbot číta kúsky z databázy, nie z buildu. Merge zmení web, **re-index zmení
+chatbota**. A `rag_index.py` číta `content.ts` zo súborového systému, takže lokálny
+beh bez `git pull` zaindexuje starý obsah (počas sedenia sa to reálne stalo).
+
+**Drobnosť na neskôr (nie blocker):** v zozname zdrojov pod odpoveďou sa popri
+FAQ ukazujú aj slabo súvisiace články (napr. „CRM systém pre malú firmu"). Je to
+dôsledok pevného `k` vo vyhľadávaní — patrí to k backlogovej položke „Výstup/štýl
+odpovedí (koľko zdrojov ukazovať)", nie k tomuto obsahu.
 
 **Čo čaká na majiteľa (presné kroky, v tomto poradí):**
 1. Revízia vetvy + **merge do `main`** (Railway nasadzuje z `main`) — FAQ sekcia
@@ -488,13 +508,10 @@ opravné poznámky doplnené v `plan-agenti.md`.
   vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
 - [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
   (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
-- [x] **Chatbot nevie o tom, že staviame weby / máme šablóny** — *obsah doplnený
-  18.8.2026 (cesta 1: tri nové FAQ v `frontend/lib/content.ts`, vrátane odkazu na
-  `/ukazky/kvetinarstvo` — odsúhlasené majiteľom).* **Zvyšok je nasadenie:** naživo
-  až po merge do `main` + re-index (`python rag_index.py`, alebo najbližší beh
-  pipeline Po/St/Pi 06:00 UTC). Overenie odpovedí chatbota **ešte neprebehlo** —
-  cloud sedenie nemá `RAG_DATABASE_URL` ani `GEMINI_API_KEY`. Detaily v zázname
-  z 18.8.2026 nižšie.
+- [x] **Chatbot nevie o tom, že staviame weby / máme šablóny** — *hotové a naživo
+  18.8.2026.* Cesta 1: tri nové FAQ v `frontend/lib/content.ts` (vrátane odkazu na
+  `/ukazky/kvetinarstvo` — odsúhlasené majiteľom), PR #72 zlúčené, re-index
+  prebehol, **odpovede overené naživo**. Detaily v zázname z 18.8.2026 nižšie.
 - [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
   (detaily `docs/rag-chatbot.md` §9).
 - [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
