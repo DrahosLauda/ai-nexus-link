@@ -349,6 +349,28 @@ opravné poznámky doplnené v `plan-agenti.md`.
 - [ ] 🔎 **Spustenie:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
   — až po odškrtnutí bodov vyššie.
 
+**🟢 Kvetinový e-shop na kľúč (M7) — čo ostáva po E1** *(katalóg je v `main`, PR #67)*:
+
+- [ ] 📸 **Fotky pre 3 kytice bez obrázka** — Red Naomi, Tichá rozlúčka, Slnečné ráno
+  (+ prípadne druhé uhly k ostatným). **Čaká na majiteľa** — dodá vlastné alebo sa
+  vygenerujú v samostatnom KREATÍVNOM sedení (Higgsfield/Gemini; Kling CDN je
+  blokovaný egressom). Doplnenie = pridať cestu do `fotky[]` v `content.ts`,
+  **žiadny zásah do kódu**; potom doplniť riadok do `images/LICENSES.md`.
+- [ ] 🤖 **AI poradca v katalógu kytíc** — prevaha č. 1 z „Naša úroveň". Nečaká na
+  nič (dáta katalógu aj chat modul existujú). **Hotový štartový prompt B**
+  v `plan-agenti.md`.
+- [ ] 🛒 **E2 — WooCommerce ako zdroj katalógu.** **Blokované infraštruktúrou:**
+  treba samostatnú inštanciu WordPress + WooCommerce (**nemiešať** s
+  `wp.digitalnapomoc.sk`). Kód je pripravený — mení sa len telo funkcií v
+  `templates/kvetinarstvo/katalog.ts`, stránky ani komponenty nie.
+- [ ] 🧑‍🌾 **E3 — produkt agent** (generuje kytice s popismi ako Woo koncepty).
+  **Stojí na E2.**
+- [ ] 🎨 **Smer V4 do sekcie Služby na Domove** — majiteľ ho vybral v demo
+  `design-shotgun` (asymetrický feature: Svadby ako veľký blok + 2×2 karty).
+  Samostatné DIZAJNOVÉ sedenie, `SluzbyZoznam` v `sections/bloky.tsx`, data-driven.
+- [ ] 📊 **Domerať Lighthouse** pre šablónu kvetinárstva — v cloud sedení chýba CLI,
+  meria sa na deployi (cieľ ≥ 95, a11y 100).
+
 **🟡 Agent / orchestrátor (kvalita obsahu):**
 
 - [ ] **Rôznorodejšie úvody článkov** — Writer často začína rovnakým vzorcom
@@ -378,13 +400,14 @@ opravné poznámky doplnené v `plan-agenti.md`.
 - [ ] **Chatbot nevie o tom, že staviame weby / máme šablóny** (napr. kvetinárstvo
   ako príklad). Príčina: nie je to v žiadnom indexovanom zdroji (články + FAQ +
   výkladná skriňa `heroBullets`/`steps`). **Nie je to „re-index", chýba samotný
-  obsah.** Dve cesty (rozhodnúť v samostatnej úlohe): (1) pridať opis „staviame
-  moderné weby, príklad: šablóna kvetinárstvo" do indexovaného obsahu (výkladná
-  skriňa / service karty v `content.ts`, príp. krátky článok) → re-index; alebo
-  (2) rozšíriť `rag_index.py` o ďalšie zdroje (service karty, `/headless-wordpress`)
-  — `/ukazky` je noindex demo, opatrne. **Predpoklad:** šablóna kvetinárstvo je
-  ešte na nezlúčenej vetve + `noindex` → „chváliť sa" ňou má zmysel až po jej
-  zlúčení do `main` a plánovanej predajnej karte „Prémiové weby na kľúč".
+  obsah.** Cesty (rozhodnúť v sedení): (1) doplniť FAQ/výkladnú skriňu
+  v `frontend/lib/content.ts` → re-index; (2) krátky článok cez Writer (má aj SEO
+  hodnotu); (3) rozšíriť `rag_index.py` o ďalšie zdroje (service karty,
+  `/headless-wordpress`) — `/ukazky` je noindex demo, opatrne.
+  **✅ ODBLOKOVANÉ (aug 2026):** predpoklad „chváliť sa šablónou až po jej zlúčení
+  do `main`" je splnený — kvetinárstvo je v `main` od PR #67. **Hotový štartový
+  prompt A** v `plan-agenti.md` → „Štartové prompty pre ďalšie sedenia (pripravené
+  po E1)". Otvorené rozhodnutie majiteľa: či má chatbot na demo aj **odkazovať**.
 - [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
   (detaily `docs/rag-chatbot.md` §9).
 - [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
