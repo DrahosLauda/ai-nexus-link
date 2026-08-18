@@ -1576,12 +1576,17 @@ main až po mojom výslovnom súhlase.
 
 ## Štartové prompty pre ďalšie sedenia (pripravené po E1)
 
-> **Odporúčané poradie: najprv A (menšie, odblokované), potom B.** Obe točia
-> okolo chatbota, ale **nemiešaj ich do jedného sedenia** — A je obsah, B je
-> stavba nového modulu. Fotky kytíc sú tretia, nezávislá vec (kreatíva) a čakajú,
-> kým ich majiteľ dodá.
+> **Stav: A je ✅ HOTOVÉ a naživo** (18.8.2026, PR #72 + #73 — viď denník).
+> Otvorené ostávajú **C** (ladenie výstupu chatbota, priamo nadväzuje na A) a **B**
+> (nový modul). **Nemiešaj ich do jedného sedenia** — C je kód, B je stavba nového
+> modulu. Fotky kytíc sú tretia, nezávislá vec (kreatíva) a čakajú, kým ich
+> majiteľ dodá.
 
-### A — Chatbot má vedieť, že staviame weby a máme šablóny (OBSAH + RAG)
+### A — Chatbot má vedieť, že staviame weby a máme šablóny (OBSAH + RAG) — ✅ HOTOVÉ 18.8.2026
+
+> Ponechané pre históriu a ako vzor, ako písať zadanie s poctivým overením.
+> Realizované: tri nové FAQ v `frontend/lib/content.ts`, PR #72 zlúčené, re-index
+> prebehol, odpovede overené naživo. Detaily v `dennik.md` (18.8.2026).
 
 ```
 Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md
@@ -1648,6 +1653,72 @@ go-live ani predaj nenavrhuj. Over `npm run lint` + `npm run build`, ak siahaš 
 frontend. Vetva claude/... , commit + push; merge do main až po mojom „áno".
 ```
 
+
+### C — Doladiť výstup a štýl odpovedí chatbota (KÓD, frontend)
+
+> Nadväzuje priamo na A. Vzniklo z toho, čo sme videli pri overovaní A naživo
+> 18.8.2026 — odpovede sú vecne správne, ale podanie drhne. Malé, uzavreté
+> sedenie: nič sa nestavia, iba sa ladí to, čo už beží.
+
+```
+Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md
+a docs/rag-chatbot.md. Rešpektuj CLAUDE.md pravidlá spolupráce (go-live a predaj
+ZAMKNUTÉ; 1 sedenie = 1 typ; do main len cez vetvu + PR, merge až na môj výslovný
+súhlas; na konci zápis do docs/dennik.md).
+
+TYP SEDENIA: KÓD (frontend). Nemieša sa do toho Krok 5 (config do Directusu) ani
+revízia obsahu článkov — to sú samostatné položky v Backlogu. Nedotýkaj sa
+orchestrator/rag_index.py ani obsahu v content.ts, dnes sa ladí VÝSTUP.
+
+ÚLOHA: doladiť výstup a štýl odpovedí chatbota. Backlogová položka „Výstup/štýl
+odpovedí — dĺžka, tón, formátovanie, koľko zdrojov ukazovať".
+
+Východisko (overené 18.8.2026, keď sme dopĺňali FAQ o weby a šablóny — viď
+denník). Dva konkrétne nálezy, oba potvrdené v kóde:
+
+1) ZDROJE SÚ ZAŠPINENÉ. frontend/lib/rag.ts má TOP_K = 5 a ŽIADNY prah
+   podobnosti. dedupeSources(top) spraví „zdroj" z každého z tých piatich
+   kúskov, aj keď je kosínus mizivý. Reálny dopad: pri otázke „viete spraviť web
+   pre kvetinárstvo?" sa pod odpoveďou ukázal článok „CRM systém pre malú firmu".
+   Návštevník to číta ako „toto je podklad k odpovedi" — a nie je. Znižuje to
+   dôveryhodnosť presne tam, kde ju zdroje majú budovať.
+   Zváž (rozhodni jednu cestu a zdôvodni ju): prah kosínovej podobnosti pre to,
+   čo sa smie CITOVAŤ ako zdroj (kontext modelu môže ostať širší); alebo ukázať
+   len zdroje kúskov, ktoré model naozaj použil; alebo relatívny prah voči
+   najlepšiemu skóre. Pozor: prah nastavený od oka je hádanie — najprv si vypíš
+   reálne skóre pre pár otázok a rozhodni sa podľa čísel, nie podľa pocitu.
+
+2) MARKDOWN SA NEVYKRESĽUJE. components/chat-widget.tsx riadok ~193 renderuje
+   odpoveď ako <p className="whitespace-pre-wrap">{m.content}</p>. Model pritom
+   vracia **tučné** a odrážky, takže návštevník vidí hviezdičky ako text.
+   Dve cesty: (a) povedať modelu v SYSTEM_PROMPT, nech píše čistý text bez
+   markdownu; (b) vykresliť jednoduchý markdown vo widgete. Rozhodni JEDNU.
+   Ak (b), tak bez novej ťažkej závislosti a bez dangerouslySetInnerHTML —
+   platí „rebrík minimalizmu" z CLAUDE.md a XSS mantinel.
+
+3) DĹŽKA A TÓN. Dnešné odpovede sú vecne správne, ale ukecané a každá končí
+   výzvou na kontaktný formulár — pri troch otázkach za sebou to pôsobí ako
+   otravný predajca. Uprav SYSTEM_PROMPT (lib/rag.ts): kratšie odpovede,
+   výzva na kontakt len keď má zmysel (keď odpoveď naozaj nevie, alebo keď sa
+   pýtajú na cenu/termín). NEZNIŽUJ anti-halucinačné zásady — pravda nad
+   plynulosťou, žiadne vymyslené ceny/termíny/URL ostávajú.
+
+MANTINEL NA OVERENIE: SYSTEM_PROMPT aj TOP_K žijú natvrdo v kóde, takže zmena =
+zmena kódu na vetve a naživo až po merge. Chatbot ČÍTA KÚSKY Z DATABÁZY, nie
+z buildu — na tieto zmeny netreba re-index, ale treba deploy. Cloud sedenie
+nemusí mať RAG_DATABASE_URL ani GEMINI_API_KEY (v auguste ich nemalo) — zisti,
+či ich máš. Ak nie, NEHLÁS, že je to overené: priprav zmenu, jasne napíš, že
+overenie prebehne po nasadení, a daj mi presné kroky a otázky na skúšku.
+
+Kontrolné otázky na porovnanie pred/po (tie isté, na ktorých sme to našli):
+„staviate aj weby?", „viete spraviť web pre kvetinárstvo?", „ako vyzerá vaša
+práca?", a k tomu jedna, na ktorú odpoveď NEMÁME (napr. „robíte aj tlač
+vizitiek?") — na tej sa overuje, že bot stále poctivo prizná „neviem".
+
+Over npm run lint + npm run build. Vetva claude/... , commit + push; merge do
+main až po mojom „áno". Na konci zápis do docs/dennik.md a úprava backlogovej
+položky „Výstup/štýl odpovedí".
+```
 
 ### B — AI poradca v katalógu kytíc (AGENTI; prevaha č. 1 z „Naša úroveň")
 

@@ -100,6 +100,50 @@ odpovedí (koľko zdrojov ukazovať)", nie k tomuto obsahu.
    so zdrojom **„Časté otázky (FAQ)"** (`…/#faq`) a pri tretej otázke s odkazom
    na ukážku. Ak odpovie „to zatiaľ neviem" → re-index ešte neprebehol.
 
+## 18.8.2026 — Konvencia — ukončenie sedenia je povinný rituál
+
+**Typ:** dokumentácia/konvencia (dobeh na konci obsahového sedenia vyššie,
+žiadny kód). **Vetva:** `claude/chatbot-web-content-7csrk6`.
+
+**Prečo:** na konci obsahového sedenia som napísal štartovací prompt pre
+nadväzujúce sedenie **iba do chatu** a majiteľovi ponúkol, že ho „ako je dobrým
+zvykom" zapíšem do `docs/`. Majiteľ to vrátil s tým, že **to nemá byť zvyk ani
+ponuka — má to byť pravidelné ukončenie každého sedenia**. Má pravdu: prompt
+v chate je prompt, ktorý zmizne so zavretým oknom, a celé `docs/` existuje presne
+preto, aby stav nežil v chate.
+
+**Čo sa zmenilo:**
+- **`CLAUDE.md`** — pravidlo „na konci sedenia zapíš do dennika" rozšírené na
+  **dvojbodové povinné ukončenie**: (1) denník + odškrtnutie Backlogu,
+  (2) **štartovací prompt pre nadväzujúce sedenie do `plan-agenti.md`**.
+  Doplnená veta, že majiteľ si o to nemá pýtať.
+- **`docs/ako-viest-sedenia.md`** — nová sekcia „Ukončenie sedenia — povinný
+  rituál (nie „dobrý zvyk")" s tým, **čo má dobrý štartovací prompt obsahovať**
+  (typ sedenia, konkrétne miesta v kóde namiesto vágneho popisu, rozhodnutia pre
+  majiteľa, mantinely na overenie, kontrolné otázky). Ťahák na konci rozšírený.
+- **`docs/plan-agenti.md`** — prompt **A označený ako ✅ hotový** (ponechaný ako
+  vzor, ako písať zadanie s poctivým overením) a pribudol **prompt C — Doladiť
+  výstup a štýl odpovedí chatbota (KÓD)**. Backlogová položka „Výstup/štýl
+  odpovedí" naň teraz odkazuje aj s konkrétnymi nálezmi.
+
+**Ponaučenie:** keď ponúkam „mám to zapísať do docs?", pýtam sa na niečo, čo je
+súčasť práce. Zápis sa robí, neponúka.
+
+**Dve prevádzkové ponaučenia z toho istého dňa** (obe nás reálne zdržali):
+
+1. **Nepredpokladať cestu k repu.** Sedenie dalo príkaz `cd ~/ai-nexus-link` a
+   Mac odpovedal „No such file or directory" — repo je inde. Majiteľ pritom už
+   v priečinku stál. **Správne: `pwd`, alebo príkazy písať relatívne k miestu,
+   kde už je** (`cd orchestrator`, nie `cd ~/…/orchestrator`).
+2. **Obsidian prepisuje súbory v `docs/` a blokuje `git pull`.** `docs/skilly.md`
+   mal lokálne preformátovanú tabuľku (nie zmenu od majiteľa) a keďže ten istý
+   súbor medzitým prepísal PR #71, pull skončil na „Your local changes would be
+   overwritten". **Riešenie, ktoré nič nestratí:** najprv záloha
+   (`cp docs/skilly.md ~/Desktop/skilly-zaloha.md`), potom
+   `git checkout -- docs/skilly.md`, až potom `git pull`. Nikdy nezahadzovať
+   lokálne zmeny bez zálohy a bez toho, aby ich majiteľ videl (`git diff`).
+   Toto sa bude opakovať — Obsidian sa nezmení.
+
 ## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
 
 **Typ:** kód (bez generovania fotiek — tie sú kreatíva, samostatné sedenie).
@@ -502,6 +546,10 @@ opravné poznámky doplnené v `plan-agenti.md`.
 **🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
 
 - [ ] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
+  **Pripravený štartovací prompt C** v `plan-agenti.md` → „Štartové prompty pre
+  ďalšie sedenia". Konkrétne nálezy z 18.8.2026: `TOP_K = 5` bez prahu podobnosti
+  v `lib/rag.ts` (preto sa citujú aj nesúvisiace články) a nevykreslený markdown
+  v `chat-widget.tsx` (návštevník vidí hviezdičky).
 - [ ] **Krok 5 — config v Directuse** — presunúť nastavenia chatbota (model,
   system prompt/osobnosť, počet kúskov `k`) do `agent_config` (riadok `chatbot`),
   aby sa dali meniť klikaním bez zásahu do kódu; logy chatov do `agent_logs`;

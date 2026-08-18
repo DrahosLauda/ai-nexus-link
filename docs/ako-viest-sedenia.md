@@ -53,8 +53,47 @@ sme si stanovili mantinely, ktoré Claude aj majiteľ dodržiavajú:
 4. **Vždy povedať, čo robíme, + presné príkazy do terminálu** (krok po kroku,
    žiadne placeholdery ako `<ID>` bez vysvetlenia, čím ich nahradiť).
 5. **Žiadny zhon/tlačenie** — tempo určuje majiteľ; overujeme a potvrdzujeme.
-6. **Na konci sedenia:** zápis do `dennik.md` (čo sa spravilo, čo je naživo, čo
-   čaká) — sedenie sa nezavrie bez neho.
+6. **Na konci sedenia: povinné ukončenie** (viď samostatnú sekciu nižšie) —
+   sedenie sa nezavrie bez neho.
+
+## Ukončenie sedenia — povinný rituál (nie „dobrý zvyk")
+
+Doplnené 18.8.2026. Dovtedy sa zapisoval len denník a **štartovací prompt pre
+nadväzujúce sedenie žil iba v chate** — teda na mieste, ktoré sa zatvorí a je
+preč. To je presne ten druh strát, kvôli ktorým `docs/` vôbec existuje.
+**Sedenie nie je hotové, kým nie sú hotové obidva body.** Nie je to na zváženie
+podľa nálady a majiteľ si to nemá pýtať — patrí to k práci ako `npm run build`.
+
+**1. Zápis do `docs/dennik.md`** — čo sa spravilo, čo je naživo, čo čaká.
+Nový záznam navrch, nadpis s dátumom vpredu (`D.M.RRRR`). Patria doň aj
+**ponaučenia** („toto nás dnes pomýlilo") a **nálezy mimo zadania**, ktoré sa
+zámerne neriešili. Zároveň **odškrtnúť / prepísať** dotknuté položky v Backlogu.
+
+**2. Štartovací prompt pre nadväzujúce sedenie do `docs/plan-agenti.md`** —
+vždy, keď z tohto sedenia niečo priamo nadväzuje (a to býva takmer vždy: nález,
+ktorý sa zámerne neriešil, alebo ďalší krok plánu). Prompt sa píše **na konci,
+kým je kontext čerstvý** — vtedy vie menovať konkrétne súbory, čísla a riadky,
+ktoré by ďalšie sedenie inak hľadalo od nuly. Prompt patrí do repa, **nie do
+chatu.**
+
+**Čo má dobrý štartovací prompt obsahovať** (vzor: prompty A/B/C v
+`plan-agenti.md`):
+- úvodné „prečítaj `dennik.md` + `vizia.md`" a odkaz na `CLAUDE.md` pravidlá;
+- **TYP sedenia** a výslovne, čo sa doň **nemieša**;
+- **východisko s konkrétnymi miestami v kóde** (súbor, konštanta, riadok) a
+  reálnym dopadom — nie „chatbot má zlé odpovede", ale „`TOP_K = 5`
+  v `lib/rag.ts`, žiadny prah, preto sa ukázal článok o CRM pri otázke
+  o kvetinárstve";
+- **rozhodnutia, ktoré má sedenie priniesť** (vrátane tých, čo má nechať na
+  majiteľa a počkať);
+- **mantinely na overenie** — čo cloud sedenie *nevie* overiť (chýbajúce env
+  premenné) a zákaz hlásiť „overené", kým to overené nie je;
+- kontrolné otázky/kroky, ktorými sa výsledok skúša;
+- záver: `lint` + `build`, vetva, PR, merge až na súhlas, zápis do denníka.
+
+**Ak nič nenadväzuje**, napíš to do denníka jednou vetou („nič priamo
+nenadväzuje, ďalší krok si majiteľ vyberie z Backlogu") — aby bolo jasné, že sa
+na prompt nezabudlo, ale nebol potrebný.
 
 ## „Podsedenie k funkcii" = často subagent, nie nové sedenie
 
@@ -83,4 +122,6 @@ dátumu netreba spätne dopĺňať.
 2. Nové sedenie pri zmene **domény / vetvy** alebo keď je kontext zašumený.
 3. **Plánovanie** cez plan mode / krátke plánovacie sedenie → zápis do `plan-agenti.md`.
 4. **Vždy zapíš záver do `dennik.md`** — to je most medzi sedeniami.
-5. Izolovanú kontrolu/prácu rieš **subagentom**, nie novým sedením.
+5. **Vždy zapíš štartovací prompt pre nadväzujúce sedenie do `plan-agenti.md`**
+   — kým je kontext čerstvý. Prompt v chate = stratený prompt.
+6. Izolovanú kontrolu/prácu rieš **subagentom**, nie novým sedením.
