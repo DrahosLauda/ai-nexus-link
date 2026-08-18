@@ -6,9 +6,10 @@
 ## 17.8.2026 — Realizačné sedenie — KROK E1: katalóg hotových kytíc („Kvetinový e-shop na kľúč", M7)
 
 **Typ:** kód (bez generovania fotiek — tie sú kreatíva, samostatné sedenie).
-**Vetva:** `claude/kvetinarstvo-katalog-e1-pvnolc`. **Stav:** hotové na vetve,
-**čaká merge do `main` po súhlase majiteľa**. Demo ostáva pod `/ukazky`, `noindex`,
-**bez checkoutu** (predaj zamknutý).
+**Vetva:** `claude/kvetinarstvo-katalog-e1-pvnolc`. **Stav: ✅ ZLÚČENÉ do `main`** —
+PR #67 (po revízii majiteľa naživo v lokálnom prehliadači). Railway nasadzuje z `main`,
+takže katalóg je aj na deployi. Demo ostáva pod `/ukazky`, `noindex`, **bez checkoutu**
+(predaj zamknutý).
 
 **Čo je hotové:**
 - **Dátový model produktu** (`templates/kvetinarstvo/content.ts`): `Kytica` je teraz
@@ -88,7 +89,6 @@ opravené** ešte pred odovzdaním:
   zoznam kvetov v šablóne.
 
 **Čaká:**
-- **Ľudská revízia majiteľa** (vizuál + texty) a potom **merge do `main`**.
 - **E1-assety (KREATÍVA, samostatné sedenie):** fotky pre Red Naomi, Tichú rozlúčku
   a Slnečné ráno + prípadne druhé uhly k ostatným kyticiam.
 - **E2** (Woo Store API ako zdroj) a **E3** (produkt agent) podľa `plan-agenti.md`.
