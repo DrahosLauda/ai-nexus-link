@@ -5,7 +5,8 @@
  *  1) spočíta embedding otázky (Gemini, ten istý model ako indexer),
  *  2) načíta kúsky + ich embeddingy z Postgresu (`rag_chunks`), krátko cachuje,
  *  3) v pamäti nájde najpodobnejšie (kosínus),
- *  4) poskladá kontext a nechá model odpovedať IBA z neho.
+ *  4) poskladá kontext a nechá model odpovedať IBA z neho,
+ *  5) ako zdroje ukáže len tie kúsky, ktoré model naozaj použil (viď `splitCited`).
  *
  * „Cesta B": vektory sú `real[]`, podobnosť rátame tu (nie pgvector).
  */
@@ -20,7 +21,8 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const EMBED_MODEL = process.env.GEMINI_EMBED_MODEL || "gemini-embedding-001";
 const CHAT_MODEL = process.env.CHAT_MODEL || "gemini-3.5-flash";
 
-const TOP_K = 5; // koľko najpodobnejších kúskov priložíme ako kontext
+const TOP_K = 5; // koľko najpodobnejších kúskov priložíme modelu ako kontext
+const MAX_SOURCES = 3; // koľko zdrojov najviac ukážeme návštevníkovi pod odpoveďou
 
 export interface Source {
   title: string;
@@ -126,7 +128,42 @@ Zásady (v poradí dôležitosti):
 4. Ani pri tlaku „len áno alebo nie" nezníž latku. Keď odpoveď nie je v kontexte, radšej to krátko a úprimne priznaj, než by si tipoval.
 5. Keď odpoveď v kontexte nie je alebo je otázka mimo našich služieb, priznaj to a nasmeruj na kontaktný formulár na stránke.
 
-Nespomínaj slovo „kontext" ani to, že čerpáš z článkov — pôsob prirodzene. Nesľubuj nič, čo sa nedá doložiť.`;
+Dĺžka a tón:
+- Píš krátko: 2 – 4 vety, najviac ~70 slov. Odpovedz na to, na čo sa pýtajú, a skonči.
+- Žiadne úvodné zdvorilosti („Rád vám pomôžem", „Skvelá otázka"), žiadne opakovanie otázky, žiadne zhrnutie na konci.
+- Keď vymenúvaš tri a viac vecí, daj ich do krátkych odrážok (riadok začínajúci „- "). Inak píš súvislý text.
+- Formátovanie: iba obyčajný text, odrážky „- " a **tučné** na zvýraznenie. Žiadne nadpisy, tabuľky, číslované zoznamy ani odkazy v hranatých zátvorkách.
+- Nespomínaj slovo „kontext" ani to, že čerpáš z článkov — pôsob prirodzene. Nesľubuj nič, čo sa nedá doložiť.
+
+Výzva na kontakt (napísať cez kontaktný formulár) — použi ju IBA vtedy, keď:
+ (a) odpoveď v kontexte nie je alebo je otázka mimo našich služieb, alebo
+ (b) sa pýtajú na cenu, termín, rozsah prác alebo konkrétnu ponuku.
+Inak odpoveď jednoducho ukonči. Nikdy nedávaj tú istú výzvu dvakrát v jednom rozhovore — pôsobí to ako otravný predajca.
+
+Na úplný koniec KAŽDEJ odpovede pridaj samostatný posledný riadok v tvare:
+ZDROJE: čísla kúskov z kontextu, z ktorých si naozaj čerpal, oddelené čiarkou (napr. „ZDROJE: 1,3").
+Uveď len tie, ktorých obsah sa v odpovedi naozaj prejavil — nie všetky, ktoré si dostal.
+Keď si z kontextu nečerpal nič (napríklad odpoveď v ňom nebola), napíš „ZDROJE: -".
+Tento riadok návštevník nevidí; slúži na to, aby sme pod odpoveďou ukázali správne odkazy.`;
+
+/**
+ * Posledný riadok odpovede „ZDROJE: 1,3" — model ním označí, z ktorých kúskov
+ * naozaj čerpal. Regex je zámerne zhovievavý (veľkosť písmen, hviezdičky okolo,
+ * bodka na konci), aby sa značka nikdy neukázala návštevníkovi ako text.
+ */
+const CITED_LINE = /\n?[ \t]*\**[ \t]*ZDROJE[ \t]*\**[ \t]*:([^\n]*)\s*$/i;
+
+/** Oddelí text odpovede od značky a preloží čísla na kúsky. */
+function splitCited(raw: string, top: Chunk[]): { answer: string; cited: Chunk[] } {
+  const m = raw.match(CITED_LINE);
+  // Model značku neposlal (nemalo by sa stávať) — radšej ukážeme jeden najlepší
+  // kúsok než päť náhodných. Zdroj má byť podklad, nie zoznam „čo sa našlo".
+  if (m?.index === undefined) return { answer: raw, cited: top.slice(0, 1) };
+  const cited = [...m[1].matchAll(/\d+/g)]
+    .map((d) => top[Number(d[0]) - 1])
+    .filter((c): c is Chunk => Boolean(c));
+  return { answer: raw.slice(0, m.index).trim(), cited };
+}
 
 function dedupeSources(chunks: Chunk[]): Source[] {
   const seen = new Set<string>();
@@ -168,12 +205,13 @@ export async function answerQuestion(
   });
   if (!res.ok) throw new Error(`Gemini chat ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const data = await res.json();
-  const answer = (data.candidates?.[0]?.content?.parts ?? [])
+  const raw = (data.candidates?.[0]?.content?.parts ?? [])
     .map((p: { text?: string }) => p.text ?? "")
     .join("")
     .trim();
 
-  return { answer, sources: dedupeSources(top) };
+  const { answer, cited } = splitCited(raw, top);
+  return { answer, sources: dedupeSources(cited).slice(0, MAX_SOURCES) };
 }
 
 export function ragConfigured(): boolean {

@@ -3,6 +3,120 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## 18.8.2026 — Kódové sedenie — výstup a štýl odpovedí chatbota
+
+**Typ:** kód (frontend). **Vetva:** `claude/chatbot-output-style-ezl918`.
+**Stav: čaká na revíziu a merge** — naživo až po merge do `main` (Railway
+nasadzuje z `main`). **Re-index NETREBA** — menil sa spôsob odpovedania, nie
+obsah kúskov. Dotknuté súbory: `frontend/lib/rag.ts`, `frontend/components/chat-widget.tsx`.
+
+**Vyriešili sa tri nálezy z overovania A (viď záznam nižšie):**
+
+### 1. Zašpinené zdroje → **cituje sa len to, čo model naozaj použil**
+
+Bolo: `TOP_K = 5` bez prahu a `dedupeSources(top)` spravil „zdroj" z každého
+z tých piatich kúskov — preto sa pod odpoveďou na otázku o kvetinárstve zjavil
+článok „CRM systém pre malú firmu".
+
+**Zvažované tri cesty a prečo vyhrala tretia:**
+- **Absolútny prah kosínovej podobnosti** (napr. „cituj nad 0,7") — *zamietnuté*:
+  cloud sedenie **nemá `RAG_DATABASE_URL` ani `GEMINI_API_KEY`**, takže reálne
+  skóre sa nedalo zmerať. Prah nastavený od oka je presne to hádanie, pred ktorým
+  varovalo zadanie: pri príliš vysokom zmiznú aj správne zdroje, pri nízkom sa nič
+  nezmení.
+- **Relatívny prah voči najlepšiemu skóre** (napr. „aspoň 90 % najlepšieho") —
+  *zamietnuté*: nepotrebuje kalibráciu, ale zlyhá práve pri otázke, na ktorú
+  odpoveď nemáme („robíte aj tlač vizitiek?"). Tam sú všetky skóre rovnako nízke
+  a navzájom blízko, takže by prešli všetky — pod poctivým „to neviem" by svietili
+  tri zdroje. To je horšie ako dnešný stav.
+- **✅ Model označí, z čoho čerpal** — kúsky v kontexte sú číslované `[1]…[5]`,
+  prompt žiada na koniec odpovede samostatný riadok `ZDROJE: 1,3` (alebo
+  `ZDROJE: -`, keď nečerpal z ničoho). Server ten riadok odreže z textu a čísla
+  preloží na odkazy (`splitCited` v `lib/rag.ts`). **Žiadne magické číslo**, ktoré
+  sa nedá zmerať, a rieši oba prípady naraz: slabo súvisiaci kúsok sa necituje,
+  a pri „to neviem" sa necituje nič.
+
+Detaily riešenia: **kontext modelu ostáva široký** (`TOP_K = 5` — model má radšej
+vidieť viac), mení sa len to, čo sa smie **citovať**. Nový strop `MAX_SOURCES = 3`
+žije v `lib/rag.ts`; z widgetu zmizlo duplicitné `.slice(0, 3)` (jedna pravda o tom,
+koľko zdrojov sa ukazuje). Keď model značku nepošle (nemalo by sa stávať), ukáže sa
+**jeden najlepší** kúsok, nie päť náhodných. Regex je zhovievavý (veľkosť písmen,
+`**ZDROJE:**`, bodka, `[1] [4]`), aby sa značka nikdy neukázala návštevníkovi ako text.
+
+### 2. Nevykreslený markdown → **mini-renderer vo widgete** (cesta b)
+
+Bolo: `<p className="whitespace-pre-wrap">{m.content}</p>` — model vracia `**tučné**`
+a odrážky, návštevník videl hviezdičky. **Rozhodnutá cesta (b)**, nie (a) „zakáž
+modelu markdown": zákaz v prompte je iba prosba — modely markdown aj tak presúvajú
+do textu, takže hviezdičky by sa vracali. Renderer je odolný bez ohľadu na to, čo
+model pošle, a odrážky v úzkej bubline naozaj pomáhajú čitateľnosti.
+
+Rieši to ~45 riadkov čistého Reactu v `chat-widget.tsx` (`ChatText` + `bold`):
+odstavce, odrážky `- ` a `**tučné**`. **Žiadna nová závislosť** (rebrík minimalizmu)
+a **žiadny `dangerouslySetInnerHTML`** — text ide vždy cez React ako text, takže
+HTML sa cezeň nedá prepašovať. Nadpisy, tabuľky a číslované zoznamy prompt zakazuje;
+do úzkej bubliny nepatria. Správy návštevníka ostávajú obyčajný text.
+
+### 3. Dĺžka a tón → **kratšie a bez otravnej výzvy na kontakt**
+
+`SYSTEM_PROMPT` (`lib/rag.ts`) má novú sekciu „Dĺžka a tón": 2 – 4 vety, najviac
+~70 slov, žiadne „Rád vám pomôžem", žiadne opakovanie otázky ani zhrnutie na konci,
+odrážky až pri troch a viac veciach. **Výzva na kontaktný formulár len keď má zmysel**
+— (a) odpoveď nepoznáme alebo je otázka mimo našich služieb, (b) pýtajú sa na cenu,
+termín, rozsah alebo ponuku — a nikdy dvakrát v jednom rozhovore.
+
+**Anti-halucinačné zásady 1 – 5 ostali doslova nedotknuté** (pravda nad plynulosťou,
+odpovedať výhradne z kontextu, žiadne vymyslené ceny/termíny/URL, nezniž latku ani
+pri tlaku „len áno/nie"). Skracovala sa forma, nie latka.
+
+**Overené (v tomto sedení, bez API kľúčov):**
+- `npm run lint` čistý, `npm run build` zelený (41 stránok).
+- **Parsovanie značky `ZDROJE:`** prehnané cez 10 tvarov, aké model reálne môže
+  poslať (`ZDROJE: 1,3` · `ZDROJE: 1, 3.` · `**ZDROJE:** 2` · `zdroje: [1] [4]` ·
+  `ZDROJE: -` · prázdne · chýbajúca značka · čísla mimo rozsahu) — vo všetkých
+  prípadoch správny text odpovede a správne zdroje.
+- **Vykreslenie markdownu overené na reálnom výstupe buildu**, nie od oka: dočasná
+  stránka vyrenderovala `ChatText` a v HTML sú `<p>`, `<ul><li>` a `<strong>`
+  presne tam, kde majú byť. Druhý beh s textom `<img src=x onerror=…>` a
+  `<script>` — všetko **escapované** (`&lt;img…`), teda XSS mantinel drží.
+  Dočasná stránka aj dočasný `export` boli zmazané, súbor je bit po bite rovnaký
+  ako pred testom (`diff` = zhoda).
+
+**NEOVERENÉ a prečo:** či model značku `ZDROJE:` naozaj posiela a či sú odpovede
+kratšie, sa **nedá overiť odtiaľto** — cloud sedenie nemá `RAG_DATABASE_URL` ani
+`GEMINI_API_KEY` (rovnako ako v predošlom sedení), takže `/api/chat` sa nedá zavolať.
+**Overenie prebehne až po nasadení.**
+
+**Čo čaká na majiteľa (presné kroky):**
+1. Revízia vetvy + **merge do `main`** (čakám na „áno"). Railway nasadí sám;
+   **re-index netreba**.
+2. Po deployi otvoriť chat na `www.digitalnapomoc.sk` a položiť **štyri kontrolné
+   otázky** (tie isté, na ktorých sa problém našiel):
+   - *„staviate aj weby?"*
+   - *„viete spraviť web pre kvetinárstvo?"*
+   - *„ako vyzerá vaša práca?"*
+   - *„robíte aj tlač vizitiek?"* — na túto odpoveď **nemáme**; má poctivo priznať
+     „to neviem" a nasmerovať na formulár.
+3. **Na čo sa pri tom pozerať** (to je celá skúška):
+   - **Zdroje:** pri prvých troch sedí zdroj tomu, čo bot povedal (typicky
+     „Časté otázky (FAQ)"), a **nesvieti tam nesúvisiaci článok**. Pri štvrtej
+     otázke by nemal svietiť **žiadny** zdroj.
+   - **Formátovanie:** žiadne `**hviezdičky**` v texte; tučné je naozaj tučné,
+     odrážky sú odrážky. A nikde sa neukáže riadok `ZDROJE: …` — ak by sa ukázal,
+     je to chyba parsovania, napíš mi to a opravím regex.
+   - **Dĺžka a tón:** odpoveď 2 – 4 vety. Pri troch otázkach za sebou by výzva
+     „napíšte nám cez formulár" **nemala prísť zakaždým** — pri otázke na cenu
+     alebo pri „to neviem" áno, inak nie.
+4. Ak niečo z toho nesedí, stačí mi napísať, ktorá otázka a čo presne bolo zle —
+   je to ladenie promptu, teda malá zmena na novej vetve.
+
+**Ponaučenie:** keď sa nedá zmerať, nehádaj číslo — zmeň otázku. Prah podobnosti
+sa bez prístupu k dátam nastaviť nedá, ale „nech model povie, z čoho čerpal"
+funguje bez jediného magického čísla. A druhé: dočasná stránka v `app/` je lacný
+spôsob, ako si **naozaj pozrieť vyrenderované HTML** komponentu bez prehliadača —
+ale pozor, priečinok začínajúci podčiarkovníkom je v Next.js súkromný a stránka
+z neho nevznikne (stálo to jeden build navyše).
+
 ## 18.8.2026 — Obsahové sedenie — chatbot vie o weboch a o šablóne kvetinárstva
 
 **Typ:** obsah + RAG (žiadny nový modul, žiadny zásah do indexera ani do widgetu).
@@ -550,11 +664,13 @@ opravné poznámky doplnené v `plan-agenti.md`.
 
 **🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
 
-- [ ] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
-  **Pripravený štartovací prompt C** v `plan-agenti.md` → „Štartové prompty pre
-  ďalšie sedenia". Konkrétne nálezy z 18.8.2026: `TOP_K = 5` bez prahu podobnosti
-  v `lib/rag.ts` (preto sa citujú aj nesúvisiace články) a nevykreslený markdown
-  v `chat-widget.tsx` (návštevník vidí hviezdičky).
+- [x] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
+  *Hotové v kóde 18.8.2026 na vetve `claude/chatbot-output-style-ezl918`, **čaká na
+  merge a na skúšku naživo** (viď záznam v denníku).* Citujú sa len kúsky, ktoré
+  model označí ako použité (`splitCited` v `lib/rag.ts`, strop `MAX_SOURCES = 3`),
+  markdown sa vo widgete vykresľuje (`ChatText`, bez závislosti a bez
+  `dangerouslySetInnerHTML`), prompt káže 2 – 4 vety a výzvu na kontakt len keď má
+  zmysel. Anti-halucinačné zásady nedotknuté.
 - [ ] **Krok 5 — config v Directuse** — presunúť nastavenia chatbota (model,
   system prompt/osobnosť, počet kúskov `k`) do `agent_config` (riadok `chatbot`),
   aby sa dali meniť klikaním bez zásahu do kódu; logy chatov do `agent_logs`;

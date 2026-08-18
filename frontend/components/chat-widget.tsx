@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
 /**
  * Plávajúci RAG chatbot (Krok 4).
@@ -46,6 +46,57 @@ function RobotMascot({ size = 30, wave = false }: { size?: number; wave?: boolea
       </g>
     </svg>
   );
+}
+
+/**
+ * Minimálny markdown pre bubliny asistenta: **tučné**, odrážky „- " a odstavce.
+ * Zámerne bez novej závislosti a bez `dangerouslySetInnerHTML` — text ide vždy
+ * cez React ako text, takže sa cezeň nedá prepašovať HTML (XSS).
+ */
+function bold(text: string): ReactNode[] {
+  // split s capture skupinou: nepárne indexy sú obsah medzi **…**
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
+    i % 2 ? (
+      <strong key={i} className="font-semibold text-ink">
+        {part}
+      </strong>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  );
+}
+
+function ChatText({ text }: { text: string }) {
+  const blocks: ReactNode[] = [];
+  let bullets: string[] = [];
+  const flush = () => {
+    if (!bullets.length) return;
+    blocks.push(
+      <ul key={blocks.length} className="list-disc space-y-0.5 pl-4">
+        {bullets.map((b, i) => (
+          <li key={i}>{bold(b)}</li>
+        ))}
+      </ul>,
+    );
+    bullets = [];
+  };
+  for (const line of text.split("\n")) {
+    const item = line.match(/^\s*[-*•]\s+(.+)$/);
+    if (item) {
+      bullets.push(item[1]);
+      continue;
+    }
+    flush();
+    if (line.trim()) {
+      blocks.push(
+        <p key={blocks.length} className="whitespace-pre-wrap">
+          {bold(line)}
+        </p>,
+      );
+    }
+  }
+  flush();
+  return <div className="space-y-1.5">{blocks}</div>;
 }
 
 const GREETING: Msg = {
@@ -190,11 +241,15 @@ export function ChatWidget() {
                       : "max-w-[85%] rounded-2xl rounded-bl-sm border border-line bg-white px-3.5 py-2.5 text-[14.5px] leading-[1.5] text-mist-700"
                   }
                 >
-                  <p className="whitespace-pre-wrap">{m.content}</p>
+                  {m.role === "user" ? (
+                    <p className="whitespace-pre-wrap">{m.content}</p>
+                  ) : (
+                    <ChatText text={m.content} />
+                  )}
                   {m.sources && m.sources.length > 0 && (
                     <div className="mt-2 flex flex-col gap-1 border-t border-line pt-2">
                       <span className="text-[11.5px] font-semibold text-mist-400">Zdroje:</span>
-                      {m.sources.slice(0, 3).map((s) => (
+                      {m.sources.map((s) => (
                         <a
                           key={s.url}
                           href={s.url}

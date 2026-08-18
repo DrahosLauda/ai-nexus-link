@@ -1654,7 +1654,7 @@ frontend. Vetva claude/... , commit + push; merge do main až po mojom „áno".
 ```
 
 
-### C — Doladiť výstup a štýl odpovedí chatbota (KÓD, frontend)
+### C — Doladiť výstup a štýl odpovedí chatbota (KÓD, frontend) — ✅ HOTOVÉ 18.8.2026 (čaká na merge + skúšku naživo)
 
 > Nadväzuje priamo na A. Vzniklo z toho, čo sme videli pri overovaní A naživo
 > 18.8.2026 — odpovede sú vecne správne, ale podanie drhne. Malé, uzavreté
@@ -1718,6 +1718,43 @@ vizitiek?") — na tej sa overuje, že bot stále poctivo prizná „neviem".
 Over npm run lint + npm run build. Vetva claude/... , commit + push; merge do
 main až po mojom „áno". Na konci zápis do docs/dennik.md a úprava backlogovej
 položky „Výstup/štýl odpovedí".
+```
+
+### C-dobeh — doladiť chatbota podľa toho, čo ukázala skúška naživo (KÓD, malé)
+
+> Spusti **iba ak** pri skúške po nasadení C niečo drhlo (viď denník 18.8.2026,
+> bod 3 „Na čo sa pri tom pozerať"). Ak všetko sedelo, toto sedenie netreba —
+> ďalej sa pokračuje prompt-om B alebo Krokom 5 (config do Directusu).
+
+```
+Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog) a
+docs/rag-chatbot.md (sekcia „Výstup a štýl odpovedí"). Rešpektuj CLAUDE.md
+pravidlá spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ; do main len
+cez vetvu + PR, merge až na môj výslovný súhlas; na konci zápis do dennika).
+
+TYP SEDENIA: KÓD (frontend), malé ladenie. Nemieša sa do toho Krok 5 ani obsah.
+
+ÚLOHA: doladiť výstup chatbota podľa toho, čo som videl naživo. Čo mi nesedelo:
+<sem napíšem konkrétne — ktorá otázka a čo bolo zle>.
+
+Kde to žije: frontend/lib/rag.ts (SYSTEM_PROMPT, splitCited, CITED_LINE,
+TOP_K, MAX_SOURCES) a frontend/components/chat-widget.tsx (ChatText, bold).
+
+Typické opravy podľa príznaku:
+- v odpovedi svieti riadok „ZDROJE: …" → regex CITED_LINE nezachytil tvar, ktorý
+  model poslal; rozšír ho a dopíš ten tvar do testovacej sady tvarov v denníku.
+- pod odpoveďou nesvieti žiadny zdroj, hoci odpoveď zjavne z niečoho čerpala →
+  model značku neposiela spoľahlivo; zváž presunutie inštrukcie o značke vyššie
+  v SYSTEM_PROMPT, alebo prechod na štruktúrovaný výstup (responseSchema) —
+  pozor, to sa nedá overiť bez GEMINI_API_KEY, takže to chce môj test naživo.
+- odpovede sú príliš strohé/dlhé alebo výzva na kontakt chodí zle → sekcia
+  „Dĺžka a tón" v SYSTEM_PROMPT.
+NEZNIŽUJ anti-halucinačné zásady 1 – 5.
+
+Mantinel: cloud sedenie zrejme opäť nebude mať RAG_DATABASE_URL ani
+GEMINI_API_KEY — NEHLÁS „overené", priprav zmenu a daj mi presné kroky na skúšku.
+Re-index netreba, treba deploy. Over npm run lint + npm run build. Vetva
+claude/... , commit + push; merge až po mojom „áno". Na konci zápis do dennika.
 ```
 
 ### B — AI poradca v katalógu kytíc (AGENTI; prevaha č. 1 z „Naša úroveň")
