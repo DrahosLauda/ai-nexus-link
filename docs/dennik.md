@@ -7,8 +7,8 @@
 
 **Typ:** kód (frontend). **Vetva:** `claude/chatbot-output-style-ezl918`.
 **Stav: ✅ ZLÚČENÉ do `main`** — PR #76 (majiteľ dal súhlas v tom istom sedení).
-Railway nasadzuje z `main`, takže zmena ide naživo sama; **skúška naživo čaká na
-majiteľa** (kroky nižšie). **Re-index NETREBA** — menil sa spôsob odpovedania, nie
+Railway nasadzuje z `main`; **overené naživo v ten istý deň** — výsledok skúšky
+je na konci záznamu. **Re-index NETREBA** — menil sa spôsob odpovedania, nie
 obsah kúskov. Dotknuté súbory: `frontend/lib/rag.ts`, `frontend/components/chat-widget.tsx`.
 
 **Vyriešili sa tri nálezy z overovania A (viď záznam nižšie):**
@@ -110,6 +110,60 @@ kratšie, sa **nedá overiť odtiaľto** — cloud sedenie nemá `RAG_DATABASE_U
      alebo pri „to neviem" áno, inak nie.
 4. Ak niečo z toho nesedí, stačí mi napísať, ktorá otázka a čo presne bolo zle —
    je to ladenie promptu, teda malá zmena na novej vetve.
+
+### ✅ Skúška naživo dopadla — všetky štyri kritériá prešli
+
+Majiteľ preskúšal chatbota na `www.digitalnapomoc.sk` hneď po deployi:
+
+| Čo sa opravovalo | Výsledok naživo |
+|---|---|
+| Zašpinené zdroje | ✅ všade len „Časté otázky (FAQ)", žiadny nesúvisiaci článok |
+| Zdroj pri „neviem" | ✅ pri *„robíte aj tlač vizitiek?"* **nesvietil žiadny zdroj** |
+| Dĺžka | ✅ 2 – 3 vety namiesto štyroch odsekov |
+| Výzva na kontakt | ✅ prišla **len** pri „to nemáme", nie po každej odpovedi |
+| Riadok `ZDROJE: …` | ✅ nikde neunikol do textu |
+| Markdown | ✅ hviezdičky preč (po tvrdom reloade, viď ponaučenie nižšie) |
+
+Odpoveď na vizitky doslova: *„Tlač vizitiek v našom zozname služieb nemáme.
+Napíšte nám však cez kontaktný formulár…"* — nič si nevymyslel, nenatiahol
+odpoveď a nasmeroval ďalej. Presne o to šlo.
+
+**Ponaučenie (stálo nás jedno kolo dohadovania):** prvá otázka v skúške vrátila
+ešte **starú** odpoveď (dlhá, s výzvou na konzultáciu, tri zdroje z toho dva mimo
+misy) — deploy dobehol až medzi prvou a druhou otázkou. A ešte zákernejšie: aj
+keď už server odpovedal po novom, **v otvorenej karte bežal starý JavaScript
+widgetu**, takže markdown sa nevykresľoval a hviezdičky ostali viditeľné. Vyzeralo
+to ako chyba v kóde, pritom stačil **tvrdý reload** (`Cmd + Shift + R`).
+Do budúcna: **po deployi vždy najprv tvrdý reload, až potom testuj** — inak
+testuješ nový server starým klientom a závery sú nezmyselné.
+
+### Dobeh — klikateľné odkazy v odpovediach (nález zo skúšky)
+
+Majiteľ sa počas skúšky bota spýtal *„da sa aj klikateľná šablóna, tak aby ma
+presmerovalo rovno na tú stránku?"* a bot mu poradil adresu **prepísať ručne**.
+Bot to povedal správne — **widget len nerobil adresy klikateľnými**; klikateľné
+boli iba položky v zozname „Zdroje". Pre návštevníka je to reálna prekážka presne
+tam, kam ho chceme poslať (živá ukážka).
+
+**Riešenie** (`chat-widget.tsx`, funkcia `linkify`, vetva
+`claude/chat-odkazy-klikatelne`): adresa nášho webu v texte odpovede sa mení na
+`next/link` odkaz. Mantinely:
+- **iba naša doména** — cudzí web sa cez odpoveď podstrčiť nedá (`priklad.sk`
+  ostáva obyčajný text). `wp.digitalnapomoc.sk` sa zámerne **nelinkuje** (nie je
+  to verejný web, je na `noindex`);
+- koncová interpunkcia ostáva vete, nie odkazu (`…/kvetinarstvo.` → odkaz bez bodky);
+- funguje aj vnútri `**tučného**` a vnútri odrážok;
+- `next/link` (nie `<a>`), takže prechod je klientský a **chat sa pri kliknutí
+  nevynuluje**; naďalej bez novej závislosti a bez `dangerouslySetInnerHTML`.
+
+Overené rovnako ako predtým — `npm run lint` čistý, `npm run build` zelený
+(41 stránok) a **na reálnom HTML z buildu**: `href="/ukazky/kvetinarstvo"`,
+`href="/headless-wordpress"` aj holá doména → `href="/"`; `wp.` subdoména a cudzia
+doména nelinkované; `<img src=x onerror=…>` escapovaný.
+
+**Ponaučenie:** najlepší testovací scenár nenapíše zadanie, ale **prvý človek,
+ktorý sa s botom naozaj rozpráva**. Otázka „a dá sa to klikateľné?" nebola
+v kontrolných otázkach — vypadla z bežného používania.
 
 **Ponaučenie:** keď sa nedá zmerať, nehádaj číslo — zmeň otázku. Prah podobnosti
 sa bez prístupu k dátam nastaviť nedá, ale „nech model povie, z čoho čerpal"
@@ -666,8 +720,9 @@ opravné poznámky doplnené v `plan-agenti.md`.
 **🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
 
 - [x] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
-  *Hotové 18.8.2026, **zlúčené do `main`** (PR #76); **čaká už len skúška naživo**
-  po deployi — kontrolné otázky a na čo sa pozerať sú v zázname v denníku.* Citujú sa len kúsky, ktoré
+  *Hotové 18.8.2026, zlúčené do `main` (PR #76) a **overené naživo** — všetky štyri
+  kontrolné otázky prešli (viď záznam v denníku). Dobeh: klikateľné odkazy
+  v odpovediach, vetva `claude/chat-odkazy-klikatelne`.* Citujú sa len kúsky, ktoré
   model označí ako použité (`splitCited` v `lib/rag.ts`, strop `MAX_SOURCES = 3`),
   markdown sa vo widgete vykresľuje (`ChatText`, bez závislosti a bez
   `dangerouslySetInnerHTML`), prompt káže 2 – 4 vety a výzvu na kontakt len keď má
