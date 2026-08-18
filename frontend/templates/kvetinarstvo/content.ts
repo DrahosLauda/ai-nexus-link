@@ -1149,6 +1149,8 @@ export const katalogObsah = {
     typ: "Typ väzby",
     vsetky: "Všetky",
     zrusit: "Zrušiť filtre",
+    /** Prístupný popis krížika na štítku vybraného filtra. */
+    zrusitJeden: (co: string) => `Zrušiť filter ${co}`,
     /** Text do `aria-live` — doplní sa počet nájdených kytíc. */
     vysledok: (n: number) => `${n} ${n === 1 ? "kytica" : n < 5 ? "kytice" : "kytíc"} v tomto výbere`,
     prazdne: "V tejto kombinácii teraz nič neviažeme. Skúste uvoľniť jeden filter alebo nám napíšte, čo hľadáte.",

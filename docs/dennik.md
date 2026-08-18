@@ -62,6 +62,22 @@ opravené** ešte pred odovzdaním:
    Zvyšok checklistu prešiel bez nálezov (kontrast overený na reálnych dvojiciach,
    mriežka v HTML aj bez JS, natívne rádiá, licencie, žiadne AI frázy, žiadny mŕtvy kód).
 
+**Revízia majiteľa (v tom istom sedení) — filter prekopaný:**
+- Doplnená príležitosť **„Pre mamu"** (5 kytíc), lebo v katalógu chýbala.
+- Majiteľ vytkol, že tri riadky veľkých piluliek s farebnými bodkami sú **priveľmi
+  podobné latke** a chipy sú veľké. Cez skill **`design-shotgun`** sme vygenerovali
+  **5 zámerne odlišných smerov** filtra (tichý typografický index · bočný stĺpec ·
+  rozbaľovačky so štítkami · filtračná karta · editorial pás) a k víťazovi ešte
+  2 podvarianty umiestnenia štítkov.
+- **Vybraný smer: „tichý typografický index" + štítky pod filtrom.** Voľby sú
+  obyčajný text v troch riadkoch medzi vlasovými linkami, aktívna je podčiarknutá
+  hlinou; vybrané filtre sa pod blokom zopakujú ako šalviové štítky s krížikom
+  (jedno kliknutie = odobratie jedného filtra). Žiadne pilulky vo filtri → prestal
+  súťažiť s fotkami kytíc a nepodobá sa na latku. Dotykový cieľ 44 px drží
+  `min-h`, podčiarknutie nesie vnútorný `span`, `aria-pressed` ostáva.
+- Overené naživo v prehliadači: kliknutie „Pre mamu" + „ružová" → „2 kytice
+  v tomto výbere", štítky sa zobrazia, mriežka sa prefiltruje.
+
 **Rozhodnutia, ktoré stoja za zapamätanie:**
 - **Karty kytíc majú vlastný súbor** (`sections/kytice.tsx`) oddelene od
   `sections/karty.tsx` — používa ich server (Domov, detail) aj klientský filter,

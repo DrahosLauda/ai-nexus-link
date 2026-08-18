@@ -1,15 +1,21 @@
 "use client";
 
 /**
- * Filtrovateľná mriežka katalógu `/kytice`.
+ * Filter a mriežka katalógu `/kytice`.
  *
- * Klientský stav drží iba trojicu filtrov (príležitosť / farba / typ väzby);
- * dáta aj filtrovanie prichádzajú z `katalog.ts`, takže po prepnutí zdroja na
- * WooCommerce (E2) sa tento komponent nemení. Bez JS ostane v HTML kompletná
- * mriežka všetkých kytíc — filtre sú progresívne vylepšenie, nie brána k obsahu.
+ * Dizajnový smer „tichý typografický index": voľby sú obyčajný text v troch
+ * riadkoch medzi vlasovými linkami, aktívna je podčiarknutá hlinou — žiadne
+ * pilulky, aby filter nesúťažil s fotkami kytíc. Vybrané filtre sa pod blokom
+ * zopakujú ako štítky, ktoré sa dajú jedným klikom odobrať (na mobile je aktívna
+ * voľba často mimo obrazovky).
+ *
+ * Klientský stav drží iba trojicu filtrov; dáta aj filtrovanie prichádzajú
+ * z `katalog.ts`, takže po prepnutí zdroja na WooCommerce (E2) sa komponent
+ * nemení. Bez JS ostane v HTML kompletná mriežka všetkých kytíc — filtre sú
+ * progresívne vylepšenie, nie brána k obsahu.
  */
-import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import { href } from "../base";
 import { farbyKvetov, katalogObsah, prilezitostLabel, typLabel } from "../content";
 import {
@@ -23,24 +29,34 @@ import { FarebnyBod, KyticeKarty } from "./kytice";
 
 const MOZNOSTI = moznostiFiltra();
 
+/** Kľúče filtra — štítok podľa nich vie, ktorú voľbu má vrátiť na „Všetky". */
+type Kluc = keyof KatalogFilter;
+
 export function KatalogFiltre() {
   const t = katalogObsah.filter;
   const [filter, setFilter] = useState<KatalogFilter>(PRAZDNY_FILTER);
   const kytice = useMemo(() => filtrujKytice(filter), [filter]);
-  const aktivny =
-    filter.prilezitost !== VSETKY || filter.farba !== VSETKY || filter.typ !== VSETKY;
+
+  const vycisti = (kluc: Kluc) => setFilter((f) => ({ ...f, [kluc]: VSETKY }));
+
+  const stitky: { kluc: Kluc; label: string }[] = [];
+  if (filter.prilezitost !== VSETKY)
+    stitky.push({ kluc: "prilezitost", label: prilezitostLabel[filter.prilezitost] });
+  if (filter.farba !== VSETKY)
+    stitky.push({ kluc: "farba", label: farbyKvetov[filter.farba]?.label ?? filter.farba });
+  if (filter.typ !== VSETKY) stitky.push({ kluc: "typ", label: typLabel[filter.typ] });
 
   return (
     <div>
-      <div className="flex flex-col gap-5">
-        <Skupina
+      <div className="border-y border-flora-line py-1">
+        <Riadok
           label={t.prilezitost}
           hodnoty={MOZNOSTI.prilezitosti}
           aktivna={filter.prilezitost}
           popis={(p) => prilezitostLabel[p]}
           onZmena={(prilezitost) => setFilter((f) => ({ ...f, prilezitost }))}
         />
-        <Skupina
+        <Riadok
           label={t.farba}
           hodnoty={MOZNOSTI.farby}
           aktivna={filter.farba}
@@ -48,7 +64,7 @@ export function KatalogFiltre() {
           bod
           onZmena={(farba) => setFilter((f) => ({ ...f, farba }))}
         />
-        <Skupina
+        <Riadok
           label={t.typ}
           hodnoty={MOZNOSTI.typy}
           aktivna={filter.typ}
@@ -57,15 +73,32 @@ export function KatalogFiltre() {
         />
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-        <p aria-live="polite" className="text-flora-small text-flora-moss">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1">
+        <p aria-live="polite" className="mr-1 text-flora-small text-flora-moss">
           {t.vysledok(kytice.length)}
         </p>
-        {aktivny ? (
+        {stitky.map((s) => (
+          <button
+            key={s.kluc}
+            type="button"
+            onClick={() => vycisti(s.kluc)}
+            aria-label={t.zrusitJeden(s.label)}
+            className="inline-flex min-h-[44px] items-center gap-2.5 rounded-flora-pill bg-flora-100 py-1.5 pl-4 pr-2.5 text-flora-small font-semibold text-flora-700 transition-colors duration-150 ease-flora hover:bg-flora-200"
+          >
+            {s.label}
+            <span
+              aria-hidden="true"
+              className="grid size-5 place-items-center rounded-flora-pill bg-flora-700/15 text-[13px] leading-none"
+            >
+              ×
+            </span>
+          </button>
+        ))}
+        {stitky.length > 1 ? (
           <button
             type="button"
             onClick={() => setFilter(PRAZDNY_FILTER)}
-            className="inline-flex min-h-[44px] items-center text-flora-small font-medium text-flora-clay-600 underline decoration-1 underline-offset-4 transition-colors duration-150 ease-flora hover:text-flora-clay-700"
+            className="inline-flex min-h-[44px] items-center text-flora-small font-medium text-flora-moss underline decoration-1 underline-offset-4 transition-colors duration-150 ease-flora hover:text-flora-ink"
           >
             {t.zrusit}
           </button>
@@ -91,8 +124,8 @@ export function KatalogFiltre() {
   );
 }
 
-/** Jedna skupina filtra — chip „Všetky" + hodnoty odvodené z dát. */
-function Skupina<T extends string>({
+/** Jeden riadok filtra — popisok vľavo, voľby ako text (chip „Všetky" navrchu). */
+function Riadok<T extends string>({
   label,
   hodnoty,
   aktivna,
@@ -104,35 +137,43 @@ function Skupina<T extends string>({
   hodnoty: T[];
   aktivna: T | typeof VSETKY;
   popis: (hodnota: T) => string;
-  /** Zobraziť farebný bod pred textom (skupina „Farba"). */
+  /** Farebný bod pred textom (riadok „Farba"). */
   bod?: boolean;
   onZmena: (hodnota: T | typeof VSETKY) => void;
 }) {
   return (
-    <div role="group" aria-label={label} className="flex flex-wrap items-center gap-2.5">
-      <span className="mr-1 w-full text-flora-small font-medium text-flora-moss sm:w-auto">
+    <div
+      role="group"
+      aria-label={label}
+      className="flex flex-wrap items-center gap-x-6 border-t border-flora-line/60 py-1 first:border-t-0"
+    >
+      <span className="w-full shrink-0 pt-2 text-flora-eyebrow font-semibold uppercase text-flora-500 sm:w-[124px] sm:pt-0">
         {label}
       </span>
-      <Chip aktivny={aktivna === VSETKY} onClick={() => onZmena(VSETKY)}>
+      <Volba aktivna={aktivna === VSETKY} onClick={() => onZmena(VSETKY)}>
         {katalogObsah.filter.vsetky}
-      </Chip>
+      </Volba>
       {hodnoty.map((h) => (
-        <Chip key={h} aktivny={aktivna === h} onClick={() => onZmena(h)}>
-          {bod ? <FarebnyBod farba={h} velkost={14} /> : null}
+        <Volba key={h} aktivna={aktivna === h} onClick={() => onZmena(h)}>
+          {bod ? <FarebnyBod farba={h} velkost={13} /> : null}
           {popis(h)}
-        </Chip>
+        </Volba>
       ))}
     </div>
   );
 }
 
-/** Filtračná pilulka — prepínač, preto `aria-pressed`. */
-function Chip({
-  aktivny,
+/**
+ * Jedna voľba — prepínač (`aria-pressed`) v podobe textu. Dotykový cieľ drží
+ * `min-h-[44px]`, podčiarknutie nesie vnútorný `span`, aby sedelo pri texte
+ * a nie na spodku dotykovej plochy.
+ */
+function Volba({
+  aktivna,
   onClick,
   children,
 }: {
-  aktivny: boolean;
+  aktivna: boolean;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -140,14 +181,18 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      aria-pressed={aktivny}
-      className={`inline-flex min-h-[44px] items-center gap-2 rounded-flora-pill border px-4 text-flora-small font-semibold transition duration-150 ease-flora ${
-        aktivny
-          ? "border-flora-clay-600 bg-flora-clay-600 text-white"
-          : "border-flora-line bg-flora-porcelain text-flora-700 hover:border-flora-500"
+      aria-pressed={aktivna}
+      className={`inline-flex min-h-[44px] items-center transition-colors duration-150 ease-flora ${
+        aktivna ? "text-flora-ink" : "text-flora-moss hover:text-flora-ink"
       }`}
     >
-      {children}
+      <span
+        className={`inline-flex items-center gap-2 border-b-2 pb-1 ${
+          aktivna ? "border-flora-clay-600 font-semibold" : "border-transparent"
+        }`}
+      >
+        {children}
+      </span>
     </button>
   );
 }
