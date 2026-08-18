@@ -39,6 +39,30 @@ nespomínať „kontext"/články).
 - **Nasadenie:** na vetve; **naživo až po merge do `main`** (Railway deployuje
   z `main`) — počkať na súhlas.
 
+## Aug 2026 — Výstup a štýl odpovedí (dĺžka, formátovanie, zdroje)
+
+Doladené 18.8.2026 (vetva `claude/chatbot-output-style-ezl918`). Tri veci, všetky
+v `frontend/lib/rag.ts` a `frontend/components/chat-widget.tsx`:
+
+- **Zdroje = len to, čo model naozaj použil.** Kúsky idú do promptu očíslované
+  `[1]…[5]`; model na koniec odpovede pripojí riadok `ZDROJE: 1,3` (alebo
+  `ZDROJE: -`). Server ho odreže z textu a čísla preloží na odkazy (`splitCited`).
+  **Prah kosínovej podobnosti sme zámerne nepoužili** — absolútny sa bez prístupu
+  k dátam nedá zmerať a relatívny zlyháva pri otázkach, na ktoré odpoveď nemáme
+  (všetky skóre nízke a blízko seba → prešli by všetky). Zdôvodnenie v denníku.
+- **Koľko zdrojov:** `TOP_K = 5` (kontext modelu) vs. `MAX_SOURCES = 3` (čo vidí
+  návštevník). Strop žije **len** v `lib/rag.ts`, widget už nekráti.
+- **Formátovanie:** widget vykresľuje minimálny markdown (`**tučné**`, odrážky
+  `- `, odstavce) cez `ChatText` — bez novej závislosti a bez
+  `dangerouslySetInnerHTML`. Nadpisy, tabuľky a číslované zoznamy prompt zakazuje.
+- **Dĺžka a tón:** 2 – 4 vety, ~70 slov, žiadne zdvorilostné úvody; **výzva na
+  kontaktný formulár len keď odpoveď nepoznáme alebo ide o cenu/termín/rozsah**,
+  a nikdy dvakrát v jednom rozhovore. Anti-halucinačné zásady 1 – 5 nedotknuté.
+
+**Zmena tohto správania = zmena kódu** (kým nie je hotový Krok 5 — config
+v Directuse). **Re-index netreba** — mení sa odpovedanie, nie obsah kúskov.
+Naživo až po merge do `main`.
+
 ## 1. Čo je RAG a načo vôbec je (po ľudsky)
 
 Predstav si, že si najmeš šikovného asistenta (to je AI model, napr. Gemini).
