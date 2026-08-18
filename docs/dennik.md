@@ -6,8 +6,9 @@
 ## 18.8.2026 — Kódové sedenie — výstup a štýl odpovedí chatbota
 
 **Typ:** kód (frontend). **Vetva:** `claude/chatbot-output-style-ezl918`.
-**Stav: čaká na revíziu a merge** — naživo až po merge do `main` (Railway
-nasadzuje z `main`). **Re-index NETREBA** — menil sa spôsob odpovedania, nie
+**Stav: ✅ ZLÚČENÉ do `main`** — PR #76 (majiteľ dal súhlas v tom istom sedení).
+Railway nasadzuje z `main`, takže zmena ide naživo sama; **skúška naživo čaká na
+majiteľa** (kroky nižšie). **Re-index NETREBA** — menil sa spôsob odpovedania, nie
 obsah kúskov. Dotknuté súbory: `frontend/lib/rag.ts`, `frontend/components/chat-widget.tsx`.
 
 **Vyriešili sa tri nálezy z overovania A (viď záznam nižšie):**
@@ -88,8 +89,8 @@ kratšie, sa **nedá overiť odtiaľto** — cloud sedenie nemá `RAG_DATABASE_U
 **Overenie prebehne až po nasadení.**
 
 **Čo čaká na majiteľa (presné kroky):**
-1. Revízia vetvy + **merge do `main`** (čakám na „áno"). Railway nasadí sám;
-   **re-index netreba**.
+1. ~~Revízia vetvy + merge do `main`~~ — **hotové (PR #76)**. Railway nasadzuje
+   sám; **re-index netreba**. Stačí počkať, kým deploy dobehne.
 2. Po deployi otvoriť chat na `www.digitalnapomoc.sk` a položiť **štyri kontrolné
    otázky** (tie isté, na ktorých sa problém našiel):
    - *„staviate aj weby?"*
@@ -665,8 +666,8 @@ opravné poznámky doplnené v `plan-agenti.md`.
 **🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
 
 - [x] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
-  *Hotové v kóde 18.8.2026 na vetve `claude/chatbot-output-style-ezl918`, **čaká na
-  merge a na skúšku naživo** (viď záznam v denníku).* Citujú sa len kúsky, ktoré
+  *Hotové 18.8.2026, **zlúčené do `main`** (PR #76); **čaká už len skúška naživo**
+  po deployi — kontrolné otázky a na čo sa pozerať sú v zázname v denníku.* Citujú sa len kúsky, ktoré
   model označí ako použité (`splitCited` v `lib/rag.ts`, strop `MAX_SOURCES = 3`),
   markdown sa vo widgete vykresľuje (`ChatText`, bez závislosti a bez
   `dangerouslySetInnerHTML`), prompt káže 2 – 4 vety a výzvu na kontakt len keď má
