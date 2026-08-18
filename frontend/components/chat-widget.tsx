@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 
@@ -49,19 +50,53 @@ function RobotMascot({ size = 30, wave = false }: { size?: number; wave?: boolea
 }
 
 /**
- * Minimálny markdown pre bubliny asistenta: **tučné**, odrážky „- " a odstavce.
- * Zámerne bez novej závislosti a bez `dangerouslySetInnerHTML` — text ide vždy
- * cez React ako text, takže sa cezeň nedá prepašovať HTML (XSS).
+ * Adresa nášho webu v texte odpovede — bot ju píše ako `digitalnapomoc.sk/…`,
+ * návštevník ju chce mať klikateľnú (nájdené pri skúške naživo 18.8.2026).
+ * Zámerne **iba naša doména**: odkaz na cudzí web sa cez odpoveď podstrčiť nedá.
  */
-function bold(text: string): ReactNode[] {
+const OUR_URL = /(?:https?:\/\/)?(?:www\.)?digitalnapomoc\.sk(?:\/[\w\-/#?=&.]*)?/gi;
+
+function linkify(text: string): ReactNode[] {
+  const out: ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(OUR_URL)) {
+    const start = m.index ?? 0;
+    // „wp.digitalnapomoc.sk" ani adresa v strede slova nie je náš verejný web
+    if (/[\w.@-]/.test(text[start - 1] ?? "")) continue;
+    // koncová interpunkcia patrí vete, nie odkazu
+    const shown = m[0].replace(/[.,;:!?)\]]+$/, "");
+    const path = shown.slice(shown.toLowerCase().indexOf("digitalnapomoc.sk") + 17) || "/";
+    out.push(text.slice(last, start));
+    out.push(
+      <Link
+        key={start}
+        href={path}
+        className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
+      >
+        {shown}
+      </Link>,
+    );
+    last = start + shown.length;
+  }
+  out.push(text.slice(last));
+  return out;
+}
+
+/**
+ * Minimálny markdown pre bubliny asistenta: **tučné**, odrážky „- ", odstavce
+ * a klikateľné adresy nášho webu. Zámerne bez novej závislosti a bez
+ * `dangerouslySetInnerHTML` — text ide vždy cez React ako text, takže sa cezeň
+ * nedá prepašovať HTML (XSS).
+ */
+function rich(text: string): ReactNode[] {
   // split s capture skupinou: nepárne indexy sú obsah medzi **…**
   return text.split(/\*\*(.+?)\*\*/g).map((part, i) =>
     i % 2 ? (
       <strong key={i} className="font-semibold text-ink">
-        {part}
+        {linkify(part)}
       </strong>
     ) : (
-      <Fragment key={i}>{part}</Fragment>
+      <Fragment key={i}>{linkify(part)}</Fragment>
     ),
   );
 }
@@ -74,7 +109,7 @@ function ChatText({ text }: { text: string }) {
     blocks.push(
       <ul key={blocks.length} className="list-disc space-y-0.5 pl-4">
         {bullets.map((b, i) => (
-          <li key={i}>{bold(b)}</li>
+          <li key={i}>{rich(b)}</li>
         ))}
       </ul>,
     );
@@ -90,7 +125,7 @@ function ChatText({ text }: { text: string }) {
     if (line.trim()) {
       blocks.push(
         <p key={blocks.length} className="whitespace-pre-wrap">
-          {bold(line)}
+          {rich(line)}
         </p>,
       );
     }
