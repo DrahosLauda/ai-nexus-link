@@ -1586,45 +1586,68 @@ main až po mojom výslovnom súhlase.
 ```
 Najprv si prečítaj docs/dennik.md (najnovšie navrchu + Backlog), docs/vizia.md
 a docs/rag-chatbot.md. Rešpektuj CLAUDE.md pravidlá spolupráce (go-live a predaj
-ZAMKNUTÉ; 1 sedenie = 1 typ).
+ZAMKNUTÉ; 1 sedenie = 1 typ; do main len cez vetvu + PR, merge až na môj výslovný
+súhlas; na konci zápis do docs/dennik.md).
 
-Toto je sedenie typu OBSAH + AGENT (RAG) — nestavia sa nový modul.
+TYP SEDENIA: OBSAH + RAG. Nestavia sa nový modul, nemieša sa do toho AI poradca
+v katalógu kytíc (to je samostatný prompt B nižšie).
+Odporúčaný model: Sonnet 5 (na Opus to nie je).
 
-Problém: náš chatbot na digitalnapomoc.sk nevie, že staviame moderné weby a máme
+PROBLÉM: náš chatbot na digitalnapomoc.sk nevie, že staviame moderné weby a máme
 knižnicu odvetvových šablón (prvá hotová: kvetinárstvo „Boma Flora", zlúčená do
-main v PR #67). Príčina NIE JE zastaraný index — chýba samotný obsah.
-`orchestrator/rag_index.py` indexuje presne tri zdroje: články z WordPressu,
-pole `faqs` a `heroBullets`/`steps` z `frontend/lib/content.ts`. Šablóna nie je
-v žiadnom z nich (žije pod /ukazky, ktoré je zámerne noindex demo).
+main v PR #67, beží na /ukazky/kvetinarstvo). Príčina NIE JE zastaraný index —
+overené v orchestrator/rag_index.py: indexujú sa presne TRI zdroje — články
+z WordPressu, pole `faqs` a `heroBullets`/`steps` z frontend/lib/content.ts.
+Šablóna nie je v žiadnom z nich (žije pod /ukazky, ktoré je zámerne noindex).
+Chýba teda SAMOTNÝ OBSAH, nie preindexovanie.
 
-Úloha: doplniť obsah tak, aby chatbot vedel odpovedať na otázky typu „staviate
-aj weby?", „viete spraviť web pre kvetinárstvo?", „ako vyzerá vaša práca?" —
-konkrétne a pravdivo, s citáciou zdroja.
+ÚLOHA: doplniť obsah tak, aby chatbot vedel pravdivo a konkrétne odpovedať na
+otázky typu „staviate aj weby?", „viete spraviť web pre kvetinárstvo?", „ako
+vyzerá vaša práca?" — a citoval zdroj.
 
-1) ROZHODNI CESTU (a zdôvodni ju, nie obe naraz):
-   (a) doplniť FAQ + výkladnú skriňu v `frontend/lib/content.ts` — najlacnejšie,
-       hneď v indexe; alebo
+1) ROZHODNI JEDNU CESTU (nie všetky naraz) a zdôvodni ju:
+   (a) doplniť `faqs` + prípadne `heroBullets`/`steps` v frontend/lib/content.ts
+       — najlacnejšie, hneď v indexe;
    (b) krátky článok cez Writer agenta — má aj SEO/GEO hodnotu, ale je to obsah
-       navyše na údržbu; alebo
-   (c) rozšíriť `rag_index.py` o ďalšie zdroje (service karty,
-       /headless-wordpress) — najväčší zásah, rob len ak (a) nestačí.
-2) NAPÍŠ OBSAH v našom tóne (žiadne generické AI frázy — zoznam v
-   docs/sablony-kvalita.md; žiadne vymyslené referencie, počty klientov ani
-   ocenenia). Hovor o tom, čo reálne vieme: moderný Next.js frontend nad
-   klientovým WordPressom, klient si spravuje obsah v známom admine, hotové
-   odvetvové šablóny, prvá je kvetinárstvo.
-3) ROZHODNUTIE MAJITEĽA (opýtaj sa v sedení, ak to nie je v zadaní): má chatbot
-   na ukážku aj ODKAZOVAŤ (/ukazky/kvetinarstvo)? Je to fiktívna značka Boma
-   Flora a noindex demo — technicky odkaz nič nekazí, ale je to obsahové
-   rozhodnutie, nie technické.
-4) RE-INDEX A OVERENIE: spusti `python rag_index.py` (v orchestrator/ s venv) a
-   preskúšaj chatbota reálnymi otázkami; over, že odpovedá z NOVÉHO zdroja a
-   cituje ho. Bez overenia sedenie nezatváraj.
+       navyše na údržbu;
+   (c) rozšíriť rag_index.py o ďalšie zdroje (service karty, /headless-wordpress)
+       — najväčší zásah, rob len ak (a) nestačí.
 
-Mantinely: slovenčina; tajomstvá len v env; nič nesľubuj za majiteľa; go-live
-nenavrhuj. Vetva claude/... , commit + push; merge do main až po mojom súhlase.
-Na konci zapíš do docs/dennik.md a odškrtni položku v Backlogu.
+2) POZOR, MÁ TO VEREJNÝ DOPAD: pole `faqs` sa nezobrazuje len chatbotovi — je to
+   FAQ sekcia na webe. Čokoľvek tam napíšeš, uvidia aj návštevníci. Text musí byť
+   hotový na zverejnenie, nie „len pre index".
+
+3) TEXT píš naším tónom, bez generických AI fráz (zoznam v docs/sablony-kvalita.md).
+   Žiadne vymyslené referencie, počty klientov, ocenenia ani ceny, ktoré nemáme
+   odsúhlasené. Hovor len o tom, čo reálne vieme: moderný Next.js frontend nad
+   klientovým WordPressom (headless), klient si spravuje obsah v známom admine,
+   hotové odvetvové šablóny, prvá je kvetinárstvo.
+
+4) ROZHODNUTIE PRE MŇA (opýtaj sa a počkaj): má chatbot na ukážku aj ODKAZOVAŤ
+   (/ukazky/kvetinarstvo)? Je to fiktívna značka Boma Flora a noindex demo —
+   technicky odkaz nič nekazí (noindex platí pre vyhľadávače, nie pre ľudí),
+   ale je to obsahové rozhodnutie, nie technické.
+
+5) RE-INDEX — realita prostredia, nepredstieraj overenie:
+   `python rag_index.py` potrebuje env premenné RAG_DATABASE_URL a GEMINI_API_KEY
+   (orchestrator/.env, resp. Railway Variables). Cloud sedenie ich nemusí mať.
+   Postup: zisti, či ich máš. Ak áno — spusti re-index (v orchestrator/, cez venv)
+   a preskúšaj chatbota reálnymi otázkami; over, že odpovedá z NOVÉHO zdroja
+   a cituje ho. Ak nie — priprav obsah, jasne mi napíš, že overenie prebehne až
+   po nasadení, a daj mi PRESNÉ príkazy/kroky (ručne `python rag_index.py`,
+   alebo „Run now" na orchestrátori na Railway; inak to naskočí pri najbližšom
+   behu pipeline Po/St/Pi 06:00 UTC). NEHLÁS „chatbot to už vie", kým to nie je
+   naozaj overené.
+
+6) NA KONCI: zápis do docs/dennik.md (čo hotové, čo naživo, čo čaká) a odškrtni
+   položku „Chatbot nevie o tom, že staviame weby / máme šablóny" v Backlogu
+   (je v skupine 🟢 PRIPRAVENÉ).
+
+Mantinely: slovenčina; tajomstvá výhradne v env premenných; nič nesľubuj za mňa;
+go-live ani predaj nenavrhuj. Over `npm run lint` + `npm run build`, ak siahaš na
+frontend. Vetva claude/... , commit + push; merge do main až po mojom „áno".
 ```
+
 
 ### B — AI poradca v katalógu kytíc (AGENTI; prevaha č. 1 z „Naša úroveň")
 
