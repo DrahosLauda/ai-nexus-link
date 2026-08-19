@@ -5,7 +5,7 @@
 #   1) KONTEXT (vždy, aj lokálne aj web): naservíruje na stdout ČISTÉ JSON
 #      s hookSpecificOutput.additionalContext = silná inštrukcia (slovenčina,
 #      prečítať dennik+vizia, Pravidlá spolupráce z CLAUDE.md) + živý Backlog
-#      vyrezaný priamo z docs/dennik.md (nikdy nie je zastaraný — číta sa za behu).
+#      načítaný priamo z docs/backlog.md (nikdy nie je zastaraný — číta sa za behu).
 #   2) ZÁVISLOSTI (len web, CLAUDE_CODE_REMOTE=true): cd frontend && npm install,
 #      aby lint/build/testy bežali hneď (bolesť M1: node_modules v cloude chýba).
 #
@@ -26,33 +26,25 @@ if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
   fi
 fi
 
-# --- 2) KONTEXT (vždy): silná inštrukcia + živý Backlog z dennika ---
-python3 - "$PROJECT_DIR/docs/dennik.md" <<'PY'
+# --- 2) KONTEXT (vždy): silná inštrukcia + živý Backlog ---
+python3 - "$PROJECT_DIR/docs/backlog.md" <<'PY'
 import io, json, sys
 
-dennik_path = sys.argv[1]
+backlog_path = sys.argv[1]
 
-# Vyrez sekcie "## Backlog …" z dennika (od nadpisu Backlog po nasledujúci "## ").
+# Backlog má vlastný súbor (docs/backlog.md) — číta sa celý, nič sa nevyrezáva.
 backlog = ""
 try:
-    with io.open(dennik_path, encoding="utf-8") as f:
-        lines = f.readlines()
-    start = next((i for i, ln in enumerate(lines) if ln.startswith("## Backlog")), None)
-    if start is not None:
-        end = len(lines)
-        for j in range(start + 1, len(lines)):
-            if lines[j].startswith("## "):
-                end = j
-                break
-        backlog = "".join(lines[start:end]).strip()
-except Exception as exc:  # dennik nedostupný — servíruj aspoň inštrukciu
-    print("session-start: dennik.md sa nepodarilo prečítať: %s" % exc, file=sys.stderr)
+    with io.open(backlog_path, encoding="utf-8") as f:
+        backlog = f.read().strip()
+except Exception as exc:  # backlog nedostupný — servíruj aspoň inštrukciu
+    print("session-start: backlog.md sa nepodarilo prečítať: %s" % exc, file=sys.stderr)
 
 instrukcia = (
     "Komunikuj po SLOVENSKY (obsah aj konverzácia).\n\n"
-    "SKÔR NEŽ ZAČNEŠ pracovať, prečítaj `docs/dennik.md` (aspoň Backlog nižšie "
-    "a najnovšie záznamy navrchu) a `docs/vizia.md` — kvôli aktuálnemu stavu, "
-    "rozhodnutiam a ponaučeniam.\n\n"
+    "SKÔR NEŽ ZAČNEŠ pracovať, prečítaj `docs/backlog.md` (otvorené úlohy — sú "
+    "aj nižšie), `docs/dennik.md` (najnovšie záznamy navrchu) a `docs/vizia.md` "
+    "— kvôli aktuálnemu stavu, rozhodnutiam a ponaučeniam.\n\n"
     "Rešpektuj „Pravidlá spolupráce“ z `CLAUDE.md`:\n"
     "• Go-live (zverejnenie do Googla) a predaj sú ZAMKNUTÉ — nenavrhuj ich, "
     "nesmeruj k nim; idú len na výslovný pokyn majiteľa.\n"
@@ -67,7 +59,7 @@ instrukcia = (
 
 context = instrukcia
 if backlog:
-    context += "\n\nŽIVÝ Backlog (aktuálny stav priamo z `docs/dennik.md`):\n\n" + backlog
+    context += "\n\nŽIVÝ Backlog (aktuálny stav priamo z `docs/backlog.md`):\n\n" + backlog
 
 out = {
     "hookSpecificOutput": {
