@@ -165,6 +165,17 @@ doména nelinkované; `<img src=x onerror=…>` escapovaný.
 ktorý sa s botom naozaj rozpráva**. Otázka „a dá sa to klikateľné?" nebola
 v kontrolných otázkach — vypadla z bežného používania.
 
+**✅ Overené naživo 19.8.2026** — zlúčené ako PR #78, chatbot na
+`www.digitalnapomoc.sk` dáva adresu ukážky ako klikateľný odkaz.
+
+**Deploy trval ~3 hodiny, a nie našou vinou.** Railway držal deploy v stave
+„Zaradené do frontu — problémy s nadradeným GitHubom" (výpadok GitHubu okolo
+01:16 GMT+2). Kým sa čakalo, vyzeralo to ako chyba v kóde: web ukazoval adresu
+ako obyčajný text aj v anonymnom okne. **Ponaučenie: keď zmena „nefunguje", najprv
+zisti, či je vôbec nasadená** — až potom hľadaj chybu v kóde. Presný postup, ako
+sa to dá zmerať bez hádania, je v `docs/prikazy.md` → „Je moja zmena naozaj
+nasadená?".
+
 **Ponaučenie:** keď sa nedá zmerať, nehádaj číslo — zmeň otázku. Prah podobnosti
 sa bez prístupu k dátam nastaviť nedá, ale „nech model povie, z čoho čerpal"
 funguje bez jediného magického čísla. A druhé: dočasná stránka v `app/` je lacný
@@ -721,8 +732,8 @@ opravné poznámky doplnené v `plan-agenti.md`.
 
 - [x] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
   *Hotové 18.8.2026, zlúčené do `main` (PR #76) a **overené naživo** — všetky štyri
-  kontrolné otázky prešli (viď záznam v denníku). Dobeh: klikateľné odkazy
-  v odpovediach, vetva `claude/chat-odkazy-klikatelne`.* Citujú sa len kúsky, ktoré
+  kontrolné otázky prešli (viď záznam v denníku). Dobeh: **klikateľné odkazy
+  v odpovediach** — PR #78, overené naživo 19.8.2026.* Citujú sa len kúsky, ktoré
   model označí ako použité (`splitCited` v `lib/rag.ts`, strop `MAX_SOURCES = 3`),
   markdown sa vo widgete vykresľuje (`ChatText`, bez závislosti a bez
   `dangerouslySetInnerHTML`), prompt káže 2 – 4 vety a výzvu na kontakt len keď má

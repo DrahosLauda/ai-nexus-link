@@ -98,6 +98,35 @@ nič nemení, len povie, kde si. Keď si mimo repa, vráť sa absolútnou cestou
 cd /Users/drahoslauda/www/ai-nexus-link
 ```
 
+### Je moja zmena naozaj nasadená? (skôr, než ju začneš hľadať v kóde)
+
+Keď zmena na webe „nefunguje", **prvá otázka nie je „kde mám chybu?", ale „beží
+tam vôbec môj build?"**. Prehliadač aj Railway vedia klamať: v otvorenej karte
+beží starý JavaScript, deploy môže visieť vo fronte. Toto je meranie, ktoré
+neklame — pozrie sa priamo na to, čo server posiela.
+
+Postup: nájdi si v svojej zmene **nejaký reťazec, ktorý predtým v kóde nebol**
+(najlepšie CSS trieda, napr. `underline-offset-2`), a hľadaj ho v živom balíku:
+
+```bash
+cd ~/Desktop
+curl -s https://www.digitalnapomoc.sk/ -o home.html
+grep -o '/_next/static/chunks/[^"]*\.js' home.html | sort -u | while read c; do
+  curl -s "https://www.digitalnapomoc.sk$c" -o chunk.js
+  grep -q "Napíšte otázku" chunk.js && grep -c "underline-offset-2" chunk.js
+done
+```
+
+`1` (alebo viac) = tvoja zmena **je** nasadená, chybu hľadaj v kóde.
+`0` = nasadená **nie je**, kód je nevinný — pozri Railway → Deployments.
+
+*(Prvý `grep` nájde súbor s chat widgetom; ak testuješ inú časť webu, nahraď
+„Napíšte otázku" iným textom, ktorý sa v nej vyskytuje.)*
+
+**Kde to vzniklo:** 18. – 19.8.2026 sme takto za dve minúty dokázali, že
+klikateľné odkazy v chatbote nefungujú preto, že Railway držal deploy vo fronte
+kvôli výpadku GitHubu — a nie preto, že by bol zlý kód.
+
 ### Keď `git pull` odmietne: „local changes would be overwritten"
 
 Znamená to, že **ty (alebo Obsidian) máš lokálne upravený ten istý súbor**, ktorý
