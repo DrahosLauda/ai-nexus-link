@@ -681,16 +681,25 @@ opravné poznámky doplnené v `plan-agenti.md`.
   Bublina „Poradím s výberom" odporučí konkrétne HOTOVÉ kytice z katalógu.
   Dáta (`katalog.ts`) aj chat modul (`/api/chat`, `chat-widget`) už existujú.
   **Hotový štartový prompt B** v `plan-agenti.md`. Typ sedenia: agenti.
-- [ ] 💬 **Chatbot má vedieť, že staviame weby a máme šablóny** — ⚠️ **odblokované**
-  zlúčením kvetinárstva do `main` (PR #67). Nie je to re-index, chýba obsah
-  v indexovaných zdrojoch. **Hotový štartový prompt A** v `plan-agenti.md`.
-  Typ sedenia: obsah + RAG. *(Detail nižšie v sekcii „RAG chatbot".)*
-- [ ] 🎨 **Smer V4 do sekcie Služby na Domove** — majiteľ ho vybral v demo
-  `design-shotgun` (asymetrický feature: Svadby ako veľký blok + 2×2 karty).
-  `SluzbyZoznam` v `sections/bloky.tsx`, data-driven. Typ sedenia: dizajn.
+- [x] 💬 **Chatbot má vedieť, že staviame weby a máme šablóny** — *hotové a naživo
+  18.8.2026 (PR #72, prompt A).* Tri nové FAQ v `frontend/lib/content.ts`, re-index
+  prebehol, odpovede overené naživo. *(Duplicita s položkou v sekcii „RAG chatbot"
+  nižšie — ponechané odškrtnuté na oboch miestach, aby nemiatlo.)*
+- [ ] 🎨 **Smer V4 do sekcie Služby na Domove** (šablóna kvetinárstva Boma Flora,
+  **nie** digitalnapomoc.sk) — majiteľ ho vybral v demo `design-shotgun` z piatich
+  smerov (V1 editorial · V2 mriežka · V3 tmavý pás · **V4 asymetrický feature** ·
+  V5 dlaždice). **V4 = Svadby ako veľký blok + 2×2 kompaktné karty** — asymetria
+  vedie oko na najhodnotnejšiu službu. Dnes je sekcia ešte starým vzorom
+  (editorial riadky): `SluzbyZoznam` v `templates/kvetinarstvo/sections/bloky.tsx`,
+  dáta `homeSluzby` v `content.ts`. **Mantinely:** data-driven (rozloženie sa
+  odvodí z dát, nie natvrdo „tu bude Svadby" — inak sa to nedá použiť pre ďalšieho
+  klienta) a **NIE kopírovaním demo HTML** (náhľady boli prieskum a sú zmazané);
+  ide sa cez `ui-ux-designer` → `frontend-dev` → `visual-qa`. Odklad za E1 už
+  neplatí — E1 je hotové. Typ sedenia: dizajn, menšie.
 
-> **Odporúčané poradie:** najprv 💬 (menšie, práve odblokované), potom 🤖.
-> **Nemiešať do jedného sedenia** — jedno je obsah, druhé stavba modulu.
+> **Poradie sa rieši na veľkej porade** — štartovací prompt **P** v
+> `plan-agenti.md` („Veľká plánovacia porada"). Do dovtedy platí: **nemiešať
+> viac vecí do jedného sedenia** (1 sedenie = 1 typ).
 
 **🔵 ČAKÁ NA MAJITEĽA — sedenie s tým samo nepohne:**
 
@@ -742,6 +751,14 @@ opravné poznámky doplnené v `plan-agenti.md`.
   system prompt/osobnosť, počet kúskov `k`) do `agent_config` (riadok `chatbot`),
   aby sa dali meniť klikaním bez zásahu do kódu; logy chatov do `agent_logs`;
   vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
+  **Dnes:** `SYSTEM_PROMPT`, `CHAT_MODEL` aj `TOP_K` sú natvrdo v `frontend/lib/rag.ts`,
+  takže každá zmena tónu = vetva + PR + deploy (18.8. to kvôli výpadku GitHubu
+  trvalo ~3 h). **Podmienka predajnosti:** klientovi nepovieme „napíš mi a ja to
+  prekódim" — musí si tón doladiť sám. **Mantinel do zadania:** hodnoty v kóde
+  ostanú ako **fallback** — keď je Directus nedostupný alebo riadok prázdny, bot
+  beží podľa dnešných hodnôt (config v DB mení bota naživo bez revízie cez PR).
+  **Hodnota logov:** dnešný nález s klikateľnými odkazmi vyšiel z jednej otázky
+  majiteľa — `agent_logs` ukáže stovky takých.
 - [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
   (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
 - [x] **Chatbot nevie o tom, že staviame weby / máme šablóny** — *hotové a naživo

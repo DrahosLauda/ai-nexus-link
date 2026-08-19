@@ -1576,6 +1576,115 @@ main až po mojom výslovnom súhlase.
 
 ## Štartové prompty pre ďalšie sedenia (pripravené po E1)
 
+### P — Veľká plánovacia porada (PORADA/PLÁN; pripravené 19.8.2026)
+
+> **Na čo to je:** backlog narástol do šírky (chatbot, rezervačný agent,
+> kvetinárstvo/M7, obsah, frontend drobnosti, workflow, veľké iniciatívy) a chýba
+> **poradie**. Toto sedenie nič nekóduje — rozhoduje sa v ňom, čo ide ďalej a
+> prečo. Výstup: zoradený plán + štartovacie prompty pre najbližšie sedenia.
+> Zoznam nižšie je **úplný prehľad otvorených vecí k 19.8.2026** — je to podklad
+> na diskusiu, nie zoznam na odsúhlasenie naraz.
+
+```
+Najprv si prečítaj docs/dennik.md (najnovšie záznamy navrchu + celý Backlog),
+docs/vizia.md (kam to smeruje, §8–§11) a docs/plan-agenti.md. Rešpektuj CLAUDE.md
+pravidlá spolupráce (go-live a predaj ZAMKNUTÉ; 1 sedenie = 1 typ; do main len cez
+vetvu + PR, merge až na môj výslovný súhlas; na konci zápis do docs/dennik.md).
+
+TYP SEDENIA: PORADA / PLÁN. Dnes sa NEKÓDUJE a nič sa nenasadzuje — jediné zmeny
+v repe sú v docs/ (denník, backlog, štartovacie prompty). Ak sa rozbehne kódovanie,
+zastav ma a navrhni samostatné sedenie.
+
+CIEĽ: prejsť VŠETKY otvorené veci, zoradiť ich podľa hodnoty a závislostí a
+rozhodnúť, čo ide v najbližších sedeniach. Chcem toho prediskutovať viac — pýtaj
+sa, oponuj, navrhuj poradie. Nechcem zoznam, chcem rozhodnutia.
+
+AKO CHCEM, ABY SI VIEDOL PORADU:
+- Ku každej oblasti mi daj krátke zhrnutie (čo to je, prečo to má/nemá zmysel
+  teraz, veľkosť sedenia, na čom to stojí) a SVOJE odporúčanie — nie neutrálny
+  výpis možností.
+- Kde sú závislosti (A sa nedá bez B), povedz to rovno.
+- Kde si myslíš, že niečo je YAGNI alebo predčasné, povedz to rovno.
+- Rozdeľ veci na: (1) NUTNÉ pred prvým klientom, (2) zvyšuje hodnotu ukážky,
+  (3) údržba/technický dlh, (4) môže počkať.
+
+OTVORENÉ OBLASTI (stav k 19.8.2026 — over si ich v Backlogu, môžu byť posunuté):
+
+A) CHATBOT (RAG)
+   - Krok 5 — nastavenia (system prompt, model, počet kúskov k) z kódu do Directusu
+     `agent_config`, logy chatov do `agent_logs`, vlastný token s minimálnymi
+     právami. Podmienka predajnosti; mantinel = hodnoty v kóde ostanú ako fallback.
+   - Kvalita obsahu, z ktorého čerpá — revízia starších článkov (viac o NAŠICH
+     riešeniach, menej odkazov na cudzie nástroje).
+   - Hlas (fáza 2) — browser Web Speech vs platený TTS (docs/rag-chatbot.md §9).
+   - Optimalizácia — frontend na vnútornú DB adresu; instantné doindexovanie cez
+     WP webhook (dnes 3×/týždeň v pipeline).
+   - HOTOVÉ 18. – 19.8.: výstup/štýl odpovedí + klikateľné odkazy (PR #76 – #79).
+
+B) REZERVAČNÝ AGENT (R1 beží naživo)
+   - Rozšíriť `booking_services` na 2–3 reálne konzultačné typy (klik v Directuse).
+   - R2 — chatbot rezervuje v konverzácii (Gemini function calling nad
+     lib/booking.ts). Robiť až po rozšírení služieb.
+   - Zrušovací link v potvrdzovacom e-maile.
+   - R3 pripomienky (cron deň vopred) · R4 replikácia u klienta.
+
+C) KVETINÁRSTVO / M7 (demo šablóna Boma Flora)
+   - AI poradca v katalógu kytíc — hotový prompt B nižšie; prevaha č. 1.
+   - Smer V4 do sekcie Služby na Domove — dizajnové sedenie, data-driven.
+   - Fotky pre 3 kytice bez obrázka (čaká na majiteľa alebo kreatívne sedenie).
+   - E2 — WooCommerce ako zdroj katalógu (potrebuje samostatnú WP+Woo inštanciu).
+   - E3 — produkt agent (stojí na E2).
+   - Domerať Lighthouse na deployi (cieľ ≥ 95, prístupnosť 100).
+
+D) OBSAH A ORCHESTRÁTOR
+   - Rôznorodejšie úvody článkov (Writer opakuje ten istý vzorec).
+   - Jednoduchšie obrázky · konzistentné alt texty.
+   - Obsahová stratégia blogu = predávať NAŠE krabicové riešenia, nie cudzie nástroje.
+
+E) FRONTEND — otvorené drobnosti
+   - Responzivita na mobile (doladiť detaily po prehliadke).
+   - Interné odkazy v tele článkov po migrácii ukazujú na `wp.` → prelinkovať na /blog/…
+   - Podstránky služieb /sluzby/[slug] · predajné podstránky pre chatbota a
+     rezervácie · fotka tímu · reálny telefón v pätičke.
+
+F) BEZPEČNOSŤ A TECHNICKÝ DLH
+   - Vlastná obmedzená rola pre orchestrátor token (teraz admin) — least privilege.
+   - Frontend číta RAG databázu priamo (patrí ku Kroku 5).
+
+G) NÁŠ WORKFLOW (shortlist z gstacku, cesta B — vlastné odľahčené skilly)
+   - „plan-review pred kódom" · „retro/reflect" (zápis ponaučení).
+
+H) VEĽKÉ INICIATÍVY (vizia.md §8–§11)
+   - Krabicové riešenia ako produktová línia: rezervácie (✅ demo), chatbot
+     (✅ demo), dohadovanie schôdzok, zápis poznámok zo stretnutí, e-mail
+     auto-odpoveď, mockup/náhľad agent.
+   - Woo služby napárované na agentov · Fáza 5 produktizácia (šablóna + napojenie
+     pre ďalších klientov).
+
+I) PRED-GOOGLE CHECKLIST — POZOR, spustenie je ZAMKNUTÉ
+   - Cookie lišta + zásady ochrany osobných údajov (GDPR, web zbiera leady),
+     doladenie dizajnu, potom SITE_INDEXABLE=true + Search Console.
+   - O tomto sa dnes iba BAVÍME (čo to obnáša, v akom poradí). Spustenie
+     nenavrhuj a nesmeruj k nemu — ide len na môj výslovný pokyn.
+
+OTÁZKY, NA KTORÉ CHCEM ODÍSŤ S ODPOVEĎOU:
+1. Čo je najbližších 3–5 sedení a v akom poradí (a prečo práve tak)?
+2. Čo z toho je NUTNÉ pred prvým platiacim klientom a čo je zbytočný luxus?
+3. Kde máme technický dlh, ktorý sa zaplatením neskôr predraží?
+4. Ktoré veci sa dajú spojiť do jedného sedenia bez porušenia „1 sedenie = 1 typ",
+   a ktoré musia ostať samostatné?
+5. Čo v backlogu je už mŕtve/prekonané a má sa zmazať?
+
+NA KONCI SEDENIA (povinné):
+- zápis do docs/dennik.md — rozhodnutia, poradie, zdôvodnenie (nie prepis diskusie);
+- prepísať Backlog tak, aby z neho bolo vidieť POradie, nielen zoznam;
+- do docs/plan-agenti.md napísať štartovacie prompty pre 2–3 najbližšie sedenia,
+  ktoré sme si odsúhlasili (konkrétne miesta v kóde, mantinely, kontrolné otázky);
+- zmeny v docs/ na vetvu claude/... + PR; merge až po mojom „áno".
+```
+
+
+
 > **Stav: A je ✅ HOTOVÉ a naživo** (18.8.2026, PR #72 + #73 — viď denník).
 > Otvorené ostávajú **C** (ladenie výstupu chatbota, priamo nadväzuje na A) a **B**
 > (nový modul). **Nemiešaj ich do jedného sedenia** — C je kód, B je stavba nového
