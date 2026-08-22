@@ -83,6 +83,7 @@ jediné miesto pravdy pre „čo je ďalej"), `docs/dennik.md` (história a vyri
 `docs/rag-chatbot.md` (štartový runbook pre RAG chatbot agenta — prvé živé demo),
 `docs/obsidian-claude.md` (návod na prepojenie Obsidian ↔ Claude + na čo nám slúži),
 `docs/ako-viest-sedenia.md` (konvencia, ako deliť a viesť sedenia — 1 sedenie = 1 súvislý cieľ),
+`docs/archiv-planov.md` (odbyté zadania a prompty k hotovým krokom — história, nie plán),
 `docs/skilly.md` (prehľad všetkých skillov a sub-agentov + ako ich vyvolať v sedeniach).
 
 **Vizuálne mapy** (v repe, otvárajú sa v prehliadači): `docs/mapy/strom-projektu.html`

@@ -111,6 +111,29 @@ ktoré nikto pred zverejnením nevidel, je riziko). Text pripraví agent, video
 spraví človek, keď sa mu nápad zapáči. Preto má `social_posts` od začiatku pole
 na médium — aby sa video dalo doplniť bez prerábania schémy.
 
+### Archív plánov — `plan-agenti.md` očistený
+
+Súbor mal 2 257 riadkov, z toho veľkú časť tvorili **hotové alebo nahradené
+zadania**. Presunuté do nového `docs/archiv-planov.md` — **836 riadkov, nič sa
+nezmazalo.** `plan-agenti.md` klesol na 1 425 riadkov a hovorí len to, čo naozaj
+ideme robiť.
+
+**Do archívu išlo:** štartový prompt go-live + celý plán SessionStart hooku
+(hotový, PR #52) · zadanie plánovacieho sedenia k Frontend agentovi (to sedenie
+prebehlo, výstup ostáva) · štartový prompt E1 (hotové) · prompty **P, A, C,
+C-dobeh** (porada odbytá; PR #72, #76, #78 zlúčené) · celý plán konfigurátora
+**„Klára"** (sám sa označoval „⛔ NAHRADENÝ") · štartový prompt M1 (hotové).
+
+**Zámerne ostalo v `plan-agenti.md`:** prompt **B** (AI poradca v katalógu —
+backlog sa naň odvoláva), celý plán rezervačného agenta **R0–R4**, plán **M7**
+a sekcia o **externých skilloch** (živý zoznam adoptovaných + kandidátov vrátane
+`ui-ux-pro-max`) — tá bola povýšená na samostatnú sekciu, lebo predtým visela
+pod nahradeným plánom Klára.
+
+**Overenie:** porovnaných všetkých 95 nadpisov a 1 754 riadkov textu pôvodného
+súboru proti dvom novým — **0 stratených riadkov**. (Pri presune vznikla
+duplicita sekcie o skilloch; kontrola ju odhalila a bola odstránená.)
+
 ### Ponaučenia
 
 - **Nekódovať priority do štruktúry.** Priority patria len do backlogu; mapa
@@ -133,9 +156,7 @@ na médium — aby sa video dalo doplniť bez prerábania schémy.
 
 - **Tvar kolekcie `social_posts`** — ktoré polia agent generuje. Do P4.
 - **Newsletter** — posledný WordPress plugin bez náhrady. Na najbližšiu poradu.
-- **Archív `plan-agenti.md`** — súbor má 2 184 riadkov, z toho ~875 sú hotové
-  alebo mŕtve zadania. Dohodnuté: **presunúť do `docs/archiv-planov.md`, nemazať.**
-  Presun tohto sedenia sa nerobil — ostáva ako samostatná drobnosť.
+- ~~Archív `plan-agenti.md`~~ — **✅ vybavené v tomto sedení** (viď nižšie).
 
 ## 18.8.2026 — Kódové sedenie — výstup a štýl odpovedí chatbota
 
