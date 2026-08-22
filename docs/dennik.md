@@ -3,6 +3,140 @@
 > Čo sa kedy urobilo, čo sa pokazilo a ako sa to vyriešilo.
 > Nové záznamy pridávajte navrch.
 
+## 22.8.2026 — Veľká plánovacia porada — poradie práce na ďalšie sedenia
+
+**Typ:** porada / plán. **Vetva:** `claude/planning-session-priorities-qap0uj`.
+**Nemenil sa žiadny kód** — iba `docs/`. Cieľ: prejsť všetko otvorené, zoradiť
+podľa hodnoty a závislostí, rozhodnúť, čo ide v ďalších sedeniach.
+
+### Hlavný výstup — fronta P1 až P6
+
+Poradie je v `docs/backlog.md` (sekcia „FRONTA"), odôvodnenie každej položky
+v `docs/mapy/pracovna-mapa.html`, štartovacie prompty v `docs/plan-agenti.md`.
+
+| | Čo | Prečo tam |
+|---|---|---|
+| **P1** | Nastavenia a logy chatbota **+ bookingu** do Directusu (Krok 5) | Odomyká všetko ostatné; bez logov sme slepí |
+| **P2** | Obmedzené prístupové kľúče | Podmienka bezpečnej replikácie pre klientov |
+| **P3** | Chatbot rezervuje v konverzácii (R2) + zrušovací odkaz | Z bota, čo odpovedá, sa stane agent, ktorý koná |
+| **P4** | Social agent — príspevky ako koncepty | Nepotrebuje novú infraštruktúru |
+| **P5** | Customizačný agent M4 — dva weby z jednej šablóny | Overí tézu produktu, ktorú sme nikdy neoverili |
+| **P6** | Kvalita obsahu — Writer a revízia článkov | Až po P1, keď z logov vieme, čo ľuďom chýba |
+
+### Nález: chatbot a booking stoja mimo lego vzoru
+
+Overené priamo v kóde: **`agent_config` ani `agent_logs` sa vo `frontend/`
+nevyskytujú ani raz**, zatiaľ čo orchestrátor ich používa v štyroch súboroch.
+
+- **Chatbot** je horší prípad — `SYSTEM_PROMPT`, `CHAT_MODEL`, `TOP_K = 5`
+  a `MAX_SOURCES = 3` sú natvrdo v `frontend/lib/rag.ts`. Zmena tónu = vetva,
+  PR, deploy. A žiadne logy → netušíme, na čo sa ľudia pýtajú ani ako často
+  bot odpovie „neviem". Je to jediný agent, ktorý hovorí priamo s návštevníkom,
+  a nemá čiernu skrinku.
+- **Booking je na tom výrazne lepšie, než sa zdalo** — služby, otváracie hodiny,
+  výluky aj rezervácie **sú** v Directuse (`booking_*`), má vlastný token
+  (`RESERVATION_TOKEN`) aj unit testy. Chýbajú mu len `agent_logs` a jedna
+  konštanta natvrdo (`MIN_LEAD_MIN = 60`).
+
+**Rozhodnutie:** booking ide do **toho istého sedenia** ako chatbot. V zadaní
+P1 už stál mantinel „config sa číta podľa kľúča, inak sa Krok 5 robí druhýkrát,
+len čo pribudne druhý bot" — booking JE ten druhý bot. Zapojenie je ~20 riadkov
+navyše; rozdeliť by znamenalo spraviť presne tú chybu, pred ktorou mantinel varuje.
+
+**Mantinel navyše (GDPR):** otázky návštevníkov sú osobné údaje. P1 začne
+**metadátami** (našiel zdroje áno/nie, koľko, odpovedal / „neviem"), nie plným
+znením otázok. Plné otázky až po dokončení zásad ochrany osobných údajov.
+
+### Rozhodnutia o odložení
+
+- **Kokpit nad Directusom → Fáza 5.** Directus sám je dnes dostatočný admin;
+  väčší zmysel má stavať pod ním agentov ako legokocky.
+- **M7 (AI poradca v katalógu kytíc) → odložené.** Je to funkcia demo šablóny,
+  nie kocka nášho systému. Prednosť majú veci, ktoré platia pre každého klienta.
+- **RAG nad `docs/` → zamietnuté.** Riziko úniku našich poznámok do verejného
+  chatbota, plus `prune()` v `rag_index.py` maže všetko, čo nie je v aktuálnom
+  zozname zdrojov — dva indexery nad jednou tabuľkou by sa navzájom vymazali.
+  A SessionStart hook doručí `docs/` každému sedeniu aj tak.
+
+### Posúdené externé nástroje — čo neberieme a prečo
+
+- **Hermes agent** — rozpísaný ako kandidát, potom zamietnutý: mal by čítať naše
+  poznámky, čo nechceme.
+- **agency-agents** (230 generických osobností) — neberieme ako celok. Máme 4
+  sub-agentov naladených na slovenčinu a našu bránu kvality; generické osobnosti
+  produkujú generický výstup, presne to, proti čomu bojujeme.
+- **free-claude-code** — neberieme. Lokálna proxy nesadne do cloud sedení, a
+  smerovať Claude Code cez tretie strany znamená posielať im náš kód a poznámky.
+- **ui-ux-pro-max** — ostáva mimo. Argument „vyzeralo by to ako AI" majiteľ
+  odmietol (dá sa upraviť); platí len časový argument — nemáme na obzore dizajnové
+  sedenie a katalóg zastaráva.
+- **MiniMax H3 lokálne** — **odpadá.** Potrebuje ~42,5 GB váh a 16–24 GB VRAM na
+  NVIDIA alebo Apple Silicon. Majiteľov Mac má Intel + AMD Radeon Pro 555X (4 GB)
+  a 16 GB RAM — dvojité nie: málo pamäte **a** nesprávny typ grafiky (AMD v Intel
+  Macu nedostane ani CUDA, ani MPS).
+- **Higgs Audio v3** — zaujímavý (hostované API zdarma, klonovanie hlasu), ale
+  licencia je **nekomerčná**; výnimka „Creator Use Grant" kryje naše vlastné
+  videá a príspevky, **nie** produkt predávaný klientom. A slovenčina nie je
+  potvrdená — dokumentácia spomína češtinu, slovenčinu nie.
+
+### Overené naživo v tomto sedení
+
+**1. Diktovanie (Wispr Flow) — funguje, vyriešené.**
+Štyri diktáty, **153 slov, 1 chyba** = 0,65 chyby na 100 slov. Zvládol `dĺžne`,
+`ľalia`, `kôň`, `päť`, sám dopĺňal čiarky v dlhých vetách, trafil `Directus`,
+`Next.js`, `WordPress`, `Orchestrátor` aj `Radeon Pro 555X`. Jediná chyba:
+`Railway` → „Raovej" (slovenská výslovnosť „rejlvej"), opravené pridaním do
+slovníka. **Verdikt: predplatné má zmysel, netreba porovnávať s alternatívami.**
+Poznámka: Wispr zalamuje riadok pri každej dlhšej pauze — pri diktovaní súvislého
+textu treba hovoriť plynulejšie.
+
+**2. Video cez API — funguje, otázka uzavretá.**
+Higgsfield má 1 kredit (free plán, video stojí 12,5) → nepoužiteľný. **Kling má
+VIP a 420 kreditov.** Vygenerovaný 5 s vertikálny klip 1080p k článku ID 863
+(„Ako tvoriť obsah na sociálne siete s pomocou AI"): model `kling-video-v3_0_turbo`,
+**70 sekúnd, 50 kreditov**, bez vodoznaku. Majiteľ hodnotil „môže byť" — doladenie
+v samostatnom sedení.
+
+**Poznatky z generovania:**
+- `kling-video-v3_0_turbo` **nepodporuje** zvukové parametre (`enable_audio`,
+  `audio_prompt`, `music_prompt`) — tie má `kling-video-v2_5` a `v2_6`.
+- Do promptu patrí **„no text, no captions, no letters"** — AI modely slovenský
+  text s mäkčeňmi rozsekajú. Text ide do popisu príspevku, nie do videa.
+- Odkazy od Klingu **expirujú po 24 h** — treba stiahnuť hneď.
+- `who_am_i` vracia ~105 000 znakov; parsovať cez `python3 -c` zo súboru,
+  nie čítať celé.
+
+**Dôsledok pre P4:** video **nepatrí do agenta na Railway** (žiadne GPU a video,
+ktoré nikto pred zverejnením nevidel, je riziko). Text pripraví agent, video
+spraví človek, keď sa mu nápad zapáči. Preto má `social_posts` od začiatku pole
+na médium — aby sa video dalo doplniť bez prerábania schémy.
+
+### Ponaučenia
+
+- **Nekódovať priority do štruktúry.** Priority patria len do backlogu; mapa
+  ukazuje, ako systém vyzerá, nie čo je naliehavé. Rovnako Frontend agent nie je
+  samostatná vetva stromu — je to náš agent (len nereplikovateľný pre klientov)
+  a jeho sub-agenti patria pod neho, nie vedľa neho.
+- **Nepísať skratky bez vysvetlenia.** Majiteľ nemá ako zistiť, čo je „M4" alebo
+  „R2". Preto má backlog teraz tabuľku vysvetliviek a každá položka fronty aj
+  cestu v strome (`AI Nexus Link / Agenti / …`).
+- **Neoverené odkazy medzi artefaktmi nefungujú** — artefakty bežia v izolovanom
+  rámci, `<a href>` medzi nimi je mŕtvy. Riešené textom, nie odkazom.
+- **Nie všetko zapísané musí navždy platiť.** Dokumentácia sa rozchádza s realitou
+  prirodzene (Fáza 3 bola v `CLAUDE.md` ako „na rade", pritom cron beží od júla).
+  Nie je na to potrebné nové pravidlo — stačí zápis na konci sedenia.
+- **Overovať tvrdenia v kóde, nie spamäti.** Nález o `agent_config` vo frontende
+  vznikol jedným `grep` — a rovnaký grep zároveň ukázal, že booking je na tom
+  lepšie, než znel prvý odhad.
+
+### Čo ostáva otvorené (neprediskutované)
+
+- **Tvar kolekcie `social_posts`** — ktoré polia agent generuje. Do P4.
+- **Newsletter** — posledný WordPress plugin bez náhrady. Na najbližšiu poradu.
+- **Archív `plan-agenti.md`** — súbor má 2 184 riadkov, z toho ~875 sú hotové
+  alebo mŕtve zadania. Dohodnuté: **presunúť do `docs/archiv-planov.md`, nemazať.**
+  Presun tohto sedenia sa nerobil — ostáva ako samostatná drobnosť.
+
 ## 18.8.2026 — Kódové sedenie — výstup a štýl odpovedí chatbota
 
 **Typ:** kód (frontend). **Vetva:** `claude/chatbot-output-style-ezl918`.

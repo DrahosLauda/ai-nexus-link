@@ -475,7 +475,7 @@
       <details class="q">
         <summary>
           <span class="qn">P1</span>
-          <span class="qt">Nastavenia chatbota z kódu do Directusu
+          <span class="qt">Nastavenia a logy chatbota + bookingu do Directusu
             <small>Aby sa tón a správanie bota dali meniť klikaním, nie prekódovaním</small></span>
           <span class="chev" aria-hidden="true"></span>
         </summary>
@@ -483,7 +483,7 @@
           <div class="path">AI&nbsp;Nexus&nbsp;Link / Agenti / RAG chatbot / Krok 5</div>
           <dl class="dl">
             <div><dt>Čo je dnes</dt><dd>To, ako sa chatbot správa — akým tónom hovorí, ktorý model používa, koľko kúskov textu si pritiahne k odpovedi — je napísané priamo v kóde, v súbore <code>frontend/lib/rag.ts</code>.</dd></div>
-            <div><dt>Čo sa zmení</dt><dd>Presunie sa to do Directusu, do tabuľky <code>agent_config</code>. Odvtedy meníš tón klikaním v admine. Zároveň sa začnú <b>logovať chaty</b>, takže uvidíš, na čo sa ľudia naozaj pýtajú.</dd></div>
+            <div><dt>Čo sa zmení</dt><dd>Presunie sa to do Directusu, do tabuľky <code>agent_config</code>. Odvtedy meníš tón klikaním v admine. Zároveň sa začne <b>logovať</b>, takže uvidíš, na čo sa ľudia naozaj pýtajú. <b>V tom istom sedení aj booking</b> — ten má config v Directuse už dnes, chýbajú mu len logy a jedna konštanta natvrdo (<code>MIN_LEAD_MIN</code>). Je to ten <i>druhý bot</i>, kvôli ktorému sa nastavenia čítajú podľa kľúča.</dd></div>
             <div><dt>Prečo prvé</dt><dd>
               <ol>
                 <li>Dnes ťa každá zmena tónu stojí vetvu, revíziu a nasadenie — 18. augusta to kvôli výpadku GitHubu trvalo tri hodiny.</li>
@@ -492,6 +492,7 @@
                 <li>Odomyká P3 aj neskoršieho poradcu — obe stavajú na tom istom.</li>
               </ol></dd></div>
             <div><dt>Veľkosť</dt><dd>Jedno sedenie typu agenti / kód.</dd></div>
+            <div><dt>Mantinel — GDPR</dt><dd>Otázky návštevníkov sú <b>osobné údaje</b>. Začať <b>metadátami</b> (našiel zdroje áno/nie, koľko, odpovedal alebo povedal „neviem“), <b>nie plným znením otázok</b>. Plné otázky až po dokončení zásad ochrany osobných údajov — tie gatujú aj spustenie do Googlu.</dd></div>
           </dl>
           <div class="warn">
             <b>Mantinel:</b> nastavenia sa čítajú <b>podľa kľúča</b>, nie z jedného pevného riadku —

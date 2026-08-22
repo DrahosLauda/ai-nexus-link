@@ -3,73 +3,146 @@
 > Zoznam cieľov a **rozhodnutí** pre nasledujúce sedenia. Podrobný plán
 > rezervačného agenta je nižšie (výstup plánovacieho sedenia, aug 2026).
 
-## ⭐ ĎALŠIE SEDENIE = PORADA (strategická revízia CELÉHO projektu, aug 2026)
+## ⭐ ĎALŠIE SEDENIA — fronta P1 až P6 (porada 22.8.2026)
 
-> **✅ PORADA ODBYTÁ (aug 2026).** Výstup — rozhodnutia, priorita naprieč
-> projektom a štartový prompt pre prvý realizačný krok — je nižšie v sekcii
-> **„PORADA — strategická revízia CELÉHO projektu (VÝSTUP)"**. Zadanie nižšie
-> ostáva pre kontext.
-
-> **Toto NIE je porada len o šablónach.** Je to strategická revízia **celého
-> AI Nexus Link** — kam dať ďalšiu energiu naprieč všetkými vetvami projektu:
-> tri vrstvy (WP obsah · Directus CRM · agenti), referenčný web
-> `digitalnapomoc.sk`, produktoví agenti (článkový/SEO/RAG/rezervačný),
-> WooCommerce a **produktizácia/SaaS (Fáza 5, `vizia.md`)**. Frontend šablóny sú
-> len JEDNA z vetiev — porada ich má zvážiť oproti ostatným, nie ich pokračovať
-> automaticky.
+> **Poradie a odôvodnenie sú v `docs/backlog.md`** (sekcia „FRONTA"), vizuálne
+> v `docs/mapy/pracovna-mapa.html`. Tu sú len **hotové štartovacie prompty** na
+> skopírovanie. Jedno sedenie = jedna položka.
 >
-> **Stav pri zadaní (naprieč projektom):**
-> - ✅ Referenčný web `digitalnapomoc.sk` (headless WP → Next.js), leady do
->   Directusu, technicky go-live — ale **zámerne skrytý pred Googlom**
->   (`SITE_INDEXABLE` vyp.), kým nie je „Pred-Google checklist" (cookie/GDPR…).
-> - ✅ Produktoví agenti čiastočne naživo: **článkový (Writer) + SEO/GEO** agent
->   (WP koncepty), **RAG chatbot**, **rezervačný agent R1**. Fáza 3 (orchestrátor
->   ako trvalý Railway worker s cronom) ešte nie.
-> - ✅ **Frontend agent** — knižnica šablón (M1) + vlajková šablóna kvetinárstvo
->   (M2, Boma Flora) naživo na `/ukazky/kvetinarstvo`, prepojená z domova.
-> - ❌ **Zatiaľ žiadny platiaci klient** — všetko je referencia/demo.
->
-> **Kľúčové zistenie na odpichnutie (šablóny):** M3 „rezervačný modul do
-> kvetinárstva" **nesedí** — booking engine je pre termínové odvetvia
-> (kaderníctvo, autoservis, zubár: „služba → deň → slot"). Kvetinárstvo funguje
-> na **objednávku kytice / e-shop / svadobnú konzultáciu**, nie na sloty.
+> Staršie zadania (odbyté porady, hotové kroky) sú nižšie v tomto súbore — sú
+> tam pre kontext, **nie ako plán**. Plán je fronta.
 
-**Štartový prompt (copy-paste do nového sedenia):**
+---
+
+### 🟢 P1 — Nastavenia a logy chatbota + bookingu do Directusu
+
+**Typ sedenia:** agenti / kód. **Predpoklad:** nič, dá sa spustiť hneď.
+
 ```
-Najprv si prečítaj docs/dennik.md, docs/vizia.md a docs/plan-agenti.md
-(hlavne sekciu „ĎALŠIE SEDENIE = PORADA").
+Najprv si prečítaj docs/backlog.md (sekcia FRONTA, položka P1), docs/dennik.md
+(záznam z 22.8.2026) a docs/vizia.md.
 
-Toto je PLÁNOVACIE sedenie = PORADA (šetríme tokeny): nič nekóduj, len
-rozhodujeme a zapisujeme. Cieľ: STRATEGICKÁ REVÍZIA CELÉHO PROJEKTU AI Nexus
-Link (nie len frontend šablón) a rozhodnutie, kam dať ďalšiu energiu.
+Sedenie typu KÓD. Jedna úloha: dostať nastavenia a logy chatbota a bookingu
+z kódu do Directusu — Krok 5 z docs/rag-chatbot.md.
 
-AGENDA:
-0. ZOOM OUT na celý projekt — zhrň, kde je AI Nexus Link naprieč VŠETKÝMI
-   vetvami (podľa vizia.md): referenčný web digitalnapomoc.sk, tri vrstvy
-   (WP obsah / Directus CRM / agenti), produktoví agenti (Writer+SEO, RAG
-   chatbot, rezervačný), frontend knižnica šablón, produktizácia/SaaS (Fáza 5).
-   Čo je hotové a naživo vs. čo je len na papieri. Kde je najväčšia hodnota.
-1. PRIORITA NAPRIEČ PROJEKTOM — čo posunie projekt najviac dopredu:
-   (i) go-live digitalnapomoc.sk do Googla (Pred-Google checklist: cookie/GDPR);
-   (ii) dotiahnuť/nasadiť produktových agentov (Fáza 3 orchestrátor worker);
-   (iii) rozširovať frontend knižnicu šablón (2. odvetvie) alebo prehĺbiť
-        kvetinárstvo (Woo/konfigurátor);
-   (iv) customizačný agent M4 (z šablóny klientský web) — cesta k predaju;
-   (v) ZÍSKAŤ PRVÉHO PLATIACEHO KLIENTA — čo na to reálne treba.
-   Odporuč poradie s odôvodnením (hodnota vs. náklad vs. blízkosť k príjmu).
-2. Mapovanie MODUL ↔ ODVETVIE — booking→kaderníctvo/autoservis/zubár (NIE
-   kvetinárstvo); kvetinárstvo→WooCommerce / flower konfigurátor / svadobná
-   konzultácia / objednávkový formulár (už má); chatbot (RAG)→kamkoľvek.
-3. OBCHODNÝ MODEL — ako sa to celé speňaží (vizia.md: dodanie ako SaaS,
-   párovanie agent↔služba, cenové balíky). Čo je najkratšia cesta k prvému €.
-4. PRED-GOOGLE CHECKLIST — cookie lišta/GDPR + kedy zapnúť SITE_INDEXABLE.
+ČO SPRAVIŤ
 
-VÝSTUP porady: rozhodnutia + PRIORITA naprieč projektom zapísané do
-docs/plan-agenti.md (aktualizovať roadmapu/míľniky/mapovanie modulov), a hotový
-ŠTARTOVÝ PROMPT pre prvé realizačné sedenie zvoleného kroku. Commit + push do
-vetvy môžeš; merge do main a zmeny v Railway/Directus až po mojom výslovnom
-súhlase. Rešpektuj CLAUDE.md (slovenčina, minimalizmus, tri zdroje pravdy,
-least privilege).
+1) Directus (poviem ti, čo mám nakliknuté — pýtaj sa ma na konkrétne kroky):
+   - riadok `rag_chatbot` v `agent_config` s poľami na systémový prompt, model,
+     `top_k` a `max_sources`;
+   - riadok `booking` v `agent_config` s poľom na `min_lead_min`.
+
+2) Frontend — napíš pomocníka podľa vzoru orchestrátora:
+   - `orchestrator/directus.py` má `nacitaj_config(agent_name)` a `zapis_log(...)`.
+     Sprav ekvivalent pre `frontend/lib/`. Config sa číta PODĽA KĽÚČA, nie
+     z jedného pevného riadku — booking je druhý používateľ toho istého
+     pomocníka. Bez toho sa to o mesiac píše druhýkrát.
+   - MANTINEL: keď je Directus nedostupný alebo riadok prázdny, použijú sa
+     hodnoty z kódu ako dnes. Chatbot ani booking nesmie spadnúť kvôli configu.
+
+3) Chatbot (`frontend/lib/rag.ts`): SYSTEM_PROMPT, CHAT_MODEL, TOP_K,
+   MAX_SOURCES sa načítajú z configu, hodnoty v kóde ostanú ako fallback.
+
+4) Booking (`frontend/lib/booking-data.ts`): MIN_LEAD_MIN (dnes natvrdo 60)
+   z configu, rovnaký fallback.
+
+5) Logy do `agent_logs` — pre chatbota po každej odpovedi, pre booking po
+   každom pokuse o rezerváciu.
+   MANTINEL GDPR: NEUKLADAJ plné znenie otázok návštevníkov — to sú osobné
+   údaje a zásady ochrany osobných údajov ešte nemáme. Ukladaj len metadáta:
+   našiel zdroje áno/nie, koľko, odpovedal alebo povedal „neviem", trvanie,
+   pri bookingu úspech/dôvod zlyhania. Plné otázky doplníme až po GDPR.
+
+6) Vlastný token s minimálnymi právami (least privilege) — čítať `agent_config`,
+   zapisovať `agent_logs`.
+
+OVERENIE PRED KONCOM
+- Zmeň tón bota v Directuse a ukáž, že sa prejaví BEZ nasadenia.
+- Vypni/rozbi Directus spojenie a ukáž, že bot aj booking bežia ďalej.
+- Ukáž riadok, ktorý pribudol v `agent_logs`.
+- `npm run lint` a `npm run build` vo `frontend/`.
+
+Vetva `claude/...`, commit, push, PR. Merge do main až po mojom výslovnom „áno".
+Na konci: zápis do docs/dennik.md + odškrtnutie P1 v docs/backlog.md.
+```
+
+---
+
+### 🟢 P2 — Obmedzené prístupové kľúče
+
+**Typ sedenia:** prevažne klikanie v Directuse (~30–45 min) + jedno nasadenie.
+**Predpoklad:** P1 hotové a overené naživo.
+
+```
+Najprv si prečítaj docs/backlog.md (položka P2), docs/directus.md a
+docs/dennik.md.
+
+Sedenie typu KÓD/INFRA, malé. Jedna úloha: každý systém dostane vlastný kľúč
+s minimálnymi právami.
+
+STAV DNES (over si to, nespoliehaj sa na tento text)
+- Orchestrátor sa do Directusu prihlasuje ako SPRÁVCA (admin) — má teda prístup
+  ku všetkému vrátane kontaktov na klientov v `client_leads`.
+- Frontend číta databázu chatbota cez VEREJNÚ adresu.
+
+ČO SPRAVIŤ
+1) Vlastná rola pre orchestrátor: čítať `agent_config`, zapisovať `agent_logs`,
+   nič viac. Žiadny prístup ku `client_leads`.
+2) Frontend prejde na VNÚTORNÚ adresu databázy.
+3) Vymeniť tokeny v Railway Variables a v orchestrátorovom `.env`.
+   Tajomstvá VÝHRADNE v premenných prostredia, nikdy v kóde.
+
+POSTUPUJ PO JEDNOM — vždy vymeň jeden kľúč, over, až potom ďalší. Keby sa rozbil
+živý pipeline, ktorý píše články, musíme vedieť, ktorá zmena to spôsobila.
+
+OVERENIE PRED KONCOM
+- Writer agent prejde celým behom s novým kľúčom.
+- Chatbot odpovie cez vnútornú adresu.
+- Rezervácia prejde.
+- Over, že orchestrátorov kľúč sa NEDOSTANE ku `client_leads` (musí zlyhať).
+
+Vetva, commit, push, PR. Zmeny v Railway/Directus rob so mnou, krok po kroku,
+presnými príkazmi. Na konci: denník + odškrtnutie P2 v backlogu.
+```
+
+---
+
+### 🟢 P3 — Chatbot rezervuje priamo v konverzácii (R2)
+
+**Typ sedenia:** agenti, väčšie.
+**Predpoklad:** P1 hotové (osobnosť z `agent_config`) **a** majiteľ predtým
+rozšíril `booking_services` v Directuse na 2–3 typy konzultácií — inak nemá bot
+čo ponúkať.
+
+```
+Najprv si prečítaj docs/backlog.md (položka P3), docs/plan-agenti.md (sekcia
+„Krok R2 — Konverzačný agent") a docs/dennik.md.
+
+Sedenie typu AGENTI. Jedna úloha: chatbot dohodne rezerváciu v konverzácii.
+
+ČO SPRAVIŤ
+1) Rozšír `/api/chat` o Gemini function calling: `najdi_sloty` a
+   `vytvor_rezervaciu`.
+2) Obe funkcie volajú TEN ISTÝ `frontend/lib/booking.ts` a `booking-data.ts`,
+   ktoré už používa widget. ŽIADNA duplicita výpočtu slotov — jedno miesto
+   pravdy, ako je napísané v hlavičke `booking.ts`.
+3) Tok: služba + čas → bot ponúkne voľné termíny → PO VÝSLOVNOM POTVRDENÍ
+   návštevníka rezervuje → pošle e-mail → založí lead.
+   Bot NESMIE rezervovať bez potvrdenia.
+4) Osobnosť a nastavenia z `agent_config` (hotové v P1).
+5) Bezpečnosť: token smie iba čítať sloty a vytvoriť rezerváciu. Nič mazať,
+   nič meniť.
+6) V TOM ISTOM SEDENÍ: zrušovací odkaz v potvrdzovacom e-maile
+   (`status=cancelled`). R1 ho nemá a je to diera — kto si rezervuje, musí
+   vedieť zrušiť.
+
+OVERENIE PRED KONCOM
+- Preklikaj celý tok naživo, vrátane pokusu rezervovať obsadený termín.
+- Skús bota nahovoriť, aby rezervoval bez potvrdenia — nesmie.
+- Klikni zrušovací odkaz a over, že sa slot uvoľnil.
+- `npm run lint` a `npm run build`.
+
+Vetva, commit, push, PR. Merge až po mojom „áno". Denník + backlog na konci.
 ```
 
 ---

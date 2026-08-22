@@ -61,12 +61,13 @@ Hotové:
 - ✅ Directus: polia `name, email, phone, message, source` v `client_leads`;
   politika „Frontend Web — create leads" (iba Create) → rola `Frontend Web` → user `frontend-bot` (token v Railway)
 
+- ✅ **Fáza 3 — orchestrátor beží ako Railway cron** (Po/St/Pi 06:00 UTC, `run_pipeline.py`: Writer → SEO/GEO agent → re-index RAG). Témy a nastavenia v `agent_config`, logy v `agent_logs`; články vznikajú ako koncepty (schvaľuje človek vo WP)
+
 Ďalšie na rade:
 - ✅ Krok 5 — WP mu-plugin webhook (`nexus-revalidate.php` v `wp-content/mu-plugins/` na hostingu) — publikovaný/upravený článok je na stránke do ~10 s
 - ✅ Krok 6 — PR #1 zmergovaný do `main`; Railway nasadzuje z `main`
 - ✅ Wayland: obrázky k téme cez Google Gemini (fallback Z.ai CogView), natrvalo vo WP médiách; téma ako CLI argument; `fix_post_images.py` na opravu starších článkov
 - ✅ **Go-live (technicky)** — doména spustená „Cestou 2": `www.digitalnapomoc.sk` → frontend, apex → `www`, WordPress na `wp.digitalnapomoc.sk` (noindex). Web zámerne **ešte skrytý pred Googlom** (`SITE_INDEXABLE` vypnuté), kým nie je hotový „Pred-Google checklist" (cookie lišta/GDPR, dizajn, štýl článkov, stránkovanie blogu). Detaily: `docs/go-live.md` + `docs/dennik.md`.
-- [ ] Fáza 3 — orchestrátor ako Railway worker: cron + témy z `agent_config`, logy do `agent_logs`; SEO agent; publikuje ako draft (človek schvaľuje vo WP)
 - [ ] Fáza 4 — WooCommerce cez Store API (najprv embednutý checkout)
 - [ ] Fáza 5 — produktizácia: šablóna frontend+napojenie pre ďalších klientov
 - [ ] Neskôr: podstránky `/sluzby/[slug]`; fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`); reálny telefón v pätičke; vlastná obmedzená rola pre orchestrátor token (teraz admin)
@@ -83,6 +84,11 @@ jediné miesto pravdy pre „čo je ďalej"), `docs/dennik.md` (história a vyri
 `docs/obsidian-claude.md` (návod na prepojenie Obsidian ↔ Claude + na čo nám slúži),
 `docs/ako-viest-sedenia.md` (konvencia, ako deliť a viesť sedenia — 1 sedenie = 1 súvislý cieľ),
 `docs/skilly.md` (prehľad všetkých skillov a sub-agentov + ako ich vyvolať v sedeniach).
+
+**Vizuálne mapy** (v repe, otvárajú sa v prehliadači): `docs/mapy/strom-projektu.html`
+(celý projekt ako klikateľný strom), `docs/mapy/pracovna-mapa.html` (strom + fronta
+P1–P6 s odôvodnením), `docs/mapy/ako-nexus-funguje.html` (dátové toky medzi systémami).
+**Ukáž ich majiteľovi na každom plánovacom sedení.**
 
 ## Príkazy
 
