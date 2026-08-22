@@ -47,9 +47,30 @@ koncept/vzor** z gstacku. Uvádzame ich tu kvôli poctivej atribúcii inšpirác
 - **Poznámka k licencii:** keďže **nepreberáme kód**, nejde o vendoring pod cudzou
   licenciou — je to len uznanie inšpirácie. Náš kód týchto skillov je náš vlastný.
 
-## Kandidát do backlogu (zatiaľ NEprevzaté)
+## Next Level Builder — katalóg dizajn systémov (MIT)
 
-- **ui-ux-pro-max-skill** — https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-  (MIT). Veľká knižnica dizajn systémov (84 štýlov, 192 paliet, 161 pravidiel…).
-  Vhodné skôr pre `ui-ux-designer` pri **rozbiehaní novej odvetvovej šablóny**,
-  nie do každého sedenia (veľký kontext). Detaily v `docs/plan-agenti.md`.
+- **Zdroj:** https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+- **Autor / copyright:** Next Level Builder
+- **Licencia:** MIT (viď `ui-ux-pro-max/UI-UX-PRO-MAX-LICENSE.txt`)
+- **Snímka:** commit `bc826e2`, 20. 8. 2026. Prevzaté 22. 8. 2026.
+- **Prevzaté:** `ui-ux-pro-max/data/` — **448 KB dát**, nie ich nástroje:
+  `styles.csv` (88 štýlov), `colors.csv` (192 paliet podľa typu produktu),
+  `typography.csv` (74 font párov), `ui-reasoning.csv` (192 odvetvových pravidiel),
+  `ux-guidelines.csv`, `products.csv`, `landing.csv`, `data-provenance.json`.
+- **`SKILL.md` je NÁŠ vlastný** (slovenský) — popisuje, ako katalóg použiť v našom
+  postupe. Pôvodné SKILL.md sme nepreberali, viď nižšie.
+- **Na čo u nás:** `ui-ux-designer` pri **rozbiehaní NOVEJ odvetvovej šablóny** —
+  voľba štýlu, palety a typografie predtým, než sa píše `theme.css`.
+- **Zámerne NEprevzaté** (celé repo má 23 MB, vzali sme 448 KB):
+  - `cli/` (4,9 MB) — ich inštalátor;
+  - `phosphor-icons-upstream.json` (805 KB), `google-fonts.csv` (730 KB),
+    `google-font-licenses.json` (423 KB) — objemné výpisy dohľadateľné online;
+  - ich skilly `design`, `brand`, `slides`, `ui-styling`, `banner-design` — sú
+    v angličtine a viazané na ICH postup (**shadcn/ui + Radix**, generovanie loga
+    cez Gemini, HTML prezentácie). Naše šablóny sú ručný Tailwind v4 a máme
+    vlastnú bránu kvality.
+  - `screenshots/`, `gallery/`, `stack/`, `projects/`.
+- **Ak by sa neskôr hodil `banner-design`** (28 KB) k social agentovi (P4),
+  prevezme sa vtedy samostatne.
+- **Pozor — dáta starnú.** Naša pôvodná poznámka hovorila „84 štýlov, 161 pravidiel";
+  repo dnes hlási 79/192. Pred dôležitou šablónou over aktuálnu verziu v zdroji.

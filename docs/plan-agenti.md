@@ -1408,8 +1408,17 @@ mojom výslovnom súhlase. Na konci zápis do docs/dennik.md.
 
 > Aug 2026. Cieľ: zdvihnúť „vkusovú" úroveň frontendu k „nerozoznateľné od AI".
 
-**Adoptované (hotové, MIT):** z `github.com/emilkowalski/skills` sme prevzali tri
-skilly do `.claude/skills/` a napojili ich:
+**Adoptované (hotové, MIT):**
+
+**`ui-ux-pro-max`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`) — prevzatý
+22.8.2026. Vzali sme **448 KB dát** z 23 MB repa: 88 štýlov, 192 paliet podľa typu
+produktu, 74 font párov, 192 odvetvových pravidiel. `SKILL.md` je náš vlastný
+(slovenský). `ui-ux-designer` ho má ako **povinný prvý krok** pri novom odvetví.
+Zámerne sme nevzali ich komponentovú vrstvu — stojí na **shadcn/ui**, my máme
+ručný Tailwind v4. Detaily a snímka verzie: `.claude/skills/VENDORED.md`.
+
+Z `github.com/emilkowalski/skills` sme prevzali tri skilly do `.claude/skills/`
+a napojili ich:
 - `emil-design-eng` (filozofia vkusu / polish / detaily),
 - `animate` (+ `RECIPES.md`) — stavba motion správne,
 - `review-animations` (+ `STANDARDS.md`) — kritika motion podľa latky.
@@ -1420,7 +1429,4 @@ Napojenie: `frontend-dev` (stavba/motion), `qa-a11y` + `docs/sablony-kvalita.md`
 - Ďalšie Emilove skilly: `apple-design`, `pick-ui-library`,
   `find-animation-opportunities`, `improve-animations`, `animation-vocabulary`,
   `prototype`.
-- **`ui-ux-pro-max-skill`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`, MIT) —
-  veľká knižnica dizajn systémov (84 štýlov, 192 paliet, 161 pravidiel, font páry,
-  tech stacky). Vhodné pre **`ui-ux-designer` pri rozbiehaní NOVEJ odvetvovej šablóny**,
-  nie do každého sedenia (veľký kontext → načítať výberovo).
+*(`ui-ux-pro-max` už NIE je v backlogu — prevzatý 22.8.2026, viď vyššie.)*

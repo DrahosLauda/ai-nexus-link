@@ -67,9 +67,8 @@ znením otázok. Plné otázky až po dokončení zásad ochrany osobných údaj
   produkujú generický výstup, presne to, proti čomu bojujeme.
 - **free-claude-code** — neberieme. Lokálna proxy nesadne do cloud sedení, a
   smerovať Claude Code cez tretie strany znamená posielať im náš kód a poznámky.
-- **ui-ux-pro-max** — ostáva mimo. Argument „vyzeralo by to ako AI" majiteľ
-  odmietol (dá sa upraviť); platí len časový argument — nemáme na obzore dizajnové
-  sedenie a katalóg zastaráva.
+- **ui-ux-pro-max** — **✅ PREVZATÝ v tomto sedení** (pôvodne som ho odporúčal
+  nechať mimo; majiteľ rozhodol inak a mal pravdu — pozri sekciu nižšie).
 - **MiniMax H3 lokálne** — **odpadá.** Potrebuje ~42,5 GB váh a 16–24 GB VRAM na
   NVIDIA alebo Apple Silicon. Majiteľov Mac má Intel + AMD Radeon Pro 555X (4 GB)
   a 16 GB RAM — dvojité nie: málo pamäte **a** nesprávny typ grafiky (AMD v Intel
@@ -133,6 +132,43 @@ pod nahradeným plánom Klára.
 **Overenie:** porovnaných všetkých 95 nadpisov a 1 754 riadkov textu pôvodného
 súboru proti dvom novým — **0 stratených riadkov**. (Pri presune vznikla
 duplicita sekcie o skilloch; kontrola ju odhalila a bola odstránená.)
+
+### Prevzatý skill `ui-ux-pro-max` (Next Level Builder, MIT)
+
+Majiteľ sa spýtal, či sa katalóg pri stavbe šablóny zaradí do sedenia sám.
+**Nezaradil by sa** — nebol nainštalovaný. Existoval len bod 4 v inštrukciách
+sub-agenta `ui-ux-designer` so slovom **„zváž pridanie"**, teda reťaz, ktorá sa
+dala prerušiť na troch miestach (sedenie nemusí zavolať toho agenta; „zváž" je
+odporúčanie; sťahovanie cudzieho repa uprostred dizajnovej práce mieša typy práce).
+
+**Rozhodnutie majiteľa: prevziať teraz.** Bolo správne — a ukázalo sa aj to, že
+naša poznámka mala **zastarané čísla** (hovorila „84 štýlov, 161 pravidiel", repo
+dnes hlási 79/192), čo bol presne ten problém starnutia, ktorý som mal za argument
+proti prevzatiu.
+
+**Čo sa prevzalo — 448 KB z 23 MB repa** (`.claude/skills/ui-ux-pro-max/data/`):
+`styles.csv` (88 štýlov, so stĺpcom „Do Not Use For", ktorý je užitočnejší než
+„Best For"), `colors.csv` (192 paliet podľa typu produktu, s kompletnou sadou
+tokenov), `typography.csv` (74 font párov), `ui-reasoning.csv` (192 odvetvových
+pravidiel), `ux-guidelines.csv`, `products.csv`, `landing.csv`.
+Snímka: commit `bc826e2`, 20.8.2026.
+
+**Čo sa zámerne NEprevzalo.** Repo obsahuje **šesť** skillov, nie jeden:
+`design`, `brand`, `slides`, `ui-styling`, `banner-design`, `design-system`.
+Nevzali sme ani jeden — sú v angličtine a viazané na ICH postup: `ui-styling`
+stojí na **shadcn/ui + Radix**, `design` na generovaní loga cez Gemini a
+korporátnej identite. Naše šablóny sú ručný Tailwind v4 a máme vlastnú bránu
+kvality. Prevzatie ich komponentovej vrstvy by bolo architektonické rozhodnutie,
+ktoré nikto neurobil. Ďalej sme vynechali `cli/` (4,9 MB) a objemné výpisy ikon
+a fontov (~2 MB), ktoré sa dajú dohľadať online.
+
+**`SKILL.md` je náš vlastný, slovenský** — popisuje postup (typ produktu → paleta
+→ štýl → typografia → odvetvové pravidlá) a tri mantinely: načítavať výberovo
+(`styles.csv` má 146 KB), overiť kontrast proti WCAG AA, neprechádzať na shadcn.
+
+**Oprava reťaze:** v `.claude/agents/ui-ux-designer.md` sa „zváž pridanie" zmenilo
+na **povinný prvý krok** pri novom odvetví. Overené naživo — skill sa v sedení
+načítal a je dostupný.
 
 ### Ponaučenia
 

@@ -78,6 +78,20 @@ Podrobná atribúcia a zdroje: `.claude/skills/VENDORED.md`.
 | **`animate`** | Ako stavať motion **správne** (poradie rozhodnutí: či animovať → účel → nástroj → vlastnosti → krivka/trvanie → prerušenie → exit). | Keď pridávaš **konkrétny pohyb/prechod** — rozhoduj **pred** písaním animácie, nie dodatočne „nech sa to hýbe". | „pridaj animáciu / oživ komponent" · `/animate` |
 | **`review-animations`** | Kritika motion podľa vysokej remeselnej latky (`STANDARDS.md`). **Len ľudsky** — sám sa nespúšťa. | **Po** napísaní motion, na kritiku **pred schválením** netriviálnej animácie. | Iba `/review-animations` |
 
+## Prevzatý katalóg — rozbeh dizajn systému (Next Level Builder, MIT)
+
+| Skill | Na čo | Kedy je najlepšie ho použiť | Ako vyvolať |
+|---|---|---|---|
+| **`ui-ux-pro-max`** | Katalóg **88 štýlov, 192 paliet** podľa typu produktu, 74 font párov a 192 odvetvových pravidiel. Dáva **odkiaľ vyberať**, aby každé odvetvie dostalo vlastný smer. | **Prvý krok** pri NOVEJ odvetvovej šablóne — voľba štýlu, palety a typografie **predtým**, než sa píše `theme.css`. Nie do každého sedenia. | Automaticky cez `ui-ux-designer` · `/ui-ux-pro-max` |
+
+> **Tri mantinely:** (1) načítavaj **výberovo** — `styles.csv` má 146 KB, filtruj
+> cez `grep`, nikdy nečítaj celý; (2) paleta je **východisko**, kontrast si over
+> proti WCAG AA sám; (3) **neprechádzaj na shadcn/ui** — pôvodné repo na ňom
+> stojí, naše šablóny sú ručný Tailwind v4.
+>
+> `SKILL.md` je **náš vlastný** (slovenský), prevzaté sú len dáta. Atribúcia,
+> čo sme zámerne nevzali a snímka verzie: `.claude/skills/VENDORED.md`.
+
 ## Sub-agenti — build tím na šablóny (`.claude/agents/`)
 
 Spúšťajú sa **sekvenčne** na tom istom balíku (nie paralelne — krížili by si súbory);
@@ -93,7 +107,9 @@ každý na štarte číta `docs/sablony-kvalita.md`. Modely: `docs/sablony-kvali
 ## Správne načasovanie — kedy ktorý (životný cyklus šablóny)
 
 1. **Smer** — `design-shotgun` (4–6 variantov) → majiteľ vyberie.
-2. **Dizajn systém** — `ui-ux-designer` (`theme.css`, rozvrh, motion koncept).
+2. **Dizajn systém** — `ui-ux-designer` (`theme.css`, rozvrh, motion koncept);
+   pri NOVOM odvetví začína katalógom `ui-ux-pro-max` (typ produktu → paleta →
+   štýl → typografia → odvetvové pravidlá).
 3. **Obsah + stavba** — `sk-copywriter` (texty) **+** `frontend-dev` (kód), súbežne;
    pri motion `animate`, pri detailoch `emil-design-eng`.
 4. **Kontrola** — `qa-a11y` (statická brána) **+** `visual-qa` (prehliadač, screenshoty);
