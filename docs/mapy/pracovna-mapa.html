@@ -321,11 +321,20 @@
     .q > summary{grid-template-columns:auto 1fr; gap:12px}
     .chev{display:none}
   }
+
+  /* Pečiatka zdroja pravdy — mapa je zobrazenie backlogu, nie druhý zoznam. */
+  .sot{margin:12px 0 0; padding:10px 14px; border:1px dashed var(--line);
+       border-radius:9px; background:var(--surface-3); color:var(--ink-soft);
+       font-size:.83rem; line-height:1.55}
+  .sot code{font-family:var(--font-mono); font-size:.94em; color:var(--ink);
+       background:var(--surface-2); padding:1px 5px; border-radius:4px}
+  .sot b{color:var(--ink)}
+  @media (max-width:680px){ .sot{font-size:.79rem; padding:9px 11px} }
 </style>
 
 <div class="wrap">
 
-  <p class="eyebrow">Plánovacia porada · 20. augusta 2026</p>
+  <p class="eyebrow">Plánovacia porada · 22. augusta 2026</p>
   <h1>Pracovná mapa</h1>
   <p class="thesis">
     Kde sa v projekte nachádzame a čo ideme robiť. Najprv <b>strom</b> — celý projekt na jednej
@@ -337,6 +346,11 @@
     <span>REFERENCIA: DIGITALNAPOMOC.SK</span>
     <span>GO-LIVE A PREDAJ: ZAMKNUTÉ</span>
   </div>
+  <p class="sot">
+    <b>Zdroj pravdy je <code>docs/backlog.md</code>.</b> Táto mapa je jeho
+    zobrazenie, nie druhý zoznam — <b>keď sa líšia, platí backlog.</b><br>
+    Zosúladené <b>22. 8. 2026</b>. Ak je odvtedy odstup, over si backlog v repe.
+  </p>
 
   <!-- ══════════ STROM ══════════ -->
   <section>
@@ -665,7 +679,7 @@
       Mení sa zriedka, len keď pribudne alebo zanikne modul.</p>
       <p><b>Poradie a detaily žijú v <code>docs/backlog.md</code></b>, ktorý sa prepisuje často.
       História toho, prečo sa niečo zmenilo, ide do <code>docs/dennik.md</code> a nikdy sa neprepisuje.
-      Tak sa tie tri veci nemôžu navzájom rozísť.</p>
+      <b>Rozísť sa však vedia</b> — 22. 8. 2026 mapa hovorila o P1 len ako o chatbotovi, kým backlog už mal aj booking. Preto je hore pečiatka s dátumom zosúladenia a pravidlom, čo platí, keď sa líšia.</p>
       <p>Sesterská mapa <b>„AI Nexus Link — mapa“</b> odpovedá na inú otázku: <i>ako do seba systém
       zapadá</i> — vrstvy a dátové toky. Táto odpovedá na <i>kde sme a čo ďalej</i>.</p>
     </div>
@@ -673,7 +687,7 @@
 
   <hr class="rule">
   <p class="stamp" style="margin-top:22px">
-    <span>VÝSTUP PLÁNOVACEJ PORADY · 20. 8. 2026</span>
+    <span>VÝSTUP PLÁNOVACEJ PORADY · 22. 8. 2026</span>
     <span>ĎALŠIA REVÍZIA: PO DOKONČENÍ P2</span>
   </p>
 

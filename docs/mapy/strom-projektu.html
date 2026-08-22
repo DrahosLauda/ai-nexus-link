@@ -210,12 +210,26 @@
   a{color:var(--flow)}
   :focus-visible{outline:2px solid var(--accent-bright); outline-offset:2px; border-radius:6px}
   @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+  /* Pečiatka zdroja pravdy — mapa je zobrazenie backlogu, nie druhý zoznam. */
+  .sot{margin:12px 0 0; padding:10px 14px; border:1px dashed var(--line);
+       border-radius:9px; background:var(--surface-3); color:var(--ink-soft);
+       font-size:.83rem; line-height:1.55}
+  .sot code{font-family:var(--font-mono); font-size:.94em; color:var(--ink);
+       background:var(--surface-2); padding:1px 5px; border-radius:4px}
+  .sot b{color:var(--ink)}
+  @media (max-width:680px){ .sot{font-size:.79rem; padding:9px 11px} }
 </style>
 
 <div class="wrap">
 
-  <p class="eyebrow">AI Nexus Link · 20. augusta 2026</p>
+  <p class="eyebrow">AI Nexus Link · 22. augusta 2026</p>
   <h1>Strom projektu</h1>
+  <p class="sot">
+    <b>Zdroj pravdy je <code>docs/backlog.md</code>.</b> Táto mapa je jeho
+    zobrazenie, nie druhý zoznam — <b>keď sa líšia, platí backlog.</b><br>
+    Zosúladené <b>22. 8. 2026</b>. Ak je odvtedy odstup, over si backlog v repe.
+  </p>
   <p class="thesis">
     Celý projekt po zložkách. <b>Klikni na ktorúkoľvek položku</b> a rozbalí sa,
     čo to je, prečo tam je a čo s ňou plánujeme. Agenty s nálepkou <b>naše</b>
@@ -653,7 +667,7 @@
   </div>
 
   <div class="foot">
-    <span>STROM PROJEKTU · 20. 8. 2026</span>
+    <span>STROM PROJEKTU · 22. 8. 2026</span>
     <span>PORADIE A DETAILY: DOCS/BACKLOG.MD</span>
   </div>
 
