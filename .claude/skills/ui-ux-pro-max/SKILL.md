@@ -57,9 +57,53 @@ nie „takto to má vyzerať".
   **shadcn/ui + Radix**; naše šablóny sú ručný Tailwind v4. Neprechádzaj na
   shadcn na základe tohto katalógu — to by bolo architektonické rozhodnutie,
   ktoré nikto neurobil.
-- **Dáta starnú.** Snímka je z **20. 8. 2026** (commit `bc826e2`). Ak od nej
-  ubehol dlhší čas a rozbiehaš dôležitú šablónu, over si aktuálnu verziu
-  v zdrojovom repe.
+- **Dáta starnú.** Snímka je z **20. 8. 2026** (commit `bc826e2`). Preto sa
+  **na začiatku každého sedenia s novou šablónou** spustí kontrola nižšie.
+  Nie je to „nezabudni sa pozrieť" — je to krok, ktorý sa buď vykoná, alebo nie.
+
+## Kontrola aktuálnosti — POVINNÝ prvý krok pri novej šablóne
+
+Trvá pol minúty. Zdroj sa vyvíja, naša snímka nie — táto kontrola ukáže rozdiel
+**skôr**, než na katalógu postavíš dizajn.
+
+**1) Stiahni len dáta zo zdroja** (nie celé 23 MB repo — sťahuje sa ~3 MB):
+
+```bash
+cd /tmp && rm -rf uipm-check
+git clone --depth 1 --filter=blob:none --sparse -q \
+  https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git uipm-check
+cd uipm-check && git sparse-checkout set src/ui-ux-pro-max/data
+git log -1 --format="verzia zdroja: %h  %ad" --date=short
+```
+
+*(Ak má sedenie vlastný dočasný priečinok — scratchpad — použi radšej ten
+namiesto `/tmp`. Je to jednorazová pracovná kópia, po kontrole sa zahodí.)*
+
+**2) Porovnaj so snímkou v repe** — spusti z koreňa projektu:
+
+```bash
+Z=/tmp/uipm-check/src/ui-ux-pro-max/data
+N=.claude/skills/ui-ux-pro-max/data
+printf "%-22s %8s %8s   %s\n" SÚBOR NAŠE ZDROJ ZMENA
+for f in styles colors typography ui-reasoning ux-guidelines products landing; do
+  a=$(($(wc -l < $N/$f.csv)-1)); b=$(($(wc -l < $Z/$f.csv)-1))
+  if cmp -s $N/$f.csv $Z/$f.csv; then z="—"; else z="LÍŠI SA"; fi
+  printf "%-22s %8s %8s   %s\n" "$f.csv" "$a" "$b" "$z"
+done
+```
+
+**3) Vyhodnoť:**
+
+| Výsledok | Čo urob |
+|---|---|
+| Všade `—` | Nič nerob, pracuj s tým, čo máš. |
+| Niekde `LÍŠI SA` | Prepíš dotknuté súbory zo `$Z` do `$N`, **v commite aktualizuj číslo verzie v tomto `SKILL.md` aj vo `VENDORED.md`** a v správe commitu uveď, čo pribudlo. Až potom navrhuj paletu. |
+| Klonovanie zlyhá (sieť, repo zmizlo) | **Nezastavuj prácu.** Pokračuj s našou snímkou a povedz majiteľovi jednou vetou, že kontrola neprebehla. Snímka je práve na toto. |
+
+> **Prečo obe veci naraz.** Čerstvé stiahnutie dá aktuálne dáta, ale **nedá naše
+> mantinely** (postup, varovanie pred shadcn, pravidlo výberového čítania) — tie
+> vznikli u nás a v cudzom repe nikdy nebudú. Snímka zas dá pevný bod, voči
+> ktorému je vidieť, čo sa zmenilo. Preto máme kópiu **aj** kontrolu.
 
 ## Čo sme zámerne NEprevzali
 

@@ -89,6 +89,11 @@ Podrobná atribúcia a zdroje: `.claude/skills/VENDORED.md`.
 > proti WCAG AA sám; (3) **neprechádzaj na shadcn/ui** — pôvodné repo na ňom
 > stojí, naše šablóny sú ručný Tailwind v4.
 >
+> **Kontrola aktuálnosti je prvý krok, nie odporúčanie.** `SKILL.md` má dva
+> presné príkazy (stiahnu ~3 MB len s dátami a porovnajú so snímkou v repe).
+> Zdroj sa vyvíja, naša kópia nie — kontrola to ukáže **skôr**, než na katalógu
+> postavíš dizajn. Keď zlyhá sieť, pracuje sa s našou kópiou; je práve na to.
+>
 > `SKILL.md` je **náš vlastný** (slovenský), prevzaté sú len dáta. Atribúcia,
 > čo sme zámerne nevzali a snímka verzie: `.claude/skills/VENDORED.md`.
 

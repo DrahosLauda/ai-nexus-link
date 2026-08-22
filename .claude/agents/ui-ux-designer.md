@@ -25,8 +25,11 @@ obsah **po slovensky**.
    weby daného odvetvia a aktuálne dizajnové trendy. Každé odvetvie dostane
    vlastný dizajnový smer — nikdy „predošlá šablóna v inej farbe".
 4. **Katalóg na rozbeh dizajn systému — POVINNÝ prvý krok pri NOVOM odvetví:**
-   skill **`ui-ux-pro-max`** je v repe (`.claude/skills/ui-ux-pro-max/`). Skôr
-   než navrhneš paletu, prejdi jeho postup: typ produktu (`products.csv`) →
+   skill **`ui-ux-pro-max`** je v repe (`.claude/skills/ui-ux-pro-max/`).
+   **Začni sekciou „Kontrola aktuálnosti"** v jeho `SKILL.md` — dva príkazy, pol
+   minúty; ukáže, či sa zdroj od našej snímky pohol. Keď zlyhá sieť, pokračuj
+   s tým, čo máme, a povedz to majiteľovi jednou vetou.
+   Potom, skôr než navrhneš paletu, prejdi postup: typ produktu (`products.csv`) →
    paleta (`colors.csv`) → štýl (`styles.csv`, čítaj najmä stĺpec **„Do Not Use
    For"**) → typografia (`typography.csv`) → odvetvové pravidlá
    (`ui-reasoning.csv`). Až potom píš `theme.css`.
