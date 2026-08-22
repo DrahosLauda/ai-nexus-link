@@ -1,220 +1,249 @@
-# Backlog — nevyriešené úlohy, zadania a doplnky (živý zoznam)
+# Backlog — čo je otvorené a v akom poradí
 
-> **Jediné miesto pravdy pre otvorené drobnosti a doplnky.** Dopĺňať/škrtať
-> priebežne. Väčšie veci majú vlastný záznam v `docs/dennik.md`. Súvisí
-> s „Pred-Google checklistom" (`docs/go-live.md`) — cieľ je **profesionálna
-> úroveň SEO/GEO**, **agent, ktorý sa dá zlepšovať**, a **web pripravený na
-> spustenie do Googlu**.
+> **Jediné miesto pravdy pre „čo je ďalej".** Denník (`docs/dennik.md`) je
+> **história** — čo sa kedy stalo a prečo. Backlog je **prítomnosť**.
+> SessionStart hook číta tento súbor priamo, takže každé sedenie dostane
+> aktuálny stav.
 >
-> **Kde to žije:** tento súbor je samostatný, aby sa v Obsidiane otvoril na
-> jeden `Cmd + O` (predtým bol schovaný uprostred `docs/dennik.md`). Denník
-> ostáva **históriou** (čo sa kedy stalo a prečo), backlog je **prítomnosť**
-> (čo je otvorené). SessionStart hook číta backlog priamo odtiaľto, takže
-> každé sedenie dostane aktuálny stav bez ohľadu na to, čo je v denníku.
+> **Vizuálne mapy** k tomuto súboru sú v `docs/mapy/` (otvor v prehliadači):
+> `strom-projektu.html` (celý strom, klikateľný) · `pracovna-mapa.html`
+> (strom + fronta s odôvodnením) · `ako-nexus-funguje.html` (dátové toky).
+>
+> Súvisí s „Pred-Google checklistom" (`docs/go-live.md`).
 
-**🔴 Gatuje spustenie do Googlu (Pred-Google checklist):**
+---
 
-- [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** (GDPR — web zbiera leady
-  cez formuláre). Bez toho web nesmieme spustiť do Googlu.
-- [x] 📄 **Stránkovanie blogu** — 6 článkov na stránku + „ďalšie" (`/blog`). *(hotové)*
-- [ ] 🎨 **Doladenie dizajnu** — priebežné vizuálne vylepšenia na expertnú úroveň.
-- [ ] 🔎 **Spustenie:** `SITE_INDEXABLE=true` (Railway) + Google Search Console (`www`)
-  — až po odškrtnutí bodov vyššie.
+## 🔤 Vysvetlivky skratiek
 
-**🟢 PRIPRAVENÉ — nečaká na nič, dá sa spustiť hneď** *(vyber si, čo ide ďalej)*:
+Aby sa nemuselo hľadať, čo znamená „M4" alebo „R2":
 
-- [ ] 🤖 **AI poradca v katalógu kytíc** (M7, prevaha č. 1 z „Naša úroveň").
-  Bublina „Poradím s výberom" odporučí konkrétne HOTOVÉ kytice z katalógu.
-  Dáta (`katalog.ts`) aj chat modul (`/api/chat`, `chat-widget`) už existujú.
-  **Hotový štartový prompt B** v `plan-agenti.md`. Typ sedenia: agenti.
-- [x] 💬 **Chatbot má vedieť, že staviame weby a máme šablóny** — *hotové a naživo
-  18.8.2026 (PR #72, prompt A).* Tri nové FAQ v `frontend/lib/content.ts`, re-index
-  prebehol, odpovede overené naživo. *(Duplicita s položkou v sekcii „RAG chatbot"
-  nižšie — ponechané odškrtnuté na oboch miestach, aby nemiatlo.)*
-- [ ] 🎨 **Smer V4 do sekcie Služby na Domove** (šablóna kvetinárstva Boma Flora,
-  **nie** digitalnapomoc.sk) — majiteľ ho vybral v demo `design-shotgun` z piatich
-  smerov (V1 editorial · V2 mriežka · V3 tmavý pás · **V4 asymetrický feature** ·
-  V5 dlaždice). **V4 = Svadby ako veľký blok + 2×2 kompaktné karty** — asymetria
-  vedie oko na najhodnotnejšiu službu. Dnes je sekcia ešte starým vzorom
-  (editorial riadky): `SluzbyZoznam` v `templates/kvetinarstvo/sections/bloky.tsx`,
-  dáta `homeSluzby` v `content.ts`. **Mantinely:** data-driven (rozloženie sa
-  odvodí z dát, nie natvrdo „tu bude Svadby" — inak sa to nedá použiť pre ďalšieho
-  klienta) a **NIE kopírovaním demo HTML** (náhľady boli prieskum a sú zmazané);
-  ide sa cez `ui-ux-designer` → `frontend-dev` → `visual-qa`. Odklad za E1 už
-  neplatí — E1 je hotové. Typ sedenia: dizajn, menšie.
+| Kód | Čo to je |
+|---|---|
+| **P1 – P6** | **Fronta sedení** — poradie, v akom ideme pracovať. Určené na porade 22.8.2026. |
+| **Fáza 1 – 5** | Veľké etapy projektu: 1 = frontend, 2 = leady, 3 = agenti/orchestrátor, 4 = WooCommerce, 5 = produktizácia pre ďalších klientov. |
+| **M4, M7** | Míľniky šablóny kvetinárstva. **M4** = customizačný agent (z jednej šablóny dva rôzne weby). **M7** = AI poradca v katalógu kytíc. |
+| **E1, E2, E3** | Kroky napojenia šablóny na e-shop. **E1** = katalóg zo súboru (hotové). **E2** = katalóg z WooCommerce. **E3** = agent, čo generuje produkty. |
+| **R1 – R4** | Kroky rezervačného agenta. **R1** = formulár + engine (hotové, naživo). **R2** = rezervácia priamo v chate. **R3** = pripomienky. **R4** = replikácia u klienta. |
+| **Krok 5** | Piaty krok RAG chatbota — presun nastavení a logov do Directusu. Je to obsah **P1**. |
 
-> **Poradie sa rieši na veľkej porade** — štartovací prompt **P** v
-> `plan-agenti.md` („Veľká plánovacia porada"). Do dovtedy platí: **nemiešať
-> viac vecí do jedného sedenia** (1 sedenie = 1 typ).
+---
 
-**🔵 ČAKÁ NA MAJITEĽA — sedenie s tým samo nepohne:**
+## 🎯 FRONTA — poradie platí
+
+**Jedno sedenie = jeden typ práce a jedna úloha: dokončiť, overiť, zavrieť.**
+Odôvodnenie každej položky (prečo práve v tomto poradí) je v
+`docs/mapy/pracovna-mapa.html`. Štartovacie prompty sú v `docs/plan-agenti.md`.
+
+### P1 — Nastavenia a logy chatbota + bookingu do Directusu
+`AI Nexus Link / Agenti / RAG chatbot / Krok 5` — typ sedenia: **agenti / kód**
+
+- [ ] **Chatbot:** presunúť `SYSTEM_PROMPT`, `CHAT_MODEL`, `TOP_K`, `MAX_SOURCES`
+  z `frontend/lib/rag.ts` do `agent_config` (riadok `rag_chatbot`).
+- [ ] **Booking:** doplniť zápis do `agent_logs` a presunúť `MIN_LEAD_MIN` (dnes
+  natvrdo `= 60` v `frontend/lib/booking-data.ts`) do configu.
+- [ ] Vlastný token s minimálnymi právami.
+
+**Prečo prvé.** Overené 22.8.2026: `agent_config` ani `agent_logs` sa vo
+`frontend/` nevyskytujú **ani raz** — chatbot aj booking stoja mimo lego vzoru,
+ktorý orchestrátor už používa. Každá zmena tónu = vetva + PR + deploy (18.8. to
+kvôli výpadku GitHubu trvalo ~3 h). Klientovi nepovieme „napíš mi a ja to
+prekódim". A dnes **netušíme, na čo sa ľudí pýtajú** — chatbot je jediný agent,
+čo hovorí priamo s návštevníkom, a nemá čiernu skrinku.
+
+**Mantinely do zadania:**
+1. Config sa číta **podľa kľúča**, nie z pevného riadku — presne ako
+   `nacitaj_config(agent_name)` v `orchestrator/directus.py`. Booking je ten
+   druhý používateľ; bez toho sa Krok 5 robí druhýkrát.
+2. Hodnoty v kóde ostávajú **fallback** — keď je Directus nedostupný, bot beží
+   ako dnes. Žiadna regresia.
+3. **GDPR:** otázky návštevníkov sú osobné údaje. Začať **metadátami** (našiel
+   zdroje áno/nie, koľko, odpovedal / „neviem"), **nie plným znením otázok**.
+   Plné otázky až po dokončení zásad ochrany osobných údajov (🔴 nižšie).
+
+### P2 — Obmedzené prístupové kľúče
+`AI Nexus Link / Systémové dáta / Tokeny` — typ sedenia: **prevažne klikanie v Directuse**, ~30–45 min
+
+- [ ] Orchestrátor má dnes **admin** token → dať mu vlastnú obmedzenú rolu.
+- [ ] Frontend prejde z verejnej adresy databázy na **vnútornú**.
+
+**Prečo hneď za P1.** Vo `vizia.md` je zapísané, že bez tohto sa systém **nedá
+bezpečne replikovať pre klientov**. Je to podmienka, nie kozmetika.
+**Prečo nie spolu s P1:** keby sa po výmene kľúča rozbil živý pipeline, ktorý
+píše články, chceš vedieť, ktorá zmena to spôsobila.
+
+### P3 — Chatbot rezervuje priamo v konverzácii
+`AI Nexus Link / Agenti / Rezervačný agent / R2` — typ sedenia: **agenti**, väčšie
+
+- [ ] **Predtým majiteľ (klik, ~10 min):** rozšíriť `booking_services` na 2–3
+  reálne typy konzultácií — „Bezplatná úvodná konzultácia 30 min", „Technický
+  audit 60 min", „Online demo automatizácií 30 min". Inak nemá bot čo ponúkať.
+- [ ] **R2:** `/api/chat` + Gemini function calling `najdi_sloty` a
+  `vytvor_rezervaciu`, volajúce ten istý `lib/booking.ts` (žiadna duplicita).
+  Tok: služba+čas → ponúkne termíny → **po výslovnom potvrdení** rezervuje →
+  e-mail + lead.
+- [ ] **V tom istom sedení:** zrušovací odkaz v potvrdzovacom e-maile
+  (`status=cancelled`) — R1 ho nemá a je to diera.
+
+**Prečo to má váhu.** Jediná vec, ktorá z chatbota spraví agenta, čo **koná**,
+nie len odpovedá. A rezervácie predávame naprieč odvetviami.
+
+### P4 — Agent na príspevky pre sociálne siete
+`AI Nexus Link / Agenti / Social agent` — typ sedenia: **agenti** + klik v Directuse
+
+- [ ] Po každom článku pripraví **2–3 varianty** príspevku (kratší na Facebook,
+  odbornejší na LinkedIn) → do Directusu ako **koncepty**. Zverejňuje človek.
+- [ ] Nová kolekcia `social_posts`. **Od začiatku pridať pole na médium**
+  (obrázok/video URL), aby sa video dalo doplniť neskôr bez prerábania schémy.
+- [ ] **Prívesok:** notifikácie na Telegram (čo agent spravil, čo zlyhalo) —
+  ~30 riadkov, a je to zárodok klientskeho modulu „ozvi sa mi, keď príde dopyt".
+
+**Prečo nepublikuje sám.** Facebook aj LinkedIn vyžadujú schvaľovanie prístupu
+(dni až týždne) — tam takéto projekty zomierajú. A je to naša zásada: agenti
+pripravujú koncepty, publikuje človek.
+**Prečo teraz.** Nepotrebuje novú infraštruktúru — nový agent = nový súbor
+a riadok v Directuse.
+
+### P5 — Customizačný agent: dva weby z jednej šablóny
+`AI Nexus Link / Frontend agent / M4` — typ sedenia: podľa nálezu, **väčšie**
+
+- [ ] Suchý beh: druhá sada obsahu do tej istej šablóny → **dva rôzne weby**.
+  Kostra už existuje ako skill `site-customizer`.
+
+**Prečo to podceňujeme.** Je to jediný spôsob, ako zistiť, či je šablóna naozaj
+riadená dátami, alebo má polovicu natvrdo v komponentoch. **Celá téza produktu
+na tom stojí — a nikdy sme ju neoverili.** Ak je problém, chceme to vedieť
+teraz, nie pri prvom klientovi.
+
+### P6 — Kvalita obsahu: Writer a revízia článkov
+`AI Nexus Link / Agenti / Obsahový agent (Writer)` — typ sedenia: **agenti / obsah**
+
+- [ ] **Rôznorodejšie úvody** — Writer často začína rovnakým vzorcom
+  („Predstavte si, je piatok večer…"). Presne podľa toho čitateľ spozná AI text.
+- [ ] **Jednoduchšie obrázky** — časť generovaných je na naše témy zbytočne zložitá.
+- [ ] **Popisné alt texty** — pre nevidiacich aj pre Google.
+- [ ] **Revízia starších článkov** cez `revise_article.py` (máme napísaný, takmer
+  nepoužitý) — smerom k NAŠIM riešeniam. Originál sa nemení, vzniká koncept.
+
+**Prečo až šieste.** Po P1 budeš mať v logoch, **na čo sa ľudia naozaj pýtajú** —
+takže sa revidujú články, ktoré chýbajú, nie tie, ktoré si tipneme.
+
+---
+
+## 🔴 Gatuje spustenie do Googlu (Pred-Google checklist)
+
+*(Spustenie samotné je ZAMKNUTÉ — ide len na výslovný pokyn majiteľa.)*
+
+- [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** (GDPR — web zbiera
+  leady cez formuláre). **Viaže sa na P1** — logovanie chatov bez tohto smie
+  ukladať len metadáta.
+- [x] 📄 **Stránkovanie blogu** — 6 článkov na stránku + „ďalšie". *(hotové)*
+- [ ] 🎨 **Doladenie dizajnu** — priebežné vizuálne vylepšenia.
+- [ ] 🔎 `SITE_INDEXABLE=true` (Railway) + Google Search Console — až po
+  odškrtnutí bodov vyššie.
+
+---
+
+## 🔵 Čaká na majiteľa — sedenie s tým samo nepohne
 
 - [ ] 📸 **Fotky pre 3 kytice bez obrázka** — Red Naomi, Tichá rozlúčka, Slnečné
-  ráno (+ prípadne druhé uhly k ostatným). Majiteľ ich **dodá**, alebo sa
-  vygenerujú v samostatnom KREATÍVNOM sedení (Higgsfield/Gemini; Kling CDN je
-  blokovaný egressom). Doplnenie = pridať cestu do `fotky[]` v `content.ts`,
-  **žiadny zásah do kódu**; potom riadok do `images/LICENSES.md`.
-- [ ] 🛒 **E2 — WooCommerce ako zdroj katalógu.** Potrebuje **samostatnú inštanciu
-  WordPress + WooCommerce** (**nemiešať** s `wp.digitalnapomoc.sk`). Kód je
-  pripravený — mení sa len telo funkcií v `templates/kvetinarstvo/katalog.ts`,
-  stránky ani komponenty nie.
-- [ ] 🧑‍🌾 **E3 — produkt agent** (generuje kytice s popismi ako Woo koncepty).
-  **Stojí na E2.**
-- [ ] 📊 **Domerať Lighthouse** pre šablónu kvetinárstva — v cloud sedení chýba CLI,
-  meria sa na deployi (cieľ ≥ 95, prístupnosť 100).
-- [ ] 🍪 **Cookie lišta + zásady ochrany osobných údajov** — viď červená sekcia
-  vyššie. Kód vieme spraviť kedykoľvek, ale **kedy sa to rieši, rozhoduje majiteľ**
-  (súvisí so spustením, ktoré je zamknuté).
+  ráno. Majiteľ dodá, alebo sa vygenerujú v samostatnom kreatívnom sedení.
+  Doplnenie = cesta do `fotky[]` v `content.ts`, **žiadny zásah do kódu**;
+  potom riadok do `images/LICENSES.md`.
+- [ ] 🛒 **E2 — WooCommerce ako zdroj katalógu.** Potrebuje **samostatnú
+  inštanciu** WordPress + WooCommerce (**nemiešať** s `wp.digitalnapomoc.sk`).
+  Kód je pripravený — mení sa len telo funkcií v `templates/kvetinarstvo/katalog.ts`.
+- [ ] 🧑‍🌾 **E3 — produkt agent.** Stojí na E2.
+- [ ] 📊 **Domerať Lighthouse** pre šablónu kvetinárstva — v cloud sedení chýba
+  CLI, meria sa na deployi (cieľ ≥ 95, prístupnosť 100).
 
-**🟡 Agent / orchestrátor (kvalita obsahu):**
+---
 
-- [ ] **Rôznorodejšie úvody článkov** — Writer často začína rovnakým vzorcom
-  („Predstavte si, je piatok večer…"). Doladiť `system_prompt` (Directus) +
-  príp. základný prompt v `wp_writer_agent.py`, nech úvody striedajú formu.
-- [ ] **Jednoduchšie obrázky** — časť generovaných obrázkov je na naše témy
-  príliš zložitá. Obmedziť/spresniť obrázkový prompt (jednoduchší, čistejší motív).
-- [ ] **Alt texty generovaných obrázkov** — agent ich pri in-článkových obrázkoch
-  už niekedy nastavuje; dotiahnuť **konzistenciu a kvalitu** (popisný alt vždy).
+## 🟡 Otvorené, ale nie vo fronte
 
-**🟡 Frontend:**
-
-- [ ] **Responzivita (mobil)** — pár detailov na doladenie (doplniť konkrétne
-  po prehliadke na mobile).
+**Frontend:**
+- [ ] **Responzivita (mobil)** — pár detailov (doplniť po prehliadke na mobile).
 - [ ] **Interné odkazy v tele článku** po migrácii `www→wp` ukazujú na `wp.` —
-  prelinkovať na `/blog/...` (samostatná téma, netýka sa obrázkov).
+  prelinkovať na `/blog/...`.
+- [ ] 🎨 **Smer V4 do sekcie Služby na Domove** (šablóna Boma Flora, **nie**
+  digitalnapomoc.sk). Majiteľ vybral V4 = Svadby ako veľký blok + 2×2 karty.
+  Dnes je sekcia starým vzorom: `SluzbyZoznam` v
+  `templates/kvetinarstvo/sections/bloky.tsx`, dáta `homeSluzby` v `content.ts`.
+  **Mantinely:** data-driven (rozloženie z dát, nie natvrdo) a **NIE kopírovaním
+  demo HTML**; ide sa cez `ui-ux-designer` → `frontend-dev` → `visual-qa`.
+  Typ sedenia: dizajn, menšie.
 
-**🟡 RAG chatbot — doladiť (prvé demo je hrubá verzia, funguje):**
+**Rezervačný agent — ďalej za P3:**
+- [ ] **R3 — pripomienky** (orchestrátor cron, deň vopred).
+- [ ] **R4 — replikácia u klienta** (viď `plan-agenti.md`).
 
-- [x] **Výstup/štýl odpovedí** — dĺžka, tón, formátovanie, koľko zdrojov ukazovať.
-  *Hotové 18.8.2026, zlúčené do `main` (PR #76) a **overené naživo** — všetky štyri
-  kontrolné otázky prešli (viď záznam v denníku). Dobeh: **klikateľné odkazy
-  v odpovediach** — PR #78, overené naživo 19.8.2026.* Citujú sa len kúsky, ktoré
-  model označí ako použité (`splitCited` v `lib/rag.ts`, strop `MAX_SOURCES = 3`),
-  markdown sa vo widgete vykresľuje (`ChatText`, bez závislosti a bez
-  `dangerouslySetInnerHTML`), prompt káže 2 – 4 vety a výzvu na kontakt len keď má
-  zmysel. Anti-halucinačné zásady nedotknuté.
-- [ ] **Krok 5 — config v Directuse** — presunúť nastavenia chatbota (model,
-  system prompt/osobnosť, počet kúskov `k`) do `agent_config` (riadok `chatbot`),
-  aby sa dali meniť klikaním bez zásahu do kódu; logy chatov do `agent_logs`;
-  vlastný token s minimálnymi právami (teraz frontend číta DB priamo).
-  **Dnes:** `SYSTEM_PROMPT`, `CHAT_MODEL` aj `TOP_K` sú natvrdo v `frontend/lib/rag.ts`,
-  takže každá zmena tónu = vetva + PR + deploy (18.8. to kvôli výpadku GitHubu
-  trvalo ~3 h). **Podmienka predajnosti:** klientovi nepovieme „napíš mi a ja to
-  prekódim" — musí si tón doladiť sám. **Mantinel do zadania:** hodnoty v kóde
-  ostanú ako **fallback** — keď je Directus nedostupný alebo riadok prázdny, bot
-  beží podľa dnešných hodnôt (config v DB mení bota naživo bez revízie cez PR).
-  **Hodnota logov:** dnešný nález s klikateľnými odkazmi vyšiel z jednej otázky
-  majiteľa — `agent_logs` ukáže stovky takých.
-- [ ] **Kvalita obsahu, z ktorého čerpá** — revízia/úprava existujúcich článkov
-  (viac o „našich" riešeniach, menej odkazov na cudzie nástroje — viď nižšie).
-- [x] **Chatbot nevie o tom, že staviame weby / máme šablóny** — *hotové a naživo
-  18.8.2026.* Cesta 1: tri nové FAQ v `frontend/lib/content.ts` (vrátane odkazu na
-  `/ukazky/kvetinarstvo` — odsúhlasené majiteľom), PR #72 zlúčené, re-index
-  prebehol, **odpovede overené naživo**. Detaily v zázname z 18.8.2026 v `docs/dennik.md`.
-- [ ] **Hlas (fáza 2)** — browser Web Speech (zadarmo, slabšia SK) vs platený TTS
-  (detaily `docs/rag-chatbot.md` §9).
-- [ ] **Optimalizácia** — frontend na vnútornú DB adresu (teraz verejná kvôli
-  jednoduchosti); prípadne instantné doindexovanie cez WP webhook (dnes 3×/týždeň
-  v pipeline — `docs/rag-cron.md` Cesta B).
+**RAG chatbot — ďalej za P1:**
+- [ ] **Instantné doindexovanie** cez WP webhook (dnes 3×/týždeň v pipeline —
+  `docs/rag-cron.md` Cesta B).
 
-**🟡 Rezervačný agent — ďalšie kroky (R1 hotový naživo; pokračovať po rozšírení služieb):**
-
-- [ ] **Rozšíriť `booking_services`** na 2–3 reálne konzultačné typy (my sme
-  agentúra → rezervuje sa konzultácia). Návrh: „Bezplatná úvodná konzultácia
-  30 min", „Technický audit / hlbšia konzultácia 60 min", „Online demo
-  automatizácií 30 min". Klik v Directuse (`booking_services`), žiadny kód.
-  *(Fiktívne odvetvové služby — kaderníctvo/autoservis — patria až do demo u
-  klienta = Krok R4 replikácia.)*
-- [ ] **Krok R2 — chatbot rezervuje v konverzácii** (prompt v `plan-agenti.md`).
-  Rozšíriť `/api/chat` o Gemini function calling `najdi_sloty` +
-  `vytvor_rezervaciu`, volajúce ten istý `lib/booking.ts`/`booking-data.ts`
-  (žiadna duplicita). Tok: služba+čas → ponúkne termíny → po výslovnom potvrdení
-  rezervuje → e-mail+lead. Osobnosť z `agent_config`. Bezpečnosť: iba čítať sloty
-  + vytvoriť rezerváciu. **Robiť až po rozšírení služieb** (nech má bot čo ponúkať).
-- [ ] **Zrušovací link v potvrdzovacom e-maile** (`status=cancelled`) — R1 „na
-  hrubo" ho zatiaľ nemá (návrh z `plan-agenti.md` otvorených drobností).
-- [ ] **Krok R3 — pripomienky** (orchestrátor cron, deň vopred) a **R4 —
-  replikácia u klienta** (viď `plan-agenti.md`).
-
-**🟣 Dedikované produktové podstránky (dotiahnuť, keď rozširujeme služby):**
-
-- [ ] **Produktové stránky pre jednotlivé služby** — dnes karty v sekcii Služby
-  len odkazujú (napr. `/rezervacia` = demo), ale chýba predajná podstránka typu
-  „Rezervačný systém pre vašu firmu" (čo to vie, pre koho, ceny/kontakt).
-  Podobne chatbot nemá vlastnú predajnú podstránku. Doplniť pri spúšťaní webu
-  do Googlu, nech má každá služba „kam odkázať". *(Súvisí s `vizia.md` §8 —
-  párovanie agent ↔ Woo služba.)*
-- [ ] **Chýbajúci agenti z vízie (§3)** — e-mail auto-odpoveď agent, mockup/náhľad
-  agent (frontend agent, §9) — zatiaľ len plán, ani karta ani demo.
-
-**🟣 Väčšie iniciatívy (roadmap — detail vo `vizia.md` §8–11):**
-
-- [x] **RAG chatbot naživo na našom webe (prvé demo)** — ✅ NASADENÝ a funguje
-  (odpovedá z nášho obsahu + cituje zdroje). Cesta B (bez pgvectora — vektor `real[]`,
-  kosínus v pamäti). Detaily v `docs/dennik.md` → „RAG chatbot — DOKONČENÉ (prvé demo)".
-- [ ] **Vlastné „krabicové" riešenia (produktová línia) + demo agenti** — namiesto
-  odkazovania na cudzie nástroje mať **vlastné hotové moduly**, ktoré vieme nasadiť
-  klientovi a zároveň ukázať ako živé demo na našom webe. Prví kandidáti:
-  - **Rezervácie / objednávky** (kalendár, potvrdenia, SMS/e-mail pripomienky),
-  - **Dohadovanie schôdzok / stretnutí** (ponuka termínov, potvrdenie, pripomienky),
-  - **Zápis poznámok zo stretnutí** (prepis → zhrnutie → úlohy/ďalšie kroky),
-  - chatbot/zák. podpora (✅ prvé demo hotové), e-mail auto-odpoveď.
-  Rovnaký „lego" vzor (config v Directuse, modul v orchestrátore, logy).
-- [ ] **Obsahová stratégia blogu = predávať NAŠE riešenia** — články majú ukazovať
-  a viesť k **našim krabicovým riešeniam** (rezervácie, schôdzky, poznámky…), nie
-  len opisovať cudzie nástroje. Doladiť Writer `system_prompt`, nech spomína naše
-  moduly ako hotové riešenie a smeruje na kontakt/demo.
-- [ ] **Woo služby napárované na agentov** — reálne produkty vo WooCommerce
-  (embednutý checkout, Store API), aby bolo vidieť headless WP ↔ frontend naostro.
-- [ ] **Frontend „mockup" agent** — z promptu podľa biznisu/biznis plánu klienta
-  vygeneruje náhľad webu; hotové ukážky do portfólia (predajný nástroj).
-- [x] 🎨 **Redizajn webu → svetlejší štýl à la apertia.ai** — hotový (zmiešaný
-  layout: tmavý hero + blog + pätička, svetlý stred; svetlé články). *(viď záznam v `docs/dennik.md`)*
-- [x] **Stránka „Čo je headless WordPress" + kalkulačka úspory za pluginy** —
-  hotová na `/headless-wordpress` (bez cenníka, CSS grafika).
-- [x] ⚠️ **Dizajnové referencie** — apertia screenshoty dodal používateľ; vlastná
-  landing je v repe (`docs/index.html`).
-- [ ] **Vylepšiť náš Claude Code workflow — inšpirácia z `gstack`** (Garry Tan, MIT;
-  balík ~23 skillov pre Claude Code: plán → dizajn → review → QA → ship → reflect).
-  **Posúdenie (16.8.2026):** koncepčne presne to, čo dnes robíme ručne cez naše
-  konvencie, ALE gstack je **lokálny-first** (vyžaduje **Bun**, team mode = symlinky
-  na lokálnu inštaláciu, lokálne daemony) → **priamo do našich cloud web sedení
-  nesadne.** Rozhodnutie: **cesta B** — neinštalovať gstack naostro, ale prevziať
-  jeho najlepšie vzory ako **vlastné odľahčené, cloud-kompatibilné skilly** do
-  `.claude/skills/`. **Shortlist na prevzatie** (samostatné nástrojové sedenie,
-  ideálne cez `skill-creator`):
-  1. [x] **„design-shotgun"** — vygeneruj 4–6 dizajnových variantov sekcie/stránky
-     naraz → rýchly výber (ideál pre stavbu šablón). *(hotové 16.8.2026 —
-     `.claude/skills/design-shotgun/`, vetva `claude/claude-code-skills-design-qa-7kweyt`,
-     NEzlúčené; viď záznam navrchu)*
-  2. [x] **„vizuálne QA v prehliadači"** — predinštalovaný Chromium + Playwright:
-     spusti app, preklikaj, screenshoty desktop/mobil, over proti
-     `docs/sablony-kvalita.md`. *(hotové 16.8.2026 — `.claude/skills/visual-qa/`,
-     tá istá vetva, NEzlúčené)*
-  3. **„plan-review pred kódom"** — štruktúrovaný review plánu (architektúra +
-     dizajn) pred realizačným sedením. (Nadväzuje na náš `Plan` subagent.)
-  4. **„retro/reflect"** — formalizovať zápis ponaučení na konci sedenia (dnes ručne
-     do denníka). Nízke úsilie, drží učenie.
-  Alternatíva (cesta A): gstack naostro — len ak raz prejdeme na **lokálny Claude
-  Code CLI** (Bun + gstack). Zatiaľ NIE. **Nezaraďovať teraz** (uprostred M7/E1;
-  1 sedenie = 1 typ).
-
-**🟢 Doplnky / neskôr (nie sú blokery):**
-
+**Produktové podstránky:**
+- [ ] **Predajné podstránky pre jednotlivé služby** — dnes karty len odkazujú
+  (napr. `/rezervacia` = demo), chýba stránka typu „Rezervačný systém pre vašu
+  firmu". Podobne chatbot. Doplniť pri spúšťaní do Googlu.
 - [ ] Podstránky služieb `/sluzby/[slug]`.
+
+**Drobnosti:**
 - [ ] Fotka tímu (`frontend/public/team.jpg` + `components/about.tsx`).
 - [ ] Reálny telefón v pätičke.
-- [ ] Vlastná obmedzená rola pre orchestrátor token (teraz admin) — least privilege.
-- [ ] Maskot značky (fialový robot) + jemné efekty na článkových obrázkoch (viď
-  „Nápady na neskôr" v `docs/dennik.md`, Cesta A/C).
-- [ ] SEO+GEO agent v2 — automatické prelinkovanie + HowTo schéma (viď roadmapa v `docs/dennik.md`).
-- [x] **SessionStart hook** — nové sedenie **automaticky (tvrdo)** dostane inštrukciu
-  prečítať `docs/dennik.md` + `docs/vizia.md` + živý Backlog (nie len „mäkký" pokyn
-  v `CLAUDE.md`), a na webe sa predinštalujú `frontend` závislosti. ✅ hotové a
-  zlúčené do `main` (PR #52) — viď záznam v `docs/dennik.md`. Aktívne od teraz.
+- [ ] Maskot značky (fialový robot) + jemné efekty na článkových obrázkoch.
+- [ ] SEO+GEO agent v2 — automatické prelinkovanie + HowTo schéma.
 
-**✅ Nedávno vyriešené (pre kontext):**
+---
 
-- [x] **Obrázky článkov po migrácii `www→wp`** — zobrazujú sa v tele článku aj
-  v náhľadoch, všade bez `wp.` prefixu. *(vyriešené)*
-- [x] Náhľady preberajú `alt` z WP (fallback názov článku).
+## ⏸️ Odložené s dôvodom *(neškrtať — vieme, prečo tam nie sú)*
+
+- **Kokpit nad Directusom** → odložené do **Fázy 5**. Directus sám je dnes
+  dostatočný admin; väčší zmysel má stavať agentov pod ním ako legokocky.
+  Rozhodnuté 22.8.2026, prehodnotiť v samostatnom plánovacom sedení.
+- **M7 — AI poradca v katalógu kytíc** → odložené. Je to funkcia demo šablóny,
+  nie kocka nášho systému. Prednosť majú veci, ktoré platia pre **každého**
+  klienta. Štartový prompt B v `plan-agenti.md` ostáva pripravený.
+- **MiniMax H3 lokálne (video)** → **odpadá.** Overené 22.8.2026: potrebuje
+  ~42,5 GB váh a NVIDIA/Apple Silicon; majiteľov Mac má Intel + AMD Radeon Pro
+  555X so 4 GB a 16 GB RAM. Video ideme **cez API** — overené naživo, 5 s klip
+  za 70 sekúnd. Poznámka: `docs/podklady/`.
+- **Hlas — výstup (bot číta nahlas)** → nie vo fronte. Kandidát Higgs Audio v3
+  (hostované API zdarma), ale licencia je **nekomerčná** — „Creator Use Grant"
+  kryje naše vlastné videá, **nie** produkt predávaný klientom. A slovenčina
+  nie je potvrdená (dokumentácia spomína češtinu).
+- **Hlas — vstup (diktovanie)** → ✅ **VYRIEŠENÉ.** Wispr Flow otestovaný
+  22.8.2026: 153 slov, 1 chyba (`Railway`, opravená slovníkom). Netreba riešiť.
+- **gstack (Garry Tan) naostro** → NIE. Je lokálny-first (Bun, symlinky,
+  daemony) → do cloud sedení nesadne. **Cesta B:** preberáme jeho vzory ako
+  vlastné skilly. Hotové: `design-shotgun`, `visual-qa`. Ostáva na zváženie:
+  „plan-review pred kódom", „retro/reflect".
+- **Hermes agent, agency-agents, free-claude-code** → posúdené 22.8.2026,
+  neberieme. Dôvody v `docs/dennik.md`.
+
+---
+
+## 🟣 Roadmapa (detail vo `vizia.md` §8–11)
+
+- [ ] **Vlastné „krabicové" riešenia + demo agenti** — vlastné hotové moduly,
+  ktoré vieme nasadiť klientovi a zároveň ukázať ako živé demo. Kandidáti:
+  rezervácie (✅ R1 naživo), dohadovanie schôdzok, zápis poznámok zo stretnutí,
+  chatbot (✅ demo hotové), e-mail auto-odpoveď. Rovnaký lego vzor.
+- [ ] **Obsahová stratégia blogu = predávať NAŠE riešenia** — články majú viesť
+  k našim modulom, nie opisovať cudzie nástroje. *(Prekrýva sa s P6.)*
+- [ ] **Woo služby napárované na agentov** — reálne produkty vo WooCommerce
+  (Store API, embednutý checkout).
+- [ ] **Frontend „mockup" agent** — z promptu vygeneruje náhľad webu; ukážky do
+  portfólia ako predajný nástroj.
+- [ ] **Newsletter** — posledný WordPress plugin, ktorý ešte nemáme nahradený.
+  *(Neprediskutované — otvoriť na najbližšej porade.)*
+
+---
+
+## ✅ Nedávno vyriešené (pre kontext)
+
+- [x] **Krok 5 časť „výstup/štýl odpovedí chatbota"** — PR #76 + #78, naživo.
+- [x] **RAG chatbot naživo (prvé demo)** — odpovedá z nášho obsahu + cituje zdroje.
+- [x] **Chatbot vie o šablónach a stavbe webov** — PR #72, overené naživo.
+- [x] **Redizajn webu → svetlejší štýl**, **stránka „Čo je headless WordPress"**.
+- [x] **SessionStart hook** — PR #52, aktívny.
+- [x] **Obrázky článkov po migrácii `www→wp`**, alt z WP.
+- [x] **E1 — katalóg kytíc zo súboru**, **R1 — rezervačný formulár naživo**.

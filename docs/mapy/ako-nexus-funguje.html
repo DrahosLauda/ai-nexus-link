@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ako Nexus funguje</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E⚙️%3C/text%3E%3C/svg%3E">
+<style>*{margin:0}html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F1F3F6; --surface:#FFFFFF; --surface-2:#E9ECF1; --surface-3:#F7F8FA;
+    --ink:#191D26; --ink-soft:#4C5462; --ink-faint:#8992A1;
+    --line:#D6DBE3; --line-soft:#E4E8EE;
+    --accent:#9E6E1B; --accent-bright:#C2913A; --accent-tint:#F4EBD6;
+    --flow:#37648F; --flow-tint:#E5EDF5;
+    --live:#2C825C; --live-tint:#E1EFE8;
+    --gap:#C24A33; --gap-tint:#F7E5E0;
+    --shadow:0 1px 2px rgba(20,28,45,.05), 0 8px 30px rgba(20,28,45,.06);
+    --shadow-sm:0 1px 2px rgba(20,28,45,.06);
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","Cascadia Code","Segoe UI Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+      --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+      --line:#29303C; --line-soft:#222833;
+      --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+      --flow:#6E9BCB; --flow-tint:#1A2532;
+      --live:#4DB183; --live-tint:#163529;
+      --gap:#E1755E; --gap-tint:#38201B;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+    --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+    --line:#29303C; --line-soft:#222833;
+    --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+    --flow:#6E9BCB; --flow-tint:#1A2532;
+    --live:#4DB183; --live-tint:#163529;
+    --gap:#E1755E; --gap-tint:#38201B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-sans); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:clamp(26px,5vw,58px) clamp(16px,4vw,36px) 90px}
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 12px; font-weight:600;
+  }
+  h1{
+    font-size:clamp(1.9rem,5.2vw,2.7rem); line-height:1.06; margin:0 0 14px;
+    letter-spacing:-.022em; text-wrap:balance; font-weight:700;
+  }
+  .thesis{font-size:clamp(1.02rem,2.2vw,1.16rem); color:var(--ink-soft); margin:0; max-width:60ch}
+  .thesis b{color:var(--ink); font-weight:600}
+  .stamp{
+    margin-top:22px; display:flex; flex-wrap:wrap; gap:8px 18px;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); letter-spacing:.04em;
+  }
+
+  section{margin-top:clamp(40px,6vw,62px)}
+  h2{font-size:1.32rem; letter-spacing:-.012em; margin:0 0 5px; font-weight:700; text-wrap:balance}
+  .sub{color:var(--ink-soft); margin:0 0 22px; max-width:62ch; font-size:.96rem}
+
+  /* ── diagram ──────────────────────────────────────────── */
+  figure{margin:0}
+  .diagram{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:clamp(12px,2.2vw,22px); box-shadow:var(--shadow); overflow-x:auto;
+  }
+  .diagram svg{display:block; width:100%; min-width:660px; height:auto; color:var(--ink)}
+  figcaption{color:var(--ink-soft); font-size:.92rem; margin-top:15px; max-width:70ch; line-height:1.6}
+  figcaption b{color:var(--ink)}
+
+  .box{fill:var(--surface-2); stroke:var(--line); stroke-width:1.2}
+  .box-key{fill:var(--accent-tint); stroke:var(--accent-bright); stroke-width:1.4}
+  .box-ext{fill:var(--surface-3); stroke:var(--line); stroke-width:1.2; stroke-dasharray:4 3}
+  .t-name{fill:currentColor; font-family:var(--font-sans); font-size:14px; font-weight:650}
+  .t-sub{fill:var(--ink-faint); font-family:var(--font-mono); font-size:10.5px; letter-spacing:.05em}
+  .t-lab{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em}
+  .lab-v{fill:var(--flow)} .lab-a{fill:var(--accent)} .lab-n{fill:var(--ink-faint)}
+  .ln-v{stroke:var(--flow); stroke-width:1.6; fill:none}
+  .ln-a{stroke:var(--accent); stroke-width:1.6; fill:none}
+  .ln-n{stroke:var(--ink-faint); stroke-width:1.4; fill:none}
+  .ln-d{stroke-dasharray:5 4}
+  .ah-v{fill:var(--flow)} .ah-a{fill:var(--accent)} .ah-n{fill:var(--ink-faint)}
+
+  .key{
+    display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:14px;
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-soft); letter-spacing:.03em;
+  }
+  .key span{display:inline-flex; align-items:center; gap:7px}
+  .swatch{width:20px; height:0; border-top:2px solid; flex:none}
+  .sw-v{border-color:var(--flow)} .sw-a{border-color:var(--accent)} .sw-n{border-color:var(--ink-faint)}
+
+  /* ── vrstvy ───────────────────────────────────────────── */
+  .layers{display:grid; gap:12px}
+  .layer{
+    background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    box-shadow:var(--shadow-sm); padding:16px 18px;
+    display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;
+  }
+  .lnum{
+    font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--accent);
+    background:var(--accent-tint); border-radius:6px; padding:4px 8px; flex:none;
+  }
+  .lh{font-weight:650; font-size:1rem; letter-spacing:-.01em; margin:0 0 3px}
+  .lh em{font-style:normal; font-weight:400; color:var(--ink-faint); font-size:.85rem}
+  .lrole{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+    color:var(--live); margin:0 0 8px; font-weight:600;
+  }
+  .layer p{margin:0; color:var(--ink-soft); font-size:.93rem}
+  .layer p + p{margin-top:8px}
+  .layer code{font-family:var(--font-mono); font-size:.87em}
+  .layer b{color:var(--ink)}
+
+  /* ── pravidlá ─────────────────────────────────────────── */
+  .rules{display:grid; gap:12px}
+  .rule{
+    background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gap);
+    border-radius:12px; padding:15px 18px; box-shadow:var(--shadow-sm);
+  }
+  .rule h3{margin:0 0 5px; font-size:1rem; font-weight:650; letter-spacing:-.01em}
+  .rule p{margin:0; color:var(--ink-soft); font-size:.93rem}
+  .rule b{color:var(--ink)}
+  .rule code{font-family:var(--font-mono); font-size:.87em}
+
+  .note{
+    margin-top:20px; padding:16px 18px; border-radius:12px;
+    background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--flow);
+    font-size:.94rem; color:var(--ink-soft); box-shadow:var(--shadow-sm);
+  }
+  .note b{color:var(--ink)}
+  .note p{margin:0 0 10px}
+  .note p:last-child{margin-bottom:0}
+
+  hr.rule-line{border:none; border-top:1px solid var(--line); margin:0}
+  a{color:var(--flow)}
+  :focus-visible{outline:2px solid var(--accent-bright); outline-offset:2px; border-radius:6px}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+  @media (max-width:560px){
+    .layer{grid-template-columns:1fr; gap:10px}
+  }
+
+  /* Pečiatka zdroja pravdy — mapa je zobrazenie backlogu, nie druhý zoznam. */
+  .sot{margin:12px 0 0; padding:10px 14px; border:1px dashed var(--line);
+       border-radius:9px; background:var(--surface-3); color:var(--ink-soft);
+       font-size:.83rem; line-height:1.55}
+  .sot code{font-family:var(--font-mono); font-size:.94em; color:var(--ink);
+       background:var(--surface-2); padding:1px 5px; border-radius:4px}
+  .sot b{color:var(--ink)}
+  @media (max-width:680px){ .sot{font-size:.79rem; padding:9px 11px} }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Systémová mapa · 22. augusta 2026</p>
+  <h1>Ako Nexus funguje</h1>
+  <p class="thesis">
+    Štyri systémy, každý s <b>jednou rolou</b>, a hranice, ktoré medzi nimi držíme.
+    Nižšie sú dva obrázky: čo sa deje počas prevádzky, a kde žije pamäť projektu —
+    <b>GitHub, Obsidian a Railway</b>.
+  </p>
+  <div class="stamp">
+    <span>AI NEXUS LINK</span>
+    <span>REFERENCIA: DIGITALNAPOMOC.SK</span>
+  </div>
+  <p class="sot">
+    <b>Zdroj pravdy je <code>docs/backlog.md</code>.</b> Táto mapa je jeho
+    zobrazenie, nie druhý zoznam — <b>keď sa líšia, platí backlog.</b><br>
+    Zosúladené <b>22. 8. 2026</b>. Ak je odvtedy odstup, over si backlog v repe.
+  </p>
+
+  <!-- ══════════ PREVÁDZKA ══════════ -->
+  <section>
+    <h2>Prevádzka — čo sa deje, keď web beží</h2>
+    <p class="sub">
+      Dva pohyby, ktoré sa nikdy nestretnú v tej istej databáze: čo spustí <b>návštevník</b>
+      a čo spustí <b>cron</b> trikrát do týždňa.
+    </p>
+
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 940 530" role="img"
+             aria-label="Návštevník volá frontend, ktorý číta obsah z WordPressu a zapisuje dopyty do Directusu. Orchestrátor v noci číta nastavenia z Directusu, volá jazykové modely a publikuje koncepty článkov do WordPressu.">
+          <defs>
+            <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <polygon class="ah-v" points="0,1 10,5 0,9"></polygon>
+            </marker>
+            <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <polygon class="ah-a" points="0,1 10,5 0,9"></polygon>
+            </marker>
+            <marker id="an" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <polygon class="ah-n" points="0,1 10,5 0,9"></polygon>
+            </marker>
+          </defs>
+
+          <!-- ── boxy ── -->
+          <rect class="box" x="30" y="86" width="170" height="72" rx="10"></rect>
+          <text class="t-name" x="115" y="116" text-anchor="middle">Návštevník</text>
+          <text class="t-sub" x="115" y="136" text-anchor="middle">PREHLIADAČ</text>
+
+          <rect class="box-key" x="300" y="76" width="210" height="92" rx="11"></rect>
+          <text class="t-name" x="405" y="108" text-anchor="middle">Frontend</text>
+          <text class="t-sub" x="405" y="128" text-anchor="middle">NEXT.JS · RAILWAY</text>
+          <text class="t-sub" x="405" y="146" text-anchor="middle">WWW.DIGITALNAPOMOC.SK</text>
+
+          <rect class="box" x="660" y="40" width="215" height="80" rx="10"></rect>
+          <text class="t-name" x="767" y="70" text-anchor="middle">WordPress</text>
+          <text class="t-sub" x="767" y="89" text-anchor="middle">OBSAH · ČLÁNKY</text>
+          <text class="t-sub" x="767" y="106" text-anchor="middle">WP. SUBDOMÉNA, SKRYTÁ</text>
+
+          <rect class="box" x="660" y="185" width="215" height="118" rx="10"></rect>
+          <text class="t-name" x="767" y="214" text-anchor="middle">Directus</text>
+          <text class="t-sub" x="767" y="233" text-anchor="middle">SYSTÉMOVÉ DÁTA</text>
+          <text class="t-sub" x="767" y="256" text-anchor="middle">DOPYTY · REZERVÁCIE</text>
+          <text class="t-sub" x="767" y="273" text-anchor="middle">NASTAVENIA · ZÁZNAMY</text>
+          <text class="t-sub" x="767" y="290" text-anchor="middle">KÚSKY PRE CHAT</text>
+
+          <rect class="box-key" x="300" y="368" width="210" height="92" rx="11"></rect>
+          <text class="t-name" x="405" y="400" text-anchor="middle">Orchestrátor</text>
+          <text class="t-sub" x="405" y="420" text-anchor="middle">AGENTI · PYTHON</text>
+          <text class="t-sub" x="405" y="438" text-anchor="middle">CRON PO · ST · PI</text>
+
+          <rect class="box-ext" x="30" y="376" width="170" height="76" rx="10"></rect>
+          <text class="t-name" x="115" y="406" text-anchor="middle">Modely</text>
+          <text class="t-sub" x="115" y="426" text-anchor="middle">GEMINI · Z.AI</text>
+
+          <!-- ── návštevnícke toky (modré) ── -->
+          <line class="ln-v" x1="200" y1="122" x2="292" y2="122" marker-end="url(#av)"></line>
+          <text class="t-lab lab-v" x="246" y="112" text-anchor="middle">otvorí web</text>
+
+          <line class="ln-v" x1="510" y1="80" x2="652" y2="80" marker-end="url(#av)"></line>
+          <text class="t-lab lab-v" x="581" y="71" text-anchor="middle">číta články</text>
+
+          <polyline class="ln-v" points="510,145 600,145 600,220 652,220" marker-end="url(#av)"></polyline>
+          <text class="t-lab lab-v" x="555" y="137" text-anchor="middle">zapisuje dopyty</text>
+          <text class="t-lab lab-v" x="592" y="196" text-anchor="end">hľadá odpoveď pre chat</text>
+
+          <!-- ── agentské toky (zlaté) ── -->
+          <polyline class="ln-a" points="405,460 405,495 905,495 905,80 883,80" marker-end="url(#aa)"></polyline>
+          <text class="t-lab lab-a" x="648" y="487" text-anchor="middle">publikuje koncepty článkov — zverejňuje človek</text>
+
+          <polyline class="ln-a" points="652,262 560,262 560,414 518,414" marker-start="url(#aa)" marker-end="url(#aa)"></polyline>
+          <text class="t-lab lab-a" x="646" y="254" text-anchor="end">číta nastavenia</text>
+          <text class="t-lab lab-a" x="572" y="345" text-anchor="start">píše záznamy · indexuje</text>
+
+          <line class="ln-a" x1="292" y1="414" x2="208" y2="414" marker-end="url(#aa)"></line>
+          <text class="t-lab lab-a" x="250" y="404" text-anchor="middle">generuje</text>
+
+          <!-- ── webhook (šedý, prerušovaný) ── -->
+          <line class="ln-n ln-d" x1="652" y1="110" x2="518" y2="110" marker-end="url(#an)"></line>
+          <text class="t-lab lab-n" x="578" y="102" text-anchor="middle">webhook: obnov stránku</text>
+        </svg>
+      </div>
+      <div class="key">
+        <span><i class="swatch sw-v"></i> spustí návštevník</span>
+        <span><i class="swatch sw-a"></i> spustí cron trikrát týždenne</span>
+        <span><i class="swatch sw-n"></i> upozornenie z WordPressu</span>
+      </div>
+      <figcaption>
+        Všimni si, čo tam <b>nie je</b>: z WordPressu nevedie žiadna šípka do Directusu a naopak.
+        Obsah a systémové dáta sa nikdy nestretnú v tej istej databáze — to je hranica, na ktorej
+        stojí replikovateľnosť pre ďalších klientov.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ══════════ VRSTVY ══════════ -->
+  <section>
+    <h2>Vrstvy — jedna rola na systém</h2>
+    <p class="sub">Každý kus má jednu úlohu a vlastný prístupový kľúč. Nič nerobí dve veci naraz.</p>
+
+    <div class="layers">
+
+      <div class="layer">
+        <span class="lnum">1</span>
+        <div>
+          <p class="lh">WordPress <em>wp.digitalnapomoc.sk</em></p>
+          <p class="lrole">Rola: obsah</p>
+          <p>Články a stránky, neskôr produkty. Klientovi ostáva <b>admin, ktorý pozná</b> — to je celý zmysel headless prístupu. Verejne sa z neho dá len čítať; zapisovať vedia len agenti cez aplikačné heslo.</p>
+          <p>Je zámerne skrytý pred vyhľadávačmi, aby sa obsah neindexoval dvakrát.</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <span class="lnum">2</span>
+        <div>
+          <p class="lh">Frontend <em>Next.js na Railway</em></p>
+          <p class="lrole">Rola: to, čo vidí návštevník</p>
+          <p>Verejný web. Číta články z WordPressu a s päťminútovou platnosťou ich drží predpripravené, takže sa stránka nemusí skladať pri každom otvorení. Zapisuje dopyty a rezervácie do Directusu.</p>
+          <p>Beží v ňom aj <b>chatbot</b> — otázku premení na čísla cez Gemini, nájde najbližšie kúsky nášho obsahu a nechá model odpovedať z nich.</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <span class="lnum">3</span>
+        <div>
+          <p class="lh">Directus <em>nad PostgreSQL na Railway</em></p>
+          <p class="lrole">Rola: systémové dáta</p>
+          <p>Kontakty z formulárov, rezervácie, nastavenia agentov, záznamy o ich behoch a kúsky textu pre chatbota. <b>Nikdy obsah webu.</b></p>
+          <p>Zároveň je to náš admin — agenti sa v ňom ovládajú klikaním. Práve preto sme <b>odložili stavbu vlastného ovládacieho rozhrania</b>: túto úlohu zatiaľ plní on.</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <span class="lnum">4</span>
+        <div>
+          <p class="lh">Orchestrátor <em>Python, cron na Railway</em></p>
+          <p class="lrole">Rola: agenti, ktorí pracujú sami</p>
+          <p>V pondelok, stredu a piatok ráno sa zobudí, prečíta si nastavenia z Directusu, napíše článok, optimalizuje ho pre vyhľadávače, preindexuje obsah pre chatbota a zapíše, čo spravil.</p>
+          <p><b>Publikuje ako koncept.</b> Zverejňuje človek — kým sa dôvera nevybuduje.</p>
+        </div>
+      </div>
+
+      <div class="layer">
+        <span class="lnum">5</span>
+        <div>
+          <p class="lh">Modely a e-mail <em>externé služby</em></p>
+          <p class="lrole">Rola: nástroje, nie chrbtica</p>
+          <p>Gemini na texty, obrázky a vyhľadávacie vektory; Z.ai ako druhá možnosť. E-mail odchádza cez schránku na našom hostingu, s pripravenou náhradou.</p>
+          <p>Sú <b>vymeniteľné zámerne</b> — volajú sa cez jedno miesto v kóde, takže výmena poskytovateľa je zmena nastavenia, nie prepis systému.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════ PAMÄŤ PROJEKTU ══════════ -->
+  <section>
+    <h2>Pamäť projektu — GitHub, Obsidian a nasadzovanie</h2>
+    <p class="sub">
+      Kde žije kód aj dokumentácia, ako sa dostane na web a ako sa dostane k tebe do Obsidianu.
+    </p>
+
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 940 420" role="img"
+             aria-label="Sedenie Claude Code pushne vetvu do GitHubu, ten je zdrojom pravdy. Z GitHubu sa automaticky nasadzuje Railway a zároveň si z neho Mac ťahá dokumentáciu do Obsidianu.">
+          <defs>
+            <marker id="bn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <polygon class="ah-n" points="0,1 10,5 0,9"></polygon>
+            </marker>
+            <marker id="ba" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <polygon class="ah-a" points="0,1 10,5 0,9"></polygon>
+            </marker>
+            <marker id="bv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <polygon class="ah-v" points="0,1 10,5 0,9"></polygon>
+            </marker>
+          </defs>
+
+          <rect class="box" x="30" y="36" width="210" height="86" rx="10"></rect>
+          <text class="t-name" x="135" y="68" text-anchor="middle">Sedenie s Claudom</text>
+          <text class="t-sub" x="135" y="88" text-anchor="middle">PÍŠE KÓD AJ DOKUMENTÁCIU</text>
+          <text class="t-sub" x="135" y="105" text-anchor="middle">V CLOUDE</text>
+
+          <rect class="box-key" x="360" y="140" width="220" height="112" rx="12"></rect>
+          <text class="t-name" x="470" y="176" text-anchor="middle">GitHub</text>
+          <text class="t-sub" x="470" y="196" text-anchor="middle">VETVA MAIN</text>
+          <text class="t-sub" x="470" y="219" text-anchor="middle">KÓD + DOCS/</text>
+          <text class="t-sub" x="470" y="236" text-anchor="middle">HLAVNÝ ZDROJ PRAVDY</text>
+
+          <rect class="box" x="700" y="36" width="210" height="86" rx="10"></rect>
+          <text class="t-name" x="805" y="68" text-anchor="middle">Railway</text>
+          <text class="t-sub" x="805" y="88" text-anchor="middle">FRONTEND</text>
+          <text class="t-sub" x="805" y="105" text-anchor="middle">+ ORCHESTRÁTOR</text>
+
+          <rect class="box" x="360" y="312" width="220" height="86" rx="10"></rect>
+          <text class="t-name" x="470" y="344" text-anchor="middle">Mac · Obsidian</text>
+          <text class="t-sub" x="470" y="364" text-anchor="middle">TREZOR = REPOZITÁR</text>
+          <text class="t-sub" x="470" y="381" text-anchor="middle">ČÍTANIE A ZÁLOHA</text>
+
+          <!-- sedenie → github -->
+          <polyline class="ln-n" points="240,62 292,62 292,166 352,166" marker-end="url(#bn)"></polyline>
+          <text class="t-lab lab-n" x="304" y="52" text-anchor="middle">vetva → PR</text>
+
+          <!-- github → sedenie -->
+          <polyline class="ln-n ln-d" points="352,226 320,226 320,100 240,100" marker-end="url(#bn)"></polyline>
+          <text class="t-lab lab-n" x="310" y="200" text-anchor="end">číta docs/</text>
+
+          <!-- github → railway -->
+          <polyline class="ln-a" points="580,166 640,166 640,62 692,62" marker-end="url(#ba)"></polyline>
+          <text class="t-lab lab-a" x="650" y="52" text-anchor="middle">nasadí sa samo</text>
+
+          <!-- github ↔ obsidian -->
+          <line class="ln-v" x1="440" y1="260" x2="440" y2="304" marker-end="url(#bv)"></line>
+          <text class="t-lab lab-v" x="428" y="286" text-anchor="end">git pull</text>
+          <line class="ln-v" x1="512" y1="304" x2="512" y2="260" marker-end="url(#bv)"></line>
+          <text class="t-lab lab-v" x="524" y="286" text-anchor="start">poznámky späť</text>
+        </svg>
+      </div>
+      <div class="key">
+        <span><i class="swatch sw-n"></i> práca v sedení</span>
+        <span><i class="swatch sw-a"></i> nasadenie</span>
+        <span><i class="swatch sw-v"></i> tvoja strana — Mac</span>
+      </div>
+      <figcaption>
+        <b>Kruh sa zatvára v GitHube.</b> Odtiaľ sa nasadzuje web aj agenti, odtiaľ si Obsidian
+        ťahá poznámky a odtiaľ si každé nové sedenie číta stav projektu. Preto platí, že
+        <b>čo ostane len v chate, je stratené</b> — dnes sme na to narazili pri mape, ktorá
+        nikdy nebola commitnutá.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ══════════ HRANICE ══════════ -->
+  <section>
+    <h2>Tri hranice, ktoré držíme</h2>
+    <p class="sub">Nie sú to zvyky. Bez nich sa systém nedá nasadiť druhému klientovi.</p>
+
+    <div class="rules">
+      <div class="rule">
+        <h3>Obsah nikdy do Directusu, dopyty a záznamy nikdy do WordPressu</h3>
+        <p>Keby sa to zamiešalo, každý klient by mal databázu inak a nič by sa nedalo replikovať. Preto v prvom obrázku nevedie medzi WordPressom a Directusom ani jedna šípka.</p>
+      </div>
+      <div class="rule">
+        <h3>Každý systém má vlastný kľúč s minimálnymi právami</h3>
+        <p>Frontend smie iba zakladať dopyty. Agenti smú iba to svoje. <b>Dnes to úplne neplatí</b> — orchestrátor beží pod správcovským prístupom. Je to úloha <b>P2</b> vo fronte a je to podmienka, nie kozmetika.</p>
+      </div>
+      <div class="rule">
+        <h3>Agenti pripravujú, zverejňuje človek</h3>
+        <p>Writer publikuje koncepty, nie hotové články. Social agent bude robiť to isté s príspevkami. Automatika sa uvoľňuje postupne, ako rastie dôvera — nie naopak.</p>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><b>Sesterská mapa.</b> Táto odpovedá na otázku <i>ako to funguje</i>. Mapa
+      <b>„Pracovná mapa AI Nexus Link“</b> odpovedá na <i>kde sme a čo ideme robiť</i> —
+      fronta šiestich sedení a rozpad projektu na zložky.</p>
+      <p>Obe sa aktualizujú zriedka. Priority a detaily žijú v <code>docs/backlog.md</code>,
+      história rozhodnutí v <code>docs/dennik.md</code>.</p>
+    </div>
+  </section>
+
+  <hr class="rule-line">
+  <p class="stamp" style="margin-top:22px">
+    <span>SYSTÉMOVÁ MAPA · 22. 8. 2026</span>
+    <span>NAHRÁDZA VERZIU Z 12. 8. (KOKPIT ODLOŽENÝ)</span>
+  </p>
+
+</div>
+</body>
+</html>

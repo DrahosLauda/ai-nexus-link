@@ -24,13 +24,21 @@ obsah **po slovensky**.
 3. **Čerstvý prieskum pred KAŽDÝM odvetvím** (učiaca sa slučka): pozri špičkové
    weby daného odvetvia a aktuálne dizajnové trendy. Každé odvetvie dostane
    vlastný dizajnový smer — nikdy „predošlá šablóna v inej farbe".
-4. **Skill na rozbeh dizajn systému (nové odvetvie):** zváž pridanie
-   **`ui-ux-pro-max`** (`github.com/nextlevelbuilder/ui-ux-pro-max-skill`, MIT —
-   84 štýlov, 192 paliet, font páry, 161 odvetvových pravidiel). Ak ešte nie je v
-   `.claude/skills/`, prevezmi ho (kópia priečinka + atribúcia — postup v
-   `.claude/skills/VENDORED.md`) a použi ho ako inšpiráciu pre paletu/typografiu/štýl.
-   Vkus a motion konzultuj cez už prevzaté `emil-design-eng` / `animate`
-   (nezabudni: `ui-ux-pro-max` je veľký → načítavaj výberovo).
+4. **Katalóg na rozbeh dizajn systému — POVINNÝ prvý krok pri NOVOM odvetví:**
+   skill **`ui-ux-pro-max`** je v repe (`.claude/skills/ui-ux-pro-max/`).
+   **Začni sekciou „Kontrola aktuálnosti"** v jeho `SKILL.md` — dva príkazy, pol
+   minúty; ukáže, či sa zdroj od našej snímky pohol. Keď zlyhá sieť, pokračuj
+   s tým, čo máme, a povedz to majiteľovi jednou vetou.
+   Potom, skôr než navrhneš paletu, prejdi postup: typ produktu (`products.csv`) →
+   paleta (`colors.csv`) → štýl (`styles.csv`, čítaj najmä stĺpec **„Do Not Use
+   For"**) → typografia (`typography.csv`) → odvetvové pravidlá
+   (`ui-reasoning.csv`). Až potom píš `theme.css`.
+   **Načítavaj VÝBEROVO** — `styles.csv` má 146 KB; filtruj cez `grep`/`python3`
+   podľa typu produktu, nikdy nečítaj celý súbor do kontextu.
+   **Paleta je východisko, nie hotová vec** — kontrast musí prejsť WCAG AA, over
+   ho sám. **Neprechádzaj na shadcn/ui** na základe tohto katalógu; naše šablóny
+   sú ručný Tailwind v4.
+   Vkus a motion konzultuj cez `emil-design-eng` / `animate`.
 
 ## Čo dodávaš
 - **Dizajn systém do `frontend/templates/<odvetvie>/theme.css`** — Tailwind v4

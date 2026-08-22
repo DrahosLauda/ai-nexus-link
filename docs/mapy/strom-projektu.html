@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strom projektu Nexus</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E📂%3C/text%3E%3C/svg%3E">
+<style>*{margin:0}html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F1F3F6; --surface:#FFFFFF; --surface-2:#E9ECF1; --surface-3:#F7F8FA;
+    --ink:#191D26; --ink-soft:#4C5462; --ink-faint:#8992A1;
+    --line:#D6DBE3; --line-soft:#E4E8EE;
+    --accent:#9E6E1B; --accent-bright:#C2913A; --accent-tint:#F4EBD6;
+    --flow:#37648F; --flow-tint:#E5EDF5;
+    --live:#2C825C; --live-tint:#E1EFE8;
+    --gap:#C24A33; --gap-tint:#F7E5E0;
+    --shadow:0 1px 2px rgba(20,28,45,.05), 0 8px 30px rgba(20,28,45,.06);
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","Cascadia Code","Segoe UI Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+      --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+      --line:#29303C; --line-soft:#222833;
+      --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+      --flow:#6E9BCB; --flow-tint:#1A2532;
+      --live:#4DB183; --live-tint:#163529;
+      --gap:#E1755E; --gap-tint:#38201B;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+    --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+    --line:#29303C; --line-soft:#222833;
+    --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+    --flow:#6E9BCB; --flow-tint:#1A2532;
+    --live:#4DB183; --live-tint:#163529;
+    --gap:#E1755E; --gap-tint:#38201B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-sans); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:clamp(24px,5vw,54px) clamp(14px,4vw,34px) 80px}
+
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 12px; font-weight:600;
+  }
+  h1{
+    font-size:clamp(1.85rem,5vw,2.6rem); line-height:1.06; margin:0 0 13px;
+    letter-spacing:-.022em; text-wrap:balance; font-weight:700;
+  }
+  .thesis{font-size:clamp(1rem,2.2vw,1.13rem); color:var(--ink-soft); margin:0 0 22px; max-width:58ch}
+  .thesis b{color:var(--ink); font-weight:600}
+
+  /* ── ovládanie + legenda ──────────────────────────────── */
+  .bar{
+    display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center;
+    margin-bottom:16px;
+  }
+  .btn{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    font-weight:600; color:var(--ink-soft); background:var(--surface);
+    border:1px solid var(--line); border-radius:8px; padding:7px 12px; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent-bright); color:var(--accent)}
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap:8px 18px; padding:13px 16px; margin-bottom:18px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:11px;
+    font-size:.85rem; color:var(--ink-soft);
+  }
+  .legend span{display:inline-flex; align-items:center; gap:8px}
+
+  /* ── odznaky ──────────────────────────────────────────── */
+  .b{
+    display:inline-flex; align-items:center; flex:none;
+    font-family:var(--font-mono); font-size:10px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase;
+    padding:2.5px 7px; border-radius:5px; border:1px solid transparent; white-space:nowrap;
+  }
+  .b-p{background:var(--accent-tint); color:var(--accent); border-color:var(--accent-bright)}
+  .b-live{background:var(--live-tint); color:var(--live); border-color:var(--live)}
+  .b-done{background:transparent; color:var(--live); border-color:var(--line)}
+  .b-pool{background:var(--surface-2); color:var(--ink-soft); border-color:var(--line)}
+  .b-no{background:var(--gap-tint); color:var(--gap); border-color:var(--gap)}
+  .b-new{background:var(--flow-tint); color:var(--flow); border-color:var(--flow)}
+  .b-our{background:transparent; color:var(--ink-faint); border-color:var(--ink-faint); border-style:dashed}
+
+  /* ── strom ────────────────────────────────────────────── */
+  .treebox{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:clamp(14px,2.4vw,24px) clamp(10px,2.4vw,24px); box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  ul.ft, ul.ft ul{list-style:none; margin:0; padding:0}
+  ul.ft{min-width:500px}
+  ul.ft ul{padding-left:22px}
+  ul.ft li{position:relative; padding-left:22px}
+  ul.ft > li{padding-left:0}
+  ul.ft li::before{content:""; position:absolute; left:0; top:0; bottom:0; border-left:1px solid var(--line)}
+  ul.ft li::after{content:""; position:absolute; left:0; top:17px; width:14px; border-top:1px solid var(--line)}
+  ul.ft li:last-child::before{bottom:auto; height:17px}
+  ul.ft > li::before, ul.ft > li::after{display:none}
+
+  .n, summary.n{
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    padding:6px 10px; border-radius:8px; margin:1px 0; list-style:none;
+  }
+  summary.n{cursor:pointer}
+  summary.n::-webkit-details-marker{display:none}
+  summary.n:hover{background:var(--surface-3)}
+  summary.n:focus-visible{outline:2px solid var(--accent-bright); outline-offset:1px}
+  .n .dot{width:6px; height:6px; border-radius:50%; flex:none; background:var(--ink-faint)}
+  .n .nm{font-size:.92rem; font-weight:480; line-height:1.4}
+  .n .ds{color:var(--ink-faint); font-size:.82rem; font-weight:400}
+  .n .chev{
+    width:7px; height:7px; flex:none; margin-left:auto;
+    border-right:1.8px solid var(--ink-faint); border-bottom:1.8px solid var(--ink-faint);
+    transform:rotate(45deg); transition:transform .17s ease;
+  }
+  details[open] > summary.n .chev{transform:rotate(-135deg)}
+
+  .n-root{
+    background:var(--accent-tint); border:1px solid var(--accent-bright);
+    padding:10px 15px; margin-bottom:5px; display:inline-flex;
+  }
+  .n-root .nm{font-weight:700; font-size:1.06rem; letter-spacing:-.01em}
+  .n-root .dot{background:var(--accent); width:8px; height:8px}
+
+  .n-br{background:var(--surface-2); border:1px solid var(--line); margin:8px 0 3px}
+  .n-br .nm{font-weight:650; font-size:.98rem}
+  .n-br .dot{background:var(--accent); width:7px; height:7px}
+  .n-br .bn{font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:var(--accent); flex:none}
+  .n-sub .nm{font-weight:560}
+  .n-sub .dot{background:var(--flow)}
+  .n-live .dot{background:var(--live)}
+  .n-p .dot{background:var(--accent-bright); width:7px; height:7px}
+  .n-off .nm{color:var(--ink-faint)}
+  .n-off .dot{background:var(--line)}
+
+  /* ── rozbalený detail ─────────────────────────────────── */
+  .det{
+    margin:2px 0 10px 12px; padding:12px 15px;
+    background:var(--surface-3); border:1px solid var(--line-soft);
+    border-left:2.5px solid var(--accent-bright); border-radius:9px;
+    font-size:.9rem; color:var(--ink-soft); max-width:64ch;
+  }
+  .det p{margin:0 0 9px}
+  .det p:last-child{margin-bottom:0}
+  .det b{color:var(--ink); font-weight:600}
+  .det code{font-family:var(--font-mono); font-size:.87em}
+  .det .lbl{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:600; display:block; margin-bottom:2px;
+  }
+  .det .pathline{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--flow);
+    background:var(--flow-tint); border-radius:6px; padding:6px 9px; margin-bottom:11px;
+    overflow-x:auto; white-space:nowrap;
+  }
+  .det-no{border-left-color:var(--gap)}
+  .det-p{border-left-color:var(--accent)}
+
+
+  /* ── mobil: strom sa zmestí bez posúvania do strán ────── */
+  @media (max-width:680px){
+    ul.ft{min-width:0}
+    .treebox{overflow-x:visible; padding-left:10px; padding-right:10px}
+    ul.ft ul{padding-left:12px}
+    ul.ft li{padding-left:13px}
+    ul.ft li::after{width:8px; top:15px}
+    ul.ft li:last-child::before{height:15px}
+
+    .n, summary.n{
+      align-items:flex-start; padding:6px 7px;
+      column-gap:7px; row-gap:3px;
+    }
+    .n .dot{margin-top:6px}
+    .n .nm{font-size:.88rem; flex:1 1 auto; min-width:0}
+    .n .ds{display:block; font-size:.77rem}
+    .n .chev{margin-left:auto; margin-top:6px}
+    .b{font-size:9.5px; padding:2px 6px; letter-spacing:.05em}
+    .n-root{padding:9px 12px}
+    .n-root .nm{font-size:1rem}
+    .n-br .bn{margin-top:5px}
+
+    .det{
+      margin:2px 0 10px 0; padding:11px 13px;
+      font-size:.87rem; max-width:100%;
+    }
+    .det .pathline{white-space:normal; overflow-x:visible; word-break:break-word}
+  }
+
+  .foot{
+    margin-top:26px; padding-top:20px; border-top:1px solid var(--line);
+    font-family:var(--font-mono); font-size:11px; color:var(--ink-faint); letter-spacing:.04em;
+    display:flex; flex-wrap:wrap; gap:8px 18px;
+  }
+  a{color:var(--flow)}
+  :focus-visible{outline:2px solid var(--accent-bright); outline-offset:2px; border-radius:6px}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+  /* Pečiatka zdroja pravdy — mapa je zobrazenie backlogu, nie druhý zoznam. */
+  .sot{margin:12px 0 0; padding:10px 14px; border:1px dashed var(--line);
+       border-radius:9px; background:var(--surface-3); color:var(--ink-soft);
+       font-size:.83rem; line-height:1.55}
+  .sot code{font-family:var(--font-mono); font-size:.94em; color:var(--ink);
+       background:var(--surface-2); padding:1px 5px; border-radius:4px}
+  .sot b{color:var(--ink)}
+  @media (max-width:680px){ .sot{font-size:.79rem; padding:9px 11px} }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">AI Nexus Link · 22. augusta 2026</p>
+  <h1>Strom projektu</h1>
+  <p class="sot">
+    <b>Zdroj pravdy je <code>docs/backlog.md</code>.</b> Táto mapa je jeho
+    zobrazenie, nie druhý zoznam — <b>keď sa líšia, platí backlog.</b><br>
+    Zosúladené <b>22. 8. 2026</b>. Ak je odvtedy odstup, over si backlog v repe.
+  </p>
+  <p class="thesis">
+    Celý projekt po zložkách. <b>Klikni na ktorúkoľvek položku</b> a rozbalí sa,
+    čo to je, prečo tam je a čo s ňou plánujeme. Agenty s nálepkou <b>naše</b>
+    používame len my na stavbu webov — klientovi sa nenasadzujú.
+  </p>
+
+  <div class="bar">
+    <button class="btn" id="ev" type="button">Otvoriť všetky detaily</button>
+    <button class="btn" id="zv" type="button">Zavrieť detaily</button>
+  </div>
+
+  <div class="legend">
+    <span><i class="b b-live">naživo</i> beží v produkcii</span>
+    <span><i class="b b-p">P1</i> vo fronte</span>
+    <span><i class="b b-pool">zásobník</i> otvorené, bez poradia</span>
+    <span><i class="b b-no">nerobíme</i> odložené alebo zamietnuté</span>
+    <span><i class="b b-our">naše</i> nenasadzuje sa klientovi</span>
+  </div>
+
+  <div class="treebox">
+    <ul class="ft">
+      <li>
+        <span class="n n-root"><i class="dot"></i><span class="nm">AI Nexus Link</span></span>
+        <ul>
+
+          <!-- ══ 1 ══ -->
+          <li>
+            <details open>
+              <summary class="n n-br"><i class="dot"></i><span class="bn">1</span><span class="nm">Referenčný web <span class="ds">digitalnapomoc.sk</span></span><i class="chev"></i></summary>
+              <div class="det">
+                <p>Náš vlastný web. Zároveň <b>referencia</b>, ktorá predáva — návštevník si na ňom vyskúša chatbota aj rezervácie naživo.</p>
+                <p>Technicky beží headless: obsah v WordPresse, vzhľad v Next.js. Presne to, čo ponúkame klientom.</p>
+              </div>
+            </details>
+            <ul>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Frontend <span class="ds">Next.js na Railway</span></span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det">
+                    <p>Verejný web na <code>www.digitalnapomoc.sk</code>. Číta články z WordPressu a drží ich päť minút predpripravené, takže sa stránka neskladá pri každom otvorení.</p>
+                    <p>Beží v ňom aj chatbot, formuláre a rezervačný widget.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Obsah <span class="ds">WordPress na skrytej wp. subdoméne</span></span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det">
+                    <p>Klientovi ostáva <b>admin, ktorý pozná</b> — to je celý zmysel headless prístupu.</p>
+                    <p>Je zámerne skrytý pred vyhľadávačmi, aby sa ten istý obsah neindexoval dvakrát. Verejne sa dá len čítať; zapisovať vedia iba agenti cez aplikačné heslo.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n"><i class="dot"></i><span class="nm">Frontend hygiena <span class="ds">odkazy a mobil</span></span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                  <div class="det">
+                    <p class="pathline">AI Nexus Link / Referenčný web / Frontend hygiena</p>
+                    <p><span class="lbl">Problém</span>Odkazy v tele článkov ukazujú po stiahnutí z WordPressu na skrytú subdoménu <code>wp.</code> namiesto na náš blog. Posiela to návštevníka preč z hlavného webu.</p>
+                    <p><span class="lbl">Oprava</span>Jedna transformácia v <code>lib/wp.ts</code>, presne vedľa tej, ktorá už rovnaký problém rieši pre obrázky. K tomu doladiť detaily na mobile.</p>
+                    <p><span class="lbl">Prečo nie vyššie</span>Web je skrytý pred Googlom a nemá návštevnosť — dnes to nikoho nebolí. Je to nesprávne, nie urgentné.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">Pred-Google checklist <span class="ds">cookie lišta a zásady</span></span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                  <div class="det det-no">
+                    <p>Spustenie do Googlu je <b>zamknuté</b> a ide výhradne na výslovný pokyn majiteľa.</p>
+                    <p><b>Tvrdá závislosť, ktorá sa ľahko prehliadne:</b> zásady ochrany osobných údajov sa nedajú napísať, kým neexistuje firma — chýba prevádzkovateľ, IČO a adresa. Checklist teda neblokuje kód, blokuje ho právny subjekt.</p>
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </li>
+
+          <!-- ══ 2 ══ -->
+          <li>
+            <details open>
+              <summary class="n n-br"><i class="dot"></i><span class="bn">2</span><span class="nm">Systémové dáta <span class="ds">Directus</span></span><i class="chev"></i></summary>
+              <div class="det">
+                <p>Databáza pre všetko, čo <b>nie je obsah webu</b>: kontakty, rezervácie, nastavenia agentov a záznamy o ich behoch.</p>
+                <p>Zároveň je to náš admin — agenti sa v ňom ovládajú klikaním. Práve preto sme odložili stavbu vlastného ovládacieho rozhrania.</p>
+              </div>
+            </details>
+            <ul>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Kontakty a dopyty</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Zbierajú sa z oboch formulárov aj z rezervácií. Chránené skrytým poľom proti robotom a obmedzením počtu odoslaní z jednej adresy.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Nastavenia agentov</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Persona, model a témy pre agentov — meniteľné klikaním.</p><p><b>Dnes to platí len pre orchestrátor.</b> Chatbot a rezervácie stoja mimo tohto vzoru — to rieši <b>P1</b>.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Záznamy o behoch</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Čo agent spravil, kedy a s akým výsledkom. Zlyhanie zápisu záznamu nikdy nezhodí samotného agenta.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Rezervácie</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Služby, dostupnosť a objednané termíny. Databáza <b>fyzicky nedovolí</b> prekryv dvoch rezervácií na tom istom zdroji — nie je to len kontrola v aplikácii.</p><p>Časy sa ukladajú v UTC a zobrazujú v našom čase.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-p"><i class="dot"></i><span class="nm">Obmedzené prístupové kľúče</span><span class="b b-p">P2</span><i class="chev"></i></summary>
+                  <div class="det det-p">
+                    <p class="pathline">AI Nexus Link / Systémové dáta / Tokeny</p>
+                    <p><span class="lbl">Čo je dnes</span>Orchestrátor sa prihlasuje <b>ako správca</b> — má teda prístup ku všetkému vrátane kontaktov na klientov. Frontend číta databázu chatbota priamo cez verejnú adresu.</p>
+                    <p><span class="lbl">Čo sa zmení</span>Každý systém dostane vlastný kľúč, ktorý smie len to, čo potrebuje. Frontend prejde na vnútornú adresu databázy.</p>
+                    <p><span class="lbl">Prečo je to podmienka</span>Vo vízii máme zapísané, že bez toho sa systém <b>nedá bezpečne replikovať pre klientov</b>. Nie je to kozmetika.</p>
+                    <p><span class="lbl">Prečo zvlášť od P1</span>Keby sa po výmene kľúča rozbil živý pipeline, ktorý píše články, chceš vedieť, ktorá zmena to spôsobila.</p>
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </li>
+
+          <!-- ══ 3 ══ -->
+          <li>
+            <details open>
+              <summary class="n n-br"><i class="dot"></i><span class="bn">3</span><span class="nm">Agenti <span class="ds">naše lego kocky</span></span><i class="chev"></i></summary>
+              <div class="det">
+                <p>Každý agent je <b>lego kocka</b> s vlastným významom: nastavenia v Directuse, záznamy v Directuse, modul v orchestrátore alebo vo frontende.</p>
+                <p>Väčšina z nich je <b>replikovateľná</b> — to isté nasadíme klientovi. Tie, ktoré nesú nálepku <b>naše</b>, používame len my na stavbu webov a šablón; klientovi sa nenasadzujú.</p>
+                <p><b>Pozor na jednu vec:</b> „naše“ agenty nemajú riadok v nastaveniach ani vlastné záznamy — nie sú to programy bežiace v produkcii, ale sady sub-agentov, ktoré spúšťame v sedení. Nehľadaj ich v Directuse.</p>
+              </div>
+            </details>
+            <ul>
+              <li>
+                <details>
+                  <summary class="n n-sub n-live"><i class="dot"></i><span class="nm">Obsahový agent „Writer“</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Napíše článok aj s obrázkami a uloží ho do WordPressu <b>ako koncept</b>. Beží v pondelok, stredu a piatok ráno.</p><p>Pamätá si, o čom už písal, aby sa témy neopakovali. Persona a témy sa nastavujú klikaním v Directuse.</p></div>
+                </details>
+                <ul>
+                  <li>
+                    <details>
+                      <summary class="n n-p"><i class="dot"></i><span class="nm">Kvalita <span class="ds">úvody, obrázky, alt texty, revízia</span></span><span class="b b-p">P6</span><i class="chev"></i></summary>
+                      <div class="det det-p">
+                        <p class="pathline">AI Nexus Link / Agenti / Writer / Kvalita</p>
+                        <p><span class="lbl">Tri veci naraz</span>Rôznorodejšie úvody (dnes často začína rovnakým vzorcom — presne podľa toho čitateľ spozná AI text), jednoduchšie obrázky, popisné alt texty. Sú to prompty toho istého agenta.</p>
+                        <p><span class="lbl">Plus revízia</span>Staršie články prepísať smerom k <b>našim</b> riešeniam. Nástroj na to už máme napísaný a takmer nepoužitý; originál sa nemení, vzniká koncept.</p>
+                        <p><span class="lbl">Prečo posledné</span>Po P1 budeš mať v logoch, na čo sa ľudia naozaj pýtajú — takže sa revidujú články, ktoré chýbajú, nie tie, ktoré si tipneme.</p>
+                      </div>
+                    </details>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">SEO a GEO agent</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Beží hneď za Writerom. Doplní meta popis, kľúčové slovo a tipy na optimalizáciu nielen pre Google, ale aj pre <b>AI vyhľadávače</b>.</p><p>Nahrádza to, čo na bežnom WordPresse rieši platený SEO plugin.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-sub n-live"><i class="dot"></i><span class="nm">RAG chatbot</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Odpovedá <b>z nášho obsahu</b> — článkov a častých otázok — a cituje, odkiaľ čerpal. Nie je to ukecaný model, ktorý si vymýšľa.</p><p>Má tvrdé pravidlo: keď odpoveď nepozná, prizná to a nasmeruje na formulár. Cituje len tie kúsky, ktoré naozaj použil.</p></div>
+                </details>
+                <ul>
+                  <li>
+                    <details>
+                      <summary class="n n-p"><i class="dot"></i><span class="nm">Nastavenia a logy do Directusu <span class="ds">Krok 5</span></span><span class="b b-p">P1</span><i class="chev"></i></summary>
+                      <div class="det det-p">
+                        <p class="pathline">AI Nexus Link / Agenti / RAG chatbot / Krok 5</p>
+                        <p><span class="lbl">Čo je dnes</span>Tón, model aj počet pritiahnutých kúskov sú napísané priamo v kóde. Každá zmena tónu = vetva, revízia, nasadenie — 18. augusta to kvôli výpadku GitHubu trvalo tri hodiny.</p>
+                        <p><span class="lbl">Čo sa zmení</span>Presunie sa to do Directusu a začne sa <b>logovať</b>, takže uvidíš, na čo sa ľudia naozaj pýtajú. <b>V tom istom sedení aj booking</b> — chýbajú mu logy a <code>MIN_LEAD_MIN</code> natvrdo. Logujú sa len <b>metadáta</b>, nie plné otázky (GDPR).</p>
+                        <p><span class="lbl">Prečo prvé</span>Klientovi nemôžeme povedať „napíšte mi a ja to prekódim“. Zapne to učiacu slučku a odomkne P3 aj neskoršieho poradcu.</p>
+                        <p><span class="lbl">Mantinel</span>Nastavenia sa čítajú <b>podľa kľúča</b>, nie z jedného pevného riadku — rovnako, ako to už robí orchestrátor. Rovnaká práca dnes; bez toho sa Krok 5 robí druhýkrát, len čo pribudne druhý bot.</p>
+                      </div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-off"><i class="dot"></i><span class="nm">Hlas <span class="ds">hovorený vstup a výstup</span></span><span class="b b-no">zamietnuté</span><i class="chev"></i></summary>
+                      <div class="det det-no"><p>Prehliadačové riešenie má slabú slovenčinu, platené predčítavanie znamená platiť za každého návštevníka dema. Nikto si to nepýtal.</p><p>Je to hračka, nie dôkaz schopnosti.</p></div>
+                    </details>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-sub n-live"><i class="dot"></i><span class="nm">Rezervačný agent</span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                  <div class="det"><p>Odvetvovo neutrálny modul: pozrie voľné termíny, po dohode vytvorí rezerváciu, pošle potvrdenie e-mailom a založí kontakt.</p><p>Sedí na termínové odvetvia — kaderníctvo, autoservis, zubár, kozmetika. <b>Nesedí na kvetinárstvo</b>, tam sa objednáva kytica, nie slot.</p></div>
+                </details>
+                <ul>
+                  <li>
+                    <details>
+                      <summary class="n"><i class="dot"></i><span class="nm">R0 <span class="ds">dátový model</span></span><span class="b b-done">hotové</span><i class="chev"></i></summary>
+                      <div class="det"><p>Kolekcie v Directuse pre služby, dostupnosť a rezervácie — postavené tak, aby sa dali replikovať u ktoréhokoľvek klienta.</p></div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-live"><i class="dot"></i><span class="nm">R1 <span class="ds">engine a formulár na webe</span></span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                      <div class="det"><p>Beží na <code>/rezervacia</code>. Prvé živé demo modulu — návštevník si vyberie službu, deň a termín, príde mu potvrdenie.</p></div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-p"><i class="dot"></i><span class="nm">R2 <span class="ds">chatbot rezervuje + zrušovací odkaz</span></span><span class="b b-p">P3</span><i class="chev"></i></summary>
+                      <div class="det det-p">
+                        <p class="pathline">AI Nexus Link / Agenti / Rezervačný agent / R2</p>
+                        <p><span class="lbl">Čo sa zmení</span>Napíšeš botovi „chcem konzultáciu v utorok“ → ponúkne termíny → po výslovnom potvrdení rezervuje, pošle e-mail a založí kontakt.</p>
+                        <p><span class="lbl">V tom istom sedení</span><b>Zrušovací odkaz</b> v potvrdzovacom e-maile — dnes tam nie je a je to diera, ktorú si u klienta všimne prvý zákazník.</p>
+                        <p><span class="lbl">Prečo to má váhu</span>Je to jediná vec, ktorá z chatbota spraví agenta, čo <b>koná</b>, nie len odpovedá.</p>
+                        <p><span class="lbl">Predtým ty</span>Rozšíriť v Directuse zoznam služieb na 2–3 typy konzultácií. Klik, asi desať minút — inak nemá bot čo ponúkať.</p>
+                      </div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-off"><i class="dot"></i><span class="nm">R3 <span class="ds">pripomienky deň vopred</span></span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                      <div class="det det-no"><p>Nemá čo pripomínať, kým nie sú reálne rezervácie. Cron na to už máme, takže to bude rýchle — až príde dôvod.</p></div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-off"><i class="dot"></i><span class="nm">R4 <span class="ds">replikácia u klienta</span></span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                      <div class="det det-no"><p>Čaká na klienta. Vtedy sem patria aj odvetvové služby — dnes by boli len fikcia.</p></div>
+                    </details>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-p"><i class="dot"></i><span class="nm">Social agent <span class="ds">príspevky z článkov</span></span><span class="b b-new">nový</span><span class="b b-p">P4</span><i class="chev"></i></summary>
+                  <div class="det det-p">
+                    <p class="pathline">AI Nexus Link / Agenti / Social agent</p>
+                    <p><span class="lbl">Čo pribudne</span>Po každom článku pripraví dva–tri varianty príspevku — kratší na Facebook, odbornejší na LinkedIn — a uloží ich do Directusu ako <b>koncepty</b>. Ty ich prejdeš a zverejníš.</p>
+                    <p><span class="lbl">Prečo nepublikuje sám</span>Facebook aj LinkedIn vyžadujú schvaľovanie prístupu, ktoré trvá dni až týždne. Tam takéto projekty zomierajú. Navyše je to naša zásada: agent pripravuje, zverejňuje človek.</p>
+                    <p><span class="lbl">Prečo teraz</span>Nepotrebuje <b>žiadnu novú infraštruktúru</b> — nový súbor a riadok v Directuse. A zaplní jednu z dvoch posledných dier v „nahrádzame WordPress pluginy“.</p>
+                    <p><span class="lbl">Prívesok</span>Notifikácie na Telegram — asi tridsať riadkov, a zároveň zárodok klientskeho modulu „ozvi sa mi, keď príde dopyt“.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">E-mail auto-odpoveď</span><span class="b b-pool">plán</span><i class="chev"></i></summary>
+                  <div class="det"><p>Agent prečíta dopyt a pripraví návrh odpovede. <b>Bližšie, než sa zdá</b> — odosielač e-mailov je postavený pre tri agenty a používajú ho zatiaľ len potvrdenia rezervácií.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">Zápis poznámok zo stretnutí</span><span class="b b-pool">plán</span><i class="chev"></i></summary>
+                  <div class="det"><p>Prepis → zhrnutie → úlohy. Dobrý nápad, ale <b>nezačíname</b>: máme dva moduly na 80 % a nula na 100 %. Tretí na 60 % nepredáva lepšie.</p></div>
+                </details>
+              </li>
+
+              <li>
+                <details>
+                  <summary class="n n-sub"><i class="dot"></i><span class="nm">Frontend agent <span class="ds">stavia weby a odvetvové šablóny</span></span><span class="b b-our">naše</span><i class="chev"></i></summary>
+                  <div class="det">
+                    <p>Náš agent na stavbu webov — <b>dopĺňa sadu lego kociek, ale klientovi sa nenasadzuje</b>. Používame ho my, keď staviame šablónu alebo klientsky web.</p>
+                    <p>Nie je to program bežiaci v produkcii: je to <b>posádka sub-agentov</b>, ktorú spustíme v sedení. Preto nemá riadok v nastaveniach ani vlastné záznamy v Directuse.</p>
+                    <p>Kurátorská cesta, nie generátor — vedome sme zamietli „jeden prompt → web“ v prospech overených šablón a ľudskej brány kvality. Latka: nerozoznateľné od práce prémiovej agentúry.</p>
+                  </div>
+                </details>
+                <ul>
+                  <li>
+                    <details>
+                      <summary class="n n-sub"><i class="dot"></i><span class="nm">Sub-agenti <span class="ds">jeho posádka</span></span><span class="b b-live">funguje</span><i class="chev"></i></summary>
+                      <div class="det"><p><b>Dizajnér</b> navrhne dizajnový systém a rozvrh sekcií · <b>vývojár</b> to postaví · <b>slovenský copywriter</b> napíše texty, ktoré neznejú ako od AI · <b>brána kvality</b> to skontroluje.</p><p>K tomu skilly: viac dizajnových variantov naraz, kontrola v reálnom prehliadači, SEO a GEO vrstva, vkus a motion.</p></div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n"><i class="dot"></i><span class="nm">M1 <span class="ds">infraštruktúra knižnice</span></span><span class="b b-done">hotové</span><i class="chev"></i></summary>
+                      <div class="det"><p>Základ, na ktorom stoja všetky šablóny: prenosné balíky, oddelené dizajnové tokeny s prefixom odvetvia (aby nekolidovali s hlavným webom) a spôsob, ako šablónu namontovať na adresu.</p></div>
+                    </details>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n n-sub"><i class="dot"></i><span class="nm">Šablóny <span class="ds">čo z neho vypadne</span></span><i class="chev"></i></summary>
+                      <div class="det"><p>Zatiaľ jedna hotová. Druhá v poradí je <b>kaderníctvo alebo autoservis</b> — odvetvie, kde rezervačný modul naozaj sedí, takže sa ním overí spojenie „šablóna + modul“.</p></div>
+                    </details>
+                    <ul>
+                      <li>
+                        <details>
+                          <summary class="n n-sub n-live"><i class="dot"></i><span class="nm">Kvetinárstvo „Boma Flora“ <span class="ds">M2</span></span><span class="b b-live">naživo</span><i class="chev"></i></summary>
+                          <div class="det"><p>Vlajková ukážka na <code>/ukazky/kvetinarstvo</code>, prepojená z domovskej stránky. Sedem stránok, reálne fotky, vlastný dizajnový systém.</p><p><b>Boma Flora je vymyslená značka</b> — priznávame to aj v texte aj v chatbotovi.</p></div>
+                        </details>
+                        <ul>
+                          <li>
+                            <details>
+                              <summary class="n"><i class="dot"></i><span class="nm">E1 <span class="ds">katalóg hotových kytíc</span></span><span class="b b-done">hotové</span><i class="chev"></i></summary>
+                              <div class="det"><p>Katalóg s filtrovaním podľa príležitosti. Nahradil pôvodný nápad „skladačky kytice“, ktorý sa ukázal ako príliš zložitý na to, čo prináša.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n"><i class="dot"></i><span class="nm">V4 <span class="ds">dizajn sekcie Služby</span></span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                              <div class="det"><p>Z piatich návrhov si vybral smer <b>V4: svadby ako veľký blok a k tomu štyri kompaktné karty</b>. Asymetria vedie oko na najhodnotnejšiu službu.</p><p><b>Podmienka:</b> rozloženie sa musí odvodiť z dát, nie natvrdo — inak sa to nedá použiť pre ďalšieho klienta.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n"><i class="dot"></i><span class="nm">Fotky troch kytíc</span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                              <div class="det"><p>Red Naomi, Tichá rozlúčka a Slnečné ráno nemajú obrázok a na vlajkovej ukážke je to vidieť.</p><p>Buď ich dodáš ty, alebo vzniknú v kreatívnom sedení. Doplnenie je zápis cesty do dát, <b>žiadny zásah do kódu</b>.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n"><i class="dot"></i><span class="nm">Rýchlosť a prístupnosť <span class="ds">domerať</span></span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                              <div class="det"><p>V našej bráne kvality tvrdíme hranicu 95 bodov a stopercentnú prístupnosť — <b>ale nikdy sme to nezmerali</b>.</p><p>Buď to zmeriame, alebo to netvrdíme.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n n-off"><i class="dot"></i><span class="nm">AI poradca pri výbere kytice</span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                              <div class="det det-no"><p>Radil by pri <b>vymyslených</b> kyticiach. Odporúčanie „k tejto príležitosti sa hodí Ranná rosa za 45 €“ je odporúčanie fikcie.</p><p>Keď príde reálne kvetinárstvo, bude mať vlastné kytice, ceny a sezónnosť — poradcu postavíme nad <b>jeho</b> dáta. Inak by sme ho stavali dvakrát.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n n-off"><i class="dot"></i><span class="nm">E2 <span class="ds">WooCommerce ako zdroj katalógu</span></span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                              <div class="det det-no"><p>Potrebuje <b>samostatnú inštaláciu WordPressu s e-shopom</b> — ďalší hosting, ďalšia údržba, ďalší povrch na útok. A dokazovalo by to technickú vec, ktorú nikto nežiada.</p><p>Kód je pripravený: mení sa len telo funkcií v katalógu. Odložené do prvého reálneho e-shopového dopytu.</p></div>
+                            </details>
+                          </li>
+                          <li>
+                            <details>
+                              <summary class="n n-off"><i class="dot"></i><span class="nm">E3 <span class="ds">produkt agent</span></span><span class="b b-no">nerobíme</span><i class="chev"></i></summary>
+                              <div class="det det-no"><p>Generoval by kytice s popismi ako koncepty v e-shope. <b>Stojí na E2</b>, takže je odložený spolu s ním.</p></div>
+                            </details>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <details>
+                      <summary class="n"><i class="dot"></i><span class="nm">Prevziať ui-ux-pro-max</span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                      <div class="det"><p>Cudzia knižnica so stovkami odvetvových pravidiel, paliet a typografických párov pre nášho dizajnéra. Má ju už v pokynoch, ale nikdy sa neprevzala.</p><p><b>Prevziať až pri rozbehu novej šablóny</b>, nie do zásoby — katalóg sa priebežne mení, prevzatá kópia by zamrzla skôr, než ju otvoríme.</p><p><b>Mantinel:</b> je to vstup do rozhodovania, nie rozhodnutie. Pri rozpore s našou bránou kvality platí brána kvality.</p></div>
+                    </details>
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <details>
+                  <summary class="n n-p"><i class="dot"></i><span class="nm">M4 — customizačný agent <span class="ds">z hotovej šablóny klientsky web</span></span><span class="b b-our">naše</span><span class="b b-p">P5</span><i class="chev"></i></summary>
+                  <div class="det det-p">
+                    <p class="pathline">AI Nexus Link / Agenti / M4 — customizačný agent</p>
+                    <p><span class="lbl">Čo to je</span>Náš agent, ktorý z hotovej šablóny spraví web konkrétneho klienta — <b>zmenou textov, farieb a fotiek, nie zásahom do kódu</b>. Kostra už existuje.</p>
+                    <p><span class="lbl">Ako sa overí</span>Suchý beh: druhá sada obsahu do tej istej šablóny. Z jednej šablóny vzniknú <b>dva rôzne weby</b>.</p>
+                    <p><span class="lbl">Prečo sa podceňuje</span>Je to jediný spôsob, ako zistiť, či je Boma Flora naozaj riadená dátami, alebo má polovicu natvrdo v komponentoch. <b>Celá téza produktu na tom stojí</b> — a nikdy sme ju neoverili.</p>
+                    <p><span class="lbl">Otvorené</span>Ako presne celý ten proces zrealizujeme, <b>sa dohodne v samostatnom sedení</b>. Zatiaľ je isté len to, čo má overiť.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">M5 — náhľadový agent <span class="ds">klient si objedná náhľad webu</span></span><span class="b b-our">naše</span><span class="b b-pool">plán</span><i class="chev"></i></summary>
+                  <div class="det"><p>Klient si cez chat objedná platený náhľad svojho webu; agent prečíta jeho starý web aj podnikateľský zámer a naleje to do šablóny.</p><p>Viazané na predaj, ktorý je zamknutý. Stojí na M4.</p></div>
+                </details>
+              </li>
+            </ul>
+          </li>
+
+          <!-- ══ 4 ══ -->
+          <li>
+            <details open>
+              <summary class="n n-br"><i class="dot"></i><span class="bn">4</span><span class="nm">Produktizácia <span class="ds">viac klientov naraz — Fáza 5</span></span><i class="chev"></i></summary>
+              <div class="det"><p>Cieľový stav: každý klient izolovaný, so svojím nastavením a svojimi agentmi, pod našou centrálnou správou. Dnes je systém <b>jedno-klientský</b>.</p></div>
+            </details>
+            <ul>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">Oddelenie klientov</span><span class="b b-pool">plán</span><i class="chev"></i></summary>
+                  <div class="det"><p>Aby dáta jedného klienta nemohli byť vidieť u druhého. Predpokladom sú obmedzené prístupové kľúče — teda <b>P2</b>.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">M6 <span class="ds">postup nasadenia u klienta</span></span><span class="b b-pool">plán</span><i class="chev"></i></summary>
+                  <div class="det"><p>Zdokumentovaný postup, ako sa šablóna nasadí reálnemu klientovi, plus návrh cesty k viac-klientskej prevádzke. Nadväzuje na M4.</p><p><b>Presunuté sem od šablón</b> — nie je to o stavbe webu, ale o jeho odovzdaní klientovi.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-off"><i class="dot"></i><span class="nm">Kokpit <span class="ds">vlastné ovládacie rozhranie</span></span><span class="b b-no">odložené</span><i class="chev"></i></summary>
+                  <div class="det det-no">
+                    <p>Kedysi sme uvažovali, že postavíme vlastné rozhranie na ovládanie agentov. Pri rozbore sme dospeli k tomu, že <b>túto úlohu zatiaľ plní sám Directus</b> — agenti sa v ňom ovládajú klikaním a záznamy sú vidieť.</p>
+                    <p>Väčší zmysel má stavať pod ním <b>agentov ako lego kocky</b>, kde každý má vlastný význam a funkciu. Presne to je fronta P1 až P6 — ani jedna nestavia ovládaciu vrstvu, všetky stavajú to, čo sa má ovládať.</p>
+                    <p><b>Vrátime sa k tomu v samostatnom plánovacom sedení</b>, keď na to bude dôvod — pravdepodobne až pri viac-klientskej prevádzke.</p>
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </li>
+
+          <!-- ══ 5 ══ -->
+          <li>
+            <details open>
+              <summary class="n n-br"><i class="dot"></i><span class="bn">5</span><span class="nm">Naše nástroje a dokumentácia</span><i class="chev"></i></summary>
+              <div class="det"><p>Nie je to súčasť produktu, ale je to dôvod, prečo sa dá stavať rýchlo a bez opakovania tých istých chýb.</p><p><i>Sub-agenti sa presunuli pod frontend agenta — patria jemu.</i></p></div>
+            </details>
+            <ul>
+              <li>
+                <details>
+                  <summary class="n n-live"><i class="dot"></i><span class="nm">Dokumentácia <span class="ds">backlog · denník · vízia · plán</span></span><span class="b b-live">funguje</span><i class="chev"></i></summary>
+                  <div class="det">
+                    <p><b>Backlog</b> = prítomnosť: čo je otvorené a v akom poradí. Prepisuje sa.</p>
+                    <p><b>Denník</b> = história: čo sa kedy stalo, prečo sme sa tak rozhodli, ponaučenia. Nikdy sa neprepisuje, len pribúda.</p>
+                    <p><b>Vízia</b> = kam to celé smeruje. <b>Plán</b> = ako to postavíme.</p>
+                    <p>Štart každého sedenia si backlog číta automaticky, takže nikto nezačína naslepo.</p>
+                  </div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n n-p"><i class="dot"></i><span class="nm">Notifikácie na Telegram <span class="ds">prívesok k P4</span></span><span class="b b-p">P4</span><i class="chev"></i></summary>
+                  <div class="det det-p"><p>Jedno volanie na konci pipeline: čo agent spravil, čo zlyhalo. Token a adresa v premenných prostredia, nikdy v kóde.</p><p><b>Mantinel:</b> zlyhanie notifikácie nesmie nikdy zhodiť agenta.</p></div>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary class="n"><i class="dot"></i><span class="nm">Rozdeliť plán na tematické súbory</span><span class="b b-pool">zásobník</span><i class="chev"></i></summary>
+                  <div class="det"><p>Súbor s plánom má cez dvetisíc riadkov a mieša štyri témy. Najprv sa z neho presunú hotové a nahradené plány do archívu, potom sa uvidí, či treba deliť aj zvyšok.</p></div>
+                </details>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span>STROM PROJEKTU · 22. 8. 2026</span>
+    <span>PORADIE A DETAILY: DOCS/BACKLOG.MD</span>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    var box = document.querySelector('.treebox');
+    function all(open){
+      box.querySelectorAll('details').forEach(function(d){ d.open = open; });
+    }
+    var ev = document.getElementById('ev'), zv = document.getElementById('zv');
+    if (ev) ev.addEventListener('click', function(){ all(true); });
+    if (zv) zv.addEventListener('click', function(){ all(false); });
+  })();
+</script>
+</body>
+</html>
