@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pracovná mapa AI Nexus Link</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🧭%3C/text%3E%3C/svg%3E">
+<style>*{margin:0}html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<style>
+  :root{
+    --bg:#F1F3F6; --surface:#FFFFFF; --surface-2:#E9ECF1; --surface-3:#F7F8FA;
+    --ink:#191D26; --ink-soft:#4C5462; --ink-faint:#8992A1;
+    --line:#D6DBE3; --line-soft:#E4E8EE;
+    --accent:#9E6E1B; --accent-bright:#C2913A; --accent-tint:#F4EBD6;
+    --flow:#37648F; --flow-tint:#E5EDF5;
+    --live:#2C825C; --live-tint:#E1EFE8;
+    --gap:#C24A33; --gap-tint:#F7E5E0;
+    --shadow:0 1px 2px rgba(20,28,45,.05), 0 8px 30px rgba(20,28,45,.06);
+    --shadow-sm:0 1px 2px rgba(20,28,45,.06);
+    --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","Cascadia Code","Segoe UI Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+      --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+      --line:#29303C; --line-soft:#222833;
+      --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+      --flow:#6E9BCB; --flow-tint:#1A2532;
+      --live:#4DB183; --live-tint:#163529;
+      --gap:#E1755E; --gap-tint:#38201B;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F131A; --surface:#161B24; --surface-2:#1D232E; --surface-3:#131822;
+    --ink:#E6EAF1; --ink-soft:#A7B0BF; --ink-faint:#6B7484;
+    --line:#29303C; --line-soft:#222833;
+    --accent:#D8A445; --accent-bright:#E6B75C; --accent-tint:#312817;
+    --flow:#6E9BCB; --flow-tint:#1A2532;
+    --live:#4DB183; --live-tint:#163529;
+    --gap:#E1755E; --gap-tint:#38201B;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 34px rgba(0,0,0,.34);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-sans); line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:clamp(26px,5vw,58px) clamp(16px,4vw,36px) 90px}
+
+  /* ── hlavička ─────────────────────────────────────────── */
+  .eyebrow{
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 12px; font-weight:600;
+  }
+  h1{
+    font-size:clamp(1.9rem,5.2vw,2.7rem); line-height:1.06; margin:0 0 14px;
+    letter-spacing:-.022em; text-wrap:balance; font-weight:700;
+  }
+  .thesis{
+    font-size:clamp(1.02rem,2.2vw,1.16rem); color:var(--ink-soft);
+    margin:0; max-width:60ch;
+  }
+  .thesis b{color:var(--ink); font-weight:600}
+  .stamp{
+    margin-top:22px; display:flex; flex-wrap:wrap; gap:8px 18px;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint);
+    letter-spacing:.04em;
+  }
+
+  section{margin-top:clamp(40px,6vw,62px)}
+  h2{
+    font-size:1.32rem; letter-spacing:-.012em; margin:0 0 5px; font-weight:700;
+    text-wrap:balance;
+  }
+  .sub{color:var(--ink-soft); margin:0 0 22px; max-width:62ch; font-size:.96rem}
+
+  /* ── odznaky ──────────────────────────────────────────── */
+  .b{
+    display:inline-flex; align-items:center; gap:5px; flex:none;
+    font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    letter-spacing:.07em; text-transform:uppercase;
+    padding:3px 8px; border-radius:5px; border:1px solid transparent;
+    white-space:nowrap;
+  }
+  .b-p{background:var(--accent-tint); color:var(--accent); border-color:var(--accent-bright)}
+  .b-live{background:var(--live-tint); color:var(--live); border-color:var(--live)}
+  .b-done{background:transparent; color:var(--live); border-color:var(--line)}
+  .b-pool{background:var(--surface-2); color:var(--ink-soft); border-color:var(--line)}
+  .b-no{background:var(--gap-tint); color:var(--gap); border-color:var(--gap)}
+  .b-new{background:var(--flow-tint); color:var(--flow); border-color:var(--flow)}
+  .b-our{background:transparent; color:var(--ink-faint); border-color:var(--ink-faint); border-style:dashed}
+
+  /* ── strom ────────────────────────────────────────────── */
+  .treebox{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:clamp(14px,2.4vw,24px) clamp(12px,2.4vw,26px); box-shadow:var(--shadow);
+    overflow-x:auto;
+  }
+  ul.ft, ul.ft ul{list-style:none; margin:0; padding:0}
+  ul.ft{min-width:520px}
+  ul.ft ul{padding-left:22px}
+  ul.ft li{position:relative; padding-left:22px}
+  ul.ft > li{padding-left:0}
+  ul.ft li::before{
+    content:""; position:absolute; left:0; top:0; bottom:0;
+    border-left:1px solid var(--line);
+  }
+  ul.ft li::after{
+    content:""; position:absolute; left:0; top:16px; width:14px;
+    border-top:1px solid var(--line);
+  }
+  ul.ft li:last-child::before{bottom:auto; height:16px}
+  ul.ft > li::before, ul.ft > li::after{display:none}
+
+  .n{
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    padding:5px 9px; border-radius:7px; margin:1px 0;
+  }
+  .n:hover{background:var(--surface-3)}
+  .n .dot{
+    width:6px; height:6px; border-radius:50%; flex:none;
+    background:var(--ink-faint);
+  }
+  .n .nm{font-size:.92rem; font-weight:480; line-height:1.4}
+  .n .ds{color:var(--ink-faint); font-size:.82rem; font-weight:400}
+
+  .n-root{
+    background:var(--accent-tint); border:1px solid var(--accent-bright);
+    padding:9px 14px; margin-bottom:4px; display:inline-flex;
+  }
+  .n-root .nm{font-weight:700; font-size:1.06rem; letter-spacing:-.01em}
+  .n-root .dot{background:var(--accent); width:8px; height:8px}
+
+  .n-br{background:var(--surface-2); border:1px solid var(--line); margin:7px 0 3px}
+  .n-br .nm{font-weight:650; font-size:.98rem}
+  .n-br .dot{background:var(--accent); width:7px; height:7px}
+  .n-br .bn{
+    font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:var(--accent);
+    flex:none;
+  }
+  .n-sub .nm{font-weight:560}
+  .n-sub .dot{background:var(--flow)}
+  .n-live .dot{background:var(--live)}
+  .n-p .dot{background:var(--accent-bright); width:7px; height:7px}
+  .n-off .nm{color:var(--ink-faint)}
+  .n-off .dot{background:var(--line)}
+
+
+  /* ── mobil: strom sa zmestí bez posúvania do strán ────── */
+  @media (max-width:680px){
+    ul.ft{min-width:0}
+    .treebox{overflow-x:visible; padding-left:10px; padding-right:10px}
+    ul.ft ul{padding-left:12px}
+    ul.ft li{padding-left:13px}
+    ul.ft li::after{width:8px; top:15px}
+    ul.ft li:last-child::before{height:15px}
+
+    .n, summary.n{
+      align-items:flex-start; padding:6px 7px;
+      column-gap:7px; row-gap:3px;
+    }
+    .n .dot{margin-top:6px}
+    .n .nm{font-size:.88rem; flex:1 1 auto; min-width:0}
+    .n .ds{display:block; font-size:.77rem}
+    .n .chev{margin-left:auto; margin-top:6px}
+    .b{font-size:9.5px; padding:2px 6px; letter-spacing:.05em}
+    .n-root{padding:9px 12px}
+    .n-root .nm{font-size:1rem}
+    .n-br .bn{margin-top:5px}
+
+    .det{
+      margin:2px 0 10px 0; padding:11px 13px;
+      font-size:.87rem; max-width:100%;
+    }
+    .det .pathline{white-space:normal; overflow-x:visible; word-break:break-word}
+  }
+
+  /* ── fronta ───────────────────────────────────────────── */
+  .queue{display:flex; flex-direction:column; gap:12px}
+  .q{
+    background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    box-shadow:var(--shadow-sm); overflow:hidden;
+  }
+  .q > summary{
+    list-style:none; cursor:pointer; padding:15px 18px;
+    display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:14px;
+  }
+  .q > summary::-webkit-details-marker{display:none}
+  .qn{
+    font-family:var(--font-mono); font-weight:700; font-size:14px;
+    width:34px; height:34px; flex:none; border-radius:9px;
+    background:var(--accent); color:var(--bg);
+    display:grid; place-items:center; letter-spacing:0;
+  }
+  :root[data-theme="dark"] .qn{color:#0F131A}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .qn{color:#0F131A}}
+  .qt{font-weight:650; font-size:1.02rem; letter-spacing:-.01em; line-height:1.35}
+  .qt small{
+    display:block; font-weight:400; font-size:.85rem; color:var(--ink-soft);
+    letter-spacing:0; margin-top:2px;
+  }
+  .chev{
+    width:9px; height:9px; flex:none; border-right:2px solid var(--ink-faint);
+    border-bottom:2px solid var(--ink-faint); transform:rotate(45deg);
+    transition:transform .18s ease; margin-right:4px;
+  }
+  details[open] > summary .chev{transform:rotate(-135deg)}
+  .q .body{padding:2px 18px 20px; border-top:1px solid var(--line-soft); margin-top:2px}
+
+  .path{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--flow);
+    background:var(--flow-tint); border:1px solid var(--line-soft);
+    padding:7px 10px; border-radius:7px; margin:16px 0 18px;
+    overflow-x:auto; white-space:nowrap;
+  }
+  .dl{display:grid; gap:14px; margin:0}
+  .dl > div{display:grid; grid-template-columns:118px 1fr; gap:14px; align-items:start}
+  .dl dt{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--ink-faint); font-weight:600; padding-top:3px;
+  }
+  .dl dd{margin:0; color:var(--ink-soft); font-size:.94rem}
+  .dl dd b, .dl dd strong{color:var(--ink); font-weight:600}
+  .dl dd code, .path code{font-family:var(--font-mono); font-size:.88em}
+  .dl ol, .dl ul{margin:0; padding-left:19px}
+  .dl li{margin-bottom:5px}
+  .warn{
+    margin-top:16px; padding:11px 13px; border-radius:8px;
+    background:var(--accent-tint); border:1px solid var(--accent-bright);
+    font-size:.9rem; color:var(--ink);
+  }
+  .warn b{color:var(--accent)}
+
+  /* ── strom ────────────────────────────────────────────── */
+  .tree{display:flex; flex-direction:column; gap:14px}
+  .branch{
+    background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    box-shadow:var(--shadow-sm); overflow:hidden;
+  }
+  .branch > summary{
+    list-style:none; cursor:pointer; padding:14px 18px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .branch > summary::-webkit-details-marker{display:none}
+  .bnum{
+    font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--accent);
+    background:var(--accent-tint); border-radius:5px; padding:2px 7px; flex:none;
+  }
+  .bt{font-weight:650; font-size:1.02rem; letter-spacing:-.01em; flex:1}
+  .bt em{font-style:normal; color:var(--ink-faint); font-weight:400; font-size:.88rem}
+  .branch > .kids{padding:4px 12px 14px 12px; border-top:1px solid var(--line-soft)}
+
+  .node{border-radius:9px; margin-top:4px}
+  .node > summary{
+    list-style:none; cursor:pointer; padding:9px 10px; border-radius:9px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
+  .node > summary::-webkit-details-marker{display:none}
+  .node > summary:hover{background:var(--surface-3)}
+  .nt{font-size:.95rem; font-weight:520; flex:1; min-width:150px; line-height:1.4}
+  .nt em{font-style:normal; color:var(--ink-faint); font-weight:400; font-size:.86rem}
+  .leaf{
+    padding:9px 10px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    border-radius:9px; margin-top:4px;
+  }
+  .leaf .nt{font-weight:450; color:var(--ink-soft)}
+  .node > .kids{padding:2px 0 8px 14px; margin-left:6px; border-left:2px solid var(--line-soft)}
+  .node .body{padding:4px 10px 14px; font-size:.92rem; color:var(--ink-soft)}
+  .node .body p{margin:0 0 10px}
+  .node .body p:last-child{margin-bottom:0}
+  .node .body b{color:var(--ink)}
+
+  /* ── tabuľka nerobíme ─────────────────────────────────── */
+  .no-table{
+    width:100%; border-collapse:collapse; font-size:.93rem;
+    background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    overflow:hidden; box-shadow:var(--shadow-sm);
+  }
+  .no-table th{
+    text-align:left; font-family:var(--font-mono); font-size:10.5px; font-weight:600;
+    letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint);
+    padding:11px 16px; background:var(--surface-2); border-bottom:1px solid var(--line);
+  }
+  .no-table td{padding:12px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+  .no-table tr:last-child td{border-bottom:none}
+  .no-table td:first-child{font-weight:600; color:var(--ink); white-space:nowrap}
+  .no-table td:last-child{color:var(--ink-soft)}
+  .scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+  /* ── legenda + poznámka ───────────────────────────────── */
+  .legend{
+    display:flex; flex-wrap:wrap; gap:10px 20px; padding:16px 18px;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:12px;
+  }
+  .legend div{display:flex; align-items:center; gap:9px; font-size:.88rem; color:var(--ink-soft)}
+  .note{
+    margin-top:18px; padding:16px 18px; border-radius:12px;
+    background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--flow); font-size:.94rem; color:var(--ink-soft);
+    box-shadow:var(--shadow-sm);
+  }
+  .note b{color:var(--ink)}
+  .note p{margin:0 0 10px}
+  .note p:last-child{margin-bottom:0}
+
+  hr.rule{border:none; border-top:1px solid var(--line); margin:0}
+
+  a{color:var(--flow)}
+  :focus-visible{outline:2px solid var(--accent-bright); outline-offset:2px; border-radius:6px}
+  @media (prefers-reduced-motion:reduce){*{transition:none !important}}
+  @media (max-width:560px){
+    .dl > div{grid-template-columns:1fr; gap:3px}
+    .q > summary{grid-template-columns:auto 1fr; gap:12px}
+    .chev{display:none}
+  }
+</style>
+
+<div class="wrap">
+
+  <p class="eyebrow">Plánovacia porada · 20. augusta 2026</p>
+  <h1>Pracovná mapa</h1>
+  <p class="thesis">
+    Kde sa v projekte nachádzame a čo ideme robiť. Najprv <b>strom</b> — celý projekt na jednej
+    obrazovke. Potom <b>fronta</b>: šesť vecí, na ktorých sme sa dohodli, berie sa zhora.
+    Nakoniec tá istá mapa <b>rozklikávacia</b>, s vysvetlením ku každej položke.
+  </p>
+  <div class="stamp">
+    <span>AI NEXUS LINK</span>
+    <span>REFERENCIA: DIGITALNAPOMOC.SK</span>
+    <span>GO-LIVE A PREDAJ: ZAMKNUTÉ</span>
+  </div>
+
+  <!-- ══════════ STROM ══════════ -->
+  <section>
+    <h2>Strom projektu</h2>
+    <p class="sub">
+      Celý Nexus na jednej obrazovke. <b>Frontend agent je náš agent</b> — stojí medzi
+      ostatnými, len sa nenasadzuje klientovi (nálepka <b>naše</b>). Šablóny sú pod ním,
+      lebo ich stavia.
+    </p>
+
+    <div class="treebox">
+      <ul class="ft">
+        <li>
+          <span class="n n-root"><i class="dot"></i><span class="nm">AI Nexus Link</span></span>
+          <ul>
+
+            <!-- 1 -->
+            <li>
+              <span class="n n-br"><i class="dot"></i><span class="bn">1</span><span class="nm">Referenčný web <span class="ds">digitalnapomoc.sk</span></span></span>
+              <ul>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Frontend <span class="ds">Next.js na Railway</span></span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Obsah <span class="ds">WordPress, skrytá wp. subdoména</span></span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n"><i class="dot"></i><span class="nm">Frontend hygiena <span class="ds">odkazy a mobil</span></span><span class="b b-pool">zásobník</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">Pred-Google checklist <span class="ds">cookie lišta a zásady</span></span><span class="b b-no">nerobíme</span></span></li>
+              </ul>
+            </li>
+
+            <!-- 2 -->
+            <li>
+              <span class="n n-br"><i class="dot"></i><span class="bn">2</span><span class="nm">Systémové dáta <span class="ds">Directus</span></span></span>
+              <ul>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Kontakty a dopyty</span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Nastavenia agentov</span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Záznamy o behoch</span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Rezervácie</span><span class="b b-live">naživo</span></span></li>
+                <li><span class="n n-p"><i class="dot"></i><span class="nm">Obmedzené prístupové kľúče</span><span class="b b-p">P2</span></span></li>
+              </ul>
+            </li>
+
+            <!-- 3 -->
+            <li>
+              <span class="n n-br"><i class="dot"></i><span class="bn">3</span><span class="nm">Agenti <span class="ds">naše lego kocky</span></span></span>
+              <ul>
+                <li>
+                  <span class="n n-sub n-live"><i class="dot"></i><span class="nm">Obsahový agent „Writer“</span><span class="b b-live">naživo</span></span>
+                  <ul>
+                    <li><span class="n n-p"><i class="dot"></i><span class="nm">Kvalita <span class="ds">úvody, obrázky, alt texty</span></span><span class="b b-p">P6</span></span></li>
+                  </ul>
+                </li>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">SEO a GEO agent</span><span class="b b-live">naživo</span></span></li>
+                <li>
+                  <span class="n n-sub n-live"><i class="dot"></i><span class="nm">RAG chatbot</span><span class="b b-live">naživo</span></span>
+                  <ul>
+                    <li><span class="n n-p"><i class="dot"></i><span class="nm">Nastavenia a logy do Directusu <span class="ds">Krok 5</span></span><span class="b b-p">P1</span></span></li>
+                    <li><span class="n n-off"><i class="dot"></i><span class="nm">Hlas</span><span class="b b-no">zamietnuté</span></span></li>
+                  </ul>
+                </li>
+                <li>
+                  <span class="n n-sub n-live"><i class="dot"></i><span class="nm">Rezervačný agent</span><span class="b b-live">naživo</span></span>
+                  <ul>
+                    <li><span class="n"><i class="dot"></i><span class="nm">R0 <span class="ds">dátový model</span></span><span class="b b-done">hotové</span></span></li>
+                    <li><span class="n n-live"><i class="dot"></i><span class="nm">R1 <span class="ds">engine a formulár</span></span><span class="b b-live">naživo</span></span></li>
+                    <li><span class="n n-p"><i class="dot"></i><span class="nm">R2 <span class="ds">chatbot rezervuje + zrušovací odkaz</span></span><span class="b b-p">P3</span></span></li>
+                    <li><span class="n n-off"><i class="dot"></i><span class="nm">R3 <span class="ds">pripomienky</span></span><span class="b b-no">nerobíme</span></span></li>
+                    <li><span class="n n-off"><i class="dot"></i><span class="nm">R4 <span class="ds">replikácia u klienta</span></span><span class="b b-no">nerobíme</span></span></li>
+                  </ul>
+                </li>
+                <li><span class="n n-p"><i class="dot"></i><span class="nm">Social agent <span class="ds">príspevky z článkov</span></span><span class="b b-new">nový</span><span class="b b-p">P4</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">E-mail auto-odpoveď</span><span class="b b-pool">plán</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">Zápis poznámok zo stretnutí</span><span class="b b-pool">plán</span></span></li>
+                <li>
+                  <span class="n n-sub"><i class="dot"></i><span class="nm">Frontend agent <span class="ds">stavia weby a šablóny</span></span><span class="b b-our">naše</span></span>
+                  <ul>
+                    <li><span class="n n-live"><i class="dot"></i><span class="nm">Sub-agenti <span class="ds">dizajnér · vývojár · QA · copywriter</span></span><span class="b b-live">funguje</span></span></li>
+                    <li><span class="n"><i class="dot"></i><span class="nm">M1 <span class="ds">infraštruktúra knižnice</span></span><span class="b b-done">hotové</span></span></li>
+                    <li>
+                      <span class="n n-sub"><i class="dot"></i><span class="nm">Šablóny</span></span>
+                      <ul>
+                        <li>
+                          <span class="n n-sub n-live"><i class="dot"></i><span class="nm">Kvetinárstvo „Boma Flora“ <span class="ds">M2</span></span><span class="b b-live">naživo</span></span>
+                          <ul>
+                            <li><span class="n"><i class="dot"></i><span class="nm">E1 <span class="ds">katalóg kytíc</span></span><span class="b b-done">hotové</span></span></li>
+                            <li><span class="n"><i class="dot"></i><span class="nm">V4 <span class="ds">dizajn sekcie Služby</span></span><span class="b b-pool">zásobník</span></span></li>
+                            <li><span class="n"><i class="dot"></i><span class="nm">Fotky troch kytíc</span><span class="b b-pool">zásobník</span></span></li>
+                            <li><span class="n"><i class="dot"></i><span class="nm">Rýchlosť a prístupnosť</span><span class="b b-pool">zásobník</span></span></li>
+                            <li><span class="n n-off"><i class="dot"></i><span class="nm">AI poradca pri výbere kytice</span><span class="b b-no">nerobíme</span></span></li>
+                            <li><span class="n n-off"><i class="dot"></i><span class="nm">E2 <span class="ds">Woo ako zdroj katalógu</span></span><span class="b b-no">nerobíme</span></span></li>
+                            <li><span class="n n-off"><i class="dot"></i><span class="nm">E3 <span class="ds">produkt agent</span></span><span class="b b-no">nerobíme</span></span></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><span class="n"><i class="dot"></i><span class="nm">Prevziať ui-ux-pro-max</span><span class="b b-pool">zásobník</span></span></li>
+                  </ul>
+                </li>
+                <li><span class="n n-p"><i class="dot"></i><span class="nm">M4 <span class="ds">customizačný agent — dva weby z jednej šablóny</span></span><span class="b b-our">naše</span><span class="b b-p">P5</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">M5 <span class="ds">náhľadový agent online</span></span><span class="b b-our">naše</span><span class="b b-pool">plán</span></span></li>
+              </ul>
+            </li>
+
+            <!-- 4 -->
+            <li>
+              <span class="n n-br"><i class="dot"></i><span class="bn">4</span><span class="nm">Produktizácia <span class="ds">viac klientov naraz — Fáza 5</span></span></span>
+              <ul>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">Oddelenie klientov</span><span class="b b-pool">plán</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">M6 <span class="ds">postup nasadenia u klienta</span></span><span class="b b-pool">plán</span></span></li>
+                <li><span class="n n-off"><i class="dot"></i><span class="nm">Kokpit <span class="ds">vlastné ovládacie rozhranie</span></span><span class="b b-no">odložené</span></span></li>
+              </ul>
+            </li>
+
+            <!-- 5 -->
+            <li>
+              <span class="n n-br"><i class="dot"></i><span class="bn">5</span><span class="nm">Naše nástroje a dokumentácia</span></span>
+              <ul>
+                <li><span class="n n-live"><i class="dot"></i><span class="nm">Dokumentácia <span class="ds">backlog · denník · vízia · plán</span></span><span class="b b-live">funguje</span></span></li>
+                <li><span class="n n-p"><i class="dot"></i><span class="nm">Notifikácie na Telegram <span class="ds">prívesok k P4</span></span><span class="b b-p">P4</span></span></li>
+                <li><span class="n"><i class="dot"></i><span class="nm">Rozdeliť plán na tematické súbory</span><span class="b b-pool">zásobník</span></span></li>
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ FRONTA ══════════ -->
+  <section>
+    <h2>Fronta — najbližších šesť sedení</h2>
+    <p class="sub">
+      Poradie platí. Každé sedenie je jeden typ práce a jedna úloha: dokončiť, overiť, zavrieť.
+    </p>
+
+    <div class="queue">
+
+      <details class="q">
+        <summary>
+          <span class="qn">P1</span>
+          <span class="qt">Nastavenia chatbota z kódu do Directusu
+            <small>Aby sa tón a správanie bota dali meniť klikaním, nie prekódovaním</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Agenti / RAG chatbot / Krok 5</div>
+          <dl class="dl">
+            <div><dt>Čo je dnes</dt><dd>To, ako sa chatbot správa — akým tónom hovorí, ktorý model používa, koľko kúskov textu si pritiahne k odpovedi — je napísané priamo v kóde, v súbore <code>frontend/lib/rag.ts</code>.</dd></div>
+            <div><dt>Čo sa zmení</dt><dd>Presunie sa to do Directusu, do tabuľky <code>agent_config</code>. Odvtedy meníš tón klikaním v admine. Zároveň sa začnú <b>logovať chaty</b>, takže uvidíš, na čo sa ľudia naozaj pýtajú.</dd></div>
+            <div><dt>Prečo prvé</dt><dd>
+              <ol>
+                <li>Dnes ťa každá zmena tónu stojí vetvu, revíziu a nasadenie — 18. augusta to kvôli výpadku GitHubu trvalo tri hodiny.</li>
+                <li>Klientovi nemôžeme povedať „napíšte mi a ja to prekódim“. Musí si to doladiť sám.</li>
+                <li>Zapne sa <b>učiaca slučka</b> — nález s klikateľnými odkazmi vyšiel z jedinej otázky. Logy ukážu stovky takých.</li>
+                <li>Odomyká P3 aj neskoršieho poradcu — obe stavajú na tom istom.</li>
+              </ol></dd></div>
+            <div><dt>Veľkosť</dt><dd>Jedno sedenie typu agenti / kód.</dd></div>
+          </dl>
+          <div class="warn">
+            <b>Mantinel:</b> nastavenia sa čítajú <b>podľa kľúča</b>, nie z jedného pevného riadku —
+            presne ako to už robí orchestrátor vo funkcii <code>nacitaj_config(agent_name)</code>.
+            Vrátane návratu k hodnotám z kódu, keď je Directus nedostupný. Rovnaká práca dnes;
+            bez toho sa Krok 5 robí druhýkrát, len čo pribudne druhý bot.
+          </div>
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>
+          <span class="qn">P2</span>
+          <span class="qt">Obmedzené prístupové kľúče
+            <small>Každý systém smie len to, čo naozaj potrebuje</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Systémové dáta / Tokeny</div>
+          <dl class="dl">
+            <div><dt>Čo je dnes</dt><dd>Orchestrátor — ten, čo píše články — sa prihlasuje do Directusu <b>ako správca</b>. Má teda prístup ku všetkému vrátane kontaktov na klientov. Frontend číta databázu chatbota priamo cez verejnú adresu.</dd></div>
+            <div><dt>Čo sa zmení</dt><dd>Každý systém dostane vlastný kľúč s minimálnymi právami. Frontend prejde na vnútornú adresu databázy.</dd></div>
+            <div><dt>Prečo hneď za P1</dt><dd>Vo <code>vizia.md</code> máme zapísané, že bez tohto sa <b>systém nedá bezpečne replikovať pre klientov</b>. Je to podmienka, nie kozmetika. A je to prevažne klikanie v Directuse.</dd></div>
+            <div><dt>Prečo nie spolu s P1</dt><dd>Keby sa po výmene kľúča rozbil živý pipeline, ktorý píše články, chceš vedieť, ktorá zmena to spôsobila. Oddelenie je poistka, nie byrokracia.</dd></div>
+            <div><dt>Veľkosť</dt><dd>Menšie sedenie — zhruba 30–45 minút klikania plus jedno nasadenie.</dd></div>
+          </dl>
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>
+          <span class="qn">P3</span>
+          <span class="qt">Chatbot rezervuje priamo v konverzácii
+            <small>Krok R2 rezervačného agenta + zrušovací odkaz v e-maile</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Agenti / Rezervačný agent / R2</div>
+          <dl class="dl">
+            <div><dt>Čo je dnes</dt><dd>Rezervuje sa cez formulár na stránke <code>/rezervacia</code>. Chatbot o rezerváciách nevie nič.</dd></div>
+            <div><dt>Čo sa zmení</dt><dd>Napíšeš botovi „chcem konzultáciu v utorok“ → ponúkne voľné termíny → po tvojom výslovnom potvrdení rezervuje, pošle e-mail a založí kontakt. V tom istom sedení pribudne aj <b>zrušovací odkaz</b> v potvrdzovacom e-maile — dnes tam nie je a je to diera.</dd></div>
+            <div><dt>Prečo to má váhu</dt><dd>Je to jediná vec, ktorá z chatbota spraví agenta, čo <b>koná</b>, nie len odpovedá. A rezervácie predávame naprieč odvetviami — kaderníctvo, autoservis, zubár.</dd></div>
+            <div><dt>Predtým ty</dt><dd>Rozšíriť v Directuse zoznam služieb na 2–3 typy konzultácií. Klik, zhruba desať minút — inak nemá bot čo ponúkať.</dd></div>
+            <div><dt>Veľkosť</dt><dd>Väčšie sedenie typu agenti.</dd></div>
+          </dl>
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>
+          <span class="qn">P4</span>
+          <span class="qt">Agent na príspevky pre sociálne siete
+            <small>Z každého hotového článku pripraví koncepty príspevkov</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Agenti / Social agent</div>
+          <dl class="dl">
+            <div><dt>Čo je dnes</dt><dd>Writer napíše článok a tým to končí. Príspevky na siete píšeš ručne alebo vôbec.</dd></div>
+            <div><dt>Čo pribudne</dt><dd>Po každom článku agent pripraví dva až tri varianty príspevku — kratší na Facebook, odbornejší na LinkedIn — a uloží ich do Directusu ako <b>koncepty</b>. Ty ich prejdeš, upravíš a zverejníš.</dd></div>
+            <div><dt>Prečo nepublikuje sám</dt><dd>Facebook aj LinkedIn vyžadujú schvaľovanie prístupu, ktoré trvá dni až týždne. Tam takéto projekty zomierajú. Automatické zverejňovanie príde neskôr, po jednej sieti — a nič neblokuje. Navyše je to <b>naša zásada</b>: agenti pripravujú koncepty, publikuje človek.</dd></div>
+            <div><dt>Prečo teraz</dt><dd>Nepotrebuje <b>žiadnu novú infraštruktúru</b> — orchestrátor, nastavenia aj logy už existujú. Nový agent = nový súbor a riadok v Directuse. A zaplní jednu z dvoch posledných dier v „nahrádzame WordPress pluginy“.</dd></div>
+            <div><dt>Prívesok</dt><dd>V tom istom sedení notifikácie na Telegram — čo agent spravil, čo zlyhalo. Zhruba tridsať riadkov, a je to zároveň zárodok klientskeho modulu „ozvi sa mi, keď príde dopyt“.</dd></div>
+            <div><dt>Veľkosť</dt><dd>Jedno sedenie typu agenti plus klik v Directuse (nová tabuľka).</dd></div>
+          </dl>
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>
+          <span class="qn">P5</span>
+          <span class="qt">Customizačný agent — dva weby z jednej šablóny
+            <small>Míľnik M4: klientský web zmenou obsahu, nie kódu</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Frontend agent / M4</div>
+          <dl class="dl">
+            <div><dt>Čo to je</dt><dd>Postup, ktorým sa z hotovej odvetvovej šablóny spraví web konkrétneho klienta — <b>zmenou textov, farieb a fotiek, nie zásahom do kódu</b>. Kostra už existuje ako skill <code>site-customizer</code>.</dd></div>
+            <div><dt>Ako sa overí</dt><dd>Suchý beh: druhá sada obsahu do tej istej šablóny. Z jednej šablóny vzniknú <b>dva rôzne weby</b>.</dd></div>
+            <div><dt>Prečo to podceňujeme</dt><dd>Je to jediný spôsob, ako zistiť, či je Boma Flora naozaj riadená dátami, alebo má polovicu natvrdo v komponentoch. <b>Celá téza produktu na tom stojí</b> — a nikdy sme ju neoverili. Ak sa ukáže problém, chceme to vedieť teraz, nie pri prvom klientovi.</dd></div>
+            <div><dt>Veľkosť</dt><dd>Väčšie sedenie. Typ podľa toho, čo suchý beh odhalí — pravdepodobne kód aj obsah.</dd></div>
+          </dl>
+        </div>
+      </details>
+
+      <details class="q">
+        <summary>
+          <span class="qn">P6</span>
+          <span class="qt">Kvalita obsahu — Writer a revízia článkov
+            <small>Aby texty neznely ako od AI a chatbot mal z čoho čerpať</small></span>
+          <span class="chev" aria-hidden="true"></span>
+        </summary>
+        <div class="body">
+          <div class="path">AI&nbsp;Nexus&nbsp;Link / Agenti / Obsahový agent (Writer)</div>
+          <dl class="dl">
+            <div><dt>Tri veci naraz</dt><dd>
+              <ol>
+                <li><b>Rôznorodejšie úvody</b> — Writer často začína tým istým vzorcom („Predstavte si, je piatok večer…“). Presne podľa toho čitateľ spozná AI text.</li>
+                <li><b>Jednoduchšie obrázky</b> — časť generovaných obrázkov je na naše témy zbytočne zložitá.</li>
+                <li><b>Popisné alt texty</b> — pre nevidiacich aj pre Google.</li>
+              </ol>
+              Sú to prompty toho istého agenta, preto jedno sedenie.</dd></div>
+            <div><dt>Plus revízia</dt><dd>Staršie články prepísať smerom k <b>našim</b> riešeniam cez <code>revise_article.py</code>, ktorý máme napísaný a takmer nepoužitý. Originál sa nemení, vzniká koncept.</dd></div>
+            <div><dt>Prečo až šieste</dt><dd>Po P1 budeš mať v logoch, <b>na čo sa ľudia naozaj pýtajú</b> — takže sa revidujú články, ktoré chýbajú, nie tie, ktoré si tipneme.</dd></div>
+            <div><dt>Veľkosť</dt><dd>Jedno sedenie typu agenti / obsah.</dd></div>
+          </dl>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
+  <!-- ══════════ ODKAZ NA STROM ══════════ -->
+  <section>
+    <h2>Detail ku každej položke</h2>
+    <p class="sub">
+      Strom vyššie ukazuje štruktúru. Keď chceš vedieť, <b>čo ktorá položka znamená
+      a prečo je tam, kde je</b>, otvor si samostatnú stránku — tam sa dá každý riadok rozkliknúť.
+    </p>
+    <div class="note">
+      <p><b>📂 Strom projektu</b> — celý Nexus po zložkách, každá položka rozklikávacia.</p>
+      <p><b>⚙️ Ako Nexus funguje</b> — vrstvy, dátové toky, GitHub a Obsidian.</p>
+      <p>Obe nájdeš vo svojej zbierke stránok (v termináli <code>/artifacts</code>, na webe
+      <b>claude.ai/code/artifacts</b>). <i>Odkaz sem nedávam — stránka beží v izolovanom
+      rámci, ktorý odchod na inú adresu nepustí, takže by to bolo mŕtve tlačidlo.</i></p>
+      <p style="margin-top:12px"><i>Detaily zámerne nie sú na dvoch miestach — inak by sa nám o mesiac rozišli.</i></p>
+    </div>
+  </section>
+
+  <!-- ══════════ NEROBÍME ══════════ -->
+  <section>
+    <h2>Vedome nerobíme</h2>
+    <p class="sub">
+      Posúdené a zamietnuté, aby sa tie isté otázky neotvárali znova. Rozhodnutia sa môžu časom
+      zmeniť — ale nech sa menia vedome, nie zabudnutím.
+    </p>
+    <div class="scroll">
+      <table class="no-table">
+        <thead><tr><th>Čo</th><th>Prečo nie</th></tr></thead>
+        <tbody>
+          <tr><td>Vertex AI a Google Cloud</td><td>Znamenalo by to cloudový projekt, oprávnenia a regióny navyše, aby sme robili to, čo dnes robíme jedným volaním Gemini z Railway.</td></tr>
+          <tr><td>Tisíce vygenerovaných stránok pre SEO</td><td>Najnebezpečnejší nápad z podkladov. Je to presne vzor, za ktorý Google penalizuje — a spustili by sme ho na doméne, ktorú ešte len raz ideme indexovať.</td></tr>
+          <tr><td>Web generovaný z chatu a nasadený sám</td><td>Naša brána kvality existuje preto, že ju konkurencia nemá. Nevymieňame ju za rýchlosť. Aj samotný podklad k tomu dochádza — skončí pri knižnici overených komponentov, čo sú naše šablóny.</td></tr>
+          <tr><td>Hermes Agent</td><td>Kvalitný osobný agent, ale jeho pamäť je stavaná na jedného človeka a <b>sám sa vylepšuje</b>, takže je nereprodukovateľný. My predávame reprodukovateľnosť. Rovnaká kategória ako Wayland, ktorý sme už zamietli.</td></tr>
+          <tr><td>Vyhľadávanie v našich poznámkach cez chatbota</td><td>Riziko, že sa interné poznámky dostanú k verejnému botovi, prevažuje nad úžitkom. A hľadanie v dokumentácii už rieši štartovací hook v každom sedení.</td></tr>
+          <tr><td>Workflow skilly (plán-review, retro)</td><td>Oboje už reálne robíme — ponaučenia v denníku a plánovacie sedenia. Obal okolo funkčného návyku nie je zlepšenie.</td></tr>
+          <tr><td>Okamžité preindexovanie po publikovaní</td><td>Pipeline beží trikrát týždenne a to stačí. Riešili by sme oneskorenie, ktoré nikto necíti.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════ LEGENDA ══════════ -->
+  <section>
+    <h2>Značky</h2>
+    <p class="sub">Priority žijú v backlogu, mapa nesie štruktúru a stav. Jeden údaj, jedno miesto.</p>
+    <div class="legend">
+      <div><span class="b b-p">P1</span> vo fronte, poradie platí</div>
+      <div><span class="b b-live">naživo</span> beží v produkcii</div>
+      <div><span class="b b-done">hotové</span> dokončené, súčasť väčšieho celku</div>
+      <div><span class="b b-pool">zásobník</span> otvorené, bez poradia</div>
+      <div><span class="b b-no">nerobíme</span> odložené alebo zamietnuté, vždy s dôvodom</div>
+      <div><span class="b b-new">nový</span> pribudlo na tejto porade</div>
+      <div><span class="b b-our">naše</span> agent, ktorý sa nenasadzuje klientovi</div>
+    </div>
+
+    <div class="note">
+      <p><b>Ako sa táto mapa udržiava.</b> Mapa nesie <b>štruktúru</b> — čo patrí pod čo — a hrubý stav.
+      Mení sa zriedka, len keď pribudne alebo zanikne modul.</p>
+      <p><b>Poradie a detaily žijú v <code>docs/backlog.md</code></b>, ktorý sa prepisuje často.
+      História toho, prečo sa niečo zmenilo, ide do <code>docs/dennik.md</code> a nikdy sa neprepisuje.
+      Tak sa tie tri veci nemôžu navzájom rozísť.</p>
+      <p>Sesterská mapa <b>„AI Nexus Link — mapa“</b> odpovedá na inú otázku: <i>ako do seba systém
+      zapadá</i> — vrstvy a dátové toky. Táto odpovedá na <i>kde sme a čo ďalej</i>.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <p class="stamp" style="margin-top:22px">
+    <span>VÝSTUP PLÁNOVACEJ PORADY · 20. 8. 2026</span>
+    <span>ĎALŠIA REVÍZIA: PO DOKONČENÍ P2</span>
+  </p>
+
+</div>
+</body>
+</html>
